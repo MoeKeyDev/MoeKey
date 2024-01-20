@@ -27,6 +27,9 @@ jobs:
           distribution: 'adopt'
           java-version: '11.x'
 
+      - name: 运行代码生成器
+        run: dart run build_runner build
+
       - name: 编译apk
         run: flutter build apk --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols/release
 #        working-directory: forum_mobile
@@ -62,6 +65,9 @@ jobs:
         run: flutter config --enable-linux-desktop
 #        working-directory: forum_mobile
 
+      - name: 运行代码生成器
+        run: dart run build_runner build
+
       - name: 编译linux
         run: flutter build linux
 #        working-directory: forum_mobile
@@ -94,6 +100,9 @@ jobs:
       - name: 启动windows桌面
         run: flutter config --enable-windows-desktop
 #        working-directory: forum_mobile
+
+      - name: 运行代码生成器
+        run: dart run build_runner build
 
       - name: 编译windows
         run: flutter build windows
