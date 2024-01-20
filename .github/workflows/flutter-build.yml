@@ -2,9 +2,8 @@ name: 构建发布Flutter应用
 
 on:
   push:
-    tags:
-      - '*'
-
+    branches:
+      - main
 jobs:
   build-apk:
     name: 编译android
@@ -111,7 +110,7 @@ jobs:
           path: forum_mobile\build\windows\moekey-windows-64.zip
   release:
     name: 上传包
-    needs: [build-apk, build-linux,build-windows,build-web]
+    needs: [build-apk, build-linux, build-windows, build-web]
     runs-on: ubuntu-latest
     permissions:
       contents: write
