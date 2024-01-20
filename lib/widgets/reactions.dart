@@ -50,7 +50,7 @@ class ReactionsListComponent extends HookConsumerWidget {
       )) {
       var code = parseString(item.key);
       var isOutSite = false;
-      if (siteEmoji.valueOrNull?[code] == null) {
+      if (code != null && siteEmoji.valueOrNull?[code] == null) {
         isOutSite = true;
       }
       var container = HoverBuilder(
