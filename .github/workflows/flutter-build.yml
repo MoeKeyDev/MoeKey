@@ -110,7 +110,7 @@ jobs:
           path: forum_mobile\build\windows\moekey-windows-64.zip
   release:
     name: 上传包
-    needs: [build-apk, build-linux, build-windows, build-web]
+    needs: [build-apk, build-linux, build-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: write
