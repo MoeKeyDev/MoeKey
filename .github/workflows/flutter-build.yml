@@ -109,7 +109,7 @@ jobs:
 #        working-directory: forum_mobile
 
       - name: 压缩生成的文件
-        run: Compress-Archive -Path "build\windows\runner\Release" -DestinationPath "build\windows\moekey-windows-64.zip"
+        run: Compress-Archive -Path "build\windows\x64\runner\Release" -DestinationPath "build\windows\moekey-windows-64.zip"
 #        working-directory: forum_mobile
 
       - name: 上传到工作流程
