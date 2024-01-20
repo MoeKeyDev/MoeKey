@@ -1,6 +1,6 @@
-# misskey for flutter
+# MoeKey
 
-
+MoeKey is a misskey client for flutter
 
 ## Getting Started
 
