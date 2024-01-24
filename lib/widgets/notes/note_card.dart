@@ -16,14 +16,16 @@ import 'package:misskey/state/themes.dart';
 import 'package:misskey/utils/format_duration.dart';
 import 'package:misskey/widgets/context_menu.dart';
 import 'package:misskey/widgets/emoji_list.dart';
+import 'package:misskey/widgets/mk_overflow_show.dart';
 import 'package:misskey/widgets/note_create_dialog/note_create_dialog.dart';
 import 'package:misskey/widgets/note_create_dialog/note_create_dialog_state.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../models/drive.dart';
 import '../../networks/timeline.dart';
 import '../../pages/image_preview/image_preview.dart';
 import '../../pages/notes/note_page.dart';
-import '../../router/main_router_delegate.dart';
+import '../../router/main_router_delegate.dart' as main_router;
 import '../../utils/parse-color.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../hover_builder.dart';
@@ -92,6 +94,8 @@ class NoteCard extends ConsumerWidget {
                             data: thisData.renote,
                             isShowAction: false,
                             isShowReactions: false,
+                            limit: 500,
+                            height: 300,
                           ),
                         )
                       : null,
@@ -114,6 +118,8 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     this.innerWidget,
     this.isShowReactions = true,
     this.disableReactions = false,
+    this.limit = 1000,
+    this.height = 400,
   });
   final dynamic data;
   final bool reply;
@@ -123,7 +129,8 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
   final Widget? innerWidget;
   final ConstraintId avatar = ConstraintId('avatar');
   final ConstraintId content = ConstraintId('content');
-
+  final double limit;
+  final double height;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
@@ -147,12 +154,13 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () {
-            MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+            main_router.MainRouterDelegate.of(context)
+                .setNewRoutePath(main_router.RouterItem(
               path: "notes/${data.id}",
               page: () => NotesPage(
                 noteId: data.id,
               ),
-              launchMode: LaunchMode.standard,
+              launchMode: main_router.LaunchMode.standard,
             ));
           },
           child: Container(
@@ -161,7 +169,8 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                    main_router.MainRouterDelegate.of(context)
+                        .setNewRoutePath(main_router.RouterItem(
                       path: "user/${data.user.id}",
                       page: () {
                         return UserPage(userId: data.user.id);
@@ -206,52 +215,72 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                       if (data.user.instance != null) const SizedBox(height: 4),
                       if (data.user.instance != null)
                         UserInstanceBar(data: data),
-                      if (data.cw != null) const SizedBox(height: 4),
-                      if (data.cw != null)
-                        MFMText(
-                          text: data.cw ?? "",
-                          currentServerHost: data.user.host,
-                          emojis: data.emojis,
+                      // start
+                      MkOverflowShow(
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (data.cw != null) const SizedBox(height: 4),
+                            if (data.cw != null)
+                              MFMText(
+                                text: data.cw ?? "",
+                                currentServerHost: data.user.host,
+                                emojis: data.emojis,
+                              ),
+                            if (data.cw != null) const SizedBox(height: 4),
+                            if (data.cw != null)
+                              SizedBox(
+                                width: double.infinity,
+                                child: FilledButton(
+                                  onPressed: () {
+                                    isHiddenCw.value = !isHiddenCw.value;
+                                  },
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.resolveWith(
+                                              (states) {
+                                        if (states
+                                            .contains(MaterialState.hovered)) {
+                                          return themes.buttonHoverBgColor;
+                                        }
+                                        return themes.buttonBgColor;
+                                      }),
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              themes.fgColor),
+                                      elevation: MaterialStateProperty.all(0)),
+                                  child: Text(isHiddenCw.value ? "查看更多" : "收起"),
+                                ),
+                              ),
+                            if (!isHiddenCw.value || data.cw == null) ...[
+                              const SizedBox(height: 4),
+                              if ((data.text ?? "") != "")
+                                MFMText(
+                                  key: ValueKey(data.text ?? ""),
+                                  text: data.text ?? "",
+                                  emojis: data.emojis,
+                                  currentServerHost: data.user.host,
+                                ),
+                              const SizedBox(height: 4),
+                              // 投票
+                              if (data.poll != null) PollCard(data: data),
+                              TimeLineImage(
+                                  files: data.files,
+                                  mainAxisExtent: constraints.maxWidth * 0.7),
+                              if (innerWidget != null) innerWidget!,
+                            ],
+                          ],
                         ),
-                      if (data.cw != null) const SizedBox(height: 4),
-                      if (data.cw != null)
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: () {
-                              isHiddenCw.value = !isHiddenCw.value;
-                            },
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.resolveWith((states) {
-                                  if (states.contains(MaterialState.hovered)) {
-                                    return themes.buttonHoverBgColor;
-                                  }
-                                  return themes.buttonBgColor;
-                                }),
-                                foregroundColor:
-                                    MaterialStateProperty.all(themes.fgColor),
-                                elevation: MaterialStateProperty.all(0)),
-                            child: Text(isHiddenCw.value ? "查看更多" : "收起"),
-                          ),
-                        ),
-                      if (!isHiddenCw.value || data.cw == null) ...[
-                        const SizedBox(height: 4),
-                        if ((data.text ?? "") != "")
-                          MFMText(
-                            key: ValueKey(data.text ?? ""),
-                            text: data.text ?? "",
-                            emojis: data.emojis,
-                            currentServerHost: data.user.host,
-                          ),
-                        const SizedBox(height: 4),
-                        // 投票
-                        if (data.poll != null) PollCard(data: data),
-                        TimeLineImage(
-                            files: data.files,
-                            mainAxisExtent: constraints.maxWidth * 0.7),
-                        if (innerWidget != null) innerWidget!,
-                      ],
+                        action: (isShow, p1) {
+                          return Text("查看更多");
+                        },
+                        limit: limit,
+                        height: height,
+                      ),
+
+                      // end
                       if (isShowReactions) ...[
                         const SizedBox(height: 8),
                         ReactionsListComponent(
@@ -292,6 +321,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
         ),
       );
     });
+
     // return VisibilityDetector(
     //   onVisibilityChanged: (visibilityInfo) {
     //     if (visibilityInfo.visibleFraction > 0) {
@@ -392,7 +422,8 @@ class UserNameRichText extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     return GestureDetector(
       onTap: () {
-        MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+        main_router.MainRouterDelegate.of(context)
+            .setNewRoutePath(main_router.RouterItem(
           path: "user/${data.id}",
           page: () {
             return UserPage(userId: data.id);
@@ -409,6 +440,19 @@ class UserNameRichText extends HookConsumerWidget {
               text: data.host != null ? "@${data.host}" : "",
               style: textStyle.copyWith(color: themes.fgColor.withAlpha(128)),
             ),
+            const TextSpan(
+              text: "  ",
+            ),
+            for (var badge in data.badgeRoles)
+              WidgetSpan(
+                  child: Tooltip(
+                    message: badge.name,
+                    child: MkImage(
+                      badge.iconUrl,
+                      height: 16,
+                    ),
+                  ),
+                  alignment: PlaceholderAlignment.middle)
           ],
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -513,18 +557,45 @@ class TimeLineImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (files.length == 1) {
-      return NoteImage(
-        imageFile: files[0],
+    // 过滤出所有的图片和视频
+    List<DriveFileModel> media = [];
+    List<Widget> filesWidget = [];
+    for (var item in files) {
+      if (item.type.startsWith("image") || item.type.startsWith("video")) {
+        media.add(item);
+      } else {
+        filesWidget.add(GestureDetector(
+          onTap: () {
+            launchUrlString(item.url);
+          },
+          child: Tooltip(
+            message: item.url,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  TablerIcons.download,
+                  size: 18,
+                  color: DefaultTextStyle.of(context).style.color,
+                ),
+                Text(item.name)
+              ],
+            ),
+          ),
+        ));
+      }
+    }
+    Widget? imageListWidget;
+    if (media.length == 1) {
+      imageListWidget = NoteImage(
+        imageFile: media[0],
         maxHeight: 460,
         onClick: () {
           open(0, context);
         },
       );
-    }
-
-    if (files.length == 2) {
-      return StaggeredGrid.count(
+    } else if (media.length == 2) {
+      imageListWidget = StaggeredGrid.count(
         crossAxisCount: 2,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
@@ -533,7 +604,7 @@ class TimeLineImage extends StatelessWidget {
             mainAxisExtent: mainAxisExtent / 2,
             crossAxisCellCount: 1,
             child: NoteImage(
-              imageFile: files[0],
+              imageFile: media[0],
               onClick: () {
                 open(0, context);
               },
@@ -543,16 +614,15 @@ class TimeLineImage extends StatelessWidget {
             mainAxisExtent: mainAxisExtent / 2,
             crossAxisCellCount: 1,
             child: NoteImage(
-                imageFile: files[1],
+                imageFile: media[1],
                 onClick: () {
                   open(1, context);
                 }),
           ),
         ],
       );
-    }
-    if (files.length == 3) {
-      return StaggeredGrid.count(
+    } else if (media.length == 3) {
+      imageListWidget = StaggeredGrid.count(
         crossAxisCount: 3,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
@@ -561,7 +631,7 @@ class TimeLineImage extends StatelessWidget {
               mainAxisExtent: mainAxisExtent / 1.5 + 8,
               crossAxisCellCount: 2,
               child: NoteImage(
-                  imageFile: files[0],
+                  imageFile: media[0],
                   onClick: () {
                     open(0, context);
                   })),
@@ -569,7 +639,7 @@ class TimeLineImage extends StatelessWidget {
             mainAxisExtent: mainAxisExtent / 3,
             crossAxisCellCount: 1,
             child: NoteImage(
-                imageFile: files[1],
+                imageFile: media[1],
                 onClick: () {
                   open(1, context);
                 }),
@@ -578,21 +648,20 @@ class TimeLineImage extends StatelessWidget {
             mainAxisExtent: mainAxisExtent / 3,
             crossAxisCellCount: 1,
             child: NoteImage(
-                imageFile: files[2],
+                imageFile: media[2],
                 onClick: () {
                   open(2, context);
                 }),
           ),
         ],
       );
-    }
-    if (files.length > 3) {
-      return StaggeredGrid.count(
+    } else if (media.length > 3) {
+      imageListWidget = StaggeredGrid.count(
         crossAxisCount: 2,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
         children: [
-          for (var (index, file) in files.indexed)
+          for (var (index, file) in media.indexed)
             StaggeredGridTile.extent(
               mainAxisExtent: mainAxisExtent / 3.8,
               crossAxisCellCount: 1,
@@ -605,9 +674,15 @@ class TimeLineImage extends StatelessWidget {
         ],
       );
     }
-    return const SizedBox(
-      width: 0,
-      height: 0,
+    return Column(
+      children: [
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: filesWidget,
+        ),
+        if (imageListWidget != null) imageListWidget,
+      ],
     );
   }
 }
