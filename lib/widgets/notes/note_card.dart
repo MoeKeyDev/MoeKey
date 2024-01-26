@@ -356,11 +356,22 @@ class ReNoteUserInfo extends HookConsumerWidget {
           SizedBox(
             width: isSmall ? 7 * (fontsize - 8) - 29 : 8 * (fontsize - 8) - 29,
           ),
-          MkImage(
-            data.user.avatarUrl ?? "",
-            width: 28,
-            height: 28,
-            shape: BoxShape.circle,
+          GestureDetector(
+            onTap: () {
+              main_router.MainRouterDelegate.of(context)
+                  .setNewRoutePath(main_router.RouterItem(
+                path: "user/${data.id}",
+                page: () {
+                  return UserPage(userId: data.id);
+                },
+              ));
+            },
+            child: MkImage(
+              data.user.avatarUrl ?? "",
+              width: 28,
+              height: 28,
+              shape: BoxShape.circle,
+            ),
           ),
           SizedBox(
             width: isSmall ? 1.5 * (fontsize - 8) : 2 * (fontsize - 8),
