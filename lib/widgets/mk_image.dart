@@ -1,6 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MkImage extends StatelessWidget {
   final String url;
@@ -19,6 +20,15 @@ class MkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 额外判断svg
+    if (url.endsWith(".svg")) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          shape: shape ?? BoxShape.rectangle,
+        ),
+        child: SvgPicture.network(url, width: width, height: height, fit: fit),
+      );
+    }
     return ExtendedImage.network(
       url,
       shape: shape,

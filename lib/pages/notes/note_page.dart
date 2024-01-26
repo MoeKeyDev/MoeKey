@@ -12,6 +12,7 @@ import 'package:misskey/widgets/mk_header.dart';
 
 import '../../main.dart';
 import '../../networks/notes.dart';
+import '../../router/main_router_delegate.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../../utils/time_to_desired_format.dart';
 import '../../widgets/mfm_text/mfm_text.dart';
@@ -20,6 +21,7 @@ import '../../widgets/mk_image.dart';
 import '../../widgets/mk_scaffold.dart';
 import '../../widgets/notes/note_card.dart';
 import '../../widgets/reactions.dart';
+import '../users/user_page.dart';
 
 class NotesPage extends HookConsumerWidget {
   const NotesPage({super.key, required this.noteId});
@@ -77,11 +79,22 @@ class NotesPage extends HookConsumerWidget {
               content: Row(
                 children: [
                   if (!dataProvider.isLoading || data != null) ...[
-                    MkImage(
-                      data?.user.avatarUrl ?? "",
-                      shape: BoxShape.circle,
-                      width: 32,
-                      height: 32,
+                    GestureDetector(
+                      child: MkImage(
+                        data?.user.avatarUrl ?? "",
+                        shape: BoxShape.circle,
+                        width: 32,
+                        height: 32,
+                      ),
+                      onTap: () {
+                        MainRouterDelegate.of(context)
+                            .setNewRoutePath(RouterItem(
+                          path: "user/${data?.userId}",
+                          page: () {
+                            return UserPage(userId: data?.userId ?? "0");
+                          },
+                        ));
+                      },
                     ),
                     const SizedBox(
                       width: 8,
@@ -164,7 +177,7 @@ class NotesPage extends HookConsumerWidget {
                                   reply: true,
                                   disableReactions: true,
                                 ),
-                              NoteCard(data: data!)
+                              NotesPageNoteCard(data: data!)
                             ],
                           ),
                         ),
@@ -286,8 +299,8 @@ class NotesPage extends HookConsumerWidget {
   }
 }
 
-class NoteCard extends HookConsumerWidget {
-  const NoteCard({super.key, required this.data});
+class NotesPageNoteCard extends HookConsumerWidget {
+  const NotesPageNoteCard({super.key, required this.data});
   final NoteModel data;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -401,47 +414,67 @@ class UserInfo extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     return Row(
       children: [
-        MkImage(
-          data.user.avatarUrl ?? "",
-          width: 56,
-          height: 56,
-          shape: BoxShape.circle,
+        GestureDetector(
+          child: MkImage(
+            data.user.avatarUrl ?? "",
+            width: 56,
+            height: 56,
+            shape: BoxShape.circle,
+          ),
+          onTap: () {
+            MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+              path: "user/${data.userId}",
+              page: () {
+                return UserPage(userId: data.userId);
+              },
+            ));
+          },
         ),
         const SizedBox(
           width: 8,
         ),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              MFMText(
-                text: data.user.name ?? data.user.username,
-                emojis: data.user.emojis,
-                bigEmojiCode: false,
-                feature: const [MFMFeature.emojiCode],
-              ),
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "@${data.user.username}",
-                    ),
-                    if (data.user.host != null)
-                      TextSpan(
-                        text: "@${data.user.host}",
-                        style: TextStyle(
-                          color: themes.fgColor.withOpacity(0.7),
-                        ),
-                      ),
-                  ],
+          child: GestureDetector(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                MFMText(
+                  text: data.user.name ?? data.user.username,
+                  emojis: data.user.emojis,
+                  bigEmojiCode: false,
+                  feature: const [MFMFeature.emojiCode],
                 ),
-              ),
-              const SizedBox(
-                height: 2,
-              ),
-              if (data.user.instance != null) UserInstanceBar(data: data)
-            ],
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "@${data.user.username}",
+                      ),
+                      if (data.user.host != null)
+                        TextSpan(
+                          text: "@${data.user.host}",
+                          style: TextStyle(
+                            color: themes.fgColor.withOpacity(0.7),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                if (data.user.instance != null) UserInstanceBar(data: data)
+              ],
+            ),
+            onTap: () {
+              MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                path: "user/${data.userId}",
+                page: () {
+                  return UserPage(userId: data.userId);
+                },
+              ));
+            },
           ),
         ),
         if (NoteVisibility.getIcon(data.visibility) != null)

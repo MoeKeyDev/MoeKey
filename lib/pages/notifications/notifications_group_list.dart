@@ -6,19 +6,39 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:misskey/models/note.dart';
 import 'package:misskey/networks/notifications.dart';
+import 'package:misskey/pages/notes/note_page.dart';
 import 'package:misskey/state/themes.dart';
 import 'package:misskey/widgets/mfm_text/mfm_text.dart';
 import 'package:misskey/widgets/mk_card.dart';
 import 'package:misskey/widgets/notifications/notifications_user_card.dart';
 
+import '../../router/main_router_delegate.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/notes/note_card.dart';
 import '../../widgets/reactions.dart';
+import '../users/user_page.dart';
 
 class NotificationsGroupList extends HookConsumerWidget {
   NotificationsGroupList({super.key});
+  static openUser(BuildContext context, String userId) {
+    MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+      path: "user/$userId",
+      page: () {
+        return UserPage(userId: userId);
+      },
+    ));
+  }
+
+  static openNote(BuildContext context, String noteId) {
+    MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+      path: "user/$noteId",
+      page: () {
+        return NotesPage(noteId: noteId);
+      },
+    ));
+  }
 
   final Map<
           String,
@@ -45,6 +65,9 @@ class NotificationsGroupList extends HookConsumerWidget {
               color: Colors.white,
             ),
           ),
+          onTap: (context) {
+            openUser(context, data["user"]["id"]);
+          },
         ),
     "followRequestAccepted": (data, borderRadius, themes) =>
         NotificationsUserCard(
@@ -67,6 +90,9 @@ class NotificationsGroupList extends HookConsumerWidget {
               color: Colors.white,
             ),
           ),
+          onTap: (context) {
+            openUser(context, data["user"]["id"]);
+          },
         ),
     "reaction": (data, borderRadius, themes) => NotificationsUserCard(
           data: data,
@@ -90,6 +116,9 @@ class NotificationsGroupList extends HookConsumerWidget {
                   emojis: data["note"]["reactionEmojis"]),
             ),
           ),
+          onTap: (context) {
+            openNote(context, data["note"]["id"]);
+          },
         ),
     "reaction:grouped": (data, borderRadius, themes) => NotificationsUserCard(
           data: data,
@@ -99,37 +128,47 @@ class NotificationsGroupList extends HookConsumerWidget {
             runSpacing: 8,
             children: [
               for (var item in data["reactions"])
-                SizedBox(
-                  width: 38,
-                  height: 38,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      MkImage(
-                        item?["user"]?["avatarUrl"] ?? "",
-                        shape: BoxShape.circle,
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                      Positioned(
-                        bottom: -2,
-                        right: -2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: themes.panelColor, shape: BoxShape.circle),
-                          padding: const EdgeInsets.all(3),
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: ReactionsIcon(
-                                emojiCode: item["reaction"],
-                                emojis: data["note"]["reactionEmojis"]),
+                Builder(builder: (context) {
+                  return GestureDetector(
+                    child: SizedBox(
+                      width: 38,
+                      height: 38,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          MkImage(
+                            item?["user"]?["avatarUrl"] ?? "",
+                            shape: BoxShape.circle,
+                            width: double.infinity,
+                            height: double.infinity,
                           ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                          Positioned(
+                            bottom: -2,
+                            right: -2,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: themes.panelColor,
+                                  shape: BoxShape.circle),
+                              padding: const EdgeInsets.all(3),
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: ReactionsIcon(
+                                    emojiCode: item["reaction"],
+                                    emojis: data["note"]["reactionEmojis"]),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      if (item?["user"]?["id"] != null) {
+                        openUser(context, item?["user"]?["id"]);
+                      }
+                    },
+                  );
+                }),
             ],
           ),
           name: MFMText(
@@ -152,6 +191,9 @@ class NotificationsGroupList extends HookConsumerWidget {
               color: Colors.white,
             ),
           ),
+          onTap: (context) {
+            openNote(context, data["note"]["id"]);
+          },
         ),
     "reply": (data, borderRadius, themes) => NoteCard(
           data: NoteModel.fromMap(data["note"]),
@@ -183,6 +225,9 @@ class NotificationsGroupList extends HookConsumerWidget {
               color: Colors.white,
             ),
           ),
+          onTap: (context) {
+            openNote(context, data["note"]["id"]);
+          },
         ),
     "renote:grouped": (data, borderRadius, themes) => NotificationsUserCard(
           data: data,
@@ -192,21 +237,30 @@ class NotificationsGroupList extends HookConsumerWidget {
             runSpacing: 8,
             children: [
               for (var item in data["users"])
-                SizedBox(
-                  width: 38,
-                  height: 38,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      MkImage(
-                        item?["avatarUrl"] ?? "",
-                        shape: BoxShape.circle,
-                        width: double.infinity,
-                        height: double.infinity,
+                Builder(builder: (context) {
+                  return GestureDetector(
+                    child: SizedBox(
+                      width: 38,
+                      height: 38,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          MkImage(
+                            item?["avatarUrl"] ?? "",
+                            shape: BoxShape.circle,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                    onTap: () {
+                      if (item?["id"] != null) {
+                        openUser(context, item?["id"]);
+                      }
+                    },
+                  );
+                }),
             ],
           ),
           name: MFMText(
@@ -230,6 +284,9 @@ class NotificationsGroupList extends HookConsumerWidget {
               color: Colors.white,
             ),
           ),
+          onTap: (context) {
+            openNote(context, data["note"]["id"]);
+          },
         ),
     "quote": (data, borderRadius, themes) => NoteCard(
           data: NoteModel.fromMap(data["note"]),
@@ -270,6 +327,9 @@ class NotificationsGroupList extends HookConsumerWidget {
               color: Colors.white,
             ),
           ),
+          onTap: (context) {
+            openNote(context, data["note"]["id"]);
+          },
         ),
     // "reaction:grouped": (data, borderRadius, themes) {}
   };
