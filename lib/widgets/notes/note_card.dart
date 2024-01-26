@@ -360,9 +360,9 @@ class ReNoteUserInfo extends HookConsumerWidget {
             onTap: () {
               main_router.MainRouterDelegate.of(context)
                   .setNewRoutePath(main_router.RouterItem(
-                path: "user/${data.id}",
+                path: "user/${data.user.id}",
                 page: () {
-                  return UserPage(userId: data.id);
+                  return UserPage(userId: data.user.id);
                 },
               ));
             },
