@@ -3,11 +3,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:html/parser.dart';
-import 'package:misskey/widgets/input_decoration.dart';
-import 'package:misskey/widgets/loading_weight.dart';
-import 'package:misskey/widgets/login/servers_select_state.dart';
-import 'package:misskey/widgets/mk_card.dart';
-import 'package:misskey/widgets/mk_image.dart';
+import 'package:moekey/widgets/input_decoration.dart';
+import 'package:moekey/widgets/loading_weight.dart';
+import 'package:moekey/widgets/login/servers_select_state.dart';
+import 'package:moekey/widgets/mk_card.dart';
+import 'package:moekey/widgets/mk_image.dart';
 
 import '../../main.dart';
 import '../../state/server.dart';
@@ -32,6 +32,7 @@ class ServersSelectCard extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var list = ref.watch(instanceListStateProvider);
+    print(list.error);
     var url = useState("");
     var filterList = instanceListFilter(list.valueOrNull ?? [], url.value);
     return MkCard(

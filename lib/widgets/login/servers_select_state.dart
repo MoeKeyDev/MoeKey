@@ -1,4 +1,4 @@
-import 'package:misskey/networks/dio.dart';
+import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'servers_select_state.g.dart';

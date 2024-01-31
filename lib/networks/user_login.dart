@@ -67,7 +67,7 @@ class ApiUserLogin extends _$ApiUserLogin {
   Future<Map> createApp() async {
     var http = ref.read(selectHttpProvider);
     var data = await http.post("/app/create", data: {
-      "name": "flutter_app",
+      "name": "MoeKey",
       "description": "app",
       "permission": [
         "read:account",

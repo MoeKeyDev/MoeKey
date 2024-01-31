@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:misskey/networks/apis.dart';
-import 'package:misskey/networks/notes.dart';
-import 'package:misskey/state/themes.dart';
+import 'package:moekey/networks/apis.dart';
+import 'package:moekey/networks/notes.dart';
+import 'package:moekey/state/themes.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 
 import 'hover_builder.dart';

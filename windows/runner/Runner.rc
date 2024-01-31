@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "love.moegirl.misskey" "\0"
-            VALUE "FileDescription", "misskey" "\0"
+            VALUE "CompanyName", "love.moegirl" "\0"
+            VALUE "FileDescription", "moekey" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "misskey" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 love.moegirl.misskey. All rights reserved." "\0"
-            VALUE "OriginalFilename", "misskey.exe" "\0"
-            VALUE "ProductName", "misskey" "\0"
+            VALUE "InternalName", "love.moegirl.moekey" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 love.moegirl. All rights reserved." "\0"
+            VALUE "OriginalFilename", "moekey.exe" "\0"
+            VALUE "ProductName", "moekey" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

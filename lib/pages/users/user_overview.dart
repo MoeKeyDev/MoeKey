@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:misskey/networks/user.dart';
-import 'package:misskey/state/themes.dart';
-import 'package:misskey/utils/time_to_desired_format.dart';
-import 'package:misskey/widgets/mfm_text/mfm_text.dart';
+import 'package:moekey/networks/user.dart';
+import 'package:moekey/state/themes.dart';
+import 'package:moekey/utils/time_to_desired_format.dart';
+import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 
 import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_card.dart';

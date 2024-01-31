@@ -10,7 +10,7 @@ import '../state/server.dart';
 part 'websocket.g.dart';
 
 @Riverpod(keepAlive: true)
-class MisskeyWebSocket extends _$MisskeyWebSocket {
+class moekeyWebSocket extends _$moekeyWebSocket {
   @override
   FutureOr<WebSocketChannel> build() async {
     var user = await ref.watch(currentLoginUserProvider.future);
@@ -35,24 +35,24 @@ class MisskeyWebSocket extends _$MisskeyWebSocket {
   }
 }
 
-class MisskeyEvent {
+class moekeyEvent {
   late Map data;
-  late MisskeyEventType type;
+  late moekeyEventType type;
 
-  MisskeyEvent({required this.data, required this.type});
+  moekeyEvent({required this.data, required this.type});
 
-  MisskeyEvent copyWith({
+  moekeyEvent copyWith({
     Map? data,
-    MisskeyEventType? type,
+    moekeyEventType? type,
   }) {
-    return MisskeyEvent(
+    return moekeyEvent(
       data: data ?? this.data,
       type: type ?? this.type,
     );
   }
 }
 
-enum MisskeyEventType {
+enum moekeyEventType {
   /// 数据事件
   data,
 
@@ -60,30 +60,30 @@ enum MisskeyEventType {
   load;
 }
 
-StreamController<MisskeyEvent> misskeyStreamController =
+StreamController<moekeyEvent> moekeyStreamController =
     StreamController.broadcast();
 
 @Riverpod(keepAlive: true)
-class MisskeyGlobalEvent extends _$MisskeyGlobalEvent {
+class moekeyGlobalEvent extends _$moekeyGlobalEvent {
   @override
   FutureOr build() async {
-    var channel = await ref.watch(misskeyWebSocketProvider.future);
-    misskeyStreamController.sink.add(MisskeyEvent(
-      type: MisskeyEventType.load,
+    var channel = await ref.watch(moekeyWebSocketProvider.future);
+    moekeyStreamController.sink.add(moekeyEvent(
+      type: moekeyEventType.load,
       data: {},
     ));
     channel.stream.listen((data) {
-      logger.d("=========emit MisskeyEvent=======");
+      logger.d("=========emit moekeyEvent=======");
       logger.d(data);
-      var event = MisskeyEvent(
-        type: MisskeyEventType.data,
+      var event = moekeyEvent(
+        type: moekeyEventType.data,
         data: jsonDecode(data),
       );
-      misskeyStreamController.sink.add(event);
+      moekeyStreamController.sink.add(event);
     }, onDone: () {
-      ref.invalidate(misskeyWebSocketProvider);
-      misskeyStreamController.sink.add(MisskeyEvent(
-        type: MisskeyEventType.load,
+      ref.invalidate(moekeyWebSocketProvider);
+      moekeyStreamController.sink.add(moekeyEvent(
+        type: moekeyEventType.load,
         data: {},
       ));
     }, onError: (error) {
@@ -94,11 +94,11 @@ class MisskeyGlobalEvent extends _$MisskeyGlobalEvent {
   send(Map data) async {
     try {
       var json = jsonEncode(data);
-      var channel = await ref.read(misskeyWebSocketProvider.future);
+      var channel = await ref.read(moekeyWebSocketProvider.future);
       channel.sink.add(json);
     } catch (e) {
       logger.d(e);
-      ref.invalidate(misskeyWebSocketProvider);
+      ref.invalidate(moekeyWebSocketProvider);
     }
   }
 }

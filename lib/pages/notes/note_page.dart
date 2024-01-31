@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:misskey/models/note.dart';
-import 'package:misskey/networks/timeline.dart';
-import 'package:misskey/state/themes.dart';
-import 'package:misskey/widgets/loading_weight.dart';
-import 'package:misskey/widgets/mk_header.dart';
+import 'package:moekey/models/note.dart';
+import 'package:moekey/networks/timeline.dart';
+import 'package:moekey/state/themes.dart';
+import 'package:moekey/widgets/loading_weight.dart';
+import 'package:moekey/widgets/mk_header.dart';
 
 import '../../main.dart';
 import '../../networks/notes.dart';

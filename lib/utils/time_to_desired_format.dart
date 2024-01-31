@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:misskey/utils/time_ago_since_date.dart';
+import 'package:moekey/utils/time_ago_since_date.dart';
 
 String timeToDesiredFormat(DateTime dateTime) {
   String formattedDateTime =

@@ -1,9 +1,9 @@
 import "package:dio/dio.dart";
-import "package:misskey/models/drive.dart";
-import "package:misskey/networks/dio.dart";
-import "package:misskey/state/server.dart";
-import "package:misskey/utils/image_compression.dart";
-import "package:misskey/widgets/info_dialog.dart";
+import "package:moekey/models/drive.dart";
+import "package:moekey/networks/dio.dart";
+import "package:moekey/state/server.dart";
+import "package:moekey/utils/image_compression.dart";
+import "package:moekey/widgets/info_dialog.dart";
 import "package:path/path.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 

@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:misskey/networks/dio.dart';
+import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../networks/user.dart';
 import '../../state/server.dart';
 
 part 'hashtag_select_dialog_state.g.dart';
@@ -15,7 +14,6 @@ class HashtagSelectDialogState extends _$HashtagSelectDialogState {
   FutureOr<List> build() async {
     return [];
   }
-
 
   search({String? query}) {
     // 防抖
