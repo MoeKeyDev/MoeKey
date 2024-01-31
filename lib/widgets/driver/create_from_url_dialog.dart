@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:misskey/widgets/input_decoration.dart';
+import 'package:moekey/widgets/input_decoration.dart';
 
 import '../../networks/drive.dart';
 import '../../state/themes.dart';

@@ -1,6 +1,6 @@
-import 'package:misskey/models/note.dart';
-import 'package:misskey/models/user_full.dart';
-import 'package:misskey/networks/dio.dart';
+import 'package:moekey/models/note.dart';
+import 'package:moekey/models/user_full.dart';
+import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../state/server.dart';

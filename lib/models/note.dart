@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:misskey/models/user_simple.dart';
+import 'package:moekey/models/user_simple.dart';
 
 import 'drive.dart';
 

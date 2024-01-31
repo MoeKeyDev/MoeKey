@@ -4,8 +4,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mfm_parser/mfm_parser.dart';
-import 'package:misskey/networks/apis.dart';
-import 'package:misskey/widgets/mfm_text/animate/jelly.dart';
+import 'package:moekey/networks/apis.dart';
+import 'package:moekey/widgets/mfm_text/animate/jelly.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 

@@ -1,18 +1,18 @@
 # MoeKey
 
-MoeKey is a Misskey client for Flutter  
+MoeKey is a moekey client for Flutter  
 
 > This project is currently under development and have many functional deficiencies
 
 ## Features
-- [x] Misskey Servers Selection List 
-- [x] Misskey Login
+- [x] moekey Servers Selection List 
+- [x] moekey Login
 - [x] TimeLine
 - [x] Drive
 - [x] Notifications
 - [x] Create,reply and forward Notes
 - [x] Streaming Apis
-- [x] Compatible with Misskey themes file
+- [x] Compatible with moekey themes file
 - [x] Mfm text
 - [x] Emoji reactions
 - [x] Multi users login

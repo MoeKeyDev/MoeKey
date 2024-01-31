@@ -8,7 +8,7 @@ import 'package:path/path.dart';
 Future saveImage({
   required Dio http,
   required String url,
-  String album = "misskey",
+  String album = "moekey",
 }) async {
   var name = basename(url);
 

@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:misskey/widgets/driver/driver_upload_bar.dart';
+import 'package:moekey/widgets/driver/driver_upload_bar.dart';
 import 'package:path/path.dart';
 
 import '../../main.dart';

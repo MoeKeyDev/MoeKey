@@ -2,7 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:misskey/networks/dio.dart';
+import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../main.dart';

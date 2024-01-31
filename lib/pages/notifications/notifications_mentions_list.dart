@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:misskey/networks/notifications.dart';
-import 'package:misskey/utils/get_padding_note.dart';
+import 'package:moekey/networks/notifications.dart';
+import 'package:moekey/utils/get_padding_note.dart';
 
 import '../../main.dart';
 import '../../state/themes.dart';

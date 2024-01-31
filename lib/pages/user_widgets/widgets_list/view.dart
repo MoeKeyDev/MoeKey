@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:misskey/state/themes.dart';
+import 'package:moekey/state/themes.dart';
 
 class WidgetsListPage extends ConsumerWidget {
   WidgetsListPage({Key? key}) : super(key: key);

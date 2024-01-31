@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:misskey/widgets/loading_weight.dart';
+import 'package:moekey/widgets/loading_weight.dart';
 
 import '../../state/themes.dart';
 import '../blur_widget.dart';

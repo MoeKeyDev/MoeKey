@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:misskey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
+import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../main.dart';

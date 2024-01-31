@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:misskey/models/note.dart';
-import 'package:misskey/networks/timeline.dart';
-import 'package:misskey/networks/websocket.dart';
+import 'package:moekey/models/note.dart';
+import 'package:moekey/networks/timeline.dart';
+import 'package:moekey/networks/websocket.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../main.dart';
@@ -65,7 +65,7 @@ class Notes extends _$Notes {
 @Riverpod(keepAlive: true)
 class NotesListener extends _$NotesListener {
   Map<String, Map<String, dynamic>> noteList = {};
-  StreamSubscription<MisskeyEvent>? listen;
+  StreamSubscription<moekeyEvent>? listen;
   @override
   Future build() async {
     try {
@@ -77,10 +77,10 @@ class NotesListener extends _$NotesListener {
       var user = await ref.watch(currentLoginUserProvider.future);
       listen?.cancel();
       listen = null;
-      listen = misskeyStreamController.stream.listen((event) async {
+      listen = moekeyStreamController.stream.listen((event) async {
         logger.d("========= event ===================");
         logger.d(event);
-        if (event.type == MisskeyEventType.data) {
+        if (event.type == moekeyEventType.data) {
           if (event.data["type"] == "noteUpdated") {
             var eventData = event.data;
             logger.d(eventData);
@@ -128,7 +128,7 @@ class NotesListener extends _$NotesListener {
             }
           }
         }
-        if (event.type == MisskeyEventType.load) {
+        if (event.type == moekeyEventType.load) {
           logger.d("========= NotesListener load ===================");
           logger.d(noteList);
           for (var item in noteList.entries) {
@@ -149,14 +149,14 @@ class NotesListener extends _$NotesListener {
   }
 
   _s(String id) {
-    ref.read(misskeyGlobalEventProvider.notifier).send({
+    ref.read(moekeyGlobalEventProvider.notifier).send({
       "type": "s",
       "body": {"id": id}
     });
   }
 
   _un(String id) {
-    ref.read(misskeyGlobalEventProvider.notifier).send({
+    ref.read(moekeyGlobalEventProvider.notifier).send({
       "type": "un",
       "body": {"id": id}
     });

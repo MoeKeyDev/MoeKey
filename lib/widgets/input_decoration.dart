@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:misskey/state/themes.dart';
+import 'package:moekey/state/themes.dart';
 
 inputDecoration(ThemeColorModel themes, String hintText,
     {Widget? prefixIcon, Widget? suffixIcon}) {
