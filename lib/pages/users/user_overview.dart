@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -21,6 +23,7 @@ class UserOverview extends HookConsumerWidget {
   final String userId;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var mediaPadding = MediaQuery.paddingOf(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = 0;
@@ -33,91 +36,124 @@ class UserOverview extends HookConsumerWidget {
         } else {
           padding = 0;
         }
-        var dataProvider = userNotesListProvider(userId);
+        var dataProvider = userNotesListProvider(
+            userId: userId,
+            withRenotes: false,
+            withChannelNotes: false,
+            withFiles: false,
+            withReplies: false);
         var data = ref.watch(dataProvider);
+        print(data.error);
         var themes = ref.watch(themeColorsProvider);
-        return CustomScrollView(
-          slivers: [
-            SliverPadding(
-              padding: MediaQuery.paddingOf(context)
-                  .copyWith(left: padding, right: padding),
-              sliver: SliverMainAxisGroup(
-                slivers: [
-                  SliverLayoutBuilder(builder: (context, constraints) {
-                    var offset = constraints.remainingPaintExtent -
-                        constraints.viewportMainAxisExtent +
-                        constraints.scrollOffset +
-                        constraints.precedingScrollExtent;
-                    offset = (offset / 140).clamp(0, 1.0);
-                    return SliverToBoxAdapter(
-                      child: UserHomeCard(userId: userId, offset: offset),
-                    );
-                  }),
-                  const SliverPadding(padding: EdgeInsets.only(top: 10)),
-                  SliverList.separated(
-                    addAutomaticKeepAlives: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      BorderRadius borderRadius;
-                      if (index == 0) {
-                        borderRadius = const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12));
-                      } else {
-                        borderRadius = const BorderRadius.all(Radius.zero);
-                      }
-                      return NoteCard(
-                          key: ValueKey(data.valueOrNull!.list[index].id),
-                          borderRadius: borderRadius,
-                          data: data.valueOrNull!.list[index]);
-                      // return KeepAliveWrapper(
-                      //     child: TimelineCardComponent(
-                      //   data: data.valueOrNull![index],
-                      //   borderRadius: borderRadius,
-                      // ));
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        width: double.infinity,
-                        height: 1,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: themes.dividerColor,
-                          ),
-                        ),
-                      );
-                    },
-                    itemCount: data.valueOrNull?.list.length ?? 0,
-                  ),
-                  SliverLayoutBuilder(
-                    builder: (context, constraints) {
-                      if (constraints.remainingPaintExtent > 0 &&
-                          (data.valueOrNull?.hasMore ?? false)) {
-                        ref.read(dataProvider.notifier).load();
-                      }
-                      if (!(data.valueOrNull?.hasMore ?? true)) {
-                        return const SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text("暂无更多"),
-                            ),
-                          ),
+        var user = ref.watch(userInfoProvider(userId: userId));
+        return RefreshIndicator.adaptive(
+          onRefresh: () => ref.refresh(dataProvider.future),
+          edgeOffset: mediaPadding.top,
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+              },
+            ),
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: MediaQuery.paddingOf(context)
+                      .copyWith(left: padding, right: padding),
+                  sliver: SliverMainAxisGroup(
+                    slivers: [
+                      SliverLayoutBuilder(builder: (context, constraints) {
+                        var offset = constraints.remainingPaintExtent -
+                            constraints.viewportMainAxisExtent +
+                            constraints.scrollOffset +
+                            constraints.precedingScrollExtent;
+                        offset = (offset / 140).clamp(0, 1.0);
+                        return SliverToBoxAdapter(
+                          child: UserHomeCard(userId: userId, offset: offset),
                         );
-                      }
-                      return const SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(
-                            child: LoadingCircularProgress(),
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
-            )
-          ],
+                      }),
+                      const SliverPadding(padding: EdgeInsets.only(top: 10)),
+                      SliverList.separated(
+                        addAutomaticKeepAlives: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          BorderRadius borderRadius;
+                          if (index == 0) {
+                            borderRadius = const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12));
+                          } else {
+                            borderRadius = const BorderRadius.all(Radius.zero);
+                          }
+                          var pinCount =
+                              (user.valueOrNull?.pinnedNotes.length ?? 0);
+                          if (index < pinCount) {
+                            return NoteCard(
+                              key: ValueKey(
+                                  user.valueOrNull?.pinnedNotes[index].id),
+                              borderRadius: borderRadius,
+                              data: user.valueOrNull!.pinnedNotes[index],
+                              pined: true,
+                            );
+                          }
+                          print(index);
+                          return NoteCard(
+                              key: ValueKey(
+                                  data.valueOrNull!.list[index - pinCount].id),
+                              borderRadius: borderRadius,
+                              data: data.valueOrNull!.list[index - pinCount]);
+                          // return KeepAliveWrapper(
+                          //     child: TimelineCardComponent(
+                          //   data: data.valueOrNull![index],
+                          //   borderRadius: borderRadius,
+                          // ));
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return SizedBox(
+                            width: double.infinity,
+                            height: 1,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: themes.dividerColor,
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: (data.valueOrNull?.list.length ?? 0) +
+                            (user.valueOrNull?.pinnedNotes.length ?? 0),
+                      ),
+                      SliverLayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.remainingPaintExtent > 0 &&
+                              (data.valueOrNull?.hasMore ?? false)) {
+                            ref.read(dataProvider.notifier).load();
+                          }
+                          if (!(data.valueOrNull?.hasMore ?? true)) {
+                            return const SliverToBoxAdapter(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Center(
+                                  child: Text("暂无更多"),
+                                ),
+                              ),
+                            );
+                          }
+                          return const SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                child: LoadingCircularProgress(),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         );
       },
     );

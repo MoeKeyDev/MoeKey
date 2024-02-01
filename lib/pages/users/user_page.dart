@@ -22,7 +22,7 @@ class UserPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var padding = MediaQuery.paddingOf(context);
     var themes = ref.watch(themeColorsProvider);
-    var tabController = useTabController(initialLength: 3);
+    var tabController = useTabController(initialLength: 4);
     var user = ref.watch(userInfoProvider(userId: userId));
     var userData = user.valueOrNull;
     logger.d(user);
@@ -35,6 +35,17 @@ class UserPage extends HookConsumerWidget {
               size: 14,
             ),
             Text("概览", style: TextStyle(fontSize: 12)),
+          ],
+        ),
+      ),
+      Tab(
+        child: Row(
+          children: [
+            Icon(
+              TablerIcons.pencil,
+              size: 14,
+            ),
+            Text("帖子", style: TextStyle(fontSize: 12)),
           ],
         ),
       ),
@@ -63,6 +74,7 @@ class UserPage extends HookConsumerWidget {
               controller: tabController,
               children: [
                 UserOverview(userId: userId),
+                Text("data"),
                 Text("data"),
                 Text("data"),
               ],

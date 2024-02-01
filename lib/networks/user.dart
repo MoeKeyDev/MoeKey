@@ -69,24 +69,30 @@ class UserNoteListsModel {
 @riverpod
 class UserNotesList extends _$UserNotesList {
   @override
-  FutureOr<UserNoteListsModel> build(String userId) async {
+  FutureOr<UserNoteListsModel> build({
+    required String userId,
+    bool withRenotes = false,
+    bool withReplies = false,
+    bool withChannelNotes = false,
+    bool withFiles = false,
+  }) async {
     var note = UserNoteListsModel();
     note.list = await notes();
     return note;
   }
 
-  Future<List<NoteModel>> notes() async {
+  Future<List<NoteModel>> notes({String? untilId}) async {
     var http = await ref.read(httpProvider.future);
     var user = await ref.read(currentLoginUserProvider.future);
+
     var res = await http.post("/users/notes", data: {
-      "userId": this.userId,
-      "withRenotes": false,
-      "withReplies": false,
-      "withChannelNotes": false,
-      "withFiles": false,
+      "userId": userId,
+      "withRenotes": withRenotes,
+      "withReplies": withReplies,
+      "withChannelNotes": withChannelNotes,
+      "withFiles": withFiles,
       "limit": 30,
-      if (state.valueOrNull?.list.last != null)
-        "untilId": state.valueOrNull?.list.last.id,
+      if (untilId != null) "untilId": untilId,
       "i": user?.token
     });
     List<NoteModel> list = [];
@@ -101,7 +107,7 @@ class UserNotesList extends _$UserNotesList {
     if (loading) return;
     loading = true;
     try {
-      var notesList = await notes();
+      var notesList = await notes(untilId: state.valueOrNull?.list.last.id);
       var model = UserNoteListsModel();
       model.list = (state.valueOrNull?.list ?? []) + notesList;
       if (notesList.isEmpty) {

@@ -38,10 +38,12 @@ import 'note_image.dart';
 class NoteCard extends ConsumerWidget {
   final NoteModel data;
   final BorderRadius borderRadius;
+  final bool pined;
   const NoteCard({
     super.key,
     required this.data,
     required this.borderRadius,
+    this.pined = false,
   });
 
   @override
@@ -63,7 +65,27 @@ class NoteCard extends ConsumerWidget {
             shadow: false,
             borderRadius: borderRadius,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (pined)
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Icon(
+                          TablerIcons.pin,
+                          size: 17,
+                          color: Colors.orangeAccent,
+                        ),
+                        Text(
+                          " 已置顶的帖子",
+                          style: TextStyle(
+                              color: Colors.orangeAccent, fontSize: 13.5),
+                        ),
+                      ],
+                    ),
+                  ),
                 if (thisData.reply != null)
                   Opacity(
                     opacity: 0.8,
