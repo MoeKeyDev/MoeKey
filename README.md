@@ -1,6 +1,6 @@
 # MoeKey
 
-MoeKey is a moekey client for Flutter  
+MoeKey is a misskey client for Flutter  
 
 > This project is currently under development and have many functional deficiencies
 
