@@ -20,178 +20,190 @@ jobs:
           sparse-checkout: |
             pubspec.yaml
           sparse-checkout-cone-mode: false
+          fetch-depth: 0
       - name: 读取当前版本号
         run: |
           VERSION=`grep -iE --regexp="version: ([0-9\.+]*)" pubspec.yaml | grep -io "[0-9\.+]*"`
           echo "Version: $VERSION"
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+      - name: 获取最新的TAG
+        run: |
+          LAST_VERSION=`git tag --sort=-creatordate | head -1`
+          echo "Version: $LAST_VERSION"
+          echo "APP_LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
 #      - name: 设置是否继续执行的变量
 #        if: env.APP_LAST_VERSION != env.APP_VERSION
 #        run: |
 #          echo "test"
-
-  build-apk:
-    name: 编译android
+  test:
+    name: 测试
     runs-on: ubuntu-latest
-    needs: [pre-build]
     steps:
-      - name: 设置Flutter环境
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: 拉取代码
-        uses: actions/checkout@v3
-
-      - name: 安装依赖项
-        run: flutter pub get
-#        working-directory: forum_mobile
-
-      - name: 设置java环境
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11.x'
-
-      - name: 运行代码生成器
-        run: dart run build_runner build
-
-      - name: 初始化签名
+      - name: 读取当前版本号
         run: |
-          touch ./android/key.properties
-          echo keyPassword='${{ secrets.KEYPASSWORD }}' >> ./android/key.properties
-          echo storePassword='${{ secrets.STOREPASSWORD }}' >> ./android/key.properties
-          echo keyAlias='${{ secrets.KEYALIAS }}' >> ./android/key.properties
-          echo storeFile='./key.jks' >> ./android/key.properties
-          # 从Secrets读取无换行符Base64解码, 然后保存到到app/key.jks
-          echo ${{ secrets.KEY_STORE }} | base64 --decode > ./android/app/key.jks
-      - name: 编译apk
-        run: flutter build apk --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols/release
-#        working-directory: forum_mobile
-
-      - name: 上传apk到工作流程
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-apk
-          path: build/app/outputs/apk/release/*
-
-  build-linux:
-    name: 编译linux
-    runs-on: ubuntu-latest
-    needs: [pre-build]
-    steps:
-      - name: 拉取代码
-        uses: actions/checkout@v3
-
-      - name: 设置Flutter环境
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: 安装ninja、libgtk
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y ninja-build libgtk-3-dev libmpv-dev mpv
-
-      - name: 安装依赖项
-        run: flutter pub get
-#        working-directory: forum_mobile
-
-      - name: 配置桌面
-        run: flutter config --enable-linux-desktop
-#        working-directory: forum_mobile
-
-      - name: 运行代码生成器
-        run: dart run build_runner build
-
-      - name: 编译linux
-        run: flutter build linux
-#        working-directory: forum_mobile
-
-      - name: 压缩生成的文件
-        run: tar -zcvf "linuxBuild/MoeKey-${{ env.APP_VERSION }}-linux-x86_64-release.tar.gz" --directory=build/linux/x64/release/bundle .
-
-      - name: 上传到工作流程
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-linux
-          path: linuxBuild/*
-
-  build-windows:
-    name: 编译windows
-    runs-on: windows-latest
-    needs: [pre-build]
-    steps:
-      - name: 拉取代码
-        uses: actions/checkout@v3
-
-      - name: 设置Flutter环境
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: 安装依赖项
-        run: flutter pub get
-#        working-directory: forum_mobile
-
-      - name: 启动windows桌面
-        run: flutter config --enable-windows-desktop
-#        working-directory: forum_mobile
-
-      - name: 运行代码生成器
-        run: dart run build_runner build
-
-      - name: 编译windows
-        run: flutter build windows
-#        working-directory: forum_mobile
-
-      - name: 压缩生成的文件
-        run: |
-          $sourceFolder = "build\windows\x64\runner\Release"
-          $destinationPath = "windowsBuild\MoeKey-$env:APP_VERSION-windows-x86_64-release"
-          Compress-Archive -Path $sourceFolder -DestinationPath "build\windows\moekey-windows-64.zip"
-#        working-directory: forum_mobile
-
-      - name: 上传到工作流程
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-windows
-          path: windowsBuild/*
-  release:
-    name: 上传包
-    needs: [build-apk, build-linux, build-windows]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Generate release tag
-        id: tag
-        run: |
-          echo "::set-output name=release_tag::${{ env.APP_VERSION }}"
-
-      - name: 下载apk
-        uses: actions/download-artifact@v2
-        with:
-          name: build-apk
-          path: artifact
-
-      - name: 下载linux
-        uses: actions/download-artifact@v2
-        with:
-          name: build-linux
-          path: artifact
-
-      - name: 下载windows
-        uses: actions/download-artifact@v2
-        with:
-          name: build-windows
-          path: artifact
-
-      - name: 创建releases
-        # 展示当前路径文件
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.tag.outputs.release_tag }}
-          files: ./artifact/*
-
+          echo "Version: ${{ $APP_VERSION }}"
+#  build-apk:
+#    name: 编译android
+#    runs-on: ubuntu-latest
+#    needs: [pre-build]
+#    steps:
+#      - name: 设置Flutter环境
+#        uses: subosito/flutter-action@v2
+#        with:
+#          channel: 'stable'
+#
+#      - name: 拉取代码
+#        uses: actions/checkout@v3
+#
+#      - name: 安装依赖项
+#        run: flutter pub get
+##        working-directory: forum_mobile
+#
+#      - name: 设置java环境
+#        uses: actions/setup-java@v2
+#        with:
+#          distribution: 'adopt'
+#          java-version: '11.x'
+#
+#      - name: 运行代码生成器
+#        run: dart run build_runner build
+#
+#      - name: 初始化签名
+#        run: |
+#          touch ./android/key.properties
+#          echo keyPassword='${{ secrets.KEYPASSWORD }}' >> ./android/key.properties
+#          echo storePassword='${{ secrets.STOREPASSWORD }}' >> ./android/key.properties
+#          echo keyAlias='${{ secrets.KEYALIAS }}' >> ./android/key.properties
+#          echo storeFile='./key.jks' >> ./android/key.properties
+#          # 从Secrets读取无换行符Base64解码, 然后保存到到app/key.jks
+#          echo ${{ secrets.KEY_STORE }} | base64 --decode > ./android/app/key.jks
+#      - name: 编译apk
+#        run: flutter build apk --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols/release
+##        working-directory: forum_mobile
+#
+#      - name: 上传apk到工作流程
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: build-apk
+#          path: build/app/outputs/apk/release/*
+#
+#  build-linux:
+#    name: 编译linux
+#    runs-on: ubuntu-latest
+#    needs: [pre-build]
+#    steps:
+#      - name: 拉取代码
+#        uses: actions/checkout@v3
+#
+#      - name: 设置Flutter环境
+#        uses: subosito/flutter-action@v2
+#        with:
+#          channel: 'stable'
+#
+#      - name: 安装ninja、libgtk
+#        run: |
+#          sudo apt-get update -y
+#          sudo apt-get install -y ninja-build libgtk-3-dev libmpv-dev mpv
+#
+#      - name: 安装依赖项
+#        run: flutter pub get
+##        working-directory: forum_mobile
+#
+#      - name: 配置桌面
+#        run: flutter config --enable-linux-desktop
+##        working-directory: forum_mobile
+#
+#      - name: 运行代码生成器
+#        run: dart run build_runner build
+#
+#      - name: 编译linux
+#        run: flutter build linux
+##        working-directory: forum_mobile
+#
+#      - name: 压缩生成的文件
+#        run: tar -zcvf "linuxBuild/MoeKey-${{ env.APP_VERSION }}-linux-x86_64-release.tar.gz" --directory=build/linux/x64/release/bundle .
+#
+#      - name: 上传到工作流程
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: build-linux
+#          path: linuxBuild/*
+#
+#  build-windows:
+#    name: 编译windows
+#    runs-on: windows-latest
+#    needs: [pre-build]
+#    steps:
+#      - name: 拉取代码
+#        uses: actions/checkout@v3
+#
+#      - name: 设置Flutter环境
+#        uses: subosito/flutter-action@v2
+#        with:
+#          channel: 'stable'
+#
+#      - name: 安装依赖项
+#        run: flutter pub get
+##        working-directory: forum_mobile
+#
+#      - name: 启动windows桌面
+#        run: flutter config --enable-windows-desktop
+##        working-directory: forum_mobile
+#
+#      - name: 运行代码生成器
+#        run: dart run build_runner build
+#
+#      - name: 编译windows
+#        run: flutter build windows
+##        working-directory: forum_mobile
+#
+#      - name: 压缩生成的文件
+#        run: |
+#          $sourceFolder = "build\windows\x64\runner\Release"
+#          $destinationPath = "windowsBuild\MoeKey-$env:APP_VERSION-windows-x86_64-release"
+#          Compress-Archive -Path $sourceFolder -DestinationPath "build\windows\moekey-windows-64.zip"
+##        working-directory: forum_mobile
+#
+#      - name: 上传到工作流程
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: build-windows
+#          path: windowsBuild/*
+#  release:
+#    name: 上传包
+#    needs: [build-apk, build-linux, build-windows]
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: write
+#    steps:
+#      - name: Generate release tag
+#        id: tag
+#        run: |
+#          echo "::set-output name=release_tag::${{ env.APP_VERSION }}"
+#
+#      - name: 下载apk
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: build-apk
+#          path: artifact
+#
+#      - name: 下载linux
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: build-linux
+#          path: artifact
+#
+#      - name: 下载windows
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: build-windows
+#          path: artifact
+#
+#      - name: 创建releases
+#        # 展示当前路径文件
+#        id: create_release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          tag_name: ${{ steps.tag.outputs.release_tag }}
+#          files: ./artifact/*
+#
