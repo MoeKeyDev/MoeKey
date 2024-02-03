@@ -184,11 +184,6 @@ jobs:
         with:
           name: build-windows
           path: artifact
-      - name: "生成ChangeLog"
-        id: changelog
-        uses: heinrichreimer/action-github-changelog-generator@v2.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: 创建releases
         # 展示当前路径文件
         id: create_release
@@ -196,5 +191,5 @@ jobs:
         with:
           tag_name: ${{ needs.pre-build.outputs.APP_VERSION }}
           files: ./artifact/*
-          body: ${{ steps.changelog.outputs.changelog }}
+          body: [CHANGELOG.md](CHANGELOG.md)
 
