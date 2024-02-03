@@ -30,9 +30,9 @@ jobs:
         run: |
           LAST_VERSION=`git tag --sort=-creatordate | head -1`
           echo "Version: $LAST_VERSION"
-          echo "APP_LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
+          echo "APP_LAST_VERSION=${{ env.APP_VERSION }}" >> $GITHUB_ENV
       - name: 设置是否继续执行的变量
-        if: ${{ env.APP_LAST_VERSION == env.APP_VERSION }}
+        if: env.APP_LAST_VERSION == env.APP_VERSION
         run: |
           echo "test"
 
