@@ -38,7 +38,7 @@ class UserOverview extends HookConsumerWidget {
         }
         var dataProvider = userNotesListProvider(
             userId: userId,
-            withRenotes: false,
+            withRenotes: true,
             withChannelNotes: false,
             withFiles: false,
             withReplies: false);
@@ -235,7 +235,7 @@ class UserHomeCard extends HookConsumerWidget {
                               ? Alignment.bottomCenter
                               : const Alignment(-1, 1),
                           child: Transform.translate(
-                            offset: Offset(isSmall ? 0 : 16, isSmall ? 50 : 60),
+                            offset: Offset(isSmall ? 0 : 32, isSmall ? 50 : 60),
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -244,14 +244,14 @@ class UserHomeCard extends HookConsumerWidget {
                                   Radius.circular(200),
                                 ),
                                 color: themes.panelColor,
-                                boxShadow: [
-                                  if (!isSmall)
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      offset: const Offset(0, 1),
-                                      blurRadius: 2,
-                                    ),
-                                ],
+                                // boxShadow: [
+                                //   if (!isSmall)
+                                //     BoxShadow(
+                                //       color: Colors.black.withOpacity(0.1),
+                                //       offset: const Offset(0, 1),
+                                //       blurRadius: 2,
+                                //     ),
+                                // ],
                               ),
                               height: isSmall ? 120 : 160,
                               width: isSmall ? 120 : 160,
@@ -280,7 +280,7 @@ class UserHomeCard extends HookConsumerWidget {
                             bottom: 0,
                             left: 180,
                             child: Padding(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.fromLTRB(32, 0, 0, 16),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,10 +384,10 @@ class UserHomeCard extends HookConsumerWidget {
                           )
                         ],
                       ),
-                    )
-                  else if (userData.description != null)
+                    ),
+                  if (!isSmall)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(190, 10, 24, 10),
+                      padding: const EdgeInsets.fromLTRB(212, 10, 24, 10),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           return ConstrainedBox(
@@ -400,7 +400,7 @@ class UserHomeCard extends HookConsumerWidget {
                                       .style
                                       .copyWith(fontSize: 13),
                                   child: MFMText(
-                                    text: userData.description!,
+                                    text: userData.description ?? "这个用户什么都没有写",
                                     bigEmojiCode: false,
                                     emojis: userData.emojis,
                                     currentServerHost: userData.host,
@@ -417,29 +417,28 @@ class UserHomeCard extends HookConsumerWidget {
                     color: themes.dividerColor,
                   ),
                   if (isSmall) ...[
-                    if (userData.description != null)
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: DefaultTextStyle(
-                                style: DefaultTextStyle.of(context)
-                                    .style
-                                    .copyWith(fontSize: 13),
-                                child: MFMText(
-                                  text: userData.description!,
-                                  bigEmojiCode: false,
-                                  emojis: userData.emojis,
-                                  textAlign: TextAlign.center,
-                                  currentServerHost: userData.host,
-                                ),
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: DefaultTextStyle(
+                              style: DefaultTextStyle.of(context)
+                                  .style
+                                  .copyWith(fontSize: 13),
+                              child: MFMText(
+                                text: userData.description ?? "这个用户什么都没有写",
+                                bigEmojiCode: false,
+                                emojis: userData.emojis,
+                                textAlign: TextAlign.center,
+                                currentServerHost: userData.host,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
                     Container(
                       height: 1,
                       color: themes.dividerColor,

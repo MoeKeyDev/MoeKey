@@ -33,32 +33,10 @@ Future<UserFullModel> userInfo(UserInfoRef ref,
     {required String userId}) async {
   var http = await ref.read(httpProvider.future);
   var user = await ref.read(currentLoginUserProvider.future);
+
   var res = await http
       .post("/users/show", data: {"userId": userId, "i": user?.token});
   return UserFullModel.fromMap(res.data);
-}
-
-// @riverpod
-// Future<List<NoteModel>> userFeaturedNotes(RefUs ref) async {
-//   return;
-// }
-
-@riverpod
-Future<List<NoteModel>> userFeaturedNotes(
-    UserFeaturedNotesRef ref, String userId) async {
-  var http = await ref.read(httpProvider.future);
-  var user = await ref.read(currentLoginUserProvider.future);
-  var res = await http.post("/users/featured-notes", data: {
-    "userId": userId,
-    "i": user?.token,
-    "allowPartial": true,
-    "limit": 20
-  });
-  List<NoteModel> list = [];
-  for (var item in res.data) {
-    list.add(NoteModel.fromMap(item));
-  }
-  return list;
 }
 
 class UserNoteListsModel {
@@ -75,9 +53,15 @@ class UserNotesList extends _$UserNotesList {
     bool withReplies = false,
     bool withChannelNotes = false,
     bool withFiles = false,
+    bool withFeatured = false,
+    int key = 0,
   }) async {
     var note = UserNoteListsModel();
-    note.list = await notes();
+    if (withFeatured) {
+      note.list = await featuredNotes();
+    } else {
+      note.list = await notes();
+    }
     return note;
   }
 
@@ -102,12 +86,94 @@ class UserNotesList extends _$UserNotesList {
     return list;
   }
 
+  Future<List<NoteModel>> featuredNotes({String? untilId}) async {
+    var http = await ref.read(httpProvider.future);
+    var user = await ref.read(currentLoginUserProvider.future);
+
+    var res = await http.post("/users/featured-notes", data: {
+      "userId": userId,
+      "i": user?.token,
+      "allowPartial": true,
+      "limit": 10,
+      if (untilId != null) "untilId": untilId,
+    });
+    List<NoteModel> list = [];
+    for (var item in res.data) {
+      list.add(NoteModel.fromMap(item));
+    }
+    return list;
+  }
+
   var loading = false;
   load() async {
+    if (!state.value!.hasMore) return;
     if (loading) return;
     loading = true;
     try {
-      var notesList = await notes(untilId: state.valueOrNull?.list.last.id);
+      String? untilId;
+      if (state.valueOrNull!.list.isNotEmpty) {
+        untilId = state.valueOrNull?.list.last.id;
+      }
+      List<NoteModel> notesList;
+      if (withFeatured) {
+        notesList = await featuredNotes(untilId: untilId);
+      } else {
+        notesList = await notes(untilId: untilId);
+      }
+      var model = UserNoteListsModel();
+      model.list = (state.valueOrNull?.list ?? []) + notesList;
+      if (notesList.isEmpty) {
+        model.hasMore = false;
+      }
+      state = AsyncData(model);
+    } finally {
+      loading = false;
+    }
+  }
+}
+
+@riverpod
+class UserReactionsList extends _$UserReactionsList {
+  @override
+  FutureOr<UserNoteListsModel> build({
+    required String userId,
+  }) async {
+    var note = UserNoteListsModel();
+
+    note.list = await reactions();
+
+    return note;
+  }
+
+  Future<List<NoteModel>> reactions({String? untilId}) async {
+    var http = await ref.read(httpProvider.future);
+    var user = await ref.read(currentLoginUserProvider.future);
+
+    var res = await http.post("/users/reactions", data: {
+      "userId": userId,
+      "limit": 30,
+      if (untilId != null) "untilId": untilId,
+      "i": user?.token
+    });
+    List<NoteModel> list = [];
+    for (var item in res.data) {
+      list.add(NoteModel.fromMap(item["note"]));
+    }
+    return list;
+  }
+
+  var loading = false;
+  load() async {
+    if (!state.value!.hasMore) return;
+    if (loading) return;
+    loading = true;
+    try {
+      String? untilId;
+      if (state.valueOrNull!.list.isNotEmpty) {
+        untilId = state.valueOrNull?.list.last.id;
+      }
+      List<NoteModel> notesList = await reactions(untilId: untilId);
+
       var model = UserNoteListsModel();
       model.list = (state.valueOrNull?.list ?? []) + notesList;
       if (notesList.isEmpty) {

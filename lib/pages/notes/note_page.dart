@@ -269,24 +269,29 @@ class NotesPage extends HookConsumerWidget {
                         padding, 56 + mediaPadding.top, padding, 0),
                     child: Column(
                       children: [
-                        MkCard(
-                          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                          shadow: false,
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (dataProvider.error is DioException)
-                                Text((dataProvider.error as DioException)
-                                    .response
-                                    .toString())
-                              else
-                                Text(dataProvider.error.toString()),
-                              Text(dataProvider.stackTrace.toString()),
-                            ],
+                        GestureDetector(
+                          onTap: () {
+                            ref.invalidate(children);
+                          },
+                          child: MkCard(
+                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                            shadow: false,
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12)),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (dataProvider.error is DioException)
+                                  Text((dataProvider.error as DioException)
+                                      .response
+                                      .toString())
+                                else
+                                  Text(dataProvider.error.toString()),
+                                Text(dataProvider.stackTrace.toString()),
+                              ],
+                            ),
                           ),
                         ),
                       ],
