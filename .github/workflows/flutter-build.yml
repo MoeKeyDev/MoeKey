@@ -22,7 +22,7 @@ jobs:
           sparse-checkout-cone-mode: false
       - name: 读取当前版本号
         run: |
-          VERSION=(grep -iE --regexp="version: ([0-9\.+]*)" pubspec.yaml | grep -io "[0-9\.+]*")
+          VERSION=`grep -iE --regexp="version: ([0-9\.+]*)" pubspec.yaml | grep -io "[0-9\.+]*"`
           echo "Version: $VERSION"
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
           exit 1
