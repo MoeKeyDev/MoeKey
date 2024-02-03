@@ -25,7 +25,18 @@ jobs:
           VERSION=`grep -iE --regexp="version: ([0-9\.+]*)" pubspec.yaml | grep -io "[0-9\.+]*"`
           echo "Version: $VERSION"
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
-          exit 1
+      - name: 获取最新的TAG
+        run: |
+          LAST_VERSION=`git tag --sort=-creatordate | head -1`
+          echo "Version: $LAST_VERSION"
+          echo "APP_LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
+      - name: 设置是否继续执行的变量
+        run: |
+          if [ $env.APP_LAST_VERSION == $env.APP_VERSION ] then
+            echo "相等"
+          else
+            echo "不相等"
+          fi
 
 #  build-apk:
 #    name: 编译android
