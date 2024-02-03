@@ -13,6 +13,8 @@ jobs:
   pre-build:
     name: 预构建
     runs-on: ubuntu-latest
+    outputs:
+      APP_VERSION: ${{ steps.output-version.outputs.APP_VERSION }}
     steps:
       - name: 拉取代码
         uses: actions/checkout@v3
@@ -22,15 +24,16 @@ jobs:
           sparse-checkout-cone-mode: false
           fetch-depth: 0
       - name: 读取当前版本号
+        id: output-version
         run: |
           VERSION=`grep -iE --regexp="version: ([0-9\.+]*)" pubspec.yaml | grep -io "[0-9\.+]*"`
           echo "Version: $VERSION"
-          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "APP_VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: 获取最新的TAG
         run: |
           LAST_VERSION=`git tag --sort=-creatordate | head -1`
           echo "Version: $LAST_VERSION"
-          echo "APP_LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
+          echo "APP_LAST_VERSION=$LAST_VERSION" >> $GITHUB_OUTPUT
 #      - name: 设置是否继续执行的变量
 #        if: env.APP_LAST_VERSION != env.APP_VERSION
 #        run: |
@@ -42,7 +45,7 @@ jobs:
     steps:
       - name: 读取当前版本号
         run: |
-          echo "Version: ${{ env.APP_VERSION }}"
+          echo "Version: ${{ needs.pre-build.outputs.APP_VERSION }}"
 #  build-apk:
 #    name: 编译android
 #    runs-on: ubuntu-latest
