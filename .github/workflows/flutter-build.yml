@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: 读取当前版本号
         run: |
-          echo "Version: ${{ APP_VERSION }}"
+          echo "Version: ${{ env.APP_VERSION }}"
 #  build-apk:
 #    name: 编译android
 #    runs-on: ubuntu-latest
