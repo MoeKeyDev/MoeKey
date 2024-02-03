@@ -37,11 +37,12 @@ jobs:
 #          echo "test"
   test:
     name: 测试
+    needs: [pre-build]
     runs-on: ubuntu-latest
     steps:
       - name: 读取当前版本号
         run: |
-          echo "Version: ${{ $APP_VERSION }}"
+          echo "Version: ${{ APP_VERSION }}"
 #  build-apk:
 #    name: 编译android
 #    runs-on: ubuntu-latest
