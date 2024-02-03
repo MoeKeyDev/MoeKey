@@ -184,12 +184,12 @@ jobs:
         with:
           name: build-windows
           path: artifact
+
       - name: 创建releases
-        # 展示当前路径文件
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.pre-build.outputs.APP_VERSION }}
           files: ./artifact/*
-          body: [CHANGELOG.md](CHANGELOG.md)
+          body: "[CHANGELOG.md](CHANGELOG.md)"
 
