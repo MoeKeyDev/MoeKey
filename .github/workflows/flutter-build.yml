@@ -5,8 +5,8 @@ name: 构建发布Flutter应用
 
 on:
   push:
-#    paths:
-#      - 'pubspec.yaml'
+    paths:
+      - 'pubspec.yaml'
     branches:
       - main
 jobs:
@@ -188,7 +188,7 @@ jobs:
         id: changelog
         uses: heinrichreimer/action-github-changelog-generator@v2.3
         with:
-          token: ${{ secrets.TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: 创建releases
         # 展示当前路径文件
         id: create_release
