@@ -36,18 +36,6 @@ jobs:
           LAST_VERSION=`git tag --sort=-creatordate | head -1`
           echo "Version: $LAST_VERSION"
           echo "APP_LAST_VERSION=$LAST_VERSION" >> $GITHUB_OUTPUT
-#      - name: 设置是否继续执行的变量
-#        if: env.APP_LAST_VERSION != env.APP_VERSION
-#        run: |
-#          echo "test"
-#  test:
-#    name: 测试
-#    needs: [pre-build]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: 读取当前版本号
-#        run: |
-#          echo "Version: ${{ needs.pre-build.outputs.APP_VERSION }}"
   build-apk:
     name: 编译android
     runs-on: ubuntu-latest
@@ -63,7 +51,6 @@ jobs:
 
       - name: 安装依赖项
         run: flutter pub get
-#        working-directory: forum_mobile
 
       - name: 设置java环境
         uses: actions/setup-java@v2
@@ -81,11 +68,9 @@ jobs:
           echo storePassword='${{ secrets.STOREPASSWORD }}' >> ./android/key.properties
           echo keyAlias='${{ secrets.KEYALIAS }}' >> ./android/key.properties
           echo storeFile='./key.jks' >> ./android/key.properties
-          # 从Secrets读取无换行符Base64解码, 然后保存到到app/key.jks
           echo ${{ secrets.KEY_STORE }} | base64 --decode > ./android/app/key.jks
       - name: 编译apk
         run: flutter build apk --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols/release
-#        working-directory: forum_mobile
 
       - name: 上传apk到工作流程
         uses: actions/upload-artifact@v2
@@ -182,11 +167,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Generate release tag
-        id: tag
-        run: |
-          echo "::set-output name=release_tag::${{ needs.pre-build.outputs.APP_VERSION }}"
-
       - name: 下载apk
         uses: actions/download-artifact@v2
         with:
@@ -204,12 +184,17 @@ jobs:
         with:
           name: build-windows
           path: artifact
-
+      - name: "生成ChangeLog"
+        id: changelog
+        uses: heinrichreimer/action-github-changelog-generator@v2.3
+        with:
+          token: ${{ secrets.TOKEN }}
       - name: 创建releases
         # 展示当前路径文件
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.tag.outputs.release_tag }}
+          tag_name: ${{ needs.pre-build.outputs.APP_VERSION }}
           files: ./artifact/*
+          body: ${{ steps.changelog.outputs.changelog }}
 
