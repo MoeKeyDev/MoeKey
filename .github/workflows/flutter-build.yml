@@ -30,6 +30,15 @@ jobs:
       - name: 运行代码生成器
         run: dart run build_runner build
 
+      - name: 初始化签名
+        run: |
+          touch ./android/key.properties
+          echo keyPassword='${{ secrets.KEYPASSWORD }}' >> ./android/key.properties
+          echo storePassword='${{ secrets.STOREPASSWORD }}' >> ./android/key.properties
+          echo keyAlias='${{ secrets.KEYALIAS }}' >> ./android/key.properties
+          echo storeFile='./key.jks' >> ./android/key.properties
+          # 从Secrets读取无换行符Base64解码, 然后保存到到app/key.jks
+          echo ${{ secrets.KEY_STORE }} | base64 --decode > ./android/key.jks
       - name: 编译apk
         run: flutter build apk --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols/release
 #        working-directory: forum_mobile

@@ -3,7 +3,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/networks/user.dart';
+import 'package:moekey/pages/users/user_notes_list.dart';
 import 'package:moekey/pages/users/user_overview.dart';
+import 'package:moekey/pages/users/user_reactions_list.dart';
+import 'package:moekey/widgets/keep_alive_wrapper.dart';
+import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_image.dart';
@@ -22,12 +26,43 @@ class UserPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var padding = MediaQuery.paddingOf(context);
     var themes = ref.watch(themeColorsProvider);
-    var tabController = useTabController(initialLength: 3);
-    var user = ref.watch(userInfoProvider(userId: userId));
+    var userProvider = userInfoProvider(userId: userId);
+    var user = ref.watch(userProvider);
+    if (user.isLoading) {
+      return MkScaffold(
+          body: const LoadingWidget(),
+          header: MkAppbar(
+            showBack: true,
+          ));
+    }
+    // 错误处理
+    if (user.hasError) {
+      return MkScaffold(
+          body: GestureDetector(
+            onTap: () => ref.invalidate(userProvider),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    user.error.toString(),
+                    textAlign: TextAlign.center,
+                  ),
+                  const Text("Click retry")
+                ],
+              ),
+            ),
+          ),
+          header: MkAppbar(
+            showBack: true,
+          ));
+    }
     var userData = user.valueOrNull;
+
     logger.d(user);
-    var tabs = const [
-      Tab(
+    var tabs = [
+      const Tab(
         child: Row(
           children: [
             Icon(
@@ -38,23 +73,36 @@ class UserPage extends HookConsumerWidget {
           ],
         ),
       ),
-      Tab(
+      const Tab(
         child: Row(
           children: [
-            Icon(TablerIcons.mood_happy, size: 14),
-            Text("回应", style: TextStyle(fontSize: 12)),
+            Icon(
+              TablerIcons.pencil,
+              size: 14,
+            ),
+            Text("帖子", style: TextStyle(fontSize: 12)),
           ],
         ),
       ),
-      Tab(
-        child: Row(
-          children: [
-            Icon(TablerIcons.chart_line, size: 14),
-            Text("活动", style: TextStyle(fontSize: 12)),
-          ],
+      if (userData?.publicReactions ?? false)
+        const Tab(
+          child: Row(
+            children: [
+              Icon(TablerIcons.mood_happy, size: 14),
+              Text("回应", style: TextStyle(fontSize: 12)),
+            ],
+          ),
         ),
-      ),
+      // Tab(
+      //   child: Row(
+      //     children: [
+      //       Icon(TablerIcons.chart_line, size: 14),
+      //       Text("活动", style: TextStyle(fontSize: 12)),
+      //     ],
+      //   ),
+      // ),
     ];
+    var tabController = useTabController(initialLength: tabs.length);
     var textStyle = DefaultTextStyle.of(context).style;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -62,9 +110,11 @@ class UserPage extends HookConsumerWidget {
             body: TabBarView(
               controller: tabController,
               children: [
-                UserOverview(userId: userId),
-                Text("data"),
-                Text("data"),
+                KeepAliveWrapper(child: UserOverview(userId: userId)),
+                KeepAliveWrapper(child: UserNotesPage(userId: userId)),
+                if (userData?.publicReactions ?? false)
+                  KeepAliveWrapper(child: UserReactionsPage(userId: userId)),
+                // Text("data"),
               ],
             ),
             header: MkAppbar(

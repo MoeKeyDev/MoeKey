@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -21,6 +23,7 @@ class UserOverview extends HookConsumerWidget {
   final String userId;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var mediaPadding = MediaQuery.paddingOf(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = 0;
@@ -33,91 +36,124 @@ class UserOverview extends HookConsumerWidget {
         } else {
           padding = 0;
         }
-        var dataProvider = userNotesListProvider(userId);
+        var dataProvider = userNotesListProvider(
+            userId: userId,
+            withRenotes: true,
+            withChannelNotes: false,
+            withFiles: false,
+            withReplies: false);
         var data = ref.watch(dataProvider);
+        print(data.error);
         var themes = ref.watch(themeColorsProvider);
-        return CustomScrollView(
-          slivers: [
-            SliverPadding(
-              padding: MediaQuery.paddingOf(context)
-                  .copyWith(left: padding, right: padding),
-              sliver: SliverMainAxisGroup(
-                slivers: [
-                  SliverLayoutBuilder(builder: (context, constraints) {
-                    var offset = constraints.remainingPaintExtent -
-                        constraints.viewportMainAxisExtent +
-                        constraints.scrollOffset +
-                        constraints.precedingScrollExtent;
-                    offset = (offset / 140).clamp(0, 1.0);
-                    return SliverToBoxAdapter(
-                      child: UserHomeCard(userId: userId, offset: offset),
-                    );
-                  }),
-                  const SliverPadding(padding: EdgeInsets.only(top: 10)),
-                  SliverList.separated(
-                    addAutomaticKeepAlives: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      BorderRadius borderRadius;
-                      if (index == 0) {
-                        borderRadius = const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12));
-                      } else {
-                        borderRadius = const BorderRadius.all(Radius.zero);
-                      }
-                      return NoteCard(
-                          key: ValueKey(data.valueOrNull!.list[index].id),
-                          borderRadius: borderRadius,
-                          data: data.valueOrNull!.list[index]);
-                      // return KeepAliveWrapper(
-                      //     child: TimelineCardComponent(
-                      //   data: data.valueOrNull![index],
-                      //   borderRadius: borderRadius,
-                      // ));
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        width: double.infinity,
-                        height: 1,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: themes.dividerColor,
-                          ),
-                        ),
-                      );
-                    },
-                    itemCount: data.valueOrNull?.list.length ?? 0,
-                  ),
-                  SliverLayoutBuilder(
-                    builder: (context, constraints) {
-                      if (constraints.remainingPaintExtent > 0 &&
-                          (data.valueOrNull?.hasMore ?? false)) {
-                        ref.read(dataProvider.notifier).load();
-                      }
-                      if (!(data.valueOrNull?.hasMore ?? true)) {
-                        return const SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text("暂无更多"),
-                            ),
-                          ),
+        var user = ref.watch(userInfoProvider(userId: userId));
+        return RefreshIndicator.adaptive(
+          onRefresh: () => ref.refresh(dataProvider.future),
+          edgeOffset: mediaPadding.top,
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+              },
+            ),
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: MediaQuery.paddingOf(context)
+                      .copyWith(left: padding, right: padding),
+                  sliver: SliverMainAxisGroup(
+                    slivers: [
+                      SliverLayoutBuilder(builder: (context, constraints) {
+                        var offset = constraints.remainingPaintExtent -
+                            constraints.viewportMainAxisExtent +
+                            constraints.scrollOffset +
+                            constraints.precedingScrollExtent;
+                        offset = (offset / 140).clamp(0, 1.0);
+                        return SliverToBoxAdapter(
+                          child: UserHomeCard(userId: userId, offset: offset),
                         );
-                      }
-                      return const SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(
-                            child: LoadingCircularProgress(),
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
-            )
-          ],
+                      }),
+                      const SliverPadding(padding: EdgeInsets.only(top: 10)),
+                      SliverList.separated(
+                        addAutomaticKeepAlives: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          BorderRadius borderRadius;
+                          if (index == 0) {
+                            borderRadius = const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12));
+                          } else {
+                            borderRadius = const BorderRadius.all(Radius.zero);
+                          }
+                          var pinCount =
+                              (user.valueOrNull?.pinnedNotes.length ?? 0);
+                          if (index < pinCount) {
+                            return NoteCard(
+                              key: ValueKey(
+                                  user.valueOrNull?.pinnedNotes[index].id),
+                              borderRadius: borderRadius,
+                              data: user.valueOrNull!.pinnedNotes[index],
+                              pined: true,
+                            );
+                          }
+                          print(index);
+                          return NoteCard(
+                              key: ValueKey(
+                                  data.valueOrNull!.list[index - pinCount].id),
+                              borderRadius: borderRadius,
+                              data: data.valueOrNull!.list[index - pinCount]);
+                          // return KeepAliveWrapper(
+                          //     child: TimelineCardComponent(
+                          //   data: data.valueOrNull![index],
+                          //   borderRadius: borderRadius,
+                          // ));
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return SizedBox(
+                            width: double.infinity,
+                            height: 1,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: themes.dividerColor,
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: (data.valueOrNull?.list.length ?? 0) +
+                            (user.valueOrNull?.pinnedNotes.length ?? 0),
+                      ),
+                      SliverLayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.remainingPaintExtent > 0 &&
+                              (data.valueOrNull?.hasMore ?? false)) {
+                            ref.read(dataProvider.notifier).load();
+                          }
+                          if (!(data.valueOrNull?.hasMore ?? true)) {
+                            return const SliverToBoxAdapter(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Center(
+                                  child: Text("暂无更多"),
+                                ),
+                              ),
+                            );
+                          }
+                          return const SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                child: LoadingCircularProgress(),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         );
       },
     );
@@ -199,7 +235,7 @@ class UserHomeCard extends HookConsumerWidget {
                               ? Alignment.bottomCenter
                               : const Alignment(-1, 1),
                           child: Transform.translate(
-                            offset: Offset(isSmall ? 0 : 16, isSmall ? 50 : 60),
+                            offset: Offset(isSmall ? 0 : 32, isSmall ? 50 : 60),
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -208,14 +244,14 @@ class UserHomeCard extends HookConsumerWidget {
                                   Radius.circular(200),
                                 ),
                                 color: themes.panelColor,
-                                boxShadow: [
-                                  if (!isSmall)
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      offset: const Offset(0, 1),
-                                      blurRadius: 2,
-                                    ),
-                                ],
+                                // boxShadow: [
+                                //   if (!isSmall)
+                                //     BoxShadow(
+                                //       color: Colors.black.withOpacity(0.1),
+                                //       offset: const Offset(0, 1),
+                                //       blurRadius: 2,
+                                //     ),
+                                // ],
                               ),
                               height: isSmall ? 120 : 160,
                               width: isSmall ? 120 : 160,
@@ -244,7 +280,7 @@ class UserHomeCard extends HookConsumerWidget {
                             bottom: 0,
                             left: 180,
                             child: Padding(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.fromLTRB(32, 0, 0, 16),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,10 +384,10 @@ class UserHomeCard extends HookConsumerWidget {
                           )
                         ],
                       ),
-                    )
-                  else if (userData.description != null)
+                    ),
+                  if (!isSmall)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(190, 10, 24, 10),
+                      padding: const EdgeInsets.fromLTRB(212, 10, 24, 10),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           return ConstrainedBox(
@@ -364,7 +400,7 @@ class UserHomeCard extends HookConsumerWidget {
                                       .style
                                       .copyWith(fontSize: 13),
                                   child: MFMText(
-                                    text: userData.description!,
+                                    text: userData.description ?? "这个用户什么都没有写",
                                     bigEmojiCode: false,
                                     emojis: userData.emojis,
                                     currentServerHost: userData.host,
@@ -381,29 +417,28 @@ class UserHomeCard extends HookConsumerWidget {
                     color: themes.dividerColor,
                   ),
                   if (isSmall) ...[
-                    if (userData.description != null)
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: DefaultTextStyle(
-                                style: DefaultTextStyle.of(context)
-                                    .style
-                                    .copyWith(fontSize: 13),
-                                child: MFMText(
-                                  text: userData.description!,
-                                  bigEmojiCode: false,
-                                  emojis: userData.emojis,
-                                  textAlign: TextAlign.center,
-                                  currentServerHost: userData.host,
-                                ),
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: DefaultTextStyle(
+                              style: DefaultTextStyle.of(context)
+                                  .style
+                                  .copyWith(fontSize: 13),
+                              child: MFMText(
+                                text: userData.description ?? "这个用户什么都没有写",
+                                bigEmojiCode: false,
+                                emojis: userData.emojis,
+                                textAlign: TextAlign.center,
+                                currentServerHost: userData.host,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
                     Container(
                       height: 1,
                       color: themes.dividerColor,
