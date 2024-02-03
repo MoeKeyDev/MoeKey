@@ -177,7 +177,7 @@ jobs:
           path: "MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-windows-x86_64-release.zip"
   release:
     name: 上传包
-    needs: [build-apk, build-linux, build-windows]
+    needs: [build-apk, build-linux, build-windows,pre-build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -185,7 +185,7 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          echo "::set-output name=release_tag::${{ env.APP_VERSION }}"
+          echo "::set-output name=release_tag::${{ needs.pre-build.outputs.APP_VERSION }}"
 
       - name: 下载apk
         uses: actions/download-artifact@v2
