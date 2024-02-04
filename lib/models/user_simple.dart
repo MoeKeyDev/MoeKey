@@ -30,6 +30,10 @@ class UserSimpleModel {
       required this.username,
       required this.badgeRoles});
 
+  String getAtUserName() {
+    return "@$username${host != null ? "@$host" : ""}";
+  }
+
   UserSimpleModel copyWith(
       {bool? isCat,
       Map? emojis,

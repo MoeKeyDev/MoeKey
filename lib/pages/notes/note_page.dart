@@ -356,7 +356,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                 MFMText(
                   text: data.text ?? "",
                   emojis: data.emojis,
-                  currentServerHost: data.user.host ?? "",
+                  currentServerHost: data.user.host,
                   isSelection: true,
                 ),
               const SizedBox(height: 4),
@@ -379,7 +379,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                     borderRadius: const BorderRadius.all(Radius.circular(8))),
                 padding: const EdgeInsets.all(12),
                 child: TimeLineNoteCardComponent(
-                    data: data.renote,
+                    data: data.renote!,
                     isShowAction: false,
                     disableReactions: true),
               ),

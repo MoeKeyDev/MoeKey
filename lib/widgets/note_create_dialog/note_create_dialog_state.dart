@@ -16,7 +16,7 @@ part 'note_create_dialog_state.g.dart';
 class NoteCreateDialogStateModel {
   NoteVisibility visibility = NoteVisibility.public; // 可见性
   LinkedHashMap visibleUserIds = LinkedHashMap(); // 当 可见性为specified 时的可见用户列表
-  String text = ''; // 文本
+  String? text = null; // 文本
   String cw = ''; //敏感内容
   bool isCw = false;
   bool localOnly = false; // 禁用联合
@@ -35,7 +35,7 @@ class NoteCreateDialogStateModel {
       'visibility': visibility.value,
       if (visibility == NoteVisibility.specified)
         'visibleUserIds': visibleUserIds.keys.toList(),
-      'text': text,
+      'text': text ?? "",
       if (isCw) 'cw': cw,
       'localOnly': localOnly,
       if (reactionAcceptance != null && visibility != NoteVisibility.specified)
@@ -250,7 +250,7 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
       state.fileIds = imageSelect.keys.toList();
 
       // 参数验证
-      if (state.text.isEmpty) {
+      if (state.text != null && state.text!.isEmpty) {
         throw Exception("内容不能为空");
       }
       if (state.isCw && state.cw.isEmpty) {
