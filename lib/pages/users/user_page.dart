@@ -19,14 +19,18 @@ import '../../state/themes.dart';
 class UserPage extends HookConsumerWidget {
   const UserPage({
     super.key,
-    required this.userId,
+    this.username,
+    this.host,
+    this.userId,
   });
-  final String userId;
+  final String? username;
+  final String? host;
+  final String? userId;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var padding = MediaQuery.paddingOf(context);
     var themes = ref.watch(themeColorsProvider);
-    var userProvider = userInfoProvider(userId: userId);
+    var userProvider =
+        userInfoProvider(username: username, host: host, userId: this.userId);
     var user = ref.watch(userProvider);
     if (user.isLoading) {
       return MkScaffold(
@@ -59,7 +63,7 @@ class UserPage extends HookConsumerWidget {
           ));
     }
     var userData = user.valueOrNull;
-
+    var userId = userData!.id;
     logger.d(user);
     var tabs = [
       const Tab(
@@ -84,7 +88,7 @@ class UserPage extends HookConsumerWidget {
           ],
         ),
       ),
-      if (userData?.publicReactions ?? false)
+      if (userData.publicReactions)
         const Tab(
           child: Row(
             children: [
@@ -112,7 +116,7 @@ class UserPage extends HookConsumerWidget {
               children: [
                 KeepAliveWrapper(child: UserOverview(userId: userId)),
                 KeepAliveWrapper(child: UserNotesPage(userId: userId)),
-                if (userData?.publicReactions ?? false)
+                if (userData.publicReactions)
                   KeepAliveWrapper(child: UserReactionsPage(userId: userId)),
                 // Text("data"),
               ],
@@ -129,7 +133,7 @@ class UserPage extends HookConsumerWidget {
                       width: 32,
                       height: 32,
                       child: MkImage(
-                        userData?.avatarUrl ?? "",
+                        userData.avatarUrl ?? "",
                         width: 32,
                         height: 32,
                         shape: BoxShape.circle,
@@ -149,8 +153,8 @@ class UserPage extends HookConsumerWidget {
                                 .style
                                 .copyWith(fontWeight: FontWeight.bold),
                             child: MFMText(
-                              text: userData?.name ?? userData?.username ?? "",
-                              emojis: userData?.emojis,
+                              text: userData.name ?? userData.username,
+                              emojis: userData.emojis,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               bigEmojiCode: false,
@@ -167,12 +171,12 @@ class UserPage extends HookConsumerWidget {
                                   TextSpan(
                                     children: [
                                       TextSpan(
-                                          text: "@${userData?.username ?? ""}",
+                                          text: "@${userData.username}",
                                           style:
                                               textStyle.copyWith(fontSize: 12)),
                                       TextSpan(
-                                        text: userData?.host != null
-                                            ? "@${userData?.host}"
+                                        text: userData.host != null
+                                            ? "@${userData.host}"
                                             : "",
                                         style: textStyle.copyWith(
                                             color:

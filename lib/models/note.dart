@@ -59,6 +59,20 @@ class NoteModel {
     return 'NoteModel{id: $id, clippedCount: $clippedCount, createdAt: $createdAt, cw: $cw, emojis: $emojis, files: $files, localOnly: $localOnly, reactionAcceptance: $reactionAcceptance, reactionEmojis: $reactionEmojis, reactions: $reactions, myReaction: $myReaction, renote: $renote, renoteCount: $renoteCount, renoteId: $renoteId, repliesCount: $repliesCount, reply: $reply, replyId: $replyId, text: $text, uri: $uri, user: $user, userId: $userId, visibility: $visibility, poll: $poll}';
   }
 
+  String createReplyAtText(String? currentUserId) {
+    var initText = "";
+    if (user.id != currentUserId) {
+      initText += user.getAtUserName();
+    }
+    if (reply?.user != null &&
+        reply!.user.id != user.id &&
+        reply!.user.id != currentUserId) {
+      initText += " ";
+      initText += reply!.user.getAtUserName();
+    }
+    return initText;
+  }
+
   factory NoteModel.fromMap(dynamic map) {
     List<DriveFileModel> files = [];
     for (var item in map['files']) {
