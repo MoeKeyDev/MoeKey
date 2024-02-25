@@ -24,7 +24,7 @@ class HttpProxy extends HttpOverrides {
   @override
   String findProxyFromEnvironment(Uri url, Map<String, String>? environment) {
     if (kDebugMode) {
-      proxyServer = "172.20.1.200:7890";
+      proxyServer = "127.0.0.1:3010";
     }
     if (proxyServer == "") {
       return super.findProxyFromEnvironment(url, environment);

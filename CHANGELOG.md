@@ -1,4 +1,12 @@
 # Changelog
+## 0.2.1
+### Fixed
+- Notify Card note preview
+- Add websocket heartbeat packets
+- Fix crashes when links contain non-text content
+
+### Feature
+
 
 ## 0.2.0
 

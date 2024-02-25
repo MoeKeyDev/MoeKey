@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/networks/user.dart';
 import 'package:moekey/state/themes.dart';
 import 'package:moekey/utils/time_to_desired_format.dart';
+import 'package:moekey/widgets/blur_widget.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 
 import '../../widgets/loading_weight.dart';
@@ -167,8 +168,7 @@ class UserHomeCard extends HookConsumerWidget {
       return LayoutBuilder(
         builder: (context, constraints) {
           var isSmall = constraints.maxWidth < 500;
-          return SelectionArea(
-              child: ClipRRect(
+          return ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(12)),
             child: MkCard(
               padding: EdgeInsets.zero,
@@ -201,6 +201,7 @@ class UserHomeCard extends HookConsumerWidget {
                               ),
                             ),
                           ),
+                        // 阴影遮罩
                         Positioned.fill(
                           child: DecoratedBox(
                             decoration: BoxDecoration(
@@ -218,6 +219,7 @@ class UserHomeCard extends HookConsumerWidget {
                             ),
                           ),
                         ),
+                        // 头像
                         Align(
                           alignment: isSmall
                               ? Alignment.bottomCenter
@@ -263,6 +265,7 @@ class UserHomeCard extends HookConsumerWidget {
                             ),
                           ),
                         ),
+                        // 大屏的用户名
                         if (!isSmall)
                           Positioned(
                             bottom: 0,
@@ -315,7 +318,101 @@ class UserHomeCard extends HookConsumerWidget {
                                 ],
                               ),
                             ),
-                          )
+                          ),
+                        if (userData.isFollowed)
+                          Positioned(
+                            top: 8,
+                            left: 8,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Color.fromARGB(175, 0, 0, 0),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(5),
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(4),
+                              child: const Text(
+                                "正在关注你",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(50)),
+                            child: BlurWidget(
+                              color: Color.fromARGB(40, 0, 0, 0),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4, horizontal: 6),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(TablerIcons.dots),
+                                      color: Colors.white,
+                                    ),
+                                    MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: GestureDetector(
+                                        onTap: () {},
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                Radius.circular(100),
+                                              ),
+                                              color: userData.isFollowing
+                                                  ? themes.buttonGradateAColor
+                                                  : Colors.white,
+                                              border: Border.all(
+                                                  color: themes
+                                                      .buttonGradateAColor,
+                                                  width: 1)),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 6, horizontal: 8),
+                                          child: Row(
+                                            children: [
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                userData.isFollowing
+                                                    ? "取消关注"
+                                                    : "关注",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: userData.isFollowing
+                                                        ? Colors.white
+                                                        : themes
+                                                            .buttonGradateAColor),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Icon(
+                                                userData.isFollowing
+                                                    ? TablerIcons.minus
+                                                    : TablerIcons.plus,
+                                                color: userData.isFollowing
+                                                    ? Colors.white
+                                                    : themes
+                                                        .buttonGradateAColor,
+                                                size: 15,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -392,6 +489,7 @@ class UserHomeCard extends HookConsumerWidget {
                                     bigEmojiCode: false,
                                     emojis: userData.emojis,
                                     currentServerHost: userData.host,
+                                    isSelection: true,
                                   ),
                                 )
                               ],
@@ -422,6 +520,7 @@ class UserHomeCard extends HookConsumerWidget {
                                   emojis: userData.emojis,
                                   textAlign: TextAlign.center,
                                   currentServerHost: userData.host,
+                                  isSelection: true,
                                 ),
                               ),
                             ),
@@ -551,7 +650,7 @@ class UserHomeCard extends HookConsumerWidget {
                 ],
               ),
             ),
-          ));
+          );
         },
       );
     }

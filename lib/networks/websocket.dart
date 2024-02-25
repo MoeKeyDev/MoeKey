@@ -68,34 +68,54 @@ class moekeyGlobalEvent extends _$moekeyGlobalEvent {
   @override
   FutureOr build() async {
     var channel = await ref.watch(moekeyWebSocketProvider.future);
+    var timer = Timer.periodic(Duration(seconds: 60), (t) {
+      this.sendString("h");
+
+      // t.cancel(); //关闭定时器
+    });
     moekeyStreamController.sink.add(moekeyEvent(
       type: moekeyEventType.load,
       data: {},
     ));
-    channel.stream.listen((data) {
-      logger.d("=========emit moekeyEvent=======");
-      logger.d(data);
-      var event = moekeyEvent(
-        type: moekeyEventType.data,
-        data: jsonDecode(data),
-      );
-      moekeyStreamController.sink.add(event);
-    }, onDone: () {
-      ref.invalidate(moekeyWebSocketProvider);
-      moekeyStreamController.sink.add(moekeyEvent(
-        type: moekeyEventType.load,
-        data: {},
-      ));
-    }, onError: (error) {
-      logger.d(error);
-    });
+    channel.stream.listen(
+      (data) {
+        logger.d("=========emit moekeyEvent=======");
+        logger.d(data);
+        var event = moekeyEvent(
+          type: moekeyEventType.data,
+          data: jsonDecode(data),
+        );
+        moekeyStreamController.sink.add(event);
+      },
+      onDone: () {
+        ref.invalidate(moekeyWebSocketProvider);
+        moekeyStreamController.sink.add(moekeyEvent(
+          type: moekeyEventType.load,
+          data: {},
+        ));
+        if (timer.isActive) {
+          timer.cancel();
+        }
+      },
+      onError: (error) {
+        logger.d(error);
+        if (timer.isActive) {
+          timer.cancel();
+        }
+      },
+      cancelOnError: true,
+    );
   }
 
   send(Map data) async {
+    var json = jsonEncode(data);
+    sendString(json);
+  }
+
+  sendString(String data) async {
     try {
-      var json = jsonEncode(data);
       var channel = await ref.read(moekeyWebSocketProvider.future);
-      channel.sink.add(json);
+      channel.sink.add(data);
     } catch (e) {
       logger.d(e);
       ref.invalidate(moekeyWebSocketProvider);
