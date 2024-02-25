@@ -12,6 +12,7 @@ import 'package:moekey/models/note.dart';
 import 'package:moekey/models/user_simple.dart';
 import 'package:moekey/networks/notes.dart';
 import 'package:moekey/pages/users/user_page.dart';
+import 'package:moekey/state/server.dart';
 import 'package:moekey/state/themes.dart';
 import 'package:moekey/utils/format_duration.dart';
 import 'package:moekey/widgets/context_menu.dart';
@@ -90,7 +91,7 @@ class NoteCard extends ConsumerWidget {
                   Opacity(
                     opacity: 0.8,
                     child: TimeLineNoteCardComponent(
-                      data: thisData.reply,
+                      data: thisData.reply!,
                       reply: true,
                       // isShowReactions: false,
                       disableReactions: true,
@@ -113,7 +114,7 @@ class NoteCard extends ConsumerWidget {
                                   const BorderRadius.all(Radius.circular(8))),
                           padding: const EdgeInsets.all(12),
                           child: TimeLineNoteCardComponent(
-                            data: thisData.renote,
+                            data: thisData.renote!,
                             isShowAction: false,
                             isShowReactions: false,
                             limit: 500,
@@ -143,7 +144,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     this.limit = 1000,
     this.height = 400,
   });
-  final dynamic data;
+  final NoteModel data;
   final bool reply;
   final bool isShowAction;
   final bool isShowReactions;
@@ -726,12 +727,13 @@ class TimeLineActions extends StatelessWidget {
     required this.fontsize,
     required this.data,
   });
-  final dynamic data;
+  final NoteModel data;
   final double fontsize;
 
   @override
   Widget build(BuildContext context) {
     return HookConsumer(builder: (context, ref, child) {
+      var currentUser = ref.watch(currentLoginUserProvider);
       return Row(
         children: [
           TimelineActionButton(
@@ -739,8 +741,14 @@ class TimeLineActions extends StatelessWidget {
             icon: TablerIcons.arrow_back_up,
             count: data.repliesCount,
             onTap: () {
-              globalNav.currentState?.push(NoteCreateDialog.getRouter(
-                  noteId: data.id, type: NoteType.reply));
+              globalNav.currentState?.push(
+                NoteCreateDialog.getRouter(
+                  noteId: data.id,
+                  type: NoteType.reply,
+                  note: data,
+                  initText: "${data.createReplyAtText(currentUser.value!.id)} ",
+                ),
+              );
             },
           ),
           const SizedBox(
@@ -766,7 +774,10 @@ class TimeLineActions extends StatelessWidget {
                       label: "引用",
                       onTap: () {
                         globalNav.currentState?.push(NoteCreateDialog.getRouter(
-                            type: NoteType.reNote, noteId: data.id));
+                          type: NoteType.reNote,
+                          noteId: data.id,
+                          note: data,
+                        ));
                         return false;
                       },
                     )

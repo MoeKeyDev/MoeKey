@@ -30,12 +30,16 @@ class UserFollowing extends _$UserFollowing {
 
 @riverpod
 Future<UserFullModel> userInfo(UserInfoRef ref,
-    {required String userId}) async {
+    {String? username, String? host, String? userId}) async {
   var http = await ref.read(httpProvider.future);
   var user = await ref.read(currentLoginUserProvider.future);
 
-  var res = await http
-      .post("/users/show", data: {"userId": userId, "i": user?.token});
+  var res = await http.post("/users/show", data: {
+    if (username != null) "username": username,
+    if (host != null) "host": host,
+    "i": user?.token,
+    if (userId != null) "userId": userId,
+  });
   return UserFullModel.fromMap(res.data);
 }
 

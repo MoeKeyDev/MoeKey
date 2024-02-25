@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../main.dart';
 import '../state/themes.dart';
 
 part 'apis.g.dart';
@@ -25,7 +24,6 @@ class ServerInfoState extends _$ServerInfoState {
   FutureOr<Map> build() async {
     var colors = ref.read(themeColorsProvider.notifier);
     var meta = await ref.watch(apiMetaProvider.future);
-    logger.d("123");
     colors.updateThemes(meta);
     return meta;
   }

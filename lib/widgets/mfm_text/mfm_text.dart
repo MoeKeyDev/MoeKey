@@ -10,6 +10,8 @@ import 'package:twemoji_v2/twemoji_v2.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../main.dart';
+import '../../pages/users/user_page.dart';
+import '../../router/main_router_delegate.dart';
 import '../../state/themes.dart';
 import '../hover_builder.dart';
 import '../mk_image.dart';
@@ -150,7 +152,7 @@ _getParse({
                   color: themes.accentColor,
                   size: textStyle.fontSize! + 2,
                 ),
-                alignment: PlaceholderAlignment.top)
+                alignment: PlaceholderAlignment.middle)
           ],
         );
       } else {
@@ -158,43 +160,48 @@ _getParse({
       }
     },
     "link": (MfmLink item, TextStyle textStyle) {
-      var parse = _getParse(
-          themes: themes,
-          loginServerUrl: loginServerUrl,
-          systemEmojis: systemEmojis);
       var a = item.children;
       if (a != null) {
         textStyle = textStyle.copyWith(
           color: themes.accentColor,
         );
         return WidgetSpan(
-            child: Tooltip(
-          message: item.url,
-          child: Text.rich(TextSpan(
-              // text: item.url,
-              style: textStyle.copyWith(
-                color: themes.accentColor,
-              ),
-              children: [
-                for (var item in a)
-                  if (parse[item.type] != null)
-                    parse[item.type](item, textStyle)
-                  else
-                    TextSpan(text: item.toString(), style: textStyle),
-                WidgetSpan(
-                    child: Icon(
-                      TablerIcons.external_link,
-                      color: themes.accentColor,
-                      size: textStyle.fontSize! + 2,
+          child: Tooltip(
+            message: item.url,
+            child: Text.rich(
+              TextSpan(
+                // text: item.url,
+                style: textStyle.copyWith(
+                  color: themes.accentColor,
+                ),
+                children: [
+                  for (var item1 in a)
+                    TextSpan(
+                        text: (item1 as MfmText).text,
+                        style: textStyle,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launchUrlString(item.url);
+                          }),
+                  WidgetSpan(
+                    child: GestureDetector(
+                      onTap: () {
+                        launchUrlString(item.url);
+                      },
+                      child: Icon(
+                        TablerIcons.external_link,
+                        color: themes.accentColor,
+                        size: textStyle.fontSize! + 2,
+                      ),
                     ),
-                    alignment: PlaceholderAlignment.top)
-              ],
-              mouseCursor: SystemMouseCursors.click,
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  launchUrlString(item.url);
-                })),
-        ));
+                    alignment: PlaceholderAlignment.middle,
+                  )
+                ],
+                mouseCursor: SystemMouseCursors.click,
+              ),
+            ),
+          ),
+        );
       }
     },
     "emojiCode": (MfmEmojiCode item, TextStyle textStyle) {
@@ -247,43 +254,54 @@ _getParse({
               builder: (context) {
                 String user = item.props?["username"]!;
                 var host = item.props?["host"] ?? currentServerHost;
-                return DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: themes.mentionColor.withOpacity(0.1),
-                    borderRadius: const BorderRadius.all(Radius.circular(100)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-                    child: IntrinsicWidth(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          MkImage(
-                            "$loginServerUrl/avatar/@$user${host != null ? "@$host" : ""}",
-                            height: textStyle.fontSize! * 1.5,
-                            shape: BoxShape.circle,
-                          ),
-                          Expanded(
-                              child: Text.rich(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                    text: "@$user",
-                                    style: textStyle.copyWith(
-                                        color: themes.mentionColor)),
-                                if (host != null && host != currentHost)
-                                  TextSpan(
-                                      text: "@$host",
-                                      style: textStyle.copyWith(
-                                        color: themes.mentionColor
-                                            .withOpacity(0.5),
-                                      )),
-                              ],
+                return GestureDetector(
+                  onTap: () {
+                    MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                      path: "user/@$user${host != null ? "@$host" : ""}",
+                      page: () {
+                        return UserPage(username: user, host: host);
+                      },
+                    ));
+                  },
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: themes.mentionColor.withOpacity(0.1),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(100)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+                      child: IntrinsicWidth(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            MkImage(
+                              "$loginServerUrl/avatar/@$user${host != null ? "@$host" : ""}",
+                              height: textStyle.fontSize! * 1.5,
+                              shape: BoxShape.circle,
                             ),
-                          ))
-                        ],
+                            Expanded(
+                                child: Text.rich(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "@$user",
+                                      style: textStyle.copyWith(
+                                          color: themes.mentionColor)),
+                                  if (host != null && host != currentHost)
+                                    TextSpan(
+                                        text: "@$host",
+                                        style: textStyle.copyWith(
+                                          color: themes.mentionColor
+                                              .withOpacity(0.5),
+                                        )),
+                                ],
+                              ),
+                            ))
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -344,7 +362,6 @@ _getParse({
           alignment: PlaceholderAlignment.middle);
     },
     "quote": (MfmQuote item, TextStyle textStyle) {
-      var code = item.children;
       var parse = _getParse(
           themes: themes,
           loginServerUrl: loginServerUrl,

@@ -19,16 +19,25 @@ import 'package:moekey/widgets/user_select_dialog/user_select_dialog.dart';
 
 import '../../main.dart';
 import '../../models/note.dart';
+import '../../utils/time_ago_since_date.dart';
 import '../driver/driver_select_dialog/driver_select_dialog.dart';
 import '../hashtag/hashtag_select_dialog.dart';
 import '../input_decoration.dart';
 import '../mk_switch.dart';
+import '../notes/note_card.dart';
 
 class NoteCreateDialog extends HookConsumerWidget {
-  NoteCreateDialog({super.key, this.noteId, this.noteType = NoteType.note});
+  NoteCreateDialog(
+      {super.key,
+      this.noteId,
+      this.noteType = NoteType.note,
+      this.note,
+      this.initText});
   final GlobalKey myKey = GlobalKey();
   final String? noteId;
   final NoteType noteType;
+  final NoteModel? note;
+  final String? initText;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -100,7 +109,12 @@ class NoteCreateDialog extends HookConsumerWidget {
             .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
             .getDriverSelectDialogStateProvider());
         var form = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
-        var contentController = useTextEditingController(text: form.text);
+        var contentController =
+            useTextEditingController(text: form.text ?? initText);
+        if (note != null && note?.cw != null) {
+          form.cw = note!.cw!;
+          form.isCw = true;
+        }
         contentController.addListener(() {
           ref
               .read(noteCreateDialogStateProvider(noteId, noteType).notifier)
@@ -197,6 +211,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (note != null) buildNotePreview(themes),
                       if (!form.preview)
                         buildTextField(data, fullscreen, contentController)
                       else
@@ -233,6 +248,69 @@ class NoteCreateDialog extends HookConsumerWidget {
           ),
         );
       },
+    );
+  }
+
+  Padding buildNotePreview(ThemeColorModel themes) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          MkImage(
+            note!.user.avatarUrl ?? "",
+            shape: BoxShape.circle,
+            width: 48,
+            height: 48,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(child: UserNameRichText(data: note!.user)),
+                    Text(timeAgoSinceDate(note!.createdAt),
+                        style: const TextStyle(fontSize: 12)),
+                    const SizedBox(
+                      width: 6,
+                    ),
+                    if (NoteVisibility.getIcon(note!.visibility) != null)
+                      Icon(
+                        NoteVisibility.getIcon(note!.visibility)!,
+                        size: 14,
+                        color: themes.fgColor,
+                      )
+                  ],
+                ),
+                if (note!.cw != null)
+                  MFMText(
+                    key: ValueKey(note!.cw ?? ""),
+                    text: note!.cw ?? "",
+                    emojis: note!.emojis,
+                    currentServerHost: note!.user.host,
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                MFMText(
+                  key: ValueKey(note!.text ?? ""),
+                  text: note!.text ?? "",
+                  emojis: note!.emojis,
+                  currentServerHost: note!.user.host,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -973,8 +1051,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: [
-                    if (noteType == NoteType.reply) "回复给...",
-                    if (noteType == NoteType.reNote) "引用...",
+                    if (noteType == NoteType.reply) "回复这个帖子...",
+                    if (noteType == NoteType.reNote) "引用这个帖子...",
                     "发生了什么...",
                   ][0],
                   isDense: true,
@@ -1366,13 +1444,21 @@ class NoteCreateDialog extends HookConsumerWidget {
   }
 
   static PageRouteBuilder getRouter(
-      {String? noteId, NoteType type = NoteType.note}) {
+      {String? noteId,
+      NoteType type = NoteType.note,
+      NoteModel? note,
+      String? initText}) {
     return PageRouteBuilder(
       opaque: false,
       transitionDuration: const Duration(milliseconds: 200),
       reverseTransitionDuration: const Duration(milliseconds: 110),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return NoteCreateDialog(noteId: noteId, noteType: type);
+        return NoteCreateDialog(
+          noteId: noteId,
+          noteType: type,
+          note: note,
+          initText: initText,
+        );
       },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var tween = animation.drive(Tween(begin: 0.95, end: 1.0)
@@ -1418,7 +1504,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 MFMText(text: state.cw),
                 const Divider(),
               ],
-              MFMText(text: state.text),
+              MFMText(text: state.text ?? ""),
             ],
           ),
         );
