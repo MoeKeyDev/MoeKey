@@ -354,10 +354,20 @@ class UserHomeCard extends HookConsumerWidget {
                                     vertical: 4, horizontal: 6),
                                 child: Row(
                                   children: [
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(TablerIcons.dots),
-                                      color: Colors.white,
+                                    MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: GestureDetector(
+                                        onTap: () {},
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8, horizontal: 8),
+                                          child: const Icon(
+                                            TablerIcons.dots,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                     MouseRegion(
                                       cursor: SystemMouseCursors.click,
