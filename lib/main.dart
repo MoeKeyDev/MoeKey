@@ -91,6 +91,7 @@ class SplashPage extends HookConsumerWidget {
     var user = ref.watch(currentLoginUserProvider.future);
     // 启动webSocket
     ref.watch(moekeyGlobalEventProvider);
+    ref.watch(moekeyMainChannelProvider);
     var isLaunch = useState(false);
     Future.wait([user]).then((value) async {
       if (isLaunch.value) return;

@@ -122,3 +122,43 @@ class moekeyGlobalEvent extends _$moekeyGlobalEvent {
     }
   }
 }
+
+StreamController<Map> moekeyStreamMainChannelController =
+    StreamController.broadcast();
+
+@Riverpod(keepAlive: true)
+class MoekeyMainChannel extends _$MoekeyMainChannel {
+  StreamSubscription<moekeyEvent>? listen;
+  @override
+  FutureOr build() async {
+    try {
+      ref.onDispose(() {
+        listen?.cancel();
+        listen = null;
+      });
+      listen?.cancel();
+      listen = null;
+      listen = moekeyStreamController.stream.listen(
+        (event) async {
+          logger.d("========= event channel main===================");
+          logger.d(event);
+          if (event.type == moekeyEventType.load) {
+            logger.d("========= NotesListener load ===================");
+            ref.read(moekeyGlobalEventProvider.notifier).send({
+              "type": "connect",
+              "body": {"channel": "main", "id": "1"}
+            });
+          }
+          if (event.type == moekeyEventType.data &&
+              event.data["type"] == "channel" &&
+              event.data["body"]["id"] == "1") {
+            logger.d(event.data);
+            moekeyStreamMainChannelController.sink.add(event.data["body"]);
+          }
+        },
+      );
+    } catch (e) {
+      logger.d(e);
+    }
+  }
+}

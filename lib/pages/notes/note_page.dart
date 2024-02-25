@@ -126,7 +126,7 @@ class NotesPage extends HookConsumerWidget {
                   ],
                 ],
               ),
-              trailing: TextButton(onPressed: () {}, child: const Text("关注")),
+              // trailing: TextButton(onPressed: () {}, child: const Text("关注")),
             ),
             body: [
               if (!dataProvider.isLoading || data != null)

@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:moekey/models/note.dart';
 import 'package:moekey/models/user_full.dart';
 import 'package:moekey/networks/dio.dart';
+import 'package:moekey/networks/websocket.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../main.dart';
 import '../state/server.dart';
 
 part 'user.g.dart';
@@ -29,19 +33,125 @@ class UserFollowing extends _$UserFollowing {
 }
 
 @riverpod
-Future<UserFullModel> userInfo(UserInfoRef ref,
-    {String? username, String? host, String? userId}) async {
-  var http = await ref.read(httpProvider.future);
-  var user = await ref.read(currentLoginUserProvider.future);
+class UserInfo extends _$UserInfo {
+  StreamSubscription<Map>? listen;
+  @override
+  FutureOr<UserFullModel> build(
+      {String? username, String? host, String? userId}) async {
+    var http = await ref.read(httpProvider.future);
+    var user = await ref.read(currentLoginUserProvider.future);
 
-  var res = await http.post("/users/show", data: {
-    if (username != null) "username": username,
-    if (host != null) "host": host,
-    "i": user?.token,
-    if (userId != null) "userId": userId,
-  });
-  return UserFullModel.fromMap(res.data);
+    var res = await http.post("/users/show", data: {
+      if (username != null) "username": username,
+      if (host != null) "host": host,
+      "i": user?.token,
+      if (userId != null) "userId": userId,
+    });
+    var model = UserFullModel.fromMap(res.data);
+    ref.onDispose(() {
+      logger.d("========= NotesListener dispose ===================");
+      listen?.cancel();
+      listen = null;
+    });
+    listen?.cancel();
+    listen = null;
+    listen = moekeyStreamMainChannelController.stream.listen((event) {
+      try {
+        logger.d("监听到Main Channel 事件");
+        if (state.value == null) {
+          logger.d("内容不存在");
+          return;
+        }
+        UserFullModel userModel = state.value!;
+        logger.d(userModel);
+        if (event["type"] == "follow" && event["body"]["id"] == model.id) {
+          userModel.isFollowing = true;
+          userModel.hasPendingFollowRequestFromYou = false;
+        }
+        if (event["type"] == "unfollow" && event["body"]["id"] == model.id) {
+          userModel.isFollowing = false;
+          userModel.hasPendingFollowRequestFromYou = false;
+        }
+        state = AsyncValue.data(userModel);
+      } catch (e) {
+        logger.e(e);
+      }
+    });
+    return model;
+  }
+
+  followingCreate() async {
+    var http = await ref.read(httpProvider.future);
+    var user = await ref.read(currentLoginUserProvider.future);
+    if (state.value == null) {
+      return;
+    }
+    UserFullModel userModel = state.value!;
+    userModel.hasPendingFollowRequestFromYou = true;
+    state = AsyncValue.data(userModel);
+    await http.post(
+      "/following/create",
+      data: {
+        "userId": userModel.id,
+        "withReplies": false,
+        "i": user?.token,
+      },
+    );
+  }
+
+  followingDelete() async {
+    var http = await ref.read(httpProvider.future);
+    var user = await ref.read(currentLoginUserProvider.future);
+    if (state.value == null) {
+      return;
+    }
+    UserFullModel userModel = state.value!;
+    userModel.hasPendingFollowRequestFromYou = true;
+    state = AsyncValue.data(userModel);
+    await http.post(
+      "/following/delete",
+      data: {
+        "userId": userModel.id,
+        "withReplies": false,
+        "i": user?.token,
+      },
+    );
+  }
+
+  followingCancel() async {
+    var http = await ref.read(httpProvider.future);
+    var user = await ref.read(currentLoginUserProvider.future);
+    if (state.value == null) {
+      return;
+    }
+    UserFullModel userModel = state.value!;
+    userModel.hasPendingFollowRequestFromYou = false;
+    state = AsyncValue.data(userModel);
+    await http.post(
+      "/following/cancel",
+      data: {
+        "userId": userModel.id,
+        "withReplies": false,
+        "i": user?.token,
+      },
+    );
+  }
 }
+
+// @riverpod
+// Future<UserFullModel> userInfo(UserInfoRef ref,
+//     {String? username, String? host, String? userId}) async {
+//   var http = await ref.read(httpProvider.future);
+//   var user = await ref.read(currentLoginUserProvider.future);
+//
+//   var res = await http.post("/users/show", data: {
+//     if (username != null) "username": username,
+//     if (host != null) "host": host,
+//     "i": user?.token,
+//     if (userId != null) "userId": userId,
+//   });
+//   return UserFullModel.fromMap(res.data);
+// }
 
 class UserNoteListsModel {
   List<NoteModel> list = [];

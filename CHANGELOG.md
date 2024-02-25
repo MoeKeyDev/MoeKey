@@ -6,7 +6,7 @@
 - Fix crashes when links contain non-text content
 
 ### Feature
-
+- User follow
 
 ## 0.2.0
 
