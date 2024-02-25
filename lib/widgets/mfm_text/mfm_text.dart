@@ -74,7 +74,10 @@ class MFMText extends HookConsumerWidget {
           ...?before,
           for (var item in mfmParse.value)
             if (parse[item.type] != null)
-              parse[item.type](item, textStyle)
+              parse[item.type](
+                item,
+                textStyle,
+              )
             else
               TextSpan(text: item.toString()),
           ...?after
@@ -165,39 +168,51 @@ _getParse({
         textStyle = textStyle.copyWith(
           color: themes.accentColor,
         );
+        var parse = _getParse(
+          themes: themes,
+          loginServerUrl: loginServerUrl,
+          systemEmojis: systemEmojis,
+          emojis: emojis,
+          defaultServerHost: currentServerHost,
+          bigEmojiCode: bigEmojiCode,
+          feature: feature,
+          currentServerHost: currentServerHost,
+        );
         return WidgetSpan(
           child: Tooltip(
             message: item.url,
-            child: Text.rich(
-              TextSpan(
-                // text: item.url,
-                style: textStyle.copyWith(
-                  color: themes.accentColor,
-                ),
-                children: [
-                  for (var item1 in a)
-                    TextSpan(
-                        text: (item1 as MfmText).text,
-                        style: textStyle,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrlString(item.url);
-                          }),
-                  WidgetSpan(
-                    child: GestureDetector(
-                      onTap: () {
-                        launchUrlString(item.url);
-                      },
-                      child: Icon(
-                        TablerIcons.external_link,
-                        color: themes.accentColor,
-                        size: textStyle.fontSize! + 2,
+            child: GestureDetector(
+              onTap: () {
+                launchUrlString(item.url);
+              },
+              child: Text.rich(
+                TextSpan(
+                  // text: item.url,
+                  style: textStyle.copyWith(
+                    color: themes.accentColor,
+                  ),
+                  children: [
+                    for (var item1 in a)
+                      if (parse[item1.type] != null)
+                        parse[item1.type](item1, textStyle)
+                      else
+                        TextSpan(text: item.toString(), style: textStyle),
+                    WidgetSpan(
+                      child: GestureDetector(
+                        onTap: () {
+                          launchUrlString(item.url);
+                        },
+                        child: Icon(
+                          TablerIcons.external_link,
+                          color: themes.accentColor,
+                          size: textStyle.fontSize! + 2,
+                        ),
                       ),
-                    ),
-                    alignment: PlaceholderAlignment.middle,
-                  )
-                ],
-                mouseCursor: SystemMouseCursors.click,
+                      alignment: PlaceholderAlignment.middle,
+                    )
+                  ],
+                  mouseCursor: SystemMouseCursors.click,
+                ),
               ),
             ),
           ),
@@ -316,9 +331,15 @@ _getParse({
     },
     "bold": (MfmBold item, TextStyle textStyle) {
       var parse = _getParse(
-          themes: themes,
-          loginServerUrl: loginServerUrl,
-          systemEmojis: systemEmojis);
+        themes: themes,
+        loginServerUrl: loginServerUrl,
+        systemEmojis: systemEmojis,
+        emojis: emojis,
+        defaultServerHost: currentServerHost,
+        bigEmojiCode: bigEmojiCode,
+        feature: feature,
+        currentServerHost: currentServerHost,
+      );
       var a = item.children;
       if (a != null) {
         textStyle = textStyle.copyWith(fontWeight: FontWeight.bold);
@@ -333,9 +354,15 @@ _getParse({
     },
     "strike": (MfmStrike item, TextStyle textStyle) {
       var parse = _getParse(
-          themes: themes,
-          loginServerUrl: loginServerUrl,
-          systemEmojis: systemEmojis);
+        themes: themes,
+        loginServerUrl: loginServerUrl,
+        systemEmojis: systemEmojis,
+        emojis: emojis,
+        defaultServerHost: currentServerHost,
+        bigEmojiCode: bigEmojiCode,
+        feature: feature,
+        currentServerHost: currentServerHost,
+      );
       var a = item.children;
       if (a != null) {
         textStyle = textStyle.copyWith(decoration: TextDecoration.lineThrough);
@@ -363,9 +390,15 @@ _getParse({
     },
     "quote": (MfmQuote item, TextStyle textStyle) {
       var parse = _getParse(
-          themes: themes,
-          loginServerUrl: loginServerUrl,
-          systemEmojis: systemEmojis);
+        themes: themes,
+        loginServerUrl: loginServerUrl,
+        systemEmojis: systemEmojis,
+        emojis: emojis,
+        defaultServerHost: currentServerHost,
+        bigEmojiCode: bigEmojiCode,
+        feature: feature,
+        currentServerHost: currentServerHost,
+      );
       var a = item.children;
       if (a != null) {
         var text = Text.rich(TextSpan(children: [
@@ -413,9 +446,15 @@ _getParse({
     },
     "center": (MfmCenter item, TextStyle textStyle) {
       var parse = _getParse(
-          themes: themes,
-          loginServerUrl: loginServerUrl,
-          systemEmojis: systemEmojis);
+        themes: themes,
+        loginServerUrl: loginServerUrl,
+        systemEmojis: systemEmojis,
+        emojis: emojis,
+        defaultServerHost: currentServerHost,
+        bigEmojiCode: bigEmojiCode,
+        feature: feature,
+        currentServerHost: currentServerHost,
+      );
       var a = item.children;
       if (a != null) {
         var text = Text.rich(
@@ -438,9 +477,15 @@ _getParse({
     },
     "small": (MfmInline item, TextStyle textStyle) {
       var parse = _getParse(
-          themes: themes,
-          loginServerUrl: loginServerUrl,
-          systemEmojis: systemEmojis);
+        themes: themes,
+        loginServerUrl: loginServerUrl,
+        systemEmojis: systemEmojis,
+        emojis: emojis,
+        defaultServerHost: currentServerHost,
+        bigEmojiCode: bigEmojiCode,
+        feature: feature,
+        currentServerHost: currentServerHost,
+      );
       var a = item.children;
       if (a != null) {
         if (item.runtimeType == MfmItalic) {
@@ -486,9 +531,15 @@ _getParse({
       // logger.d(item.props?["name"]);
       // logger.d(item.args);
       var parse = _getParse(
-          themes: themes,
-          loginServerUrl: loginServerUrl,
-          systemEmojis: systemEmojis);
+        themes: themes,
+        loginServerUrl: loginServerUrl,
+        systemEmojis: systemEmojis,
+        emojis: emojis,
+        defaultServerHost: currentServerHost,
+        bigEmojiCode: bigEmojiCode,
+        feature: feature,
+        currentServerHost: currentServerHost,
+      );
       var child = TextSpan(children: [
         for (var item in item.children ?? [])
           if (parse[item.type] != null)

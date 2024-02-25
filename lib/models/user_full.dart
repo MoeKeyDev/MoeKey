@@ -30,6 +30,11 @@ class UserFullModel {
   String? uri;
   String? url;
   num notesCount;
+  bool isFollowed;
+  bool isFollowing;
+  bool hasPendingFollowRequestFromYou;
+  bool hasPendingFollowRequestToYou;
+  bool isLocked;
   UserFullModel({
     this.avatarBlurhash,
     this.avatarUrl,
@@ -59,6 +64,11 @@ class UserFullModel {
     this.url,
     required this.notesCount,
     required this.publicReactions,
+    required this.isFollowed,
+    required this.isFollowing,
+    required this.hasPendingFollowRequestFromYou,
+    required this.hasPendingFollowRequestToYou,
+    required this.isLocked,
   });
 
   factory UserFullModel.fromMap(dynamic map) {
@@ -95,6 +105,13 @@ class UserFullModel {
       pinnedNotesIds: map['pinnedNotesIds'] ?? [],
       notesCount: map['notesCount'],
       publicReactions: map["publicReactions"] ?? false,
+      isFollowed: map["isFollowed"] ?? false,
+      isFollowing: map["isFollowing"] ?? false,
+      hasPendingFollowRequestFromYou:
+          map["hasPendingFollowRequestFromYou"] ?? false,
+      hasPendingFollowRequestToYou:
+          map["hasPendingFollowRequestToYou"] ?? false,
+      isLocked: map["isLocked"] ?? false,
     );
   }
 
@@ -127,6 +144,11 @@ class UserFullModel {
     String? url,
     num? notesCount,
     bool? publicReactions,
+    bool? isFollowed,
+    bool? isFollowing,
+    bool? hasPendingFollowRequestFromYou,
+    bool? hasPendingFollowRequestToYou,
+    bool? isLocked,
   }) {
     return UserFullModel(
       avatarBlurhash: avatarBlurhash ?? this.avatarBlurhash,
@@ -157,6 +179,13 @@ class UserFullModel {
       url: url ?? this.url,
       notesCount: notesCount ?? this.notesCount,
       publicReactions: publicReactions ?? this.publicReactions,
+      isFollowing: isFollowing ?? this.isFollowing,
+      isFollowed: isFollowed ?? this.isFollowed,
+      hasPendingFollowRequestToYou:
+          hasPendingFollowRequestFromYou ?? this.hasPendingFollowRequestFromYou,
+      hasPendingFollowRequestFromYou:
+          hasPendingFollowRequestFromYou ?? this.hasPendingFollowRequestFromYou,
+      isLocked: isLocked ?? this.isLocked,
     );
   }
 }

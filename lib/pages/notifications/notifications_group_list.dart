@@ -98,7 +98,8 @@ class NotificationsGroupList extends HookConsumerWidget {
           data: data,
           borderRadius: borderRadius,
           content: MFMText(
-            text: "${data["note"]?["cw"] ?? ""}${data["note"]?["text"] ?? ""}",
+            text: "${data["note"]?["cw"] ?? ""}${data["note"]?["text"] ?? ""}"
+                .replaceAll('\n', ' '),
             bigEmojiCode: false,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

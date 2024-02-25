@@ -3,18 +3,26 @@ import 'package:flutter/material.dart';
 import '../generated/l10n.dart';
 
 class LoadingCircularProgress extends StatelessWidget {
-  const LoadingCircularProgress(
-      {super.key, this.size = 32, this.strokeWidth = 6});
+  const LoadingCircularProgress({
+    super.key,
+    this.size = 32,
+    this.strokeWidth = 6,
+    this.color,
+    this.backgroundColor,
+  });
   final double size;
   final double strokeWidth;
+  final Color? color;
+  final Color? backgroundColor;
   @override
   Widget build(BuildContext context) {
     return SizedBox.square(
         dimension: size,
         child: CircularProgressIndicator(
           strokeCap: StrokeCap.round,
-          backgroundColor: Theme.of(context).primaryColor.withAlpha(32),
-          color: Theme.of(context).primaryColor.withAlpha(200),
+          backgroundColor:
+              backgroundColor ?? Theme.of(context).primaryColor.withAlpha(32),
+          color: color ?? Theme.of(context).primaryColor.withAlpha(200),
           strokeWidth: strokeWidth,
         ));
   }

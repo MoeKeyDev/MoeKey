@@ -24,7 +24,7 @@ class HttpProxy extends HttpOverrides {
   @override
   String findProxyFromEnvironment(Uri url, Map<String, String>? environment) {
     if (kDebugMode) {
-      proxyServer = "172.20.1.200:7890";
+      proxyServer = "127.0.0.1:3010";
     }
     if (proxyServer == "") {
       return super.findProxyFromEnvironment(url, environment);
@@ -91,6 +91,7 @@ class SplashPage extends HookConsumerWidget {
     var user = ref.watch(currentLoginUserProvider.future);
     // 启动webSocket
     ref.watch(moekeyGlobalEventProvider);
+    ref.watch(moekeyMainChannelProvider);
     var isLaunch = useState(false);
     Future.wait([user]).then((value) async {
       if (isLaunch.value) return;
