@@ -55,7 +55,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        archivesBaseName = "MoeKey-$versionName+$versionCode"
+        archivesBaseName = "MoeKey-$versionName+$versionCode-Android"
     }
 
     signingConfigs {
