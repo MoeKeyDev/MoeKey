@@ -8,7 +8,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/networks/apis.dart';
 import 'package:moekey/state/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
-import 'package:moekey/widgets/driver/drive_thumbnail.dart';
 import 'package:moekey/widgets/emoji_list.dart';
 import 'package:moekey/widgets/hover_builder.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
@@ -20,6 +19,7 @@ import 'package:moekey/widgets/user_select_dialog/user_select_dialog.dart';
 import '../../main.dart';
 import '../../models/note.dart';
 import '../../utils/time_ago_since_date.dart';
+import '../driver/drive_thumbnail.dart';
 import '../driver/driver_select_dialog/driver_select_dialog.dart';
 import '../hashtag/hashtag_select_dialog.dart';
 import '../input_decoration.dart';
@@ -760,6 +760,7 @@ class NoteCreateDialog extends HookConsumerWidget {
             .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
             .getDriverSelectDialogStateProvider());
         var driverList = driverMap;
+        logger.d(driverList);
         return Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -771,14 +772,15 @@ class NoteCreateDialog extends HookConsumerWidget {
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    ClipRRect(
+                    Positioned.fill(
+                        child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(6)),
                       child: DriverFileIcon(
                         data: item,
                         themes: themes,
                         fit: BoxFit.cover,
                       ),
-                    ),
+                    )),
                     Positioned(
                       top: 4,
                       right: 4,
@@ -1059,7 +1061,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 ),
                 minLines: isFullscreen ? 4 : 4,
                 maxLines: isFullscreen ? 200 : 100,
-                maxLength: data["maxNoteTextLength"] ?? 0,
+                maxLength: data?["maxNoteTextLength"] ?? 100,
 
                 // initialValue: state.text,
                 onChanged: (value) {

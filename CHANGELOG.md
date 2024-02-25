@@ -1,4 +1,9 @@
 # Changelog
+
+## 0.2.2
+### Fixed
+fix crashes when  note create dialog uploading image
+
 ## 0.2.1
 ### Fixed
 - Notify Card note preview
