@@ -17,7 +17,7 @@ MoeKey is a misskey client for Flutter
 - [x] Emoji reactions
 - [x] Multi users login
 - [ ] I18n
-- [ ] User Profile
+- [X] User Profile
 - [ ] User Widgets
 - [ ] Clips
 - [ ] Explore
