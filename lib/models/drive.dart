@@ -1,3 +1,5 @@
+import 'package:moekey/utils/get_random_string.dart';
+
 class DriveFileModel {
   String? blurhash;
   String type;
@@ -9,7 +11,7 @@ class DriveFileModel {
   String id;
   Map? properties;
   String? thumbnailUrl;
-
+  String hero;
   DriveFileModel({
     this.blurhash,
     required this.type,
@@ -21,11 +23,12 @@ class DriveFileModel {
     required this.id,
     this.properties,
     this.thumbnailUrl,
+    required this.hero,
   });
 
   @override
   String toString() {
-    return 'NoteFileModel{blurhash: $blurhash, type: $type, url: $url, createdAt: $createdAt, size: $size, isSensitive: $isSensitive, name: $name, id: $id, properties: $properties, thumbnailUrl: $thumbnailUrl}';
+    return 'DriveFileModel{blurhash: $blurhash, type: $type, url: $url, createdAt: $createdAt, size: $size, isSensitive: $isSensitive, name: $name, id: $id, properties: $properties, thumbnailUrl: $thumbnailUrl, hero: $hero}';
   }
 
   factory DriveFileModel.fromMap(dynamic map) {
@@ -39,7 +42,8 @@ class DriveFileModel {
         id: map['id'],
         properties: map['properties'],
         isSensitive: map['isSensitive'] ?? false,
-        thumbnailUrl: map['thumbnailUrl']);
+        thumbnailUrl: map['thumbnailUrl'],
+        hero: getRandomString(10));
   }
 
   DriveFileModel copyWith({
@@ -53,6 +57,7 @@ class DriveFileModel {
     String? id,
     Map? properties,
     String? thumbnailUrl,
+    String? hero,
   }) {
     return DriveFileModel(
       blurhash: blurhash ?? this.blurhash,
@@ -65,6 +70,7 @@ class DriveFileModel {
       id: id ?? this.id,
       properties: properties ?? this.properties,
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
+      hero: hero ?? this.hero,
     );
   }
 }

@@ -1,8 +1,19 @@
 # Changelog
+## 0.2.3
+
+### Feature
+- Adding a transition animation to a preview image
+- Preload image preview
+- Add double-click to zoom in and out to preview
+- Saving images is faster
+
+### Fixed
+- Fix the crash that may occur due to oversized images.
+
 
 ## 0.2.2
 ### Fixed
-fix crashes when  note create dialog uploading image
+- fix crashes when  note create dialog uploading image
 
 ## 0.2.1
 ### Fixed

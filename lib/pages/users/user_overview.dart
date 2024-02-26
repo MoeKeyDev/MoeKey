@@ -351,7 +351,7 @@ class UserHomeCard extends HookConsumerWidget {
                               color: Color.fromARGB(40, 0, 0, 0),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 6),
+                                    vertical: 8, horizontal: 8),
                                 child: Row(
                                   children: [
                                     MouseRegion(
@@ -360,7 +360,7 @@ class UserHomeCard extends HookConsumerWidget {
                                         onTap: () {},
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 8),
+                                              vertical: 6, horizontal: 6),
                                           child: const Icon(
                                             TablerIcons.dots,
                                             color: Colors.white,

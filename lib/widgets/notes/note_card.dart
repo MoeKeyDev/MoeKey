@@ -577,16 +577,18 @@ class TimeLineImage extends StatelessWidget {
   const TimeLineImage(
       {super.key, required this.files, this.mainAxisExtent = 0});
   open(index, BuildContext context) {
-    globalNav.currentState?.push(DialogRoute(
-      context: context,
-      builder: (context) {
-        return ImagePreviewPage(
-          initialIndex: index,
-          galleryItems: files,
-          backgroundDecoration: null,
-        );
-      },
-    ));
+    globalNav.currentState?.push(
+      FFTransparentPageRoute(
+        pageBuilder: (BuildContext context, Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return ImagePreviewPage(
+            initialIndex: index,
+            galleryItems: files,
+            backgroundDecoration: null,
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -697,7 +699,7 @@ class TimeLineImage extends StatelessWidget {
         children: [
           for (var (index, file) in media.indexed)
             StaggeredGridTile.extent(
-              mainAxisExtent: mainAxisExtent / 3.8,
+              mainAxisExtent: mainAxisExtent / 2.5,
               crossAxisCellCount: 1,
               child: NoteImage(
                   imageFile: file,
@@ -1030,4 +1032,34 @@ class PollCard extends HookConsumerWidget {
       },
     );
   }
+}
+
+class FFTransparentPageRoute<T> extends PageRouteBuilder<T> {
+  FFTransparentPageRoute({
+    super.settings,
+    required super.pageBuilder,
+    super.transitionsBuilder = _defaultTransitionsBuilder,
+    super.transitionDuration = const Duration(milliseconds: 150),
+    super.barrierDismissible,
+    super.barrierColor,
+    super.barrierLabel,
+    super.maintainState,
+  }) : super(
+          opaque: false,
+        );
+}
+
+Widget _defaultTransitionsBuilder(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  return FadeTransition(
+    opacity: CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOut,
+    ),
+    child: child,
+  );
 }

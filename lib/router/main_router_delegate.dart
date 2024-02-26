@@ -28,25 +28,46 @@ class MainRouterDelegate extends RouterDelegate<RouterItem>
       _stack.isNotEmpty ? _stack.last : null;
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      key: navigatorKey,
-      pages: [
-        for (var item in _stack)
-          if (item.animated)
-            MaterialPage(child: item.page())
-          else
-            MyPage(
-              key: ValueKey(item.path),
-              child: item.page(),
-            )
-      ],
-      onPopPage: (route, result) {
-        _stack.removeLast();
+    return HeroControllerScope(
+        controller: MaterialApp.createMaterialHeroController(),
+        child: Navigator(
+          key: navigatorKey,
+          pages: [
+            for (var item in _stack)
+              if (item.animated)
+                MaterialPage(child: item.page())
+              else
+                MyPage(
+                  key: ValueKey(item.path),
+                  child: item.page(),
+                )
+          ],
+          onPopPage: (route, result) {
+            _stack.removeLast();
 
-        notifyListeners();
-        return route.didPop(result);
-      },
-    );
+            notifyListeners();
+            return route.didPop(result);
+          },
+        ));
+    // return Navigator(
+    //   key: navigatorKey,
+    //   pages: [
+    //     for (var item in _stack)
+    //       if (item.animated)
+    //         MaterialPage(child: item.page())
+    //       else
+    //         MyPage(
+    //           key: ValueKey(item.path),
+    //           child: item.page(),
+    //         )
+    //   ],
+    //   onPopPage: (route, result) {
+    //     _stack.removeLast();
+    //
+    //     notifyListeners();
+    //     return route.didPop(result);
+    //   },
+    // );
   }
 
   @override
