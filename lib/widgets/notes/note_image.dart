@@ -12,9 +12,15 @@ import '../mk_image.dart';
 import '../video_player.dart';
 
 class NoteImage extends HookConsumerWidget {
-  const NoteImage(
-      {super.key, this.maxHeight, required this.imageFile, this.onClick});
-  final int? maxHeight;
+  const NoteImage({
+    super.key,
+    this.maxHeight,
+    required this.imageFile,
+    this.onClick,
+    this.minHeight,
+  });
+  final num? maxHeight;
+  final num? minHeight;
   final DriveFileModel imageFile;
   final void Function()? onClick;
   @override
@@ -127,18 +133,23 @@ class NoteImage extends HookConsumerWidget {
                   if (!isHidden.value)
                     if (isImage) ...[
                       if (imageFile.thumbnailUrl != null)
-                        MkImage(
-                          imageFile.thumbnailUrl!,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.contain,
-                        )
+                        Hero(
+                            tag: imageFile.hero,
+                            child: MkImage(
+                              imageFile.thumbnailUrl!,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.contain,
+                            ))
                       else
-                        MkImage(
-                          imageFile.url,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.contain,
+                        Hero(
+                          tag: imageFile.hero,
+                          child: MkImage(
+                            imageFile.url,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                     ] else if (isVideo)
                       VideoPlayerComponent(url: imageFile.url),
@@ -172,7 +183,7 @@ class NoteImage extends HookConsumerWidget {
     );
   }
 
-  num getHeight(int w, int h, int ww, int wh) {
+  num getHeight(num w, num h, num ww, num wh) {
     var a = w / h;
     var wa = ww / wh;
     if (a >= wa) {

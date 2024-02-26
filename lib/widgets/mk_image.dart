@@ -29,8 +29,10 @@ class MkImage extends StatelessWidget {
         child: SvgPicture.network(url, width: width, height: height, fit: fit),
       );
     }
-    return ExtendedImage.network(
-      url,
+    return ExtendedImage(
+      image: ExtendedResizeImage(ExtendedNetworkImageProvider(
+        url,
+      )),
       shape: shape,
       loadStateChanged: (state) {
         switch (state.extendedImageLoadState) {
@@ -53,6 +55,7 @@ class MkImage extends StatelessWidget {
                   }
                   return SizedBox(
                     height: height,
+                    width: width,
                     child: BlurHash(hash: blurHash!),
                   );
                 },

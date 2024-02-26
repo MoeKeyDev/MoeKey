@@ -4,11 +4,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/hook/useExtendedPageController.dart';
+import 'package:moekey/main.dart';
 import 'package:moekey/networks/apis.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:moekey/utils/save_image.dart';
+import 'package:moekey/widgets/mk_image.dart';
 
 import '../../models/drive.dart';
+
+List<double> _doubleTapScales = <double>[1.0, 2.0];
 
 class ImagePreviewPage extends HookConsumerWidget {
   final List<DriveFileModel> galleryItems;
@@ -19,12 +23,13 @@ class ImagePreviewPage extends HookConsumerWidget {
 
   final int initialIndex;
 
-  const ImagePreviewPage(
-      {super.key,
-      required this.initialIndex,
-      required this.galleryItems,
-      this.onPageChanged,
-      required this.backgroundDecoration});
+  const ImagePreviewPage({
+    super.key,
+    required this.initialIndex,
+    required this.galleryItems,
+    this.onPageChanged,
+    required this.backgroundDecoration,
+  });
 
   void setBar() {
     SystemChrome.setSystemUIOverlayStyle(
@@ -44,16 +49,47 @@ class ImagePreviewPage extends HookConsumerWidget {
     );
   }
 
+  // final List<int> _cachedIndexes = <int>[];
+  void _preloadImage(int index, BuildContext context) {
+    // if (_cachedIndexes.contains(index)) {
+    //   return;
+    // }
+    if (0 <= index && index < galleryItems.length) {
+      final String url = galleryItems[index].url;
+
+      precacheImage(
+        ExtendedNetworkImageProvider(
+          url,
+          cache: true,
+          imageCacheName: 'CropImage',
+        ),
+        context,
+      );
+
+      // _cachedIndexes.add(index);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var pageController = useExtendedPageController(initialPage: initialIndex);
     var currentIndex = useState(initialIndex);
     var http = ref.watch(httpProvider);
     var meta = ref.watch(apiMetaProvider);
+    var doubleClickAnimationController =
+        useAnimationController(duration: const Duration(milliseconds: 150));
+    void Function() doubleClickAnimationListener = useMemoized(() => () {});
+    Animation<double>? doubleClickAnimation = useMemoized(() => null);
     useEffect(() {
       setBar();
+      Future.microtask(() {
+        _preloadImage(initialIndex - 1, context);
+        _preloadImage(initialIndex + 1, context);
+      });
+
       return removeBar;
     }, const []);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
@@ -62,7 +98,7 @@ class ImagePreviewPage extends HookConsumerWidget {
             children: [
               ExtendedImageSlidePage(
                 slideAxis: SlideAxis.vertical,
-                slideType: SlideType.wholePage,
+                // slideType: SlideType.wholePage,
                 slidePageBackgroundHandler: (offset, pageSize) {
                   var tmp = (pageSize.height / 2 - offset.dy.abs()) /
                       (pageSize.height / 2);
@@ -76,32 +112,109 @@ class ImagePreviewPage extends HookConsumerWidget {
                       fit: BoxFit.contain,
                       mode: ExtendedImageMode.gesture,
                       enableSlideOutPage: true,
+                      loadStateChanged: (state) {
+                        switch (state.extendedImageLoadState) {
+                          case LoadState.completed:
+                            return null;
+                          case LoadState.loading:
+                          case LoadState.failed:
+                        }
+                        Widget child;
+                        if (galleryItems[index].thumbnailUrl != null) {
+                          child = Center(
+                            child: AspectRatio(
+                              aspectRatio: (galleryItems[index]
+                                          .properties?["width"] ??
+                                      16) /
+                                  (galleryItems[index].properties?["height"] ??
+                                      9),
+                              child: MkImage(
+                                galleryItems[index].thumbnailUrl!,
+                                fit: BoxFit.contain,
+                                blurHash: galleryItems[index].blurhash,
+                              ),
+                            ),
+                          );
+                        } else {
+                          child = const SizedBox(width: 0, height: 0);
+                        }
+
+                        child = ExtendedImageSlidePageHandler(
+                          child: child,
+                        );
+                        return child;
+                      },
                       initGestureConfigHandler: (state) {
                         return GestureConfig(
-                          minScale: 0.9,
-                          animationMinScale: 0.7,
-                          maxScale: 3.0,
-                          animationMaxScale: 3.5,
-                          speed: 1.0,
-                          inertialSpeed: 100.0,
-                          initialScale: 1.0,
                           inPageView: true,
+                          initialScale: 1.0,
+                          maxScale: 5.0,
+                          animationMaxScale: 6.0,
                           initialAlignment: InitialAlignment.center,
                         );
                       },
+                      onDoubleTap: (ExtendedImageGestureState state) {
+                        try {
+                          ///you can use define pointerDownPosition as you can,
+                          ///default value is double tap pointer down postion.
+                          final Offset? pointerDownPosition =
+                              state.pointerDownPosition;
+                          final double? begin =
+                              state.gestureDetails!.totalScale;
+                          double end;
+
+                          //remove old
+                          doubleClickAnimation
+                              ?.removeListener(doubleClickAnimationListener);
+
+                          //stop pre
+                          doubleClickAnimationController.stop();
+
+                          //reset to use
+                          doubleClickAnimationController.reset();
+
+                          if (begin == _doubleTapScales[0]) {
+                            end = _doubleTapScales[1];
+                          } else {
+                            end = _doubleTapScales[0];
+                          }
+
+                          doubleClickAnimationListener = () {
+                            //print(_animation.value);
+                            state.handleDoubleTap(
+                                scale: doubleClickAnimation!.value,
+                                doubleTapPosition: pointerDownPosition);
+                          };
+                          doubleClickAnimation = doubleClickAnimationController
+                              .drive(Tween<double>(begin: begin, end: end));
+
+                          doubleClickAnimation!
+                              .addListener(doubleClickAnimationListener);
+
+                          doubleClickAnimationController.forward();
+                        } catch (e) {
+                          logger.e(e);
+                        }
+                      },
+                    );
+                    image = Hero(
+                      tag: galleryItems[index].hero,
+                      child: image,
                     );
                     image = Container(
                       padding: const EdgeInsets.all(5.0),
                       child: image,
                     );
 
-                    return GestureDetector(child: image, onTap: () {});
+                    return image;
                   },
                   itemCount: galleryItems.length,
                   controller: pageController,
                   scrollDirection: Axis.horizontal,
                   onPageChanged: (value) {
                     currentIndex.value = value;
+                    _preloadImage(value - 1, context);
+                    _preloadImage(value + 1, context);
                   },
                 ),
               ),
@@ -116,20 +229,20 @@ class ImagePreviewPage extends HookConsumerWidget {
                       backgroundColor: Colors.black.withOpacity(0.4),
                       iconTheme: const IconThemeData(color: Colors.white),
                       title: Text(
-                        "${galleryItems.length} / ${currentIndex.value + 1}",
+                        "${currentIndex.value + 1} / ${galleryItems.length} ",
                         style: const TextStyle(color: Colors.white),
                       ),
                       actions: [
                         IconButton(
                             onPressed: () async {
                               if (http.valueOrNull != null) {
-                                await saveImage(
+                                var res = await saveImage(
                                     http: http.valueOrNull!,
                                     url: galleryItems[currentIndex.value].url,
                                     album: meta.valueOrNull?["name"]);
                                 if (context.mounted) {
-                                  const snackBar = SnackBar(
-                                    content: Text('保存成功'),
+                                  var snackBar = SnackBar(
+                                    content: Text(res ? "保存成功" : "保存失败"),
                                   );
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(snackBar);
