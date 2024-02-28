@@ -1,13 +1,17 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/networks/user.dart';
+import 'package:moekey/state/server.dart';
 import 'package:moekey/state/themes.dart';
 import 'package:moekey/utils/time_to_desired_format.dart';
 import 'package:moekey/widgets/blur_widget.dart';
+import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_card.dart';
@@ -163,6 +167,7 @@ class UserHomeCard extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var userProvider = userInfoProvider(userId: userId);
     var user = ref.watch(userProvider);
+    var currentUser = ref.watch(currentLoginUserProvider);
     var userData = user.valueOrNull;
     var themes = ref.watch(themeColorsProvider);
     if (userData != null) {
@@ -294,36 +299,58 @@ class UserHomeCard extends HookConsumerWidget {
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
-                                  DefaultTextStyle(
-                                    style: DefaultTextStyle.of(context)
-                                        .style
-                                        .copyWith(
-                                            fontSize: 15, color: Colors.white),
-                                    child: Opacity(
-                                      opacity: 0.7,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            "@${userData.username}",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                  ContextMenuBuilder(
+                                    menu: ContextMenuCard(
+                                      menuListBuilder: () {
+                                        return [
+                                          ContextMenuItem(
+                                            label: "复制用户名",
+                                            onTap: () {
+                                              Clipboard.setData(ClipboardData(
+                                                  text:
+                                                      "@${userData.username}@${userData.host}"));
+                                              return false;
+                                            },
                                           ),
-                                          if (userData.host != null)
-                                            Text("@${userData.host}"),
-                                        ],
+                                        ];
+                                      },
+                                    ),
+                                    mode: const [
+                                      ContextMenuMode.onSecondaryTap,
+                                      ContextMenuMode.onSecondaryTap
+                                    ],
+                                    child: DefaultTextStyle(
+                                      style: DefaultTextStyle.of(context)
+                                          .style
+                                          .copyWith(
+                                              fontSize: 15,
+                                              color: Colors.white),
+                                      child: Opacity(
+                                        opacity: 0.7,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              "@${userData.username}",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            if (userData.host != null)
+                                              Text("@${userData.host}"),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
                           ),
                         if (userData.isFollowed)
                           Positioned(
-                            top: 8,
-                            left: 8,
+                            top: 16,
+                            left: 16,
                             child: Container(
                               decoration: const BoxDecoration(
                                 color: Color.fromARGB(175, 0, 0, 0),
@@ -348,7 +375,7 @@ class UserHomeCard extends HookConsumerWidget {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(50)),
                             child: BlurWidget(
-                              color: Color.fromARGB(40, 0, 0, 0),
+                              color: const Color.fromARGB(40, 0, 0, 0),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 8),
@@ -356,8 +383,61 @@ class UserHomeCard extends HookConsumerWidget {
                                   children: [
                                     MouseRegion(
                                       cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        onTap: () {},
+                                      child: ContextMenuBuilder(
+                                        menu: ContextMenuCard(
+                                          menuListBuilder: () {
+                                            return [
+                                              ContextMenuItem(
+                                                label: "复制用户名",
+                                                icon: TablerIcons.at,
+                                                onTap: () {
+                                                  Clipboard.setData(ClipboardData(
+                                                      text:
+                                                          "@${userData.username}@${userData.host}"));
+                                                  return false;
+                                                },
+                                              ),
+                                              ContextMenuItem(
+                                                label: "复制RSS",
+                                                icon: TablerIcons.rss,
+                                                onTap: () {
+                                                  Clipboard.setData(ClipboardData(
+                                                      text:
+                                                          "${userData.host}/@${userData.username}.atom"));
+                                                  return false;
+                                                },
+                                              ),
+                                              ContextMenuItem(
+                                                label: "转到浏览器显示",
+                                                icon: TablerIcons.external_link,
+                                                onTap: () {
+                                                  launchUrlString(
+                                                      "https://${userData.host}/@${userData.username}");
+                                                  return false;
+                                                },
+                                              ),
+                                              ContextMenuItem(
+                                                label: "复制用户主页地址",
+                                                icon: TablerIcons.home,
+                                                onTap: () {
+                                                  Clipboard.setData(ClipboardData(
+                                                      text:
+                                                          "https://${userData.host}/@${userData.username}"));
+                                                  return false;
+                                                },
+                                              ),
+                                              // ContextMenuItem(
+                                              //   label: "发送",
+                                              //   icon: TablerIcons.mail,
+                                              // ),
+                                            ];
+                                          },
+                                        ),
+                                        mode: const [
+                                          ContextMenuMode.onTap,
+                                          ContextMenuMode.onSecondaryTap,
+                                          ContextMenuMode.onSecondaryTap
+                                        ],
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 6, horizontal: 6),
@@ -369,109 +449,111 @@ class UserHomeCard extends HookConsumerWidget {
                                         ),
                                       ),
                                     ),
-                                    MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          var notifier =
-                                              ref.read(userProvider.notifier);
-                                          if (userData
-                                              .hasPendingFollowRequestFromYou) {
-                                            notifier.followingCancel();
-                                            return;
-                                          }
-                                          if (userData.isFollowing) {
-                                            notifier.followingDelete();
-                                            return;
-                                          }
-                                          notifier.followingCreate();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                Radius.circular(100),
-                                              ),
-                                              color: userData.isFollowing ||
-                                                      userData
-                                                          .hasPendingFollowRequestFromYou
-                                                  ? themes.buttonGradateAColor
-                                                  : Colors.white,
-                                              border: Border.all(
-                                                  color: themes
-                                                      .buttonGradateAColor,
-                                                  width: 1)),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 6, horizontal: 8),
-                                          child: [
+                                    if (currentUser.value?.id != user.value?.id)
+                                      MouseRegion(
+                                        cursor: SystemMouseCursors.click,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            var notifier =
+                                                ref.read(userProvider.notifier);
                                             if (userData
-                                                .hasPendingFollowRequestFromYou)
-                                              Row(
-                                                children: [
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    userData.isLocked
-                                                        ? "关注请求批准中"
-                                                        : "正在处理",
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  if (userData.isLocked)
-                                                    const Icon(
-                                                      TablerIcons
-                                                          .hourglass_empty,
-                                                      color: Colors.white,
-                                                      size: 15,
-                                                    )
-                                                  else
-                                                    LoadingCircularProgress(
-                                                      size: 12,
-                                                      color: Colors.white,
-                                                      strokeWidth: 2,
-                                                      backgroundColor: Colors
-                                                          .white
-                                                          .withOpacity(0.5),
-                                                    )
-                                                ],
-                                              )
-                                            else
-                                              Row(
-                                                children: [
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    userData.isFollowing
-                                                        ? "取消关注"
-                                                        : "关注",
-                                                    style: TextStyle(
+                                                .hasPendingFollowRequestFromYou) {
+                                              notifier.followingCancel();
+                                              return;
+                                            }
+                                            if (userData.isFollowing) {
+                                              notifier.followingDelete();
+                                              return;
+                                            }
+                                            notifier.followingCreate();
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  Radius.circular(100),
+                                                ),
+                                                color: userData.isFollowing ||
+                                                        userData
+                                                            .hasPendingFollowRequestFromYou
+                                                    ? themes.buttonGradateAColor
+                                                    : Colors.white,
+                                                border: Border.all(
+                                                    color: themes
+                                                        .buttonGradateAColor,
+                                                    width: 1)),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 6, horizontal: 8),
+                                            child: [
+                                              if (userData
+                                                  .hasPendingFollowRequestFromYou)
+                                                Row(
+                                                  children: [
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      userData.isLocked
+                                                          ? "关注请求批准中"
+                                                          : "正在处理",
+                                                      style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: userData
-                                                                .isFollowing
-                                                            ? Colors.white
-                                                            : themes
-                                                                .buttonGradateAColor),
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Icon(
-                                                    userData.isFollowing
-                                                        ? TablerIcons.minus
-                                                        : TablerIcons.plus,
-                                                    color: userData.isFollowing
-                                                        ? Colors.white
-                                                        : themes
-                                                            .buttonGradateAColor,
-                                                    size: 15,
-                                                  )
-                                                ],
-                                              )
-                                          ][0],
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    if (userData.isLocked)
+                                                      const Icon(
+                                                        TablerIcons
+                                                            .hourglass_empty,
+                                                        color: Colors.white,
+                                                        size: 15,
+                                                      )
+                                                    else
+                                                      LoadingCircularProgress(
+                                                        size: 12,
+                                                        color: Colors.white,
+                                                        strokeWidth: 2,
+                                                        backgroundColor: Colors
+                                                            .white
+                                                            .withOpacity(0.5),
+                                                      )
+                                                  ],
+                                                )
+                                              else
+                                                Row(
+                                                  children: [
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      userData.isFollowing
+                                                          ? "取消关注"
+                                                          : "关注",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: userData
+                                                                  .isFollowing
+                                                              ? Colors.white
+                                                              : themes
+                                                                  .buttonGradateAColor),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Icon(
+                                                      userData.isFollowing
+                                                          ? TablerIcons.minus
+                                                          : TablerIcons.plus,
+                                                      color: userData
+                                                              .isFollowing
+                                                          ? Colors.white
+                                                          : themes
+                                                              .buttonGradateAColor,
+                                                      size: 15,
+                                                    )
+                                                  ],
+                                                )
+                                            ][0],
+                                          ),
                                         ),
                                       ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -510,28 +592,48 @@ class UserHomeCard extends HookConsumerWidget {
                           ),
                           Align(
                             alignment: Alignment.center,
-                            child: DefaultTextStyle(
-                              style: DefaultTextStyle.of(context)
-                                  .style
-                                  .copyWith(fontSize: 13),
-                              child: Opacity(
-                                opacity: 0.7,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      "@${userData.username}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
+                            child: ContextMenuBuilder(
+                              menu: ContextMenuCard(
+                                menuListBuilder: () {
+                                  return [
+                                    ContextMenuItem(
+                                        label: "复制用户名",
+                                        onTap: () {
+                                          Clipboard.setData(ClipboardData(
+                                              text:
+                                                  "@${userData.username}@${userData.host}"));
+                                          return false;
+                                        }),
+                                  ];
+                                },
+                              ),
+                              mode: const [
+                                ContextMenuMode.onSecondaryTap,
+                                ContextMenuMode.onSecondaryTap
+                              ],
+                              child: DefaultTextStyle(
+                                style: DefaultTextStyle.of(context)
+                                    .style
+                                    .copyWith(fontSize: 13),
+                                child: Opacity(
+                                  opacity: 0.7,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "@${userData.username}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    if (userData.host != null)
-                                      Text("@${userData.host}"),
-                                  ],
+                                      if (userData.host != null)
+                                        Text("@${userData.host}"),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),

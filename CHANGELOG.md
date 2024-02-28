@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.5
+### Feature
+- User profile page update
 ## 0.2.3
 
 ### Feature

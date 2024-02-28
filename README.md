@@ -43,8 +43,13 @@ MoeKey is a misskey client for Flutter
 
 ![](docs/screenshot/QQ截图20240120162521.png) 
 
-![](docs/screenshot/QQ截图20240120162535.png) 
+![](docs/screenshot/QQ截图20240120162535.png)
 
+![](/docs/screenshot/QQ截图20240228005934.png)
+
+![](/docs/screenshot/QQ截图20240228010147.png)
+
+![](/docs/screenshot/QQ截图20240228010251.png)
 ## Developers
 
 riverpod code gen

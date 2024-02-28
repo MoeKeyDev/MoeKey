@@ -30,9 +30,11 @@ class MkImage extends StatelessWidget {
       );
     }
     return ExtendedImage(
-      image: ExtendedResizeImage(ExtendedNetworkImageProvider(
-        url,
-      )),
+      image: ExtendedResizeImage(
+          ExtendedNetworkImageProvider(
+            url,
+          ),
+          maxBytes: 500 << 10),
       shape: shape,
       loadStateChanged: (state) {
         switch (state.extendedImageLoadState) {

@@ -33,6 +33,10 @@ class HomePageState extends _$HomePageState {
     }
   }
 
+  changePageByRouterItem(RouterItem item) {
+    ref.read(routerDelegateProvider).setNewRoutePath(item);
+  }
+
   Widget getPage(String id) {
     for (var element in state.navItemList) {
       if (element["id"] != null) {

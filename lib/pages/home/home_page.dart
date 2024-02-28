@@ -6,6 +6,8 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/networks/apis.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
+import 'package:moekey/pages/users/user_page.dart';
+import 'package:moekey/router/main_router_delegate.dart';
 import 'package:moekey/state/server.dart';
 import 'package:moekey/state/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
@@ -387,6 +389,20 @@ class UserAvatarButton extends ConsumerWidget {
                     ),
                   );
                 },
+                onTap: () {
+                  Timer(const Duration(milliseconds: 150), () {
+                    var logic = ref.read(homePageStateProvider.notifier);
+                    logic.changePageByRouterItem(RouterItem(
+                      path: "member/${user?.id}",
+                      page: () {
+                        return UserPage(
+                          userId: user?.id,
+                        );
+                      },
+                    ));
+                  });
+                  return false;
+                },
               ),
               for (var item in list.values)
                 if (item.id != user?.id)
@@ -477,12 +493,17 @@ class UserAvatarButton extends ConsumerWidget {
                     extend ? MainAxisAlignment.start : MainAxisAlignment.center,
                 children: [
                   userData?["avatarUrl"] != null
-                      ? MkImage(
-                          userData?["avatarUrl"],
+                      ? SizedBox(
                           width: extend ? 32 : 38,
                           height: extend ? 32 : 38,
-                          fit: BoxFit.cover,
-                          shape: BoxShape.circle,
+                          child: MkImage(
+                            userData?["avatarUrl"],
+                            blurHash: userData?["avatarBlurhash"],
+                            width: extend ? 32 : 38,
+                            height: extend ? 32 : 38,
+                            fit: BoxFit.cover,
+                            shape: BoxShape.circle,
+                          ),
                         )
                       : SizedBox(
                           width: extend ? 32 : 38,

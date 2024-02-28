@@ -48,6 +48,8 @@ class UserInfo extends _$UserInfo {
       if (userId != null) "userId": userId,
     });
     var model = UserFullModel.fromMap(res.data);
+    // 如果服务端没有返回用户名HOST，默认使用本示例的地址
+    model.host ??= Uri.parse(user!.serverUrl).host;
     ref.onDispose(() {
       logger.d("========= NotesListener dispose ===================");
       listen?.cancel();

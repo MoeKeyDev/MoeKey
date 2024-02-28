@@ -8,9 +8,9 @@ import 'package:moekey/main.dart';
 import 'package:moekey/networks/apis.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:moekey/utils/save_image.dart';
-import 'package:moekey/widgets/mk_image.dart';
 
 import '../../models/drive.dart';
+import '../../widgets/mk_image.dart';
 
 List<double> _doubleTapScales = <double>[1.0, 2.0];
 
@@ -113,35 +113,53 @@ class ImagePreviewPage extends HookConsumerWidget {
                       mode: ExtendedImageMode.gesture,
                       enableSlideOutPage: true,
                       loadStateChanged: (state) {
+                        Widget? child;
                         switch (state.extendedImageLoadState) {
                           case LoadState.completed:
-                            return null;
+                            child = ExtendedRawImage(
+                              fit: BoxFit.contain,
+                              image: state.extendedImageInfo?.image,
+                              filterQuality: FilterQuality.medium,
+                            );
                           case LoadState.loading:
                           case LoadState.failed:
                         }
-                        Widget child;
-                        if (galleryItems[index].thumbnailUrl != null) {
-                          child = Center(
-                            child: AspectRatio(
-                              aspectRatio: (galleryItems[index]
-                                          .properties?["width"] ??
-                                      16) /
-                                  (galleryItems[index].properties?["height"] ??
-                                      9),
-                              child: MkImage(
-                                galleryItems[index].thumbnailUrl!,
-                                fit: BoxFit.contain,
-                                blurHash: galleryItems[index].blurhash,
-                              ),
-                            ),
-                          );
-                        } else {
-                          child = const SizedBox(width: 0, height: 0);
-                        }
 
+                        if (child == null) {
+                          if (galleryItems[index].thumbnailUrl != null) {
+                            child = Center(
+                              child: AspectRatio(
+                                aspectRatio:
+                                    (galleryItems[index].properties?["width"] ??
+                                            16) /
+                                        (galleryItems[index]
+                                                .properties?["height"] ??
+                                            9),
+                                child: MkImage(
+                                  galleryItems[index].thumbnailUrl!,
+                                  fit: BoxFit.contain,
+                                  blurHash: galleryItems[index].blurhash,
+                                ),
+                              ),
+                            );
+                          } else {
+                            child = const SizedBox(width: 0, height: 0);
+                          }
+                        }
+                        // print(state.widget!);
                         child = ExtendedImageSlidePageHandler(
+                          extendedImageSlidePageState: state.slidePageState,
+                          heroBuilderForSlidingPage: (widget) {
+                            print(galleryItems[index].hero);
+                            return Hero(
+                              tag: galleryItems[index].hero,
+                              child: widget,
+                            );
+                          },
                           child: child,
                         );
+                        // child = ExtendedImageSlidePageHandler(state.);
+                        print(child);
                         return child;
                       },
                       initGestureConfigHandler: (state) {
@@ -197,10 +215,7 @@ class ImagePreviewPage extends HookConsumerWidget {
                         }
                       },
                     );
-                    image = Hero(
-                      tag: galleryItems[index].hero,
-                      child: image,
-                    );
+
                     image = Container(
                       padding: const EdgeInsets.all(5.0),
                       child: image,
