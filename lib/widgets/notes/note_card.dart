@@ -574,8 +574,9 @@ class TimeLineImage extends StatelessWidget {
   final List<DriveFileModel> files;
   final double mainAxisExtent;
 
-  const TimeLineImage(
-      {super.key, required this.files, this.mainAxisExtent = 0});
+  TimeLineImage(
+      {super.key, required List<DriveFileModel> files, this.mainAxisExtent = 0})
+      : files = files.map((e) => e.copyWith(hero: UniqueKey())).toList();
   open(index, BuildContext context) {
     globalNav.currentState?.push(
       FFTransparentPageRoute(

@@ -1,6 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/hook/useExtendedPageController.dart';
@@ -8,9 +9,9 @@ import 'package:moekey/main.dart';
 import 'package:moekey/networks/apis.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:moekey/utils/save_image.dart';
+import 'package:moekey/widgets/mk_image.dart';
 
 import '../../models/drive.dart';
-import '../../widgets/mk_image.dart';
 
 List<double> _doubleTapScales = <double>[1.0, 2.0];
 
@@ -58,11 +59,7 @@ class ImagePreviewPage extends HookConsumerWidget {
       final String url = galleryItems[index].url;
 
       precacheImage(
-        ExtendedNetworkImageProvider(
-          url,
-          cache: true,
-          imageCacheName: 'CropImage',
-        ),
+        getExtendedResizeImage(url),
         context,
       );
 
@@ -77,7 +74,7 @@ class ImagePreviewPage extends HookConsumerWidget {
     var http = ref.watch(httpProvider);
     var meta = ref.watch(apiMetaProvider);
     var doubleClickAnimationController =
-        useAnimationController(duration: const Duration(milliseconds: 150));
+        useAnimationController(duration: const Duration(milliseconds: 180));
     void Function() doubleClickAnimationListener = useMemoized(() => () {});
     Animation<double>? doubleClickAnimation = useMemoized(() => null);
     useEffect(() {
@@ -89,6 +86,55 @@ class ImagePreviewPage extends HookConsumerWidget {
 
       return removeBar;
     }, const []);
+    GestureConfig initGestureConfigHandler(ExtendedImageState state) {
+      return GestureConfig(
+        inPageView: true,
+        initialScale: 1.0,
+        maxScale: 5.0,
+        animationMaxScale: 6.0,
+        initialAlignment: InitialAlignment.center,
+      );
+    }
+
+    onDoubleTap(ExtendedImageGestureState state) {
+      try {
+        ///you can use define pointerDownPosition as you can,
+        ///default value is double tap pointer down postion.
+        final Offset? pointerDownPosition = state.pointerDownPosition;
+        final double? begin = state.gestureDetails!.totalScale;
+        double end;
+
+        //remove old
+        doubleClickAnimation?.removeListener(doubleClickAnimationListener);
+
+        //stop pre
+        doubleClickAnimationController.stop();
+
+        //reset to use
+        doubleClickAnimationController.reset();
+
+        if (begin == _doubleTapScales[0]) {
+          end = _doubleTapScales[1];
+        } else {
+          end = _doubleTapScales[0];
+        }
+
+        doubleClickAnimationListener = () {
+          //print(_animation.value);
+          state.handleDoubleTap(
+              scale: doubleClickAnimation!.value,
+              doubleTapPosition: pointerDownPosition);
+        };
+        doubleClickAnimation = doubleClickAnimationController
+            .drive(Tween<double>(begin: begin, end: end));
+
+        doubleClickAnimation!.addListener(doubleClickAnimationListener);
+
+        doubleClickAnimationController.forward();
+      } catch (e) {
+        logger.e(e);
+      }
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -107,112 +153,73 @@ class ImagePreviewPage extends HookConsumerWidget {
                 child: ExtendedImageGesturePageView.builder(
                   itemBuilder: (BuildContext context, int index) {
                     var item = galleryItems[index].url;
-                    Widget image = ExtendedImage.network(
-                      item,
-                      fit: BoxFit.contain,
-                      mode: ExtendedImageMode.gesture,
-                      enableSlideOutPage: true,
-                      loadStateChanged: (state) {
-                        Widget? child;
-                        switch (state.extendedImageLoadState) {
-                          case LoadState.completed:
-                            child = ExtendedRawImage(
-                              fit: BoxFit.contain,
-                              image: state.extendedImageInfo?.image,
-                              filterQuality: FilterQuality.medium,
-                            );
-                          case LoadState.loading:
-                          case LoadState.failed:
-                        }
-
-                        if (child == null) {
-                          if (galleryItems[index].thumbnailUrl != null) {
-                            child = Center(
-                              child: AspectRatio(
-                                aspectRatio:
-                                    (galleryItems[index].properties?["width"] ??
+                    Widget image = FutureBuilder(
+                      future: precacheImage(
+                        ExtendedNetworkImageProvider(item, cache: true),
+                        context,
+                      ),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done &&
+                            galleryItems[index].thumbnailUrl != null) {
+                          return ExtendedImage(
+                            image: getExtendedResizeImage(
+                                galleryItems[index].thumbnailUrl!),
+                            fit: BoxFit.contain,
+                            mode: ExtendedImageMode.gesture,
+                            enableSlideOutPage: true,
+                            loadStateChanged: (state) {
+                              if (galleryItems[index].blurhash == null) {
+                                return null;
+                              }
+                              if (state.extendedImageLoadState !=
+                                  LoadState.completed) {
+                                return Center(
+                                  child: AspectRatio(
+                                    aspectRatio: (galleryItems[index]
+                                                .properties?["width"] ??
                                             16) /
                                         (galleryItems[index]
                                                 .properties?["height"] ??
                                             9),
-                                child: MkImage(
-                                  galleryItems[index].thumbnailUrl!,
-                                  fit: BoxFit.contain,
-                                  blurHash: galleryItems[index].blurhash,
-                                ),
-                              ),
-                            );
-                          } else {
-                            child = const SizedBox(width: 0, height: 0);
-                          }
+                                    child: BlurHash(
+                                        hash: galleryItems[index].blurhash!),
+                                  ),
+                                );
+                              }
+                              return null;
+                            },
+                            heroBuilderForSlidingPage: (widget) {
+                              if (galleryItems[index].hero != null) {
+                                return Hero(
+                                  tag: galleryItems[index].hero!,
+                                  child: widget,
+                                );
+                              }
+                              return widget;
+                            },
+                            initGestureConfigHandler: initGestureConfigHandler,
+                            onDoubleTap: onDoubleTap,
+                          );
                         }
-                        // print(state.widget!);
-                        child = ExtendedImageSlidePageHandler(
-                          extendedImageSlidePageState: state.slidePageState,
+                        return ExtendedImage(
+                          image:
+                              ExtendedNetworkImageProvider(item, cache: true),
+                          fit: BoxFit.contain,
+                          mode: ExtendedImageMode.gesture,
+                          enableSlideOutPage: true,
                           heroBuilderForSlidingPage: (widget) {
-                            print(galleryItems[index].hero);
-                            return Hero(
-                              tag: galleryItems[index].hero,
-                              child: widget,
-                            );
+                            print(galleryItems[index]);
+                            if (galleryItems[index].hero != null) {
+                              return Hero(
+                                tag: galleryItems[index].hero!,
+                                child: widget,
+                              );
+                            }
+                            return widget;
                           },
-                          child: child,
+                          initGestureConfigHandler: initGestureConfigHandler,
+                          onDoubleTap: onDoubleTap,
                         );
-                        // child = ExtendedImageSlidePageHandler(state.);
-                        print(child);
-                        return child;
-                      },
-                      initGestureConfigHandler: (state) {
-                        return GestureConfig(
-                          inPageView: true,
-                          initialScale: 1.0,
-                          maxScale: 5.0,
-                          animationMaxScale: 6.0,
-                          initialAlignment: InitialAlignment.center,
-                        );
-                      },
-                      onDoubleTap: (ExtendedImageGestureState state) {
-                        try {
-                          ///you can use define pointerDownPosition as you can,
-                          ///default value is double tap pointer down postion.
-                          final Offset? pointerDownPosition =
-                              state.pointerDownPosition;
-                          final double? begin =
-                              state.gestureDetails!.totalScale;
-                          double end;
-
-                          //remove old
-                          doubleClickAnimation
-                              ?.removeListener(doubleClickAnimationListener);
-
-                          //stop pre
-                          doubleClickAnimationController.stop();
-
-                          //reset to use
-                          doubleClickAnimationController.reset();
-
-                          if (begin == _doubleTapScales[0]) {
-                            end = _doubleTapScales[1];
-                          } else {
-                            end = _doubleTapScales[0];
-                          }
-
-                          doubleClickAnimationListener = () {
-                            //print(_animation.value);
-                            state.handleDoubleTap(
-                                scale: doubleClickAnimation!.value,
-                                doubleTapPosition: pointerDownPosition);
-                          };
-                          doubleClickAnimation = doubleClickAnimationController
-                              .drive(Tween<double>(begin: begin, end: end));
-
-                          doubleClickAnimation!
-                              .addListener(doubleClickAnimationListener);
-
-                          doubleClickAnimationController.forward();
-                        } catch (e) {
-                          logger.e(e);
-                        }
                       },
                     );
 

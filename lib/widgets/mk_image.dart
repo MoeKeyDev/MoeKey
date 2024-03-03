@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+ExtendedResizeImage getExtendedResizeImage(String url) {
+  return ExtendedResizeImage(ExtendedNetworkImageProvider(url, cache: true),
+      maxBytes: 500 << 10);
+}
+
 class MkImage extends StatelessWidget {
   final String url;
   final double? width;
@@ -30,11 +35,7 @@ class MkImage extends StatelessWidget {
       );
     }
     return ExtendedImage(
-      image: ExtendedResizeImage(
-          ExtendedNetworkImageProvider(
-            url,
-          ),
-          maxBytes: 500 << 10),
+      image: getExtendedResizeImage(url),
       shape: shape,
       loadStateChanged: (state) {
         switch (state.extendedImageLoadState) {

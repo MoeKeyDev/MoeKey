@@ -1,4 +1,4 @@
-import 'package:moekey/utils/get_random_string.dart';
+import 'package:flutter/cupertino.dart';
 
 class DriveFileModel {
   String? blurhash;
@@ -11,7 +11,7 @@ class DriveFileModel {
   String id;
   Map? properties;
   String? thumbnailUrl;
-  String hero;
+  UniqueKey? hero;
   DriveFileModel({
     this.blurhash,
     required this.type,
@@ -43,7 +43,7 @@ class DriveFileModel {
         properties: map['properties'],
         isSensitive: map['isSensitive'] ?? false,
         thumbnailUrl: map['thumbnailUrl'],
-        hero: getRandomString(10));
+        hero: null);
   }
 
   DriveFileModel copyWith({
@@ -57,7 +57,7 @@ class DriveFileModel {
     String? id,
     Map? properties,
     String? thumbnailUrl,
-    String? hero,
+    UniqueKey? hero,
   }) {
     return DriveFileModel(
       blurhash: blurhash ?? this.blurhash,

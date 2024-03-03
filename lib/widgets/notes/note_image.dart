@@ -134,7 +134,7 @@ class NoteImage extends HookConsumerWidget {
                     if (isImage) ...[
                       if (imageFile.thumbnailUrl != null)
                         Hero(
-                            tag: imageFile.hero,
+                            tag: imageFile.hero ?? UniqueKey(),
                             child: MkImage(
                               imageFile.thumbnailUrl!,
                               width: double.infinity,
@@ -143,7 +143,7 @@ class NoteImage extends HookConsumerWidget {
                             ))
                       else
                         Hero(
-                          tag: imageFile.hero,
+                          tag: imageFile.hero ?? UniqueKey(),
                           child: MkImage(
                             imageFile.url,
                             width: double.infinity,

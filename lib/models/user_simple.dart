@@ -111,7 +111,7 @@ class InstanceModel {
   factory InstanceModel.fromMap(dynamic map) {
     return InstanceModel(
       faviconUrl: map['faviconUrl'],
-      softwareName: map['softwareName'],
+      softwareName: map['softwareName'] ?? "",
       themeColor: map['themeColor'] ?? "#ccff66",
       name: map['name'] ?? "",
       iconUrl: map['iconUrl'] ?? "",
