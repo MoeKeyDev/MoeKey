@@ -5,7 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/networks/timeline.dart';
 import 'package:moekey/state/themes.dart';
 
-import '../../widgets/keep_alive_wrapper.dart';
 import '../../widgets/loading_weight.dart';
 import '../../widgets/notes/note_card.dart';
 
@@ -81,18 +80,18 @@ class TimeLineListPage extends HookConsumerWidget {
                                 borderRadius =
                                     const BorderRadius.all(Radius.zero);
                               }
-                              // return NoteCard(
-                              //     key: ValueKey(data.valueOrNull![index].id),
-                              //     borderRadius: borderRadius,
-                              //     data: data.valueOrNull![index]);
-
-                              return KeepAliveWrapper(
-                                child: NoteCard(
+                              return NoteCard(
                                   key: ValueKey(data.valueOrNull![index].id),
                                   borderRadius: borderRadius,
-                                  data: data.valueOrNull![index],
-                                ),
-                              );
+                                  data: data.valueOrNull![index]);
+
+                              // return KeepAliveWrapper(
+                              //   child: NoteCard(
+                              //     key: ValueKey(data.valueOrNull![index].id),
+                              //     borderRadius: borderRadius,
+                              //     data: data.valueOrNull![index],
+                              //   ),
+                              // );
                             },
                             separatorBuilder:
                                 (BuildContext context, int index) {
