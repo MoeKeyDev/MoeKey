@@ -1,5 +1,10 @@
 # Changelog
-## 0.2.5
+
+## 0.2.7
+### Fixed
+- Android image save album
+
+## 0.2.6
 ### Fixed
 - Image preview gestures
 
