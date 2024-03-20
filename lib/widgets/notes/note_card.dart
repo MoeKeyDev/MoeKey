@@ -411,82 +411,90 @@ class NoteLinkPreview extends HookConsumerWidget {
               width: 1,
             )),
         child: IntrinsicHeight(
-          child: Row(
-            children: [
-              if (data["thumbnail"] != null)
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    bottomLeft: Radius.circular(5),
-                  ),
-                  child: SizedBox(
-                    width: fontsize * 7,
-                    height: fontsize * 7,
-                    child: MkImage(
-                      data["thumbnail"],
-                      height: fontsize * 8,
-                      width: fontsize * 8,
-                    ),
-                  ),
-                ),
-              Expanded(
-                  child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      data["title"] ?? "",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: fontsize,
-                        fontWeight: FontWeight.bold,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                launchUrlString(link);
+              },
+              child: Row(
+                children: [
+                  if (data["thumbnail"] != null)
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(5),
+                        bottomLeft: Radius.circular(5),
+                      ),
+                      child: SizedBox(
+                        width: fontsize * 7,
+                        height: fontsize * 7,
+                        child: MkImage(
+                          data["thumbnail"],
+                          height: fontsize * 8,
+                          width: fontsize * 8,
+                        ),
                       ),
                     ),
-                    Text(
-                      data["description"] ?? "",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: fontsize * 0.9,
-                      ),
-                    ),
-                    Row(
+                  Expanded(
+                      child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (data["icon"] != null) ...[
-                          SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: MkImage(
-                              data["icon"],
-                              height: 16,
-                              width: 16,
-                            ),
+                        Text(
+                          data["title"] ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: fontsize,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(
-                            width: 4,
-                          )
-                        ],
-                        Expanded(
-                          child: Text(
-                            data["sitename"] ?? "",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: fontsize * 0.9,
-                            ),
+                        ),
+                        Text(
+                          data["description"] ?? "",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: fontsize * 0.9,
                           ),
+                        ),
+                        Row(
+                          children: [
+                            if (data["icon"] != null) ...[
+                              SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: MkImage(
+                                  data["icon"],
+                                  height: 16,
+                                  width: 16,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 4,
+                              )
+                            ],
+                            Expanded(
+                              child: Text(
+                                data["sitename"] ?? "",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: fontsize * 0.9,
+                                ),
+                              ),
+                            )
+                          ],
                         )
                       ],
-                    )
-                  ],
-                ),
-              ))
-            ],
+                    ),
+                  ))
+                ],
+              ),
+            ),
           ),
         ),
       );

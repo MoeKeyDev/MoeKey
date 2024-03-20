@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.10
+### Feature
+- Clicking on the link preview will now open the link.
 ## 0.2.9
 ### Feature
 - Add link preview

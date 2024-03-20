@@ -313,6 +313,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var data = ref.watch(
         noteListProvider.select((value) => value[this.data.id] ?? this.data));
+    var links = extractLinksFromMarkdown(data.text ?? "");
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -365,6 +366,10 @@ class NotesPageNoteCard extends HookConsumerWidget {
               TimeLineImage(
                   files: data.files,
                   mainAxisExtent: constraints.maxWidth * 0.7),
+              for (var link in links)
+                NoteLinkPreview(
+                    link: link,
+                    fontsize: DefaultTextStyle.of(context).style.fontSize!),
             ],
             if (data.reactions.isNotEmpty)
               const SizedBox(
