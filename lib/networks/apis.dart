@@ -1,10 +1,12 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../state/server.dart';
 import '../state/themes.dart';
 
 part 'apis.g.dart';
@@ -106,4 +108,20 @@ Future<Map> apiEmojis(ApiEmojisRef ref) async {
     emojiMap[item["name"]] = item;
   }
   return emojiMap;
+}
+
+@Riverpod(keepAlive: true)
+Future<dynamic> getUriInfo(GetUriInfoRef ref, String url) async {
+  String myLocale = Platform.localeName;
+
+  var user = await ref.watch(currentLoginUserProvider.future);
+  var host = user?.serverUrl;
+  var http = await ref.watch(httpProvider.future);
+  // http.
+  var res = await http.get("$host/url", queryParameters: {
+    "url": url,
+    "lang": myLocale,
+  });
+
+  return res.data;
 }

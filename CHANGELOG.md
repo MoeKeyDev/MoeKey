@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.9
+### Feature
+- Add link preview
+
 ## 0.2.7
 ### Fixed
 - Android image save album

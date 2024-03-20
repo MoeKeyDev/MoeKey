@@ -10,6 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/main.dart';
 import 'package:moekey/models/note.dart';
 import 'package:moekey/models/user_simple.dart';
+import 'package:moekey/networks/apis.dart';
 import 'package:moekey/networks/notes.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/state/server.dart';
@@ -35,6 +36,23 @@ import '../mk_card.dart';
 import '../mk_image.dart';
 import '../reactions.dart';
 import 'note_image.dart';
+
+List<String> extractLinksFromMarkdown(String markdownText) {
+  final RegExp linkRegex = RegExp(
+      r'(http|https)://[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&:/~+#]*[\w\-@?^=%&/~+#])?');
+
+  final Set<String> links = {};
+  final Iterable<RegExpMatch> matches = linkRegex.allMatches(markdownText);
+
+  for (final RegExpMatch match in matches) {
+    if (match.group(0) != null) {
+      final String linkUrl = match.group(0)!;
+      links.add(linkUrl);
+    }
+  }
+
+  return links.toList();
+}
 
 class NoteCard extends ConsumerWidget {
   final NoteModel data;
@@ -103,6 +121,7 @@ class NoteCard extends ConsumerWidget {
                 ),
                 TimeLineNoteCardComponent(
                   data: thisData,
+                  isShowUrlPreview: true,
                   innerWidget: thisData.renote != null
                       ? Container(
                           margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
@@ -140,6 +159,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     this.isShowAction = true,
     this.innerWidget,
     this.isShowReactions = true,
+    this.isShowUrlPreview = false,
     this.disableReactions = false,
     this.limit = 1000,
     this.height = 400,
@@ -149,6 +169,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
   final bool isShowAction;
   final bool isShowReactions;
   final bool disableReactions;
+  final bool isShowUrlPreview;
   final Widget? innerWidget;
   final ConstraintId avatar = ConstraintId('avatar');
   final ConstraintId content = ConstraintId('content');
@@ -171,6 +192,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
 
       return () => note.unsubNote(data, code);
     }, [this.data.id]);
+    var links = extractLinksFromMarkdown(data.text ?? "");
     return LayoutBuilder(builder: (context, constraints) {
       var isSmall = constraints.maxWidth < 400;
       return MouseRegion(
@@ -292,6 +314,11 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                               TimeLineImage(
                                   files: data.files,
                                   mainAxisExtent: constraints.maxWidth * 0.7),
+                              // 链接预览
+                              if (isShowUrlPreview)
+                                for (var link in links)
+                                  NoteLinkPreview(
+                                      link: link, fontsize: fontsize),
                               if (innerWidget != null) innerWidget!,
                             ],
                           ],
@@ -356,6 +383,115 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     //   key: ValueKey(data.id),
     //   child: ,
     // );
+  }
+}
+
+class NoteLinkPreview extends HookConsumerWidget {
+  const NoteLinkPreview({
+    super.key,
+    required this.link,
+    required this.fontsize,
+  });
+
+  final String link;
+  final double fontsize;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var themes = ref.watch(themeColorsProvider);
+    var res = ref.watch(getUriInfoProvider(link));
+    if (res.valueOrNull != null) {
+      var data = res.valueOrNull;
+      return Container(
+        margin: const EdgeInsets.only(top: 8),
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(5)),
+            border: Border.all(
+              color: themes.dividerColor,
+              width: 1,
+            )),
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              if (data["thumbnail"] != null)
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    bottomLeft: Radius.circular(5),
+                  ),
+                  child: SizedBox(
+                    width: fontsize * 7,
+                    height: fontsize * 7,
+                    child: MkImage(
+                      data["thumbnail"],
+                      height: fontsize * 8,
+                      width: fontsize * 8,
+                    ),
+                  ),
+                ),
+              Expanded(
+                  child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      data["title"] ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: fontsize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      data["description"] ?? "",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: fontsize * 0.9,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        if (data["icon"] != null) ...[
+                          SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: MkImage(
+                              data["icon"],
+                              height: 16,
+                              width: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          )
+                        ],
+                        Expanded(
+                          child: Text(
+                            data["sitename"] ?? "",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: fontsize * 0.9,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ))
+            ],
+          ),
+        ),
+      );
+    }
+    return const SizedBox();
   }
 }
 
