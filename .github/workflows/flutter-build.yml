@@ -56,7 +56,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11.x'
+          java-version: '17.x'
 
       - name: 运行代码生成器
         run: dart run build_runner build
