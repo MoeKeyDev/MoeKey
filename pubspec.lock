@@ -589,6 +589,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.4"
+  jpeg_encode:
+    dependency: "direct main"
+    description:
+      name: jpeg_encode
+      sha256: "6e8965f5185dd0cc6c8e052f97e9147d55d4578985e9beff2d844efd2d70eeed"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.1"
   js:
     dependency: transitive
     description:

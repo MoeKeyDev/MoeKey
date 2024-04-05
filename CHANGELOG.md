@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.11
+### Feature
+- image save webp to jpeg
 
 ## 0.2.10
 ### Feature
