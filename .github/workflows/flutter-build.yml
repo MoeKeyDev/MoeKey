@@ -58,6 +58,7 @@ jobs:
           distribution: "adopt"
           java-version: "17.x"
 
+
       - name: 运行代码生成器
         run: dart run build_runner build
 
@@ -136,6 +137,7 @@ jobs:
       - name: 启动windows桌面
         run: flutter config --enable-windows-desktop
 
+
       - name: 运行代码生成器
         run: dart run build_runner build
 
@@ -147,7 +149,7 @@ jobs:
           $sourceFolder = "build\windows\x64\runner\Release"
           $destinationPath = "MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-windows-x86_64-release.zip"
           Compress-Archive -Path $sourceFolder -DestinationPath $destinationPath
-
+          
       - name: 上传到工作流程
         uses: actions/upload-artifact@v2
         with:
