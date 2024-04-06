@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.14
+### Fixed
+- Update padding for login page Logo
+
 ## 0.2.13
 ### Feature
 - add macos build (#9)
