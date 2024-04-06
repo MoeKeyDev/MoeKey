@@ -208,7 +208,7 @@ class ImagePreviewPage extends HookConsumerWidget {
                           mode: ExtendedImageMode.gesture,
                           enableSlideOutPage: true,
                           heroBuilderForSlidingPage: (widget) {
-                            print(galleryItems[index]);
+                            // print(galleryItems[index]);
                             if (galleryItems[index].hero != null) {
                               return Hero(
                                 tag: galleryItems[index].hero!,

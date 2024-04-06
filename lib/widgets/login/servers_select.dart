@@ -81,6 +81,7 @@ class ServersSelectCard extends HookConsumerWidget {
                 ref.invalidate(instanceListStateProvider);
               },
               child: ListView.separated(
+                  padding: EdgeInsets.zero,
                   itemBuilder: (context, index) {
                     var data = filterList[index];
                     return ListTile(

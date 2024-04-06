@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.13
+### Feature
+- add macos build (#9)
+
+## 0.2.12
+### Feature
+- Note list context menu
+- Note translate
+
+### Change
+- image save webp to png
+
+## 0.2.11
+### Feature
+- image save webp to jpeg
+
 ## 0.2.10
 ### Feature
 - Clicking on the link preview will now open the link.

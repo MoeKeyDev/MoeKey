@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../models/translate.dart';
 import '../state/server.dart';
 import '../state/themes.dart';
 
@@ -124,4 +125,17 @@ Future<dynamic> getUriInfo(GetUriInfoRef ref, String url) async {
   });
 
   return res.data;
+}
+
+@riverpod
+Future<NoteTranslate> noteTranslate(NoteTranslateRef ref, String noteId) async {
+  var http = await ref.watch(httpProvider.future);
+  var user = await ref.watch(currentLoginUserProvider.future);
+
+  var res = await http.post("/notes/translate", data: {
+    "noteId": noteId,
+    "targetLang": Platform.localeName.replaceAll("_", "-"),
+    "i": user?.token ?? "",
+  });
+  return NoteTranslate.fromMap(res.data);
 }

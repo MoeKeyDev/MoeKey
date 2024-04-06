@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:moekey/models/translate.dart';
 import 'package:moekey/models/user_simple.dart';
 
 import 'drive.dart';
@@ -28,6 +29,9 @@ class NoteModel {
   String userId;
   NoteVisibility visibility;
   NotePollModel? poll;
+
+  NoteTranslate? noteTranslate;
+
   NoteModel({
     required this.id,
     required this.clippedCount,
@@ -56,7 +60,7 @@ class NoteModel {
 
   @override
   String toString() {
-    return 'NoteModel{id: $id, clippedCount: $clippedCount, createdAt: $createdAt, cw: $cw, emojis: $emojis, files: $files, localOnly: $localOnly, reactionAcceptance: $reactionAcceptance, reactionEmojis: $reactionEmojis, reactions: $reactions, myReaction: $myReaction, renote: $renote, renoteCount: $renoteCount, renoteId: $renoteId, repliesCount: $repliesCount, reply: $reply, replyId: $replyId, text: $text, uri: $uri, user: $user, userId: $userId, visibility: $visibility, poll: $poll}';
+    return 'NoteModel{id: $id, clippedCount: $clippedCount, createdAt: $createdAt, cw: $cw, emojis: $emojis, files: $files, localOnly: $localOnly, reactionAcceptance: $reactionAcceptance, reactionEmojis: $reactionEmojis, reactions: $reactions, myReaction: $myReaction, renote: $renote, renoteCount: $renoteCount, renoteId: $renoteId, repliesCount: $repliesCount, reply: $reply, replyId: $replyId, text: $text, uri: $uri, user: $user, userId: $userId, visibility: $visibility, poll: $poll, noteTranslate: $noteTranslate}';
   }
 
   String createReplyAtText(String? currentUserId) {
