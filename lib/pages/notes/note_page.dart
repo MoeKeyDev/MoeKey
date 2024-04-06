@@ -11,6 +11,8 @@ import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_header.dart';
 
 import '../../main.dart';
+import '../../models/translate.dart';
+import '../../networks/apis.dart';
 import '../../networks/notes.dart';
 import '../../router/main_router_delegate.dart';
 import '../../utils/time_ago_since_date.dart';
@@ -314,6 +316,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
     var data = ref.watch(
         noteListProvider.select((value) => value[this.data.id] ?? this.data));
     var links = extractLinksFromMarkdown(data.text ?? "");
+    var meta = ref.watch(apiMetaProvider).valueOrNull;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -359,6 +362,78 @@ class NotesPageNoteCard extends HookConsumerWidget {
                   emojis: data.emojis,
                   currentServerHost: data.user.host,
                   isSelection: true,
+                ),
+              if (meta != null &&
+                  meta.containsKey("translatorAvailable") &&
+                  meta["translatorAvailable"] &&
+                  data.noteTranslate == null)
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      var note = ref.read(noteListProvider)[data.id] ?? data;
+                      note = note.copyWith();
+                      note.noteTranslate =
+                          NoteTranslate(text: "", sourceLang: "");
+                      ref.read(noteListProvider.notifier).registerNote(note);
+                      var res = ref.read(noteTranslateProvider(data.id).future);
+                      res.then(
+                        (res) {
+                          res.loading = false;
+                          note = note.copyWith();
+                          note.noteTranslate = res;
+                          ref
+                              .read(noteListProvider.notifier)
+                              .registerNote(note);
+                        },
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Text(
+                        "翻译帖子",
+                        style: TextStyle(color: themes.accentColor),
+                      ),
+                    ),
+                  ),
+                ),
+
+              if (data.noteTranslate != null)
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: themes.dividerColor, width: 1),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(6),
+                    ),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  margin: const EdgeInsets.only(top: 8, bottom: 2),
+                  child: [
+                    if (data.noteTranslate!.loading)
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Center(
+                          child: LoadingCircularProgress(
+                            size: 22,
+                            strokeWidth: 4,
+                          ),
+                        ),
+                      )
+                    else
+                      MFMText(
+                        emojis: data.emojis,
+                        currentServerHost: data.user.host,
+                        before: [
+                          TextSpan(
+                              text: "从${data.noteTranslate!.sourceLang}翻译:\n",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold))
+                        ],
+                        text: data.noteTranslate!.text ?? "",
+                      ),
+                  ][0],
                 ),
               const SizedBox(height: 4),
               // 投票

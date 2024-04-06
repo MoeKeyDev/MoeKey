@@ -30,6 +30,8 @@ class Notes extends _$Notes {
   @override
   FutureOr<NotesState> build(String noteId) async {
     var data = await ref.watch(getNoteProvider(noteId).future);
+    var noteTranslate = ref.watch(noteListProvider)[noteId]?.noteTranslate;
+    data?.noteTranslate = noteTranslate;
     var note = NotesState();
     ref
         .read(noteListProvider.notifier)

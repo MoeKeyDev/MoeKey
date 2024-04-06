@@ -1,4 +1,12 @@
 # Changelog
+
+## 0.2.12
+### Feature
+- Note list context menu
+- Note translate
+### Change
+- image save webp to png
+
 ## 0.2.11
 ### Feature
 - image save webp to jpeg

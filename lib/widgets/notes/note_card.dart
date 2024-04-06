@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/main.dart';
 import 'package:moekey/models/note.dart';
+import 'package:moekey/models/translate.dart';
 import 'package:moekey/models/user_simple.dart';
 import 'package:moekey/networks/apis.dart';
 import 'package:moekey/networks/notes.dart';
@@ -18,9 +20,11 @@ import 'package:moekey/state/themes.dart';
 import 'package:moekey/utils/format_duration.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/emoji_list.dart';
+import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_overflow_show.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../models/drive.dart';
@@ -303,10 +307,48 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                               const SizedBox(height: 4),
                               if ((data.text ?? "") != "")
                                 MFMText(
-                                  key: ValueKey(data.text ?? ""),
                                   text: data.text ?? "",
                                   emojis: data.emojis,
                                   currentServerHost: data.user.host,
+                                ),
+                              if (data.noteTranslate != null)
+                                Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: themes.dividerColor, width: 1),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  margin:
+                                      const EdgeInsets.only(top: 6, bottom: 2),
+                                  child: [
+                                    if (data.noteTranslate!.loading)
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Center(
+                                          child: LoadingCircularProgress(
+                                            size: 22,
+                                            strokeWidth: 4,
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      MFMText(
+                                        emojis: data.emojis,
+                                        currentServerHost: data.user.host,
+                                        before: [
+                                          TextSpan(
+                                              text:
+                                                  "从${data.noteTranslate!.sourceLang}翻译:\n",
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold))
+                                        ],
+                                        text: data.noteTranslate!.text ?? "",
+                                      ),
+                                  ][0],
                                 ),
                               const SizedBox(height: 4),
                               // 投票
@@ -868,7 +910,7 @@ class TimeLineImage extends StatelessWidget {
   }
 }
 
-class TimeLineActions extends StatelessWidget {
+class TimeLineActions extends HookConsumerWidget {
   const TimeLineActions({
     super.key,
     required this.fontsize,
@@ -878,7 +920,9 @@ class TimeLineActions extends StatelessWidget {
   final double fontsize;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
+    var meta = ref.watch(apiMetaProvider).valueOrNull;
     return HookConsumer(builder: (context, ref, child) {
       var currentUser = ref.watch(currentLoginUserProvider);
       return Row(
@@ -976,9 +1020,103 @@ class TimeLineActions extends StatelessWidget {
           const SizedBox(
             width: 28,
           ),
-          TimelineActionButton(
-            fontsize: fontsize,
-            icon: TablerIcons.dots,
+          ContextMenuBuilder(
+            mode: const [ContextMenuMode.onTap],
+            menu: ContextMenuCard(
+              menuListBuilder: () {
+                return [
+                  ContextMenuItem(
+                    icon: TablerIcons.copy,
+                    label: "复制内容",
+                    onTap: () {
+                      Clipboard.setData(
+                        ClipboardData(text: data.text ?? ""),
+                      );
+                      return false;
+                    },
+                  ),
+                  ContextMenuItem(
+                    icon: TablerIcons.link,
+                    label: "复制本站链接",
+                    onTap: () {
+                      Clipboard.setData(
+                        ClipboardData(text: "$serverUrl/notes/${data.id}"),
+                      );
+                      return false;
+                    },
+                  ),
+                  ContextMenuItem(
+                    icon: TablerIcons.share,
+                    label: "分享",
+                    onTap: () {
+                      // ref.read(noteApisProvider.notifier).reNote(data.id);
+                      Share.shareUri(Uri.parse("$serverUrl/notes/${data.id}"));
+                      return false;
+                    },
+                  ),
+                  if (data.user.host != null)
+                    ContextMenuItem(
+                      icon: TablerIcons.external_link,
+                      label: "转到所在服务器显示",
+                      onTap: () {
+                        if (data.uri != null) {
+                          launchUrlString(data.uri!);
+                        }
+                        // ref.read(noteApisProvider.notifier).reNote(data.id);
+                        return false;
+                      },
+                    ),
+                  if (meta != null &&
+                      meta.containsKey("translatorAvailable") &&
+                      meta["translatorAvailable"])
+                    ContextMenuItem(
+                      icon: TablerIcons.language_hiragana,
+                      label: "翻译",
+                      onTap: () {
+                        var note = ref.read(noteListProvider)[data.id] ?? data;
+                        note = note.copyWith();
+                        note.noteTranslate =
+                            NoteTranslate(text: "", sourceLang: "");
+                        ref.read(noteListProvider.notifier).registerNote(note);
+                        var res =
+                            ref.read(noteTranslateProvider(data.id).future);
+                        res.then(
+                          (res) {
+                            res.loading = false;
+                            note = note.copyWith();
+                            note.noteTranslate = res;
+                            ref
+                                .read(noteListProvider.notifier)
+                                .registerNote(note);
+                          },
+                        );
+
+                        return false;
+                      },
+                    ),
+                ];
+              },
+            ),
+            child: Builder(builder: (context) {
+              return TimelineActionButton(
+                fontsize: fontsize,
+                icon: TablerIcons.dots,
+                onTap: () {
+                  print("click");
+                  if (Platform.isAndroid || Platform.isIOS) {
+                    context
+                        .findAncestorStateOfType<ContextMenuBuilderState>()
+                        ?.showBottomSheet();
+                  } else {
+                    context
+                        .findAncestorStateOfType<ContextMenuBuilderState>()
+                        ?.show((context.findRenderObject() as RenderBox)
+                                .localToGlobal(Offset.zero) +
+                            context.size!.bottomCenter(const Offset(-100, 0)));
+                  }
+                },
+              );
+            }),
           ),
         ],
       );

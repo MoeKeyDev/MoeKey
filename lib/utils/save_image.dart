@@ -1,21 +1,22 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gal/gal.dart';
-import 'package:jpeg_encode/jpeg_encode.dart';
 import 'package:path/path.dart';
-import 'dart:ui' as ui;
-
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 Future<bool> saveImage({
   required Dio http,
   required String url,
   String album = "moekey",
 }) async {
+  print(url);
   var name = basename(url);
   var ext = extension(name);
   var fileBasename = basenameWithoutExtension(name);
@@ -27,25 +28,28 @@ Future<bool> saveImage({
 
   var codec = await ui.instantiateImageCodec(data);
 
-  // webp 单帧图片转换成jpeg
-  if(ext.toLowerCase().contains("webp") && codec.frameCount == 1){
-    final frame = await codec.getNextFrame();
-    final image = frame.image;
-    final byteData = await image.toByteData(format: ImageByteFormat.rawRgba);
-    data = JpegEncoder().compress(byteData!.buffer.asUint8List(), image.width, image.height, 100);
-    name = "$fileBasename.jpg";
-  }
 
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    // webp 单帧图片转换成png
+    if (ext.toLowerCase().contains("webp") && codec.frameCount == 1) {
+      final frame = await codec.getNextFrame();
+      final image = frame.image;
+      final byteData = await image.toByteData(format: ImageByteFormat.png);
+      if (byteData == null) {
+        return false;
+      }
+      data = Uint8List.view(byteData.buffer);
+      name = "$fileBasename.png";
+    }
+
     var prefs = await SharedPreferences.getInstance();
     var initialDirectory = prefs.getString("saveInitialDirectory");
     String? outputFile = await FilePicker.platform.saveFile(
-      dialogTitle: 'Please select an output file:',
-      fileName: name,
-      type: FileType.image,
-      initialDirectory: initialDirectory
-    );
+        dialogTitle: 'Please select an output file:',
+        fileName: name,
+        type: FileType.image,
+        initialDirectory: initialDirectory);
     if (outputFile == null) {
       return false;
     }
