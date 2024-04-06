@@ -1,9 +1,14 @@
 # Changelog
 
+## 0.2.13
+### Feature
+- add macos build (#9)
+
 ## 0.2.12
 ### Feature
 - Note list context menu
 - Note translate
+
 ### Change
 - image save webp to png
 
