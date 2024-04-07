@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.15
+### Fixed
+- add macOS network permission #10
 
 ## 0.2.14
 ### Fixed
@@ -6,7 +9,7 @@
 
 ## 0.2.13
 ### Feature
-- add macos build (#9)
+- add macOS build (#9)
 
 ## 0.2.12
 ### Feature
