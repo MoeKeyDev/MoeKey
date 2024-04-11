@@ -3,6 +3,11 @@
 ### Fixed
 - add macOS network permission #10
 
+## 0.2.15
+### Fixed
+- fix note page conversation can't load
+
+
 ## 0.2.14
 ### Fixed
 - Update padding for login page Logo
