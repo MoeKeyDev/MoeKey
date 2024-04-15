@@ -1,5 +1,5 @@
+![](./docs/banner.png)
 # MoeKey
-
 MoeKey is a misskey client for Flutter  
 
 > This project is currently under development and has many functional deficiencies
@@ -27,29 +27,12 @@ MoeKey is a misskey client for Flutter
 - [ ] Achievements
 - [ ] Channels
 - [ ] Firefish Apis
+
+
 ## Screenshot
 
-![](docs/screenshot/QQ截图20240120161822.png)  
+![](./docs/Screenshot.png)
 
-![](docs/screenshot/QQ截图20240120161903.png) 
-
-![](docs/screenshot/QQ截图20240120161921.png) 
-
-![](docs/screenshot/QQ截图20240120162131.png) 
-
-![](docs/screenshot/QQ截图20240120162442.png) 
-
-![](docs/screenshot/QQ截图20240120162512.png) 
-
-![](docs/screenshot/QQ截图20240120162521.png) 
-
-![](docs/screenshot/QQ截图20240120162535.png)
-
-![](/docs/screenshot/QQ截图20240228005934.png)
-
-![](/docs/screenshot/QQ截图20240228010147.png)
-
-![](/docs/screenshot/QQ截图20240228010251.png)
 ## Developers
 
 riverpod code gen
