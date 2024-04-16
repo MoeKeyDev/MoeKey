@@ -65,6 +65,10 @@ class ServersSelectCard extends HookConsumerWidget {
                   if (value.isEmpty) return;
                   // 纯域名
                   if (RegExp("^https?://.+").hasMatch(value)) {
+                    // 如果最后是以 / 结尾 尝试删除
+                    if (value.endsWith('/')) {
+                      value = value.substring(0, value.length - 1);
+                    }
                     login(context, ref, value);
                     return;
                   }

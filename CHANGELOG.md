@@ -1,5 +1,11 @@
 # Changelog
-## 0.2.15
+
+## 0.2.17
+### Fixed
+- Fixed save url error when user login
+- Optimize image loading performance.
+
+## 0.2.16
 ### Fixed
 - add macOS network permission #10
 

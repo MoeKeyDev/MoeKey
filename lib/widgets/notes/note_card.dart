@@ -263,7 +263,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                       ),
                       if (data.user.instance != null) const SizedBox(height: 4),
                       if (data.user.instance != null)
-                        UserInstanceBar(data: data),
+                        RepaintBoundary(child: UserInstanceBar(data: data)),
                       // start
                       MkOverflowShow(
                         content: Column(
@@ -358,9 +358,10 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                                   mainAxisExtent: constraints.maxWidth * 0.7),
                               // 链接预览
                               if (isShowUrlPreview)
-                                for (var link in links)
+                                for (var link in links) ...[
                                   NoteLinkPreview(
-                                      link: link, fontsize: fontsize),
+                                      link: link, fontsize: fontsize)
+                                ],
                               if (innerWidget != null) innerWidget!,
                             ],
                           ],
@@ -442,6 +443,7 @@ class NoteLinkPreview extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var res = ref.watch(getUriInfoProvider(link));
+    print(res);
     if (res.valueOrNull != null) {
       var data = res.valueOrNull;
       return Container(
@@ -617,11 +619,13 @@ class ReNoteUserInfo extends HookConsumerWidget {
               ),
             ),
           ),
-          Text(timeAgoSinceDate(data.createdAt),
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: fontsize,
-                  color: themes.reNoteColor))
+          RepaintBoundary(
+            child: Text(timeAgoSinceDate(data.createdAt),
+                style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: fontsize,
+                    color: themes.reNoteColor)),
+          )
         ],
       );
     });

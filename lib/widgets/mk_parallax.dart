@@ -11,11 +11,13 @@ class Parallax extends StatelessWidget {
   final double offset;
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      // clipBehavior: Clip.none,
-      child: CustomSingleChildLayout(
-        delegate: _ParallaxDelegate(offset: offset),
-        child: child,
+    return RepaintBoundary(
+      child: ClipRect(
+        // clipBehavior: Clip.none,
+        child: CustomSingleChildLayout(
+          delegate: _ParallaxDelegate(offset: offset),
+          child: child,
+        ),
       ),
     );
   }

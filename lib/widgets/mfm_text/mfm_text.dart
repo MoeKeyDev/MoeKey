@@ -68,25 +68,27 @@ class MFMText extends HookConsumerWidget {
       currentServerHost: currentServerHost,
       systemEmojis: emoji.valueOrNull ?? {},
     );
-    Widget rich = Text.rich(
-      TextSpan(
-        children: [
-          ...?before,
-          for (var item in mfmParse.value)
-            if (parse[item.type] != null)
-              parse[item.type](
-                item,
-                textStyle,
-              )
-            else
-              TextSpan(text: item.toString()),
-          ...?after
-        ],
-        style: Theme.of(context).textTheme.bodyMedium,
+    Widget rich = RepaintBoundary(
+      child: Text.rich(
+        TextSpan(
+          children: [
+            ...?before,
+            for (var item in mfmParse.value)
+              if (parse[item.type] != null)
+                parse[item.type](
+                  item,
+                  textStyle,
+                )
+              else
+                TextSpan(text: item.toString()),
+            ...?after
+          ],
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        maxLines: maxLines,
+        overflow: overflow,
+        textAlign: textAlign,
       ),
-      maxLines: maxLines,
-      overflow: overflow,
-      textAlign: textAlign,
     );
     lastText.value = text;
     if (isSelection) {
