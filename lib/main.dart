@@ -38,7 +38,9 @@ class HttpProxy extends HttpOverrides {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // 视频初始化
   MediaKit.ensureInitialized();
+  // 代理配置
   HttpOverrides.global = HttpProxy();
   // SystemChrome.setSystemUIOverlayStyle(
   //   const SystemUiOverlayStyle(

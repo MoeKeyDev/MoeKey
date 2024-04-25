@@ -89,100 +89,96 @@ class HomePage extends HookConsumerWidget {
                 child: WidgetsListPage(),
               )
             : null,
-        body: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Stack(
-            children: [
-              Row(
-                children: [
-                  if (constraints.maxWidth >= 500)
-                    NavBar(
-                      width: constraints.maxWidth < 1280 ? 80 : 250,
-                    ),
-                  Expanded(
-                    child: MediaQuery(
-                      data: media.copyWith(
-                          padding: media.padding.copyWith(
-                              bottom: media.padding.bottom +
-                                  (constraints.maxWidth > 500 ||
-                                          !isShowBottomNav
-                                      ? 0
-                                      : 100))),
-                      child: Router(
-                        routerDelegate: router,
-                        backButtonDispatcher: RootBackButtonDispatcher(),
-                      ),
+        body: Stack(
+          children: [
+            Row(
+              children: [
+                if (constraints.maxWidth >= 500)
+                  NavBar(
+                    width: constraints.maxWidth < 1280 ? 80 : 250,
+                  ),
+                Expanded(
+                  child: MediaQuery(
+                    data: media.copyWith(
+                        padding: media.padding.copyWith(
+                            bottom: media.padding.bottom +
+                                (constraints.maxWidth > 500 ||
+                                        !isShowBottomNav
+                                    ? 0
+                                    : 100))),
+                    child: Router(
+                      routerDelegate: router,
+                      backButtonDispatcher: RootBackButtonDispatcher(),
                     ),
                   ),
-                  if (constraints.maxWidth >= 1190) WidgetsListPage()
-                ],
-              ),
-              if (constraints.maxWidth < 500)
-                AnimatedPositioned(
-                  bottom: isShowBottomNav ? 0 : -86,
-                  left: 0,
-                  duration: const Duration(milliseconds: 250),
-                  child: SizedBox(
-                    width: constraints.maxWidth,
-                    height: 86,
-                    child: BlurWidget(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            onPressed: _openDrawer,
-                            icon: const Icon(TablerIcons.menu_2),
-                            padding: const EdgeInsets.all(20),
-                            color: themes.fgColor,
-                            style: btnStyle,
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              var logic =
-                                  ref.read(homePageStateProvider.notifier);
-                              logic.changePage("timeline");
-                            },
-                            icon: const Icon(TablerIcons.home),
-                            padding: const EdgeInsets.all(20),
-                            color: themes.fgColor,
-                            style: btnStyle,
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              var logic =
-                                  ref.read(homePageStateProvider.notifier);
-                              logic.changePage("notifications");
-                            },
-                            icon: const Icon(TablerIcons.bell),
-                            padding: const EdgeInsets.all(20),
-                            color: themes.fgColor,
-                            style: btnStyle,
-                          ),
-                          IconButton(
-                            onPressed: _openEndDrawer,
-                            icon: const Icon(TablerIcons.apps),
-                            padding: const EdgeInsets.all(20),
-                            color: themes.fgColor,
-                            style: btnStyle,
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              globalNav.currentState
-                                  ?.push(NoteCreateDialog.getRouter());
-                            },
-                            icon: const Icon(TablerIcons.pencil),
-                            padding: const EdgeInsets.all(20),
-                            color: themes.fgColor,
-                            style: btnStyle,
-                          )
-                        ],
-                      ),
+                ),
+                if (constraints.maxWidth >= 1190) WidgetsListPage()
+              ],
+            ),
+            if (constraints.maxWidth < 500)
+              AnimatedPositioned(
+                bottom: isShowBottomNav ? 0 : -86,
+                left: 0,
+                duration: const Duration(milliseconds: 250),
+                child: SizedBox(
+                  width: constraints.maxWidth,
+                  height: 86,
+                  child: BlurWidget(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: _openDrawer,
+                          icon: const Icon(TablerIcons.menu_2),
+                          padding: const EdgeInsets.all(20),
+                          color: themes.fgColor,
+                          style: btnStyle,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            var logic =
+                                ref.read(homePageStateProvider.notifier);
+                            logic.changePage("timeline");
+                          },
+                          icon: const Icon(TablerIcons.home),
+                          padding: const EdgeInsets.all(20),
+                          color: themes.fgColor,
+                          style: btnStyle,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            var logic =
+                                ref.read(homePageStateProvider.notifier);
+                            logic.changePage("notifications");
+                          },
+                          icon: const Icon(TablerIcons.bell),
+                          padding: const EdgeInsets.all(20),
+                          color: themes.fgColor,
+                          style: btnStyle,
+                        ),
+                        IconButton(
+                          onPressed: _openEndDrawer,
+                          icon: const Icon(TablerIcons.apps),
+                          padding: const EdgeInsets.all(20),
+                          color: themes.fgColor,
+                          style: btnStyle,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            globalNav.currentState
+                                ?.push(NoteCreateDialog.getRouter());
+                          },
+                          icon: const Icon(TablerIcons.pencil),
+                          padding: const EdgeInsets.all(20),
+                          color: themes.fgColor,
+                          style: btnStyle,
+                        )
+                      ],
                     ),
                   ),
-                )
-            ],
-          ),
+                ),
+              )
+          ],
         ),
       );
     });
@@ -215,6 +211,7 @@ class NavBar extends HookConsumerWidget {
         router.removeListener(func);
       };
     }, const []);
+
     return AnimatedContainer(
       width: width,
       color: themes.navBgColor,
