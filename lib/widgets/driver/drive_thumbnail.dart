@@ -20,10 +20,12 @@ class DriveImageThumbnail extends HookConsumerWidget {
     this.data = data["data"];
     type = data["type"];
   }
+
   late final dynamic data;
   late final String type;
   final bool isSelect;
   final void Function()? onRemove;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -547,6 +549,7 @@ class DriverFileIcon extends StatelessWidget {
   final ThemeColorModel themes;
   final DriveFileModel data;
   final BoxFit fit;
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(

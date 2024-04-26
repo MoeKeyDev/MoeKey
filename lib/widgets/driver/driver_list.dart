@@ -173,7 +173,7 @@ class DriverList extends HookConsumerWidget {
                 const Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "创建文件夹",
+                    "新建文件夹",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:moekey/pages/clips/clips_page.dart';
 import 'package:moekey/pages/drive/drive_page.dart';
 import 'package:moekey/pages/notifications/notifications_page.dart';
 import 'package:moekey/pages/timeline/timeline_page.dart';
@@ -87,6 +88,7 @@ class HomeState {
       "icon": TablerIcons.paperclip,
       "label": S.current.clips,
       "id": "clips",
+      "page": () => const ClipsPage()
     },
     {
       "icon": TablerIcons.cloud,
