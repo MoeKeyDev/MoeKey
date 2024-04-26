@@ -17,9 +17,11 @@ class MkToolBar extends ConsumerWidget implements PreferredSizeWidget {
     required this.child,
     this.border = 1,
   });
+
   final double height;
   final Widget child;
   final double border;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -74,6 +76,7 @@ class MkAppbar extends ConsumerWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final bool isSmallLeadingCenter;
   final bool showBack;
+
   static double _preferredSize(
       PreferredSizeWidget? bottom, bool isSmallLeadingCenter) {
     var size = 50.0;
@@ -185,10 +188,12 @@ class MkTabBar extends ConsumerWidget implements PreferredSizeWidget {
     this.onTap,
     this.tabAlignment = TabAlignment.center,
   });
+
   final TabController controller;
   final List<Widget> tabs;
   final void Function(int)? onTap;
   final TabAlignment tabAlignment;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);

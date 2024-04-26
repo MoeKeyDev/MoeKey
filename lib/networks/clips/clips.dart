@@ -1,4 +1,5 @@
 import 'package:moekey/models/clips.dart';
+import 'package:moekey/models/note.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -34,7 +35,7 @@ class Clips extends _$Clips {
       }
       // 将list反序排列
       list = list.reversed.toList();
-      
+
       return list;
     } finally {
       // 设置加载状态为false
@@ -49,6 +50,63 @@ class Clips extends _$Clips {
     loading = true;
     try {
       state = AsyncData((state.valueOrNull ?? []) + await clipsList());
+    } finally {
+      loading = false;
+    }
+  }
+}
+
+class ClipsNoteListState {
+  List<NoteModel> list = [];
+  var haveMore = true;
+}
+
+@riverpod
+class ClipsNotesList extends _$ClipsNotesList {
+  @override
+  FutureOr<ClipsNoteListState> build(String clipId) async {
+    var list = await clipsNotesList(clipId: clipId);
+
+    return ClipsNoteListState()..list = list;
+  }
+
+  Future<List<NoteModel>> clipsNotesList(
+      {required String clipId, num? limit = 10, String? untilId}) async {
+    try {
+      var http = await ref.watch(httpProvider.future);
+      var user = await ref.watch(currentLoginUserProvider.future);
+      var res = await http.post("/clips/notes", data: {
+        "clipId": clipId,
+        "limit": limit,
+        if (untilId != null) "untilId": untilId,
+        "i": user?.token,
+      });
+
+      List<NoteModel> list = [];
+      for (var item in res.data) {
+        var data = NoteModel.fromMap(item);
+        list.add(data);
+      }
+
+      return list;
+    } finally {}
+  }
+
+  var loading = false;
+
+  load() async {
+    if (loading) return;
+    loading = true;
+    try {
+      var untilId = state.valueOrNull?.list.last.id;
+      var list = await clipsNotesList(clipId: clipId, untilId: untilId);
+      if (list.isEmpty) {
+        state = AsyncData(state.valueOrNull!..haveMore = false);
+      } else {
+        state = AsyncData(state.valueOrNull!
+          ..list.addAll(list)
+          ..haveMore = true);
+      }
     } finally {
       loading = false;
     }

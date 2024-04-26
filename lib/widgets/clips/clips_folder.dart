@@ -2,9 +2,10 @@ import 'package:badges/badges.dart' as badges;
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/pages/clips/clips_notes.dart';
+import 'package:moekey/router/main_router_delegate.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
@@ -40,7 +41,6 @@ class ClipsCardComponent extends HookConsumerWidget {
 
   ClipsCardComponent({super.key, required this.data});
 
-  var isHiddenCw = useState(true);
   final ConstraintId avatar = ConstraintId('avatar');
   final ConstraintId content = ConstraintId('content');
   final double limit = 1000;
@@ -57,7 +57,8 @@ class ClipsCardComponent extends HookConsumerWidget {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () {
-            print("点击了");
+            MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                path: "/clips/${data.id}", page: () => ClipsNotes(data.id)));
           },
           child: Container(
             color: Colors.transparent,
@@ -151,7 +152,7 @@ class ClipsCardComponent extends HookConsumerWidget {
                       MkOverflowShow(
                           content: MFMText(text: data.description ?? ""),
                           action: (isShow, p1) {
-                            return Text("查看更多");
+                            return const Text("查看更多");
                           },
                           limit: limit,
                           height: height)
