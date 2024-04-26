@@ -65,8 +65,15 @@ class ClipsMy extends HookConsumerWidget {
   }
 
   Widget buildClipsListItem(AsyncValue<List<ClipsModel>> clipsList, int index) {
-    return ClipsFolder(
-      data: clipsList.valueOrNull![index],
+    return Column(
+      children: [
+        ClipsFolder(
+          data: clipsList.valueOrNull![index],
+        ),
+        const SizedBox(
+          height: 20,
+        )
+      ],
     );
   }
 }

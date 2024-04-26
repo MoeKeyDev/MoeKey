@@ -1,10 +1,9 @@
-import 'dart:ffi';
-
 import 'package:moekey/models/clips.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../state/server.dart';
+
 part 'clips.g.dart';
 
 @riverpod
@@ -14,8 +13,9 @@ class Clips extends _$Clips {
     return clipsList();
   }
 
-  Future<List<ClipsModel>> clipsList({num? limit=10,bool? allowPartial=true}) async {
-    try{
+  Future<List<ClipsModel>> clipsList(
+      {num? limit = 10, bool? allowPartial = true}) async {
+    try {
       // 获取httpProvider和currentLoginUserProvider的实例
       var http = await ref.watch(httpProvider.future);
       var user = await ref.watch(currentLoginUserProvider.future);
@@ -23,7 +23,7 @@ class Clips extends _$Clips {
       var res = await http.post("/clips/list", data: {
         "allowPartial": allowPartial,
         "i": user?.token,
-        "limit":limit,
+        "limit": limit,
       });
 
       // 将数据转换为ClipsModel列表
@@ -32,21 +32,23 @@ class Clips extends _$Clips {
         var data = ClipsModel.fromMap(item);
         list.add(data);
       }
-      // 返回列表
+      // 将list反序排列
+      list = list.reversed.toList();
+      
       return list;
-    }finally{
+    } finally {
       // 设置加载状态为false
       loading = false;
     }
   }
 
   var loading = false;
+
   load() async {
     if (loading) return;
     loading = true;
     try {
-      state = AsyncData((state.valueOrNull ?? []) +
-          await clipsList());
+      state = AsyncData((state.valueOrNull ?? []) + await clipsList());
     } finally {
       loading = false;
     }

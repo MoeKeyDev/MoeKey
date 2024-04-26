@@ -1,9 +1,11 @@
+import 'package:badges/badges.dart' as badges;
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_overflow_show.dart';
@@ -20,7 +22,6 @@ class ClipsFolder extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var themes = ref.watch(themeColorsProvider);
     var textStyle = Theme.of(context).textTheme.bodyMedium;
 
     return DefaultTextStyle(
@@ -55,16 +56,34 @@ class ClipsCardComponent extends HookConsumerWidget {
       return MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            print("点击了");
+          },
           child: Container(
             color: Colors.transparent,
             child: ConstraintLayout(
               children: [
                 GestureDetector(
                   onTap: () {},
-                  child: MkImage(
-                    data.user.avatarUrl ?? "",
-                    shape: BoxShape.circle,
+                  child: badges.Badge(
+                    badgeContent: Tooltip(
+                      message: data.user.onlineStatus == "online" ? "在线" : "离线",
+                      child: Container(
+                        width: 10.0,
+                        height: 10.0,
+                        decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 88, 212, 201),
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      ),
+                    ),
+                    badgeStyle: badges.BadgeStyle(
+                        badgeColor: themes.panelColor,
+                        padding: const EdgeInsets.all(3)),
+                    position: badges.BadgePosition.bottomStart(start: 1),
+                    child: MkImage(
+                      data.user.avatarUrl ?? "",
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ).applyConstraint(
                   top: parent.top,
@@ -103,20 +122,34 @@ class ClipsCardComponent extends HookConsumerWidget {
                           const SizedBox(
                             width: 6,
                           ),
-                          Icon(
-                            TablerIcons.lock,
-                            size: fontsize,
-                            color: themes.fgColor,
-                          )
+                          if (data.isPublic)
+                            Icon(
+                              TablerIcons.lock,
+                              size: fontsize,
+                              color: themes.fgColor,
+                            ),
+                        ],
+                      ),
+                      Row(
+                        // 两端对齐
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(data.name),
+                          if (data.favoritedCount != 0)
+                            Row(
+                              children: [
+                                Text(data.favoritedCount.toString()),
+                                Icon(
+                                  TablerIcons.heart,
+                                  size: fontsize,
+                                  color: themes.fgColor,
+                                )
+                              ],
+                            ),
                         ],
                       ),
                       MkOverflowShow(
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [],
-                          ),
+                          content: MFMText(text: data.description ?? ""),
                           action: (isShow, p1) {
                             return Text("查看更多");
                           },
