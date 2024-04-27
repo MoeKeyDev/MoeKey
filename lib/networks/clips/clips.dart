@@ -112,3 +112,21 @@ class ClipsNotesList extends _$ClipsNotesList {
     }
   }
 }
+
+@riverpod
+class ClipsShow extends _$ClipsShow {
+  @override
+  FutureOr<ClipsModel> build(String clipId) async {
+    try {
+      var http = await ref.watch(httpProvider.future);
+      var user = await ref.watch(currentLoginUserProvider.future);
+      var res = await http.post("/clips/show", data: {
+        "clipId": clipId,
+        "i": user?.token,
+      });
+
+      var data = ClipsModel.fromMap(res.data);
+      return data;
+    } finally {}
+  }
+}

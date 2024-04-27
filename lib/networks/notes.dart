@@ -68,6 +68,7 @@ class Notes extends _$Notes {
 class NotesListener extends _$NotesListener {
   Map<String, Map<String, dynamic>> noteList = {};
   StreamSubscription<moekeyEvent>? listen;
+
   @override
   Future build() async {
     try {
@@ -80,8 +81,6 @@ class NotesListener extends _$NotesListener {
       listen?.cancel();
       listen = null;
       listen = moekeyStreamController.stream.listen((event) async {
-        logger.d("========= event ===================");
-        logger.d(event);
         if (event.type == moekeyEventType.data) {
           if (event.data["type"] == "noteUpdated") {
             var eventData = event.data;
