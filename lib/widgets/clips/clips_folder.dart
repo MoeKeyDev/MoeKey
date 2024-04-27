@@ -75,7 +75,7 @@ class ClipsCardComponent extends HookConsumerWidget {
                         decoration: BoxDecoration(
                             color: data.user.onlineStatus == "online"
                                 ? const Color.fromARGB(255, 88, 212, 201)
-                                : const Color.fromARGB(228, 188, 72, 201),
+                                : const Color.fromARGB(255, 228, 188, 72),
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(5))),
                       ),
@@ -110,18 +110,18 @@ class ClipsCardComponent extends HookConsumerWidget {
                           if (data.lastClippedAt != null)
                             Text(
                                 "${formatDate(data.lastClippedAt!, [
-                                          yyyy,
-                                          "-",
-                                          mm,
-                                          "-",
-                                          dd,
-                                          " ",
-                                          HH,
-                                          ":",
-                                          nn,
-                                          ":",
-                                          ss
-                                        ]) ?? ""}(${timeAgoSinceDate(data.createdAt)})",
+                                      yyyy,
+                                      "-",
+                                      mm,
+                                      "-",
+                                      dd,
+                                      " ",
+                                      HH,
+                                      ":",
+                                      nn,
+                                      ":",
+                                      ss
+                                    ])}(${timeAgoSinceDate(data.createdAt)})",
                                 style: TextStyle(fontSize: fontsize * 0.9)),
                           const SizedBox(
                             width: 6,

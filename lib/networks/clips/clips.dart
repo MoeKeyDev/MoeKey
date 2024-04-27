@@ -65,9 +65,7 @@ class ClipsNoteListState {
 class ClipsNotesList extends _$ClipsNotesList {
   @override
   FutureOr<ClipsNoteListState> build(String clipId) async {
-    var list = await clipsNotesList(clipId: clipId);
-
-    return ClipsNoteListState()..list = list;
+    return ClipsNoteListState();
   }
 
   Future<List<NoteModel>> clipsNotesList(
@@ -100,6 +98,7 @@ class ClipsNotesList extends _$ClipsNotesList {
     try {
       var untilId = state.valueOrNull?.list.last.id;
       var list = await clipsNotesList(clipId: clipId, untilId: untilId);
+
       if (list.isEmpty) {
         state = AsyncData(state.valueOrNull!..haveMore = false);
       } else {

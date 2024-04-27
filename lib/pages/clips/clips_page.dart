@@ -73,7 +73,7 @@ class ClipsPage extends HookConsumerWidget {
           ),
           bottom: MkTabBar(controller: tabController, tabs: tabs),
           trailing: Visibility(
-            visible: currentIndex.value== 0,
+            visible: currentIndex.value == 0,
             maintainAnimation: true,
             maintainSize: true,
             maintainState: true,
