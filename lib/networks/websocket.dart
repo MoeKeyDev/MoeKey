@@ -25,7 +25,7 @@ class moekeyWebSocket extends _$moekeyWebSocket {
     logger.d(uri.port);
     logger.d(uri.host);
     uri = Uri.parse(
-        "$scheme://${uri.host}:${uri.port}/streaming?i=${user?.token ?? ""}");
+        "$scheme://${uri.host}:${uri.port}/streaming?i=${user.token ?? ""}");
     var channel = WebSocketChannel.connect(uri);
     ref.onDispose(() {
       channel.sink.close();
@@ -68,8 +68,8 @@ class moekeyGlobalEvent extends _$moekeyGlobalEvent {
   @override
   FutureOr build() async {
     var channel = await ref.watch(moekeyWebSocketProvider.future);
-    var timer = Timer.periodic(Duration(seconds: 60), (t) {
-      this.sendString("h");
+    var timer = Timer.periodic(const Duration(seconds: 60), (t) {
+      sendString("h");
 
       // t.cancel(); //关闭定时器
     });

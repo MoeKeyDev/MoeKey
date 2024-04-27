@@ -62,7 +62,7 @@ class EmojiList extends HookConsumerWidget {
               onTap: (value) {
                 a.animateTo(
                     index: value,
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     curve: Easing.emphasizedDecelerate);
               },
             ),

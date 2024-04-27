@@ -133,7 +133,7 @@ class Themes extends _$Themes {
     //           !colors.isDark ? Brightness.dark : Brightness.light,
     //       systemNavigationBarContrastEnforced: false),
     // );
-    String? font = null;
+    String? font;
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: colors.accentColor).copyWith(
         surface: colors.panelColor,

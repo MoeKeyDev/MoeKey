@@ -207,7 +207,7 @@ class UserSelectDialog extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("用户名"),
+                    const Text("用户名"),
                     const SizedBox(
                       height: 4,
                     ),
@@ -247,7 +247,7 @@ class UserSelectDialog extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("服务器"),
+                      const Text("服务器"),
                       const SizedBox(
                         height: 4,
                       ),

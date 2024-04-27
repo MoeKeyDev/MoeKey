@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 
 class SliverFixedHeader extends SingleChildRenderObjectWidget {
   const SliverFixedHeader({
-    Key? key,
+    super.key,
     required this.pinnedOffset,
     required Widget child,
   }) : super(child: child);
@@ -90,22 +90,22 @@ class RenderSliverFixedHeader extends RenderSliverSingleBoxAdapter {
     );
   }
 
-  // @override
-  // void paint(PaintingContext context, Offset offset) {
-  //   if (child != null && geometry!.visible) {
-  //     final SliverPhysicalParentData childParentData =
-  //         child!.parentData! as SliverPhysicalParentData;
-  //     // 4.绘制子节点
-  //     // topOffset = constraints.viewportMainAxisExtent - constraints.remainingPaintExtent;
-  //     //其中 offset = topOffset(sliver 到达顶部后等于 0） + paintOrigin(默认等于0）
-  //     //其中 paintOffset(默认等于0)
-  //     //即到达顶部后，如果两者都等于0，并且 visible 不等于 false，则 child 保持当前位置不变。
-  //     context.paintChild(child!, offset + childParentData.paintOffset);
-  //   }
-  // }
+// @override
+// void paint(PaintingContext context, Offset offset) {
+//   if (child != null && geometry!.visible) {
+//     final SliverPhysicalParentData childParentData =
+//         child!.parentData! as SliverPhysicalParentData;
+//     // 4.绘制子节点
+//     // topOffset = constraints.viewportMainAxisExtent - constraints.remainingPaintExtent;
+//     //其中 offset = topOffset(sliver 到达顶部后等于 0） + paintOrigin(默认等于0）
+//     //其中 paintOffset(默认等于0)
+//     //即到达顶部后，如果两者都等于0，并且 visible 不等于 false，则 child 保持当前位置不变。
+//     context.paintChild(child!, offset + childParentData.paintOffset);
+//   }
+// }
 
-  // @override
-  // double childMainAxisPosition(RenderBox child) {
-  //   return 0;
-  // }
+// @override
+// double childMainAxisPosition(RenderBox child) {
+//   return 0;
+// }
 }

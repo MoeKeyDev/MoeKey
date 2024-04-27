@@ -229,7 +229,6 @@ class UserNotesPage extends HookConsumerWidget {
 
 class _NotesSelectButton extends HookConsumerWidget {
   const _NotesSelectButton({
-    super.key,
     required this.active,
     required this.text,
     required this.onTap,

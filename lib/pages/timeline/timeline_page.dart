@@ -37,7 +37,7 @@ final List<Map<String, dynamic>> navItemList = [
 ];
 
 class TimelinePage extends HookConsumerWidget {
-  const TimelinePage({Key? key}) : super(key: key);
+  const TimelinePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

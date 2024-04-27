@@ -147,7 +147,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                       if (noteType == NoteType.reNote) "引用帖子",
                       "发布新帖子",
                     ][0],
-                    style: TextStyle(fontSize: 15),
+                    style: const TextStyle(fontSize: 15),
                   ),
                   const Spacer(),
                   buildVisibilityBottomList(themes),
@@ -184,7 +184,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         ),
                         elevation: MaterialStateProperty.all(0),
                         padding: MaterialStateProperty.all(
-                          EdgeInsets.fromLTRB(12, 0, 12, 0),
+                          const EdgeInsets.fromLTRB(12, 0, 12, 0),
                         ),
                       ),
                       child: const Row(
@@ -328,7 +328,7 @@ class NoteCreateDialog extends HookConsumerWidget {
             runSpacing: 4,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text("收件人"),
+              const Text("收件人"),
               for (var key in data.keys)
                 Container(
                   padding: const EdgeInsets.all(2),
@@ -598,7 +598,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("天"),
+                          const Text("天"),
                           const SizedBox(
                             height: 4,
                           ),
@@ -644,7 +644,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("小时"),
+                          const Text("小时"),
                           const SizedBox(
                             height: 4,
                           ),
@@ -690,7 +690,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("分钟"),
+                          const Text("分钟"),
                           const SizedBox(
                             height: 4,
                           ),
@@ -1199,10 +1199,10 @@ class NoteCreateDialog extends HookConsumerWidget {
                       ),
                     ),
                     padding: MaterialStateProperty.all(
-                      EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     ),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     TablerIcons.icons,
                     size: 16,
                   ),
@@ -1242,7 +1242,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   ),
                 ),
                 padding: MaterialStateProperty.all(
-                  EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 ),
               ),
               child: Opacity(

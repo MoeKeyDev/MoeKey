@@ -21,8 +21,7 @@ class _ScrollControllerHook extends Hook<TimelineScrollController> {
   const _ScrollControllerHook({
     required this.keepScrollOffset,
     required this.initialScrollOffset,
-    List<Object?>? keys,
-  }) : super(keys: keys);
+  });
 
   final bool keepScrollOffset;
   final double initialScrollOffset;

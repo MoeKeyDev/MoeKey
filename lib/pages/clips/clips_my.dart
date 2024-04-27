@@ -23,7 +23,7 @@ class ClipsMy extends HookConsumerWidget {
     return RefreshIndicator.adaptive(
         // 通知刷新指示器
         onRefresh: () => ref.refresh(clipsProvider.future),
-        edgeOffset: 20,
+        edgeOffset: queryPadding.top,
         child: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(
             dragDevices: {

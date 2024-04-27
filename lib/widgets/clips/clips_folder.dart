@@ -72,9 +72,12 @@ class ClipsCardComponent extends HookConsumerWidget {
                       child: Container(
                         width: 10.0,
                         height: 10.0,
-                        decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 88, 212, 201),
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                        decoration: BoxDecoration(
+                            color: data.user.onlineStatus == "online"
+                                ? const Color.fromARGB(255, 88, 212, 201)
+                                : const Color.fromARGB(228, 188, 72, 201),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(5))),
                       ),
                     ),
                     badgeStyle: badges.BadgeStyle(

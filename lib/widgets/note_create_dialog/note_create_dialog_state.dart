@@ -16,7 +16,7 @@ part 'note_create_dialog_state.g.dart';
 class NoteCreateDialogStateModel {
   NoteVisibility visibility = NoteVisibility.public; // 可见性
   LinkedHashMap visibleUserIds = LinkedHashMap(); // 当 可见性为specified 时的可见用户列表
-  String? text = null; // 文本
+  String? text; // 文本
   String cw = ''; //敏感内容
   bool isCw = false;
   bool localOnly = false; // 禁用联合

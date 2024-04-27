@@ -21,7 +21,7 @@ import '../../widgets/note_create_dialog/note_create_dialog.dart';
 import '../user_widgets/widgets_list/view.dart';
 
 class HomePage extends HookConsumerWidget {
-  HomePage({Key? key}) : super(key: key);
+  HomePage({super.key});
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   void _openDrawer() {
@@ -86,7 +86,7 @@ class HomePage extends HookConsumerWidget {
         endDrawer: constraints.maxWidth < 500
             ? Container(
                 color: themes.panelColor,
-                child: WidgetsListPage(),
+                child: const WidgetsListPage(),
               )
             : null,
         body: Stack(
@@ -112,7 +112,7 @@ class HomePage extends HookConsumerWidget {
                     ),
                   ),
                 ),
-                if (constraints.maxWidth >= 1190) WidgetsListPage()
+                if (constraints.maxWidth >= 1190) const WidgetsListPage()
               ],
             ),
             if (constraints.maxWidth < 500)
@@ -416,7 +416,7 @@ class UserAvatarButton extends ConsumerWidget {
                               child: MkImage(item.userInfo["avatarUrl"],
                                   shape: BoxShape.circle),
                             ),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Expanded(
                                 child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -443,7 +443,7 @@ class UserAvatarButton extends ConsumerWidget {
                 icon: TablerIcons.plus,
                 label: "添加账号",
                 onTap: () {
-                  Timer(Duration(milliseconds: 150), () {
+                  Timer(const Duration(milliseconds: 150), () {
                     showDialog(
                         context: context,
                         builder: (context) {

@@ -1,12 +1,14 @@
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/networks/clips/clips.dart';
 
+import '../../models/clips.dart';
 import '../../networks/notifications.dart';
-import '../../state/themes.dart';
+import '../../utils/get_padding_note.dart';
+import '../../widgets/clips/clips_folder.dart';
 import '../../widgets/loading_weight.dart';
 
 class ClipsCollection extends HookConsumerWidget {
@@ -14,11 +16,14 @@ class ClipsCollection extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var res = ref.watch(clipsProvider);
+    var queryPadding = MediaQuery.of(context).padding;
+    var res = ref.watch(clipsMyFavoritesProvider);
+    var scrollController = useScrollController();
 
     return RefreshIndicator.adaptive(
-      // 通知刷新指示器
-        onRefresh: () => ref.refresh(clipsProvider.future),
+        // 通知刷新指示器
+        onRefresh: () => ref.refresh(clipsMyFavoritesProvider.future),
+        edgeOffset: queryPadding.top,
         child: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(
             dragDevices: {
@@ -38,9 +43,37 @@ class ClipsCollection extends HookConsumerWidget {
                 refresh: () {
                   ref.invalidate(notificationsProvider);
                 },
-                child: Placeholder()
-            ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    var padding = getPaddingForNote(constraints);
+                    return ListView.builder(
+                      itemCount: res.valueOrNull!.length,
+                      padding: EdgeInsets.only(
+                          left: padding,
+                          right: padding,
+                          top: queryPadding.top,
+                          bottom: queryPadding.bottom),
+                      controller: scrollController,
+                      itemBuilder: (BuildContext context, int index) {
+                        return buildClipsListItem(res, index);
+                      },
+                    );
+                  },
+                )),
           ),
         ));
+  }
+
+  Widget buildClipsListItem(AsyncValue<List<ClipsModel>> clipsList, int index) {
+    return Column(
+      children: [
+        ClipsFolder(
+          data: clipsList.valueOrNull![index],
+        ),
+        const SizedBox(
+          height: 20,
+        )
+      ],
+    );
   }
 }

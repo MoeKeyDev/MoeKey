@@ -10,8 +10,6 @@ import '../../state/themes.dart';
 import '../../widgets/keep_alive_wrapper.dart';
 import '../../widgets/mk_header.dart';
 import '../../widgets/mk_scaffold.dart';
-import '../notifications/notifications_group_list.dart';
-import '../notifications/notifications_mentions_list.dart';
 
 ///Clips are a feature of Misskey that summarize notes.Clips are a feature of Misskey that summarize notes.They don't care if the notes are mine or someone else's. You can make more than one clips, and you can name them and give an explanation, and you can manage them.You can also choose between public and private clips.You can also choose between public and private clips.
 ///To create clips, select "Add" on the Clip Management page.
@@ -100,11 +98,11 @@ class ClipsPage extends HookConsumerWidget {
               children: [
                 TabBarView(
                   controller: tabController,
-                  children: [
+                  children: const [
                     KeepAliveWrapper(
                       child: ClipsMy(),
                     ),
-                    const KeepAliveWrapper(
+                    KeepAliveWrapper(
                       child: ClipsCollection(),
                     )
                   ],

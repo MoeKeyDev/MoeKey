@@ -34,7 +34,7 @@ class DriverUploadBar extends ConsumerWidget {
               itemBuilder: (context, index) {
                 var item = list[index];
                 return Container(
-                  margin: EdgeInsets.only(bottom: 4),
+                  margin: const EdgeInsets.only(bottom: 4),
                   decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(
                         Radius.circular(6),
@@ -42,7 +42,7 @@ class DriverUploadBar extends ConsumerWidget {
                       boxShadow: [
                         BoxShadow(
                             color: Colors.black.withOpacity(0.2),
-                            offset: Offset(0, 4),
+                            offset: const Offset(0, 4),
                             blurRadius: 8,
                             blurStyle: BlurStyle.outer)
                       ]),

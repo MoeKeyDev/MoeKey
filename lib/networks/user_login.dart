@@ -12,6 +12,7 @@ part 'user_login.g.dart';
 @riverpod
 class ApiUserLogin extends _$ApiUserLogin {
   var didDispose = false;
+
   @override
   FutureOr<LoginUser> build() async {
     var userModel = await login();
@@ -94,7 +95,9 @@ class ApiUserLogin extends _$ApiUserLogin {
         "write:page-likes",
         "read:page-likes",
         "write:gallery-likes",
-        "read:gallery-likes"
+        "read:gallery-likes",
+        "write:clip-favorite",
+        "read:clip-favorite",
       ]
     });
     return data.data;

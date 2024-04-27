@@ -553,9 +553,9 @@ _getParse({
         case "flip":
           return WidgetSpan(
               child: Transform.flip(
-            child: Text.rich(child),
             flipX: item.args["h"] != null || item.args.isEmpty,
             flipY: item.args["v"] != null,
+            child: Text.rich(child),
           ));
         case "jelly":
           return WidgetSpan(

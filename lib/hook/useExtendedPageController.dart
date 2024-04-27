@@ -29,8 +29,8 @@ class _ScrollControllerHook extends Hook<ExtendedPageController> {
     required this.shouldIgnorePointerWhenScrolling,
     required this.pageSpacing,
     required this.viewportFraction,
-    List<Object?>? keys,
-  }) : super(keys: keys);
+    super.keys,
+  });
 
   final int initialPage;
   final bool keepPage;

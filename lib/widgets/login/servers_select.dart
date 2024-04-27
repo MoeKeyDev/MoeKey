@@ -50,12 +50,12 @@ class ServersSelectCard extends HookConsumerWidget {
             ),
             Divider(color: themes.dividerColor, height: 0.5),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: TextFormField(
                 decoration: inputDecoration(
                   themes,
                   "搜索或输入服务器地址",
-                  prefixIcon: Icon(TablerIcons.server),
+                  prefixIcon: const Icon(TablerIcons.server),
                 ),
                 keyboardType: TextInputType.url,
                 onChanged: (value) {

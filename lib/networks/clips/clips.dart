@@ -130,3 +130,24 @@ class ClipsShow extends _$ClipsShow {
     } finally {}
   }
 }
+
+@riverpod
+class ClipsMyFavorites extends _$ClipsMyFavorites {
+  @override
+  FutureOr<List<ClipsModel>> build() async {
+    return clipsMyFavorites();
+  }
+
+  Future<List<ClipsModel>> clipsMyFavorites(
+      {num? limit = 10, bool? allowPartial = true}) async {
+    var http = await ref.watch(httpProvider.future);
+    var user = await ref.watch(currentLoginUserProvider.future);
+    var res = await http.post("/clips/my-favorites", data: {"i": user?.token});
+    List<ClipsModel> list = [];
+    for (var item in res.data) {
+      var clip = ClipsModel.fromMap(item);
+      list.add(clip);
+    }
+    return list;
+  }
+}

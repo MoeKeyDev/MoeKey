@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/state/themes.dart';
 
 class WidgetsListPage extends ConsumerWidget {
-  WidgetsListPage({Key? key}) : super(key: key);
+  const WidgetsListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

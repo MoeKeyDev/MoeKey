@@ -73,7 +73,6 @@ class _MkOverflowShowState extends State<MkOverflowShow> {
 // 计算出来的大小
 class _RenderObjectLayoutBox extends MultiChildRenderObjectWidget {
   const _RenderObjectLayoutBox({
-    super.key,
     super.children,
     required this.limit,
     required this.height,

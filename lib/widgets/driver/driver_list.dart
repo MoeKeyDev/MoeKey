@@ -228,7 +228,7 @@ class DriverList extends HookConsumerWidget {
                             foregroundColor: MaterialStateProperty.all(
                                 themes.fgOnAccentColor),
                             elevation: MaterialStateProperty.all(0)),
-                        child: Text("OK"),
+                        child: const Text("OK"),
                       ),
                     ),
                     SizedBox(
@@ -243,7 +243,7 @@ class DriverList extends HookConsumerWidget {
                               foregroundColor:
                                   MaterialStateProperty.all(themes.fgColor),
                               elevation: MaterialStateProperty.all(0)),
-                          child: Text("取消")),
+                          child: const Text("取消")),
                     )
                   ],
                 )

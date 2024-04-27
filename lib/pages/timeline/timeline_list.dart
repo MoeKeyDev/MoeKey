@@ -10,11 +10,11 @@ import '../../widgets/notes/note_card.dart';
 
 class TimeLineListPage extends HookConsumerWidget {
   const TimeLineListPage({
-    Key? key,
+    super.key,
     required this.api,
     this.selectHttp = false,
     this.nestedScroll = false,
-  }) : super(key: key);
+  });
   final String api;
   final bool selectHttp;
   final bool nestedScroll;

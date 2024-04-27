@@ -367,7 +367,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                           ],
                         ),
                         action: (isShow, p1) {
-                          return Text("查看更多");
+                          return const Text("查看更多");
                         },
                         limit: limit,
                         height: height,
@@ -1233,7 +1233,7 @@ class PollCard extends HookConsumerWidget {
               Builder(
                 builder: (context) {
                   return Padding(
-                    padding: EdgeInsets.only(top: 2, bottom: 2),
+                    padding: const EdgeInsets.only(top: 2, bottom: 2),
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(6)),
                       child: SizedBox(

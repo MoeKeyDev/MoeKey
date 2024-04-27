@@ -311,7 +311,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             overflow: TextOverflow.ellipsis,
             currentServerHost: data["note"]["user"]["host"],
           ),
-          name: Text("投票结果已经生成"),
+          name: const Text("投票结果已经生成"),
           avatarBadge: Container(
             width: 20,
             height: 20,

@@ -143,7 +143,7 @@ class UserPage extends HookConsumerWidget {
                       width: 8,
                     ),
                     ConstrainedBox(
-                      constraints: BoxConstraints.loose(Size.fromWidth(200)),
+                      constraints: BoxConstraints.loose(const Size.fromWidth(200)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
