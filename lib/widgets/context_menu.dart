@@ -2,28 +2,59 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/main.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 
 import '../state/themes.dart';
 import 'hover_builder.dart';
 
-enum ContextMenuMode { onTap, onSecondaryTap, onLongPress }
+/// 上下文菜单的触发模式
+enum ContextMenuMode {
+  /// 单击触发
+  onTap,
 
+  /// 右键单击触发
+  onSecondaryTap,
+
+  /// 长按触发
+  onLongPress,
+}
+
+final ContextMenuController _contextMenuController = ContextMenuController();
+
+/// 上下文菜单组件，支持在页面上弹出菜单
 class ContextMenuBuilder extends ConsumerStatefulWidget {
-  const ContextMenuBuilder(
-      {super.key,
-      required this.child,
-      required this.menu,
-      this.mode,
-      this.maskColor});
+  const ContextMenuBuilder({
+    super.key,
+    required this.child,
+    required this.menu,
+    this.behavior = HitTestBehavior.translucent,
+    this.alignmentChild = false,
+    this.mode,
+    this.maskColor,
+  });
+
+  /// 子元素
   final Widget child;
+
+  /// 上下文菜单
   final ContextMenuCard menu;
+
+  /// 触发模式
   final List<ContextMenuMode>? mode;
+
+  /// 遮罩颜色，默认无遮罩
   final Color? maskColor;
+
+  /// 对齐子元素，当启此选项之后菜单的弹出位置将会出现在 [child] 正下方
+  /// 默认为禁用，菜单的弹出位置将默认为鼠标点击的位置
+  final bool alignmentChild;
+
+  final HitTestBehavior behavior;
+
   @override
   ConsumerState<ContextMenuBuilder> createState() => ContextMenuBuilderState();
 }
@@ -35,8 +66,10 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     super.initState();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 150));
+    // 缩放动画
     tween1 = Tween(begin: 0.9, end: 1.0).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    // 淡入淡出
     tween2 = Tween(begin: 0.2, end: 1.0).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
   }
@@ -48,7 +81,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   show(Offset offset) {
     _animationController.reset();
     _animationController.forward();
-    globalContextMenuController.show(
+    _contextMenuController.show(
       context: context,
       contextMenuBuilder: (context) {
         return getContextMenuLayoutWidget(offset);
@@ -70,15 +103,30 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   }
 
   LayoutBuilder getContextMenuLayoutWidget(Offset offset) {
+    var childSize = (context.findRenderObject() as RenderBox).size;
+    var childOffset =
+        (context.findRenderObject() as RenderBox).localToGlobal(Offset.zero);
+
+    // 当设置子元素对齐的时候，将菜单对齐到子元素的底部居中
+    var menuOffset = const Offset(0, 0);
+    if (widget.alignmentChild) {
+      offset = childOffset;
+      menuOffset = Offset(
+          -((widget.menu.width - childSize.width) / 2), childSize.height);
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        // 不透明遮罩
         Widget w = ScaleTransition(
             alignment: Alignment(offset.dx / constraints.maxWidth * 2 - 1,
                 offset.dy / constraints.minHeight * 2 - 1),
             scale: tween1,
             child: ContextMenuLayoutWidget(
-                menu: widget.menu, offset: offset, controller: this));
+                menu: widget.menu,
+                offset: offset + menuOffset,
+                controller: this));
+
+        // 不透明遮罩
         if (widget.maskColor != null) {
           w = Container(
             color: widget.maskColor ?? Colors.transparent,
@@ -99,11 +147,11 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     );
   }
 
-  void onSecondaryTapUp(TapUpDetails details) {
+  void _onSecondaryTapUp(TapUpDetails details) {
     show(details.globalPosition);
   }
 
-  void onTapUp(TapUpDetails details) {
+  void _onTapUp(TapUpDetails details) {
     if (Platform.isAndroid || Platform.isIOS) {
       showBottomSheet();
       return;
@@ -111,15 +159,17 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     show(details.globalPosition);
   }
 
-  void onLongPress() {
+  void _onLongPress() {
     if (Platform.isAndroid || Platform.isIOS) {
       showBottomSheet();
+      // 长按震动
+      HapticFeedback.lightImpact();
     }
   }
 
   hidden() async {
     await _animationController.reverse();
-    globalContextMenuController.remove();
+    _contextMenuController.remove();
   }
 
   @override
@@ -128,12 +178,13 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
         [ContextMenuMode.onSecondaryTap, ContextMenuMode.onLongPress];
     var isMobile = Platform.isAndroid || Platform.isIOS;
     return GestureDetector(
+      behavior: widget.behavior,
       onSecondaryTapUp: mode.contains(ContextMenuMode.onSecondaryTap)
-          ? onSecondaryTapUp
+          ? _onSecondaryTapUp
           : null,
-      onTapUp: mode.contains(ContextMenuMode.onTap) ? onTapUp : null,
+      onTapUp: mode.contains(ContextMenuMode.onTap) ? _onTapUp : null,
       onLongPress: mode.contains(ContextMenuMode.onLongPress) && isMobile
-          ? onLongPress
+          ? _onLongPress
           : null,
       child: widget.child,
     );
@@ -142,7 +193,9 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
 
 class ContextDraggableBottomSheet extends HookConsumerWidget {
   const ContextDraggableBottomSheet({super.key, required this.menu});
+
   final ContextMenuCard menu;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -166,9 +219,12 @@ class ContextDraggableBottomSheet extends HookConsumerWidget {
       },
       behavior: HitTestBehavior.opaque,
       child: DraggableScrollableSheet(
-        initialChildSize: menu.initialChildSize, //set this as you want
-        maxChildSize: menu.maxChildSize, //set this as you want
-        minChildSize: menu.minChildSize, //set this as you want
+        initialChildSize: menu.initialChildSize,
+        //set this as you want
+        maxChildSize: menu.maxChildSize,
+        //set this as you want
+        minChildSize: menu.minChildSize,
+        //set this as you want
         expand: true,
         builder: (context, scrollController) {
           return Container(
@@ -245,9 +301,11 @@ class ContextMenuLayoutWidget extends StatefulWidget {
     required this.offset,
     required this.controller,
   });
+
   final ContextMenuCard menu;
   final Offset offset;
   final ContextMenuBuilderState controller;
+
   @override
   State<ContextMenuLayoutWidget> createState() =>
       _ContextMenuLayoutWidgetState();
@@ -262,6 +320,7 @@ class _ContextMenuLayoutWidgetState extends State<ContextMenuLayoutWidget> {
 
   Map<ContextMenuCard, Future<List<ContextMenuItem>>> menuListCacheMap = {};
   Map<ContextMenuCard, Future<Widget>> widgetCacheMap = {};
+
   getWidgetFromItem(ContextMenuCard list, {int index = 0}) {
     assert(list.menuListBuilder != null);
     if (indexList[index] == null) {
@@ -390,6 +449,7 @@ class ContextMenuLayoutOffset {
     required this.id,
     required this.offset,
   });
+
   final int id;
   final double offset;
 }
@@ -399,6 +459,7 @@ class ContextMenuLayout extends MultiChildLayoutDelegate {
 
   final List<ContextMenuLayoutOffset> children;
   final Offset offset;
+
   @override
   void performLayout(Size size) {
     var lastOffset = offset;
@@ -448,6 +509,7 @@ class ContextMenuCard {
   final FutureOr<List<ContextMenuItem>> Function()? menuListBuilder;
   final FutureOr<Widget> Function(
       {required void Function() onHidden, required bool large})? widgetBuilder;
+
   ContextMenuCard({
     this.width = 200,
     this.menuListBuilder,
@@ -470,6 +532,7 @@ class ContextMenuItem {
     this.title,
     this.isActive = false,
   });
+
   String? label;
   IconData? icon;
   ContextMenuCard? child;
@@ -489,12 +552,14 @@ class _ContextMenuItem extends ConsumerWidget {
       this.large = false,
       this.onTap,
       this.onHidden});
+
   final ContextMenuItem contextMenuItem;
   final void Function()? onHover;
   final void Function()? onTap;
   final bool isActive;
   final bool large;
   final void Function()? onHidden;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -608,8 +673,10 @@ class _ContextMenu extends HookConsumerWidget {
     required this.children,
     this.width = 200,
   });
+
   final List<Widget> children;
   final double width;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);

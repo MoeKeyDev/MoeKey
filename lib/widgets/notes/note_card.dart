@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,6 +61,7 @@ class NoteCard extends ConsumerWidget {
   final NoteModel data;
   final BorderRadius borderRadius;
   final bool pined;
+
   const NoteCard({
     super.key,
     required this.data,
@@ -168,6 +168,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     this.limit = 1000,
     this.height = 400,
   });
+
   final NoteModel data;
   final bool reply;
   final bool isShowAction;
@@ -179,6 +180,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
   final ConstraintId content = ConstraintId('content');
   final double limit;
   final double height;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
@@ -197,223 +199,244 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
       return () => note.unsubNote(data, code);
     }, [this.data.id]);
     var links = extractLinksFromMarkdown(data.text ?? "");
-    return LayoutBuilder(builder: (context, constraints) {
-      var isSmall = constraints.maxWidth < 400;
-      return MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: () {
-            main_router.MainRouterDelegate.of(context)
-                .setNewRoutePath(main_router.RouterItem(
-              path: "notes/${data.id}",
-              page: () => NotesPage(
-                noteId: data.id,
-              ),
-              launchMode: main_router.LaunchMode.standard,
-            ));
-          },
-          child: Container(
-            color: Colors.transparent,
-            child: ConstraintLayout(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    main_router.MainRouterDelegate.of(context)
-                        .setNewRoutePath(main_router.RouterItem(
-                      path: "user/${data.user.id}",
-                      page: () {
-                        return UserPage(userId: data.user.id);
-                      },
-                    ));
-                  },
-                  child: MkImage(
-                    data.user.avatarUrl ?? "",
-                    shape: BoxShape.circle,
-                  ),
-                ).applyConstraint(
-                  top: parent.top,
-                  left: parent.left,
-                  size: isSmall ? 7 * (fontsize - 8) : 8 * (fontsize - 8),
-                  id: avatar,
+    var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
+    var meta = ref.watch(apiMetaProvider).valueOrNull;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var isSmall = constraints.maxWidth < 400;
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: () {
+              main_router.MainRouterDelegate.of(context)
+                  .setNewRoutePath(main_router.RouterItem(
+                path: "notes/${data.id}",
+                page: () => NotesPage(
+                  noteId: data.id,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left:
-                          isSmall ? 8.5 * (fontsize - 8) : 10 * (fontsize - 8)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
+                launchMode: main_router.LaunchMode.standard,
+              ));
+            },
+            child: ContextMenuBuilder(
+              mode: const [
+                ContextMenuMode.onSecondaryTap,
+                ContextMenuMode.onLongPress
+              ],
+              menu: buildNoteContextMenu(serverUrl, meta, data, ref),
+              child: Container(
+                color: Colors.transparent,
+                child: ConstraintLayout(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        main_router.MainRouterDelegate.of(context)
+                            .setNewRoutePath(main_router.RouterItem(
+                          path: "user/${data.user.id}",
+                          page: () {
+                            return UserPage(userId: data.user.id);
+                          },
+                        ));
+                      },
+                      child: MkImage(
+                        data.user.avatarUrl ?? "",
+                        shape: BoxShape.circle,
+                      ),
+                    ).applyConstraint(
+                      top: parent.top,
+                      left: parent.left,
+                      size: isSmall ? 7 * (fontsize - 8) : 8 * (fontsize - 8),
+                      id: avatar,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: isSmall
+                              ? 8.5 * (fontsize - 8)
+                              : 10 * (fontsize - 8)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Expanded(child: UserNameRichText(data: data.user)),
-                          Text(timeAgoSinceDate(data.createdAt),
-                              style: TextStyle(fontSize: fontsize * 0.9)),
-                          const SizedBox(
-                            width: 6,
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Expanded(
+                                  child: UserNameRichText(data: data.user)),
+                              Text(timeAgoSinceDate(data.createdAt),
+                                  style: TextStyle(fontSize: fontsize * 0.9)),
+                              const SizedBox(
+                                width: 6,
+                              ),
+                              if (NoteVisibility.getIcon(data.visibility) !=
+                                  null)
+                                Icon(
+                                  NoteVisibility.getIcon(data.visibility)!,
+                                  size: fontsize,
+                                  color: themes.fgColor,
+                                )
+                            ],
                           ),
-                          if (NoteVisibility.getIcon(data.visibility) != null)
-                            Icon(
-                              NoteVisibility.getIcon(data.visibility)!,
-                              size: fontsize,
-                              color: themes.fgColor,
+                          if (data.user.instance != null)
+                            const SizedBox(height: 4),
+                          if (data.user.instance != null)
+                            RepaintBoundary(child: UserInstanceBar(data: data)),
+                          // start
+                          MkOverflowShow(
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (data.cw != null) const SizedBox(height: 4),
+                                if (data.cw != null)
+                                  MFMText(
+                                    text: data.cw ?? "",
+                                    currentServerHost: data.user.host,
+                                    emojis: data.emojis,
+                                  ),
+                                if (data.cw != null) const SizedBox(height: 4),
+                                if (data.cw != null)
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: FilledButton(
+                                      onPressed: () {
+                                        isHiddenCw.value = !isHiddenCw.value;
+                                      },
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.resolveWith(
+                                                  (states) {
+                                            if (states.contains(
+                                                MaterialState.hovered)) {
+                                              return themes.buttonHoverBgColor;
+                                            }
+                                            return themes.buttonBgColor;
+                                          }),
+                                          foregroundColor:
+                                              MaterialStateProperty.all(
+                                                  themes.fgColor),
+                                          elevation:
+                                              MaterialStateProperty.all(0)),
+                                      child: Text(
+                                          isHiddenCw.value ? "查看更多" : "收起"),
+                                    ),
+                                  ),
+                                if (!isHiddenCw.value || data.cw == null) ...[
+                                  const SizedBox(height: 4),
+                                  if ((data.text ?? "") != "")
+                                    MFMText(
+                                      text: data.text ?? "",
+                                      emojis: data.emojis,
+                                      currentServerHost: data.user.host,
+                                    ),
+                                  if (data.noteTranslate != null)
+                                    Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: themes.dividerColor,
+                                            width: 1),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(6),
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      margin: const EdgeInsets.only(
+                                          top: 6, bottom: 2),
+                                      child: [
+                                        if (data.noteTranslate!.loading)
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: LoadingCircularProgress(
+                                                size: 22,
+                                                strokeWidth: 4,
+                                              ),
+                                            ),
+                                          )
+                                        else
+                                          MFMText(
+                                            emojis: data.emojis,
+                                            currentServerHost: data.user.host,
+                                            before: [
+                                              TextSpan(
+                                                  text:
+                                                      "从${data.noteTranslate!.sourceLang}翻译:\n",
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold))
+                                            ],
+                                            text:
+                                                data.noteTranslate!.text ?? "",
+                                          ),
+                                      ][0],
+                                    ),
+                                  const SizedBox(height: 4),
+                                  // 投票
+                                  if (data.poll != null) PollCard(data: data),
+                                  TimeLineImage(
+                                      files: data.files,
+                                      mainAxisExtent:
+                                          constraints.maxWidth * 0.7),
+                                  // 链接预览
+                                  if (isShowUrlPreview)
+                                    for (var link in links) ...[
+                                      NoteLinkPreview(
+                                          link: link, fontsize: fontsize)
+                                    ],
+                                  if (innerWidget != null) innerWidget!,
+                                ],
+                              ],
+                            ),
+                            action: (isShow, p1) {
+                              return const Text("查看更多");
+                            },
+                            limit: limit,
+                            height: height,
+                          ),
+
+                          // end
+                          if (isShowReactions) ...[
+                            const SizedBox(height: 8),
+                            ReactionsListComponent(
+                                emojis: data.reactionEmojis,
+                                reactionsList: data.reactions,
+                                id: data.id,
+                                myReaction: data.myReaction,
+                                disableReactions: disableReactions),
+                          ],
+                          if (isShowAction)
+                            TimeLineActions(
+                              fontsize: fontsize,
+                              data: data,
                             )
                         ],
                       ),
-                      if (data.user.instance != null) const SizedBox(height: 4),
-                      if (data.user.instance != null)
-                        RepaintBoundary(child: UserInstanceBar(data: data)),
-                      // start
-                      MkOverflowShow(
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (data.cw != null) const SizedBox(height: 4),
-                            if (data.cw != null)
-                              MFMText(
-                                text: data.cw ?? "",
-                                currentServerHost: data.user.host,
-                                emojis: data.emojis,
-                              ),
-                            if (data.cw != null) const SizedBox(height: 4),
-                            if (data.cw != null)
-                              SizedBox(
-                                width: double.infinity,
-                                child: FilledButton(
-                                  onPressed: () {
-                                    isHiddenCw.value = !isHiddenCw.value;
-                                  },
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) {
-                                        if (states
-                                            .contains(MaterialState.hovered)) {
-                                          return themes.buttonHoverBgColor;
-                                        }
-                                        return themes.buttonBgColor;
-                                      }),
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                              themes.fgColor),
-                                      elevation: MaterialStateProperty.all(0)),
-                                  child: Text(isHiddenCw.value ? "查看更多" : "收起"),
-                                ),
-                              ),
-                            if (!isHiddenCw.value || data.cw == null) ...[
-                              const SizedBox(height: 4),
-                              if ((data.text ?? "") != "")
-                                MFMText(
-                                  text: data.text ?? "",
-                                  emojis: data.emojis,
-                                  currentServerHost: data.user.host,
-                                ),
-                              if (data.noteTranslate != null)
-                                Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: themes.dividerColor, width: 1),
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(6),
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.all(4),
-                                  margin:
-                                      const EdgeInsets.only(top: 6, bottom: 2),
-                                  child: [
-                                    if (data.noteTranslate!.loading)
-                                      const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Center(
-                                          child: LoadingCircularProgress(
-                                            size: 22,
-                                            strokeWidth: 4,
-                                          ),
-                                        ),
-                                      )
-                                    else
-                                      MFMText(
-                                        emojis: data.emojis,
-                                        currentServerHost: data.user.host,
-                                        before: [
-                                          TextSpan(
-                                              text:
-                                                  "从${data.noteTranslate!.sourceLang}翻译:\n",
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold))
-                                        ],
-                                        text: data.noteTranslate!.text ?? "",
-                                      ),
-                                  ][0],
-                                ),
-                              const SizedBox(height: 4),
-                              // 投票
-                              if (data.poll != null) PollCard(data: data),
-                              TimeLineImage(
-                                  files: data.files,
-                                  mainAxisExtent: constraints.maxWidth * 0.7),
-                              // 链接预览
-                              if (isShowUrlPreview)
-                                for (var link in links) ...[
-                                  NoteLinkPreview(
-                                      link: link, fontsize: fontsize)
-                                ],
-                              if (innerWidget != null) innerWidget!,
-                            ],
-                          ],
+                    ).applyConstraint(
+                        top: parent.top,
+                        width: matchParent,
+                        height: wrapContent,
+                        id: content),
+                    if (reply)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4, bottom: 4),
+                        child: Container(
+                          color: themes.dividerColor,
                         ),
-                        action: (isShow, p1) {
-                          return const Text("查看更多");
-                        },
-                        limit: limit,
-                        height: height,
-                      ),
-
-                      // end
-                      if (isShowReactions) ...[
-                        const SizedBox(height: 8),
-                        ReactionsListComponent(
-                            emojis: data.reactionEmojis,
-                            reactionsList: data.reactions,
-                            id: data.id,
-                            myReaction: data.myReaction,
-                            disableReactions: disableReactions),
-                      ],
-                      if (isShowAction)
-                        TimeLineActions(
-                          fontsize: fontsize,
-                          data: data,
-                        )
-                    ],
-                  ),
-                ).applyConstraint(
-                    top: parent.top,
-                    width: matchParent,
-                    height: wrapContent,
-                    id: content),
-                if (reply)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4, bottom: 4),
-                    child: Container(
-                      color: themes.dividerColor,
-                    ),
-                  ).applyConstraint(
-                      width: 2,
-                      top: avatar.bottom,
-                      bottom: parent.bottom,
-                      left: avatar.left,
-                      right: avatar.right,
-                      height: matchConstraint)
-              ],
+                      ).applyConstraint(
+                          width: 2,
+                          top: avatar.bottom,
+                          bottom: parent.bottom,
+                          left: avatar.left,
+                          right: avatar.right,
+                          height: matchConstraint)
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     // return VisibilityDetector(
     //   onVisibilityChanged: (visibilityInfo) {
@@ -443,7 +466,6 @@ class NoteLinkPreview extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var res = ref.watch(getUriInfoProvider(link));
-    print(res);
     if (res.valueOrNull != null) {
       var data = res.valueOrNull;
       return Container(
@@ -767,6 +789,7 @@ class TimeLineImage extends StatelessWidget {
   TimeLineImage(
       {super.key, required List<DriveFileModel> files, this.mainAxisExtent = 0})
       : files = files.map((e) => e.copyWith(hero: UniqueKey())).toList();
+
   open(index, BuildContext context) {
     globalNav.currentState?.push(
       FFTransparentPageRoute(
@@ -914,12 +937,88 @@ class TimeLineImage extends StatelessWidget {
   }
 }
 
+ContextMenuCard buildNoteContextMenu(String serverUrl,
+    Map<dynamic, dynamic>? meta, NoteModel data, WidgetRef ref) {
+  return ContextMenuCard(
+    menuListBuilder: () {
+      return [
+        ContextMenuItem(
+          icon: TablerIcons.copy,
+          label: "复制内容",
+          onTap: () {
+            Clipboard.setData(
+              ClipboardData(text: data.text ?? ""),
+            );
+            return false;
+          },
+        ),
+        ContextMenuItem(
+          icon: TablerIcons.link,
+          label: "复制本站链接",
+          onTap: () {
+            Clipboard.setData(
+              ClipboardData(text: "$serverUrl/notes/${data.id}"),
+            );
+            return false;
+          },
+        ),
+        ContextMenuItem(
+          icon: TablerIcons.share,
+          label: "分享",
+          onTap: () {
+            // ref.read(noteApisProvider.notifier).reNote(data.id);
+            Share.shareUri(Uri.parse("$serverUrl/notes/${data.id}"));
+            return false;
+          },
+        ),
+        if (data.user.host != null)
+          ContextMenuItem(
+            icon: TablerIcons.external_link,
+            label: "转到所在服务器显示",
+            onTap: () {
+              if (data.uri != null) {
+                launchUrlString(data.uri!);
+              }
+              // ref.read(noteApisProvider.notifier).reNote(data.id);
+              return false;
+            },
+          ),
+        if (meta != null &&
+            meta.containsKey("translatorAvailable") &&
+            meta["translatorAvailable"])
+          ContextMenuItem(
+            icon: TablerIcons.language_hiragana,
+            label: "翻译",
+            onTap: () {
+              var note = ref.read(noteListProvider)[data.id] ?? data;
+              note = note.copyWith();
+              note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
+              ref.read(noteListProvider.notifier).registerNote(note);
+              var res = ref.read(noteTranslateProvider(data.id).future);
+              res.then(
+                (res) {
+                  res.loading = false;
+                  note = note.copyWith();
+                  note.noteTranslate = res;
+                  ref.read(noteListProvider.notifier).registerNote(note);
+                },
+              );
+
+              return false;
+            },
+          ),
+      ];
+    },
+  );
+}
+
 class TimeLineActions extends HookConsumerWidget {
   const TimeLineActions({
     super.key,
     required this.fontsize,
     required this.data,
   });
+
   final NoteModel data;
   final double fontsize;
 
@@ -927,204 +1026,105 @@ class TimeLineActions extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
     var meta = ref.watch(apiMetaProvider).valueOrNull;
-    return HookConsumer(builder: (context, ref, child) {
-      var currentUser = ref.watch(currentLoginUserProvider);
-      return Row(
-        children: [
-          TimelineActionButton(
-            fontsize: fontsize,
-            icon: TablerIcons.arrow_back_up,
-            count: data.repliesCount,
-            onTap: () {
-              globalNav.currentState?.push(
-                NoteCreateDialog.getRouter(
-                  noteId: data.id,
-                  type: NoteType.reply,
-                  note: data,
-                  initText: "${data.createReplyAtText(currentUser.value!.id)} ",
-                ),
-              );
-            },
-          ),
-          const SizedBox(
-            width: 28,
-          ),
-          ContextMenuBuilder(
-              menu: ContextMenuCard(
-                initialChildSize: 0.3,
-                maxChildSize: 0.4,
-                minChildSize: 0.3,
-                menuListBuilder: () {
-                  return [
-                    ContextMenuItem(
-                      icon: TablerIcons.repeat,
-                      label: "转发",
-                      onTap: () {
-                        ref.read(noteApisProvider.notifier).reNote(data.id);
-                        return false;
-                      },
-                    ),
-                    ContextMenuItem(
-                      icon: TablerIcons.quote,
-                      label: "引用",
-                      onTap: () {
-                        globalNav.currentState?.push(NoteCreateDialog.getRouter(
-                          type: NoteType.reNote,
-                          noteId: data.id,
-                          note: data,
-                        ));
-                        return false;
-                      },
-                    )
-                  ];
-                },
-              ),
-              mode: const [ContextMenuMode.onTap],
-              child: Builder(
-                builder: (context) {
-                  return TimelineActionButton(
-                    fontsize: fontsize,
-                    icon: TablerIcons.repeat,
-                    count: data.renoteCount,
-                    onTap: () {
-                      if (Platform.isAndroid || Platform.isIOS) {
-                        context
-                            .findAncestorStateOfType<ContextMenuBuilderState>()
-                            ?.showBottomSheet();
-                      } else {
-                        context
-                            .findAncestorStateOfType<ContextMenuBuilderState>()
-                            ?.show((context.findRenderObject() as RenderBox)
-                                    .localToGlobal(Offset.zero) +
-                                context.size!
-                                    .bottomCenter(const Offset(-100, 0)));
-                      }
-                    },
-                  );
-                },
-              )),
-          const SizedBox(
-            width: 28,
-          ),
-          TimelineActionButton(
-            fontsize: fontsize,
-            icon: TablerIcons.plus,
-            onTap: () {
-              EmojiList.showBottomSheet(
-                context,
-                onInsert: (emoji) {
-                  ref
-                      .read(noteApisProvider.notifier)
-                      .createReactions(data.id, emoji["name"]);
-                  globalNav.currentState?.pop();
-                },
-              );
-            },
-          ),
-          const SizedBox(
-            width: 28,
-          ),
-          ContextMenuBuilder(
-            mode: const [ContextMenuMode.onTap],
-            menu: ContextMenuCard(
-              menuListBuilder: () {
-                return [
-                  ContextMenuItem(
-                    icon: TablerIcons.copy,
-                    label: "复制内容",
-                    onTap: () {
-                      Clipboard.setData(
-                        ClipboardData(text: data.text ?? ""),
-                      );
-                      return false;
-                    },
+    return HookConsumer(
+      builder: (context, ref, child) {
+        var currentUser = ref.watch(currentLoginUserProvider);
+        return Row(
+          children: [
+            TimelineActionButton(
+              fontsize: fontsize,
+              icon: TablerIcons.arrow_back_up,
+              count: data.repliesCount,
+              onTap: () {
+                globalNav.currentState?.push(
+                  NoteCreateDialog.getRouter(
+                    noteId: data.id,
+                    type: NoteType.reply,
+                    note: data,
+                    initText:
+                        "${data.createReplyAtText(currentUser.value!.id)} ",
                   ),
-                  ContextMenuItem(
-                    icon: TablerIcons.link,
-                    label: "复制本站链接",
-                    onTap: () {
-                      Clipboard.setData(
-                        ClipboardData(text: "$serverUrl/notes/${data.id}"),
-                      );
-                      return false;
-                    },
-                  ),
-                  ContextMenuItem(
-                    icon: TablerIcons.share,
-                    label: "分享",
-                    onTap: () {
-                      // ref.read(noteApisProvider.notifier).reNote(data.id);
-                      Share.shareUri(Uri.parse("$serverUrl/notes/${data.id}"));
-                      return false;
-                    },
-                  ),
-                  if (data.user.host != null)
-                    ContextMenuItem(
-                      icon: TablerIcons.external_link,
-                      label: "转到所在服务器显示",
-                      onTap: () {
-                        if (data.uri != null) {
-                          launchUrlString(data.uri!);
-                        }
-                        // ref.read(noteApisProvider.notifier).reNote(data.id);
-                        return false;
-                      },
-                    ),
-                  if (meta != null &&
-                      meta.containsKey("translatorAvailable") &&
-                      meta["translatorAvailable"])
-                    ContextMenuItem(
-                      icon: TablerIcons.language_hiragana,
-                      label: "翻译",
-                      onTap: () {
-                        var note = ref.read(noteListProvider)[data.id] ?? data;
-                        note = note.copyWith();
-                        note.noteTranslate =
-                            NoteTranslate(text: "", sourceLang: "");
-                        ref.read(noteListProvider.notifier).registerNote(note);
-                        var res =
-                            ref.read(noteTranslateProvider(data.id).future);
-                        res.then(
-                          (res) {
-                            res.loading = false;
-                            note = note.copyWith();
-                            note.noteTranslate = res;
-                            ref
-                                .read(noteListProvider.notifier)
-                                .registerNote(note);
-                          },
-                        );
-
-                        return false;
-                      },
-                    ),
-                ];
+                );
               },
             ),
-            child: Builder(builder: (context) {
-              return TimelineActionButton(
+            const SizedBox(
+              width: 28,
+            ),
+            ContextMenuBuilder(
+              menu: _buildNoteRepeatContextMenu(ref),
+              mode: const [ContextMenuMode.onTap],
+              alignmentChild: true,
+              child: TimelineActionButton(
+                fontsize: fontsize,
+                icon: TablerIcons.repeat,
+                count: data.renoteCount,
+              ),
+            ),
+            const SizedBox(
+              width: 28,
+            ),
+            TimelineActionButton(
+              fontsize: fontsize,
+              icon: TablerIcons.plus,
+              onTap: () {
+                EmojiList.showBottomSheet(
+                  context,
+                  onInsert: (emoji) {
+                    ref
+                        .read(noteApisProvider.notifier)
+                        .createReactions(data.id, emoji["name"]);
+                    globalNav.currentState?.pop();
+                  },
+                );
+              },
+            ),
+            const SizedBox(
+              width: 28,
+            ),
+            ContextMenuBuilder(
+              mode: const [ContextMenuMode.onTap],
+              menu: buildNoteContextMenu(serverUrl, meta, data, ref),
+              child: TimelineActionButton(
                 fontsize: fontsize,
                 icon: TablerIcons.dots,
-                onTap: () {
-                  print("click");
-                  if (Platform.isAndroid || Platform.isIOS) {
-                    context
-                        .findAncestorStateOfType<ContextMenuBuilderState>()
-                        ?.showBottomSheet();
-                  } else {
-                    context
-                        .findAncestorStateOfType<ContextMenuBuilderState>()
-                        ?.show((context.findRenderObject() as RenderBox)
-                                .localToGlobal(Offset.zero) +
-                            context.size!.bottomCenter(const Offset(-100, 0)));
-                  }
-                },
-              );
-            }),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  ContextMenuCard _buildNoteRepeatContextMenu(WidgetRef ref) {
+    return ContextMenuCard(
+      initialChildSize: 0.3,
+      maxChildSize: 0.4,
+      minChildSize: 0.3,
+      menuListBuilder: () {
+        return [
+          ContextMenuItem(
+            icon: TablerIcons.repeat,
+            label: "转发",
+            onTap: () {
+              ref.read(noteApisProvider.notifier).reNote(data.id);
+              return false;
+            },
           ),
-        ],
-      );
-    });
+          ContextMenuItem(
+            icon: TablerIcons.quote,
+            label: "引用",
+            onTap: () {
+              globalNav.currentState?.push(NoteCreateDialog.getRouter(
+                type: NoteType.reNote,
+                noteId: data.id,
+                note: data,
+              ));
+              return false;
+            },
+          )
+        ];
+      },
+    );
   }
 }
 
@@ -1189,7 +1189,9 @@ class PollCard extends HookConsumerWidget {
     super.key,
     required this.data,
   });
+
   final NoteModel data;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // return Text(data.poll["choices"].toString());

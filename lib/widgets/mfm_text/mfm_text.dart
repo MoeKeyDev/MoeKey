@@ -56,7 +56,6 @@ class MFMText extends HookConsumerWidget {
     var textStyle = DefaultTextStyle.of(context).style;
     if (lastText.value != text) {
       mfmParse.value = const MfmParser().parse(text);
-      print("text build");
     }
     var parse = _getParse(
       feature: feature,

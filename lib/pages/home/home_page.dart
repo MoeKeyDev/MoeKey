@@ -24,6 +24,7 @@ class HomePage extends HookConsumerWidget {
   HomePage({super.key});
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void _openDrawer() {
     _scaffoldKey.currentState!.openDrawer();
   }
@@ -102,8 +103,7 @@ class HomePage extends HookConsumerWidget {
                     data: media.copyWith(
                         padding: media.padding.copyWith(
                             bottom: media.padding.bottom +
-                                (constraints.maxWidth > 500 ||
-                                        !isShowBottomNav
+                                (constraints.maxWidth > 500 || !isShowBottomNav
                                     ? 0
                                     : 100))),
                     child: Router(
@@ -112,7 +112,7 @@ class HomePage extends HookConsumerWidget {
                     ),
                   ),
                 ),
-                if (constraints.maxWidth >= 1190) const WidgetsListPage()
+                if (constraints.maxWidth >= 1100) const WidgetsListPage()
               ],
             ),
             if (constraints.maxWidth < 500)
@@ -191,6 +191,7 @@ class NavBar extends HookConsumerWidget {
     required this.width,
     this.onSelect,
   });
+
   final void Function()? onSelect;
   final double width;
 
@@ -279,6 +280,7 @@ class ServerIconAndBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
     var meta = ref.watch(apiMetaProvider.future);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return FutureBuilder(
@@ -330,8 +332,12 @@ class ServerIconAndBanner extends ConsumerWidget {
                     ),
                   ));
             }
+            var top = 10 + mediaPadding.top;
+            if (top < 20) {
+              top = 20;
+            }
             return Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+              padding: EdgeInsets.fromLTRB(0, top, 0, 20),
               child: icon,
             );
           },
@@ -533,6 +539,7 @@ class NavbarItem extends ConsumerWidget {
   final String id;
   final String currentId;
   final void Function()? onSelect;
+
   const NavbarItem({
     super.key,
     required this.icon,

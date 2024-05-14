@@ -15,8 +15,10 @@ import '../../models/translate.dart';
 import '../../networks/apis.dart';
 import '../../networks/notes.dart';
 import '../../router/main_router_delegate.dart';
+import '../../state/server.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../../utils/time_to_desired_format.dart';
+import '../../widgets/context_menu.dart';
 import '../../widgets/mfm_text/mfm_text.dart';
 import '../../widgets/mk_card.dart';
 import '../../widgets/mk_image.dart';
@@ -27,6 +29,7 @@ import '../users/user_page.dart';
 
 class NotesPage extends HookConsumerWidget {
   const NotesPage({super.key, required this.noteId});
+
   final String noteId;
 
   @override
@@ -308,7 +311,9 @@ class NotesPage extends HookConsumerWidget {
 
 class NotesPageNoteCard extends HookConsumerWidget {
   const NotesPageNoteCard({super.key, required this.data});
+
   final NoteModel data;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var isHiddenCw = useState(true);
@@ -317,174 +322,183 @@ class NotesPageNoteCard extends HookConsumerWidget {
         noteListProvider.select((value) => value[this.data.id] ?? this.data));
     var links = extractLinksFromMarkdown(data.text ?? "");
     var meta = ref.watch(apiMetaProvider).valueOrNull;
+    var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            UserInfo(data: data),
-            const SizedBox(height: 8),
-            if (data.cw != null) ...[
-              MFMText(
-                text: data.cw ?? "",
-                emojis: data.emojis,
-                currentServerHost: data.user.host,
-              ),
-              const SizedBox(height: 4),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    isHiddenCw.value = !isHiddenCw.value;
-                  },
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.resolveWith((states) {
-                        if (states.contains(MaterialState.hovered)) {
-                          return themes.buttonHoverBgColor;
-                        }
-                        return themes.buttonBgColor;
-                      }),
-                      foregroundColor:
-                          MaterialStateProperty.all(themes.fgColor),
-                      elevation: MaterialStateProperty.all(0)),
-                  child: Text(isHiddenCw.value ? "查看更多" : "收起"),
-                ),
-              ),
-            ],
-            if (!isHiddenCw.value || data.cw == null) ...[
-              const SizedBox(height: 4),
-              if (data.text != null)
+        return ContextMenuBuilder(
+          mode: const [
+            ContextMenuMode.onSecondaryTap,
+            ContextMenuMode.onLongPress
+          ],
+          menu: buildNoteContextMenu(serverUrl, meta, data, ref),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              UserInfo(data: data),
+              const SizedBox(height: 8),
+              if (data.cw != null) ...[
                 MFMText(
-                  text: data.text ?? "",
+                  text: data.cw ?? "",
                   emojis: data.emojis,
                   currentServerHost: data.user.host,
-                  isSelection: true,
                 ),
-              if (meta != null &&
-                  meta.containsKey("translatorAvailable") &&
-                  meta["translatorAvailable"] &&
-                  data.noteTranslate == null)
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () {
-                      var note = ref.read(noteListProvider)[data.id] ?? data;
-                      note = note.copyWith();
-                      note.noteTranslate =
-                          NoteTranslate(text: "", sourceLang: "");
-                      ref.read(noteListProvider.notifier).registerNote(note);
-                      var res = ref.read(noteTranslateProvider(data.id).future);
-                      res.then(
-                        (res) {
-                          res.loading = false;
-                          note = note.copyWith();
-                          note.noteTranslate = res;
-                          ref
-                              .read(noteListProvider.notifier)
-                              .registerNote(note);
-                        },
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Text(
-                        "翻译帖子",
-                        style: TextStyle(color: themes.accentColor),
-                      ),
-                    ),
-                  ),
-                ),
-
-              if (data.noteTranslate != null)
-                Container(
+                const SizedBox(height: 4),
+                SizedBox(
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: themes.dividerColor, width: 1),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(6),
+                  child: FilledButton(
+                    onPressed: () {
+                      isHiddenCw.value = !isHiddenCw.value;
+                    },
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith((states) {
+                          if (states.contains(MaterialState.hovered)) {
+                            return themes.buttonHoverBgColor;
+                          }
+                          return themes.buttonBgColor;
+                        }),
+                        foregroundColor:
+                            MaterialStateProperty.all(themes.fgColor),
+                        elevation: MaterialStateProperty.all(0)),
+                    child: Text(isHiddenCw.value ? "查看更多" : "收起"),
+                  ),
+                ),
+              ],
+              if (!isHiddenCw.value || data.cw == null) ...[
+                const SizedBox(height: 4),
+                if (data.text != null)
+                  MFMText(
+                    text: data.text ?? "",
+                    emojis: data.emojis,
+                    currentServerHost: data.user.host,
+                    isSelection: true,
+                  ),
+                if (meta != null &&
+                    meta.containsKey("translatorAvailable") &&
+                    meta["translatorAvailable"] &&
+                    data.noteTranslate == null)
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        var note = ref.read(noteListProvider)[data.id] ?? data;
+                        note = note.copyWith();
+                        note.noteTranslate =
+                            NoteTranslate(text: "", sourceLang: "");
+                        ref.read(noteListProvider.notifier).registerNote(note);
+                        var res =
+                            ref.read(noteTranslateProvider(data.id).future);
+                        res.then(
+                          (res) {
+                            res.loading = false;
+                            note = note.copyWith();
+                            note.noteTranslate = res;
+                            ref
+                                .read(noteListProvider.notifier)
+                                .registerNote(note);
+                          },
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Text(
+                          "翻译帖子",
+                          style: TextStyle(color: themes.accentColor),
+                        ),
+                      ),
                     ),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  margin: const EdgeInsets.only(top: 8, bottom: 2),
-                  child: [
-                    if (data.noteTranslate!.loading)
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Center(
-                          child: LoadingCircularProgress(
-                            size: 22,
-                            strokeWidth: 4,
-                          ),
-                        ),
-                      )
-                    else
-                      MFMText(
-                        emojis: data.emojis,
-                        currentServerHost: data.user.host,
-                        before: [
-                          TextSpan(
-                              text: "从${data.noteTranslate!.sourceLang}翻译:\n",
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold))
-                        ],
-                        text: data.noteTranslate!.text ?? "",
+
+                if (data.noteTranslate != null)
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: themes.dividerColor, width: 1),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(6),
                       ),
-                  ][0],
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    margin: const EdgeInsets.only(top: 8, bottom: 2),
+                    child: [
+                      if (data.noteTranslate!.loading)
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(
+                            child: LoadingCircularProgress(
+                              size: 22,
+                              strokeWidth: 4,
+                            ),
+                          ),
+                        )
+                      else
+                        MFMText(
+                          emojis: data.emojis,
+                          currentServerHost: data.user.host,
+                          before: [
+                            TextSpan(
+                                text: "从${data.noteTranslate!.sourceLang}翻译:\n",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold))
+                          ],
+                          text: data.noteTranslate!.text ?? "",
+                        ),
+                    ][0],
+                  ),
+                const SizedBox(height: 4),
+                // 投票
+                if (data.poll != null) PollCard(data: data),
+                TimeLineImage(
+                    files: data.files,
+                    mainAxisExtent: constraints.maxWidth * 0.7),
+                for (var link in links)
+                  NoteLinkPreview(
+                      link: link,
+                      fontsize: DefaultTextStyle.of(context).style.fontSize!),
+              ],
+              if (data.reactions.isNotEmpty)
+                const SizedBox(
+                  height: 8,
                 ),
-              const SizedBox(height: 4),
-              // 投票
-              if (data.poll != null) PollCard(data: data),
-              TimeLineImage(
-                  files: data.files,
-                  mainAxisExtent: constraints.maxWidth * 0.7),
-              for (var link in links)
-                NoteLinkPreview(
-                    link: link,
-                    fontsize: DefaultTextStyle.of(context).style.fontSize!),
-            ],
-            if (data.reactions.isNotEmpty)
+              if (data.renote != null)
+                Container(
+                  margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          width: 1, color: themes.fgColor.withOpacity(0.6)),
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
+                  padding: const EdgeInsets.all(12),
+                  child: TimeLineNoteCardComponent(
+                      data: data.renote!,
+                      isShowAction: false,
+                      disableReactions: true),
+                ),
+              // 发布日期
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Opacity(
+                  opacity: 0.7,
+                  child: Text(timeToDesiredFormat(data.createdAt)),
+                ),
+              ),
+              ReactionsListComponent(
+                emojis: data.reactionEmojis,
+                reactionsList: data.reactions,
+                id: data.id,
+                myReaction: data.myReaction,
+              ),
               const SizedBox(
-                height: 8,
+                height: 4,
               ),
-            if (data.renote != null)
-              Container(
-                margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 1, color: themes.fgColor.withOpacity(0.6)),
-                    borderRadius: const BorderRadius.all(Radius.circular(8))),
-                padding: const EdgeInsets.all(12),
-                child: TimeLineNoteCardComponent(
-                    data: data.renote!,
-                    isShowAction: false,
-                    disableReactions: true),
-              ),
-            // 发布日期
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Opacity(
-                opacity: 0.7,
-                child: Text(timeToDesiredFormat(data.createdAt)),
-              ),
-            ),
-            ReactionsListComponent(
-              emojis: data.reactionEmojis,
-              reactionsList: data.reactions,
-              id: data.id,
-              myReaction: data.myReaction,
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            TimeLineActions(
-              fontsize: 14,
-              data: data,
-            )
-          ],
+              TimeLineActions(
+                fontsize: 14,
+                data: data,
+              )
+            ],
+          ),
         );
       },
     );
@@ -493,7 +507,9 @@ class NotesPageNoteCard extends HookConsumerWidget {
 
 class UserInfo extends HookConsumerWidget {
   const UserInfo({super.key, required this.data});
+
   final NoteModel data;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
