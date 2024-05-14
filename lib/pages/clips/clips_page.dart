@@ -4,6 +4,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/clips/clips_collection.dart';
 import 'package:moekey/pages/clips/clips_my.dart';
+import 'package:moekey/widgets/clips/clips_create_dialog.dart';
 
 import '../../router/main_router_delegate.dart';
 import '../../state/themes.dart';
@@ -82,7 +83,12 @@ class ClipsPage extends HookConsumerWidget {
               children: [
                 IconButton(
                   onPressed: () {
-                    MainRouterDelegate.of(context).popRoute();
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return ClipCreateDialog();
+                      },
+                    );
                   },
                   tooltip: "添加",
                   icon: const Icon(TablerIcons.plus, size: 18),

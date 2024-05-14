@@ -5,6 +5,7 @@ import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/clips/clips_notes.dart';
+import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
@@ -57,15 +58,28 @@ class ClipsCardComponent extends HookConsumerWidget {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () {
-            MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                path: "/clips/${data.id}", page: () => ClipsNotes(data.id)));
+            MainRouterDelegate.of(context).setNewRoutePath(
+              RouterItem(
+                path: "/clips/${data.id}",
+                page: () => ClipsNotes(data.id),
+              ),
+            );
           },
           child: Container(
             color: Colors.transparent,
             child: ConstraintLayout(
               children: [
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    MainRouterDelegate.of(context).setNewRoutePath(
+                      RouterItem(
+                        path: "/user/${data.userId}",
+                        page: () => UserPage(
+                          userId: data.userId,
+                        ),
+                      ),
+                    );
+                  },
                   child: badges.Badge(
                     badgeContent: Tooltip(
                       message: data.user.onlineStatus == "online" ? "在线" : "离线",
@@ -106,22 +120,29 @@ class ClipsCardComponent extends HookConsumerWidget {
                       Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Expanded(child: UserNameRichText(data: data.user)),
+                          Expanded(
+                              child: UserNameRichText(
+                            data: data.user,
+                            navigator: false,
+                          )),
                           if (data.lastClippedAt != null)
                             Text(
-                                "${formatDate(data.lastClippedAt!, [
-                                      yyyy,
-                                      "-",
-                                      mm,
-                                      "-",
-                                      dd,
-                                      " ",
-                                      HH,
-                                      ":",
-                                      nn,
-                                      ":",
-                                      ss
-                                    ])}(${timeAgoSinceDate(data.createdAt)})",
+                                "${formatDate(
+                                  data.lastClippedAt!,
+                                  [
+                                    yyyy,
+                                    "-",
+                                    mm,
+                                    "-",
+                                    dd,
+                                    " ",
+                                    HH,
+                                    ":",
+                                    nn,
+                                    ":",
+                                    ss
+                                  ],
+                                )}(${timeAgoSinceDate(data.createdAt)})",
                                 style: TextStyle(fontSize: fontsize * 0.9)),
                           const SizedBox(
                             width: 6,

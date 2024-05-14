@@ -15,9 +15,11 @@ class TimeLineListPage extends HookConsumerWidget {
     this.selectHttp = false,
     this.nestedScroll = false,
   });
+
   final String api;
   final bool selectHttp;
   final bool nestedScroll;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.of(context).padding;
@@ -54,6 +56,7 @@ class TimeLineListPage extends HookConsumerWidget {
                   ref.invalidate(dataProvider);
                 },
                 child: CustomScrollView(
+                  cacheExtent: 4000,
                   // controller: scrollController,
                   slivers: [
                     if (nestedScroll)

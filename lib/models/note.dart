@@ -56,6 +56,7 @@ class NoteModel {
     required this.user,
     required this.userId,
     required this.visibility,
+    this.noteTranslate,
   });
 
   @override
@@ -83,32 +84,33 @@ class NoteModel {
       files.add(DriveFileModel.fromMap(item));
     }
     return NoteModel(
-        id: map['id'],
-        clippedCount: map['clippedCount'] ?? 0,
-        createdAt: DateTime.parse(map['createdAt']),
-        cw: map['cw']?.toString(),
-        emojis: map['emojis'] ?? {},
-        files: files,
-        localOnly: map['localOnly'],
-        reactionAcceptance:
-            NoteReactionAcceptance.fromString(map['reactionAcceptance']),
-        reactionEmojis: map['reactionEmojis'],
-        reactions: map['reactions'],
-        myReaction: map['myReaction'],
-        renote: map['renote'] != null ? NoteModel.fromMap(map['renote']) : null,
-        renoteCount: map['renoteCount'],
-        renoteId: map['renoteId'],
-        repliesCount: map['repliesCount'],
-        replyId: map['replyId'],
-        reply: map['reply'] != null ? NoteModel.fromMap(map['reply']) : null,
-        text: map['text'],
-        uri: map['uri'],
-        user: UserSimpleModel.fromMap(map['user']),
-        userId: map['userId'],
-        visibility: NoteVisibility.fromString(
-          map['visibility'],
-        ),
-        poll: map["poll"] != null ? NotePollModel.fromMap(map["poll"]) : null);
+      id: map['id'],
+      clippedCount: map['clippedCount'] ?? 0,
+      createdAt: DateTime.parse(map['createdAt']),
+      cw: map['cw']?.toString(),
+      emojis: map['emojis'] ?? {},
+      files: files,
+      localOnly: map['localOnly'],
+      reactionAcceptance:
+          NoteReactionAcceptance.fromString(map['reactionAcceptance']),
+      reactionEmojis: map['reactionEmojis'],
+      reactions: map['reactions'],
+      myReaction: map['myReaction'],
+      renote: map['renote'] != null ? NoteModel.fromMap(map['renote']) : null,
+      renoteCount: map['renoteCount'],
+      renoteId: map['renoteId'],
+      repliesCount: map['repliesCount'],
+      replyId: map['replyId'],
+      reply: map['reply'] != null ? NoteModel.fromMap(map['reply']) : null,
+      text: map['text'],
+      uri: map['uri'],
+      user: UserSimpleModel.fromMap(map['user']),
+      userId: map['userId'],
+      visibility: NoteVisibility.fromString(
+        map['visibility'],
+      ),
+      poll: map["poll"] != null ? NotePollModel.fromMap(map["poll"]) : null,
+    );
   }
 
   NoteModel copyWith(
@@ -133,30 +135,33 @@ class NoteModel {
       UserSimpleModel? user,
       String? userId,
       NoteVisibility? visibility,
-      NotePollModel? poll}) {
+      NotePollModel? poll,
+      NoteTranslate? noteTranslate}) {
     return NoteModel(
-        id: id ?? this.id,
-        clippedCount: clippedCount ?? this.clippedCount,
-        createdAt: createdAt ?? this.createdAt,
-        cw: cw ?? this.cw,
-        emojis: emojis ?? this.emojis,
-        files: files ?? this.files,
-        localOnly: localOnly ?? this.localOnly,
-        reactionAcceptance: reactionAcceptance ?? this.reactionAcceptance,
-        reactionEmojis: reactionEmojis ?? this.reactionEmojis,
-        reactions: reactions ?? this.reactions,
-        renote: renote ?? this.renote,
-        renoteCount: renoteCount ?? this.renoteCount,
-        renoteId: renoteId ?? this.renoteId,
-        repliesCount: repliesCount ?? this.repliesCount,
-        reply: reply ?? this.reply,
-        replyId: replyId ?? this.replyId,
-        text: text ?? this.text,
-        uri: uri ?? this.uri,
-        user: user ?? this.user,
-        userId: userId ?? this.userId,
-        visibility: visibility ?? this.visibility,
-        poll: poll ?? this.poll);
+      id: id ?? this.id,
+      clippedCount: clippedCount ?? this.clippedCount,
+      createdAt: createdAt ?? this.createdAt,
+      cw: cw ?? this.cw,
+      emojis: emojis ?? this.emojis,
+      files: files ?? this.files,
+      localOnly: localOnly ?? this.localOnly,
+      reactionAcceptance: reactionAcceptance ?? this.reactionAcceptance,
+      reactionEmojis: reactionEmojis ?? this.reactionEmojis,
+      reactions: reactions ?? this.reactions,
+      renote: renote ?? this.renote,
+      renoteCount: renoteCount ?? this.renoteCount,
+      renoteId: renoteId ?? this.renoteId,
+      repliesCount: repliesCount ?? this.repliesCount,
+      reply: reply ?? this.reply,
+      replyId: replyId ?? this.replyId,
+      text: text ?? this.text,
+      uri: uri ?? this.uri,
+      user: user ?? this.user,
+      userId: userId ?? this.userId,
+      visibility: visibility ?? this.visibility,
+      poll: poll ?? this.poll,
+      noteTranslate: noteTranslate ?? this.noteTranslate,
+    );
   }
 }
 
@@ -243,6 +248,7 @@ enum NoteReactionAcceptance {
   likeOnly("likeOnly");
 
   const NoteReactionAcceptance(this.value);
+
   final String value;
 
   static NoteReactionAcceptance? fromString(String? name) {
@@ -275,7 +281,9 @@ enum NoteVisibility {
   specified("specified");
 
   const NoteVisibility(this.value);
+
   final String value;
+
   static NoteVisibility fromString(String name) {
     switch (name) {
       case "public":

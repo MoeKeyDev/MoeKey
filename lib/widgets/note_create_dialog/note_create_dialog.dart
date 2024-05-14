@@ -33,11 +33,13 @@ class NoteCreateDialog extends HookConsumerWidget {
       this.noteType = NoteType.note,
       this.note,
       this.initText});
+
   final GlobalKey myKey = GlobalKey();
   final String? noteId;
   final NoteType noteType;
   final NoteModel? note;
   final String? initText;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -46,9 +48,10 @@ class NoteCreateDialog extends HookConsumerWidget {
         var isFullscreen = constraints.maxWidth < 580;
         var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
         var queryPadding = MediaQuery.of(context).padding;
+        var topPadding = isFullscreen ? queryPadding.top : 0.0;
         Widget form = MkCard(
           key: myKey,
-          padding: const EdgeInsets.all(8).copyWith(top: 8 + queryPadding.top),
+          padding: const EdgeInsets.all(8).copyWith(top: 8 + topPadding),
           borderRadius: isFullscreen
               ? const BorderRadius.all(Radius.zero)
               : const BorderRadius.all(

@@ -7,6 +7,7 @@ class MkCard extends ConsumerWidget {
   final EdgeInsetsGeometry? padding;
   final bool shadow;
   final BorderRadius borderRadius;
+
   const MkCard(
       {super.key,
       required this.child,
@@ -19,8 +20,10 @@ class MkCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-    return AnimatedContainer(
-      decoration: BoxDecoration(
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: AnimatedContainer(
+        decoration: BoxDecoration(
           borderRadius: borderRadius,
           color: themes.panelColor,
           boxShadow: [
@@ -30,13 +33,15 @@ class MkCard extends ConsumerWidget {
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               )
-          ]),
-      duration: const Duration(milliseconds: 300),
-      child: Padding(
-        padding: padding ?? const EdgeInsets.all(16),
-        child: DefaultTextStyle(
-          style: DefaultTextStyle.of(context).style,
-          child: child,
+          ],
+        ),
+        duration: const Duration(milliseconds: 300),
+        child: Padding(
+          padding: padding ?? const EdgeInsets.all(16),
+          child: DefaultTextStyle(
+            style: DefaultTextStyle.of(context).style,
+            child: child,
+          ),
         ),
       ),
     );

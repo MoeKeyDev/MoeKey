@@ -240,6 +240,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                       child: MkImage(
                         data.user.avatarUrl ?? "",
                         shape: BoxShape.circle,
+                        blurHash: data.user.avatarBlurhash,
                       ),
                     ).applyConstraint(
                       top: parent.top,
@@ -599,11 +600,16 @@ class ReNoteUserInfo extends HookConsumerWidget {
                 },
               ));
             },
-            child: MkImage(
-              data.user.avatarUrl ?? "",
+            child: SizedBox(
               width: 28,
               height: 28,
-              shape: BoxShape.circle,
+              child: MkImage(
+                data.user.avatarUrl ?? "",
+                width: 28,
+                height: 28,
+                shape: BoxShape.circle,
+                blurHash: data.user.avatarBlurhash,
+              ),
             ),
           ),
           SizedBox(
@@ -655,27 +661,28 @@ class ReNoteUserInfo extends HookConsumerWidget {
 }
 
 class UserNameRichText extends HookConsumerWidget {
-  const UserNameRichText({
-    super.key,
-    required this.data,
-  });
+  const UserNameRichText(
+      {super.key, required this.data, this.navigator = true});
 
   final UserSimpleModel data;
+  final bool navigator;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textStyle = DefaultTextStyle.of(context).style;
     var themes = ref.watch(themeColorsProvider);
     return GestureDetector(
-      onTap: () {
-        main_router.MainRouterDelegate.of(context)
-            .setNewRoutePath(main_router.RouterItem(
-          path: "user/${data.id}",
-          page: () {
-            return UserPage(userId: data.id);
-          },
-        ));
-      },
+      onTap: navigator
+          ? () {
+              main_router.MainRouterDelegate.of(context)
+                  .setNewRoutePath(main_router.RouterItem(
+                path: "user/${data.id}",
+                page: () {
+                  return UserPage(userId: data.id);
+                },
+              ));
+            }
+          : null,
       child: DefaultTextStyle(
         style: textStyle.copyWith(fontWeight: FontWeight.bold),
         child: MFMText(
