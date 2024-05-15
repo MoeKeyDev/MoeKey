@@ -1043,14 +1043,12 @@ class TimeLineActions extends HookConsumerWidget {
               icon: TablerIcons.arrow_back_up,
               count: data.repliesCount,
               onTap: () {
-                globalNav.currentState?.push(
-                  NoteCreateDialog.getRouter(
-                    noteId: data.id,
-                    type: NoteType.reply,
-                    note: data,
-                    initText:
-                        "${data.createReplyAtText(currentUser.value!.id)} ",
-                  ),
+                NoteCreateDialog.open(
+                  noteId: data.id,
+                  type: NoteType.reply,
+                  note: data,
+                  initText: "${data.createReplyAtText(currentUser.value!.id)} ",
+                  context: context,
                 );
               },
             ),
@@ -1058,7 +1056,7 @@ class TimeLineActions extends HookConsumerWidget {
               width: 28,
             ),
             ContextMenuBuilder(
-              menu: _buildNoteRepeatContextMenu(ref),
+              menu: _buildNoteRepeatContextMenu(ref, context),
               mode: const [ContextMenuMode.onTap],
               alignmentChild: true,
               child: TimelineActionButton(
@@ -1102,7 +1100,8 @@ class TimeLineActions extends HookConsumerWidget {
     );
   }
 
-  ContextMenuCard _buildNoteRepeatContextMenu(WidgetRef ref) {
+  ContextMenuCard _buildNoteRepeatContextMenu(
+      WidgetRef ref, BuildContext context) {
     return ContextMenuCard(
       initialChildSize: 0.3,
       maxChildSize: 0.4,
@@ -1121,11 +1120,11 @@ class TimeLineActions extends HookConsumerWidget {
             icon: TablerIcons.quote,
             label: "引用",
             onTap: () {
-              globalNav.currentState?.push(NoteCreateDialog.getRouter(
-                type: NoteType.reNote,
-                noteId: data.id,
-                note: data,
-              ));
+              NoteCreateDialog.open(
+                  type: NoteType.reNote,
+                  noteId: data.id,
+                  note: data,
+                  context: context);
               return false;
             },
           )

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -10,9 +12,9 @@ class MkModal extends HookConsumerWidget {
     super.key,
     required this.body,
     required this.appbar,
-    required this.width,
-    required this.height,
-    this.padding = EdgeInsets.zero,
+    this.width = 450,
+    this.height = 500,
+    this.padding,
     this.maskClosable = true,
   });
 
@@ -20,7 +22,7 @@ class MkModal extends HookConsumerWidget {
   final Widget appbar;
   final double width;
   final double height;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
   final bool maskClosable;
 
   @override
@@ -54,7 +56,7 @@ class MkModal extends HookConsumerWidget {
                   // 防止事件冒泡
                   onTap: () {},
                   child: Padding(
-                    padding: padding,
+                    padding: padding ?? const EdgeInsets.all(12),
                     child: AnimatedContainer(
                       width: querySize.width > width ? width : querySize.width,
                       height:
@@ -66,7 +68,7 @@ class MkModal extends HookConsumerWidget {
                           children: [
                             SizedBox(
                               width: double.infinity,
-                              height: 50 + queryPadding.top,
+                              height: 50,
                               child: BlurWidget(
                                 color: themes.windowHeaderColor,
                                 child: appbar,
@@ -93,4 +95,52 @@ class MkModal extends HookConsumerWidget {
       ),
     );
   }
+}
+
+showModel({
+  required BuildContext context,
+  required Widget Function(BuildContext) builder,
+}) {
+  var page = PageRouteBuilder(
+    opaque: false,
+    transitionDuration: const Duration(milliseconds: 250),
+    reverseTransitionDuration: const Duration(milliseconds: 250),
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return builder(context);
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var tween = animation.drive(Tween(begin: 0.0, end: 1.0)
+          .chain(CurveTween(curve: Curves.easeInOut)));
+      var tween1 = animation.drive(Tween(begin: 0.0, end: 1.0)
+          .chain(CurveTween(curve: Curves.easeInOut)));
+      var tween2 = animation.drive(Tween(begin: 0.9, end: 1.0)
+          .chain(CurveTween(curve: Curves.easeInOut)));
+      return Stack(
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(
+                sigmaX: tween1.value * 5, sigmaY: tween1.value * 5),
+            child: Consumer(
+              builder: (context, ref, child) {
+                var themes = ref.watch(themeColorsProvider);
+                return Container(
+                  color: themes.modalBgColor
+                      .withOpacity(themes.modalBgColor.opacity * tween1.value),
+                );
+              },
+            ),
+          ),
+          FadeTransition(
+            opacity: tween,
+            child: ScaleTransition(
+              alignment: Alignment.center,
+              scale: tween2,
+              child: child,
+            ),
+          )
+        ],
+      );
+    },
+  );
+  Navigator.of(context, rootNavigator: true).push(page);
 }

@@ -9,26 +9,21 @@ import 'package:moekey/widgets/mk_modal.dart';
 import 'package:moekey/widgets/user_select_dialog/user_select_dialog_state.dart';
 
 import '../../state/themes.dart';
-import '../input_decoration.dart';
+import '../mk_input.dart';
 
 class UserSelectDialog extends HookConsumerWidget {
   const UserSelectDialog({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var queryPadding = MediaQuery.of(context).padding;
     var themes = ref.watch(themeColorsProvider);
     var userList = ref.watch(userSelectDialogStateProvider);
     var selectList = useState({});
     return MkModal(
       body: buildUserListView(userList, selectList, themes),
-      appbar: Padding(
-        padding: EdgeInsets.fromLTRB(0, queryPadding.top, 0, 0),
-        child: buildHeader(selectList.value),
-      ),
+      appbar: buildHeader(selectList.value),
       width: 400,
       height: 550,
-      padding: const EdgeInsets.symmetric(vertical: 12),
     );
   }
 
@@ -53,7 +48,12 @@ class UserSelectDialog extends HookConsumerWidget {
               },
               behavior: HitTestBehavior.opaque,
               child: buildUserItem(
-                  themes, item, selectList.value.containsKey(item["id"])),
+                themes,
+                item,
+                selectList.value.containsKey(
+                  item["id"],
+                ),
+              ),
             )
         ],
       ),
@@ -119,80 +119,31 @@ class UserSelectDialog extends HookConsumerWidget {
           child: Row(
             children: [
               Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("用户名"),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            decoration: inputDecoration(
-                              themes,
-                              "",
-                              prefixIcon: Icon(
-                                TablerIcons.at,
-                                color: themes.fgColor,
-                              ),
-                            ),
-                            style: const TextStyle(fontSize: 14),
-                            cursorColor: themes.fgColor,
-                            maxLines: 1,
-                            textAlignVertical: TextAlignVertical.center,
-                            onChanged: (value) {
-                              ref
-                                  .read(userSelectDialogStateProvider.notifier)
-                                  .search(name: value);
-                            },
-                            initialValue: "",
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
+                child: MkInput(
+                  label: '用户名',
+                  prefixIcon: Icon(
+                    TablerIcons.at,
+                    color: themes.fgColor,
+                  ),
+                  onChanged: (value) {
+                    ref
+                        .read(userSelectDialogStateProvider.notifier)
+                        .search(name: value);
+                  },
                 ),
               ),
               const SizedBox(
                 width: 8,
               ),
               Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("服务器"),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            decoration: inputDecoration(
-                              themes,
-                              "",
-                              prefixIcon:
-                                  Icon(TablerIcons.at, color: themes.fgColor),
-                            ),
-                            style: const TextStyle(fontSize: 14),
-                            cursorColor: themes.fgColor,
-                            maxLines: 1,
-                            textAlignVertical: TextAlignVertical.center,
-                            onChanged: (value) {
-                              ref
-                                  .read(userSelectDialogStateProvider.notifier)
-                                  .search(host: value);
-                            },
-                            initialValue: "",
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
+                child: MkInput(
+                  label: '主机名',
+                  prefixIcon: Icon(TablerIcons.at, color: themes.fgColor),
+                  onChanged: (value) {
+                    ref
+                        .read(userSelectDialogStateProvider.notifier)
+                        .search(host: value);
+                  },
                 ),
               ),
             ],

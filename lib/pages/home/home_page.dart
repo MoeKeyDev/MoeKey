@@ -112,7 +112,7 @@ class HomePage extends HookConsumerWidget {
                     ),
                   ),
                 ),
-                if (constraints.maxWidth >= 1100) const WidgetsListPage()
+                if (constraints.maxWidth >= 1090) const WidgetsListPage()
               ],
             ),
             if (constraints.maxWidth < 500)
@@ -165,8 +165,7 @@ class HomePage extends HookConsumerWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            globalNav.currentState
-                                ?.push(NoteCreateDialog.getRouter());
+                            NoteCreateDialog.open(context: context);
                           },
                           icon: const Icon(TablerIcons.pencil),
                           padding: const EdgeInsets.all(20),
@@ -646,17 +645,15 @@ class CreateBottom extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
 
-    onPressed() {
-      globalNav.currentState?.push(NoteCreateDialog.getRouter());
-    }
-
     return LayoutBuilder(builder: (context, constraints) {
       var extend = constraints.maxWidth >= 250;
       if (extend) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
           child: TextButton(
-            onPressed: onPressed,
+            onPressed: () {
+              NoteCreateDialog.open(context: context);
+            },
             style: ButtonStyle(
               splashFactory: InkSparkle.splashFactory,
               animationDuration: Duration.zero,
@@ -687,7 +684,9 @@ class CreateBottom extends ConsumerWidget {
         );
       }
       return IconButton(
-        onPressed: onPressed,
+        onPressed: () {
+          NoteCreateDialog.open(context: context);
+        },
         icon: const Icon(TablerIcons.pencil),
         padding: const EdgeInsets.all(18),
         tooltip: "帖子",

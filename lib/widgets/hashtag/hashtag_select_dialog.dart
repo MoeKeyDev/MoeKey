@@ -3,10 +3,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/widgets/loading_weight.dart';
+import 'package:moekey/widgets/mk_dialog.dart';
+import 'package:moekey/widgets/mk_input.dart';
+import 'package:moekey/widgets/mk_modal.dart';
 
 import '../../state/themes.dart';
 import '../blur_widget.dart';
-import '../input_decoration.dart';
 import '../mk_card.dart';
 import 'hashtag_select_dialog_state.dart';
 
@@ -21,125 +23,34 @@ class HashtagSelectDialog extends HookConsumerWidget {
     var userList = ref.watch(hashtagSelectDialogStateProvider);
     var selectList = useState({});
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        var borderRadius = const BorderRadius.all(
-          Radius.circular(12),
-        );
-        return GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          behavior: HitTestBehavior.opaque,
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SizedBox(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Center(
-                    // duration: const Duration(milliseconds: 500),
-                    // top: isFullscreen ? 0 : 40,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: AnimatedContainer(
-                        width: querySize.width > 400 ? 400 : querySize.width,
-                        height: querySize.height > 550
-                            ? 550
-                            : querySize.height - 32,
-                        duration: const Duration(milliseconds: 500),
-                        child: ClipRRect(
-                          borderRadius: borderRadius,
-                          child: MkCard(
-                            padding: const EdgeInsets.all(0),
-                            borderRadius: borderRadius,
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                return Stack(
-                                  children: [
-                                    SizedBox(
-                                      width: constraints.maxWidth,
-                                      height: constraints.maxHeight,
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(height: 64),
-                                            buildUserQuery(),
-                                            const SizedBox(height: 8),
-                                            for (var item
-                                                in userList.valueOrNull ?? [])
-                                              GestureDetector(
-                                                onTap: () {
-                                                  if (selectList.value
-                                                      .containsKey(item)) {
-                                                    selectList.value
-                                                        .remove(item);
-                                                  } else {
-                                                    selectList.value[item] =
-                                                        item;
-                                                  }
+    return MkModal(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            buildUserQuery(),
+            const SizedBox(height: 8),
+            for (var item in userList.valueOrNull ?? [])
+              GestureDetector(
+                onTap: () {
+                  if (selectList.value.containsKey(item)) {
+                    selectList.value.remove(item);
+                  } else {
+                    selectList.value[item] = item;
+                  }
 
-                                                  selectList.value = Map.from(
-                                                      selectList.value);
-                                                },
-                                                behavior:
-                                                    HitTestBehavior.opaque,
-                                                child: buildUserItem(
-                                                    themes,
-                                                    item,
-                                                    selectList.value
-                                                        .containsKey(item)),
-                                              )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 0,
-                                      left: 0,
-                                      child: SizedBox(
-                                        width: constraints.maxWidth,
-                                        height: 50 + queryPadding.top,
-                                        child: BlurWidget(
-                                          color: themes.bgColor.withAlpha(204),
-                                          child: Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                0, queryPadding.top, 0, 0),
-                                            child: DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                  border: Border(
-                                                      bottom: BorderSide(
-                                                          color: themes
-                                                              .dividerColor,
-                                                          width: 1))),
-                                              child:
-                                                  buildHeader(selectList.value),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+                  selectList.value = Map.from(selectList.value);
+                },
+                behavior: HitTestBehavior.opaque,
+                child: buildUserItem(
+                    themes, item, selectList.value.containsKey(item)),
+              )
+          ],
+        ),
+      ),
+      appbar: buildHeader(selectList.value),
     );
   }
 
@@ -202,27 +113,14 @@ class HashtagSelectDialog extends HookConsumerWidget {
           child: Row(
             children: [
               Expanded(
-                  child: TextFormField(
-                decoration: inputDecoration(
-                  themes,
-                  "",
-                  prefixIcon: Icon(
-                    TablerIcons.at,
-                    color: themes.fgColor,
-                  ),
+                child: MkInput(
+                  onChanged: (value) {
+                    ref
+                        .read(hashtagSelectDialogStateProvider.notifier)
+                        .search(query: value);
+                  },
                 ),
-                style: const TextStyle(fontSize: 14),
-                cursorWidth: 1,
-                cursorColor: themes.fgColor,
-                maxLines: 1,
-                textAlignVertical: TextAlignVertical.center,
-                onChanged: (value) {
-                  ref
-                      .read(hashtagSelectDialogStateProvider.notifier)
-                      .search(query: value);
-                },
-                initialValue: "",
-              ))
+              )
             ],
           ),
         );

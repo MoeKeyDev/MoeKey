@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/widgets/input_decoration.dart';
+import 'package:moekey/widgets/mk_input.dart';
 
 import '../../networks/drive.dart';
 import '../../state/themes.dart';
@@ -31,16 +31,8 @@ class DriverCreateFromUrlDialog extends HookConsumerWidget {
             const SizedBox(
               height: 12,
             ),
-            TextField(
-              decoration: inputDecoration(
-                themes,
-                "请输入URL",
-              ),
-              style: const TextStyle(fontSize: 14),
-              cursorWidth: 1,
-              cursorColor: themes.fgColor,
-              maxLines: 1,
-              textAlignVertical: TextAlignVertical.center,
+            MkInput(
+              hintText: "请输入URL",
               onChanged: (value) {
                 url.value = value;
               },

@@ -47,9 +47,6 @@ class ClipCreateDialog extends HookConsumerWidget {
           )
         ],
       ),
-      width: 450,
-      height: 500,
-      padding: EdgeInsets.all(12),
     );
   }
 }

@@ -13,6 +13,8 @@ import 'package:moekey/widgets/hover_builder.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
+import 'package:moekey/widgets/mk_input.dart';
+import 'package:moekey/widgets/mk_modal.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart';
 import 'package:moekey/widgets/user_select_dialog/user_select_dialog.dart';
 
@@ -22,7 +24,6 @@ import '../../utils/time_ago_since_date.dart';
 import '../driver/drive_thumbnail.dart';
 import '../driver/driver_select_dialog/driver_select_dialog.dart';
 import '../hashtag/hashtag_select_dialog.dart';
-import '../input_decoration.dart';
 import '../mk_switch.dart';
 import '../notes/note_card.dart';
 
@@ -385,7 +386,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   message: "添加",
                   child: IconButton(
                     onPressed: () async {
-                      var list = await showDialog(
+                      var list = await showModel(
                         context: context,
                         builder: (context) {
                           return const UserSelectDialog();
@@ -450,17 +451,10 @@ class NoteCreateDialog extends HookConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
+                    child: MkInput(
                       key: key,
-                      decoration: inputDecoration(
-                        themes,
-                        "选项 ${index + 1}",
-                      ),
-                      style: const TextStyle(fontSize: 14),
-                      cursorWidth: 1,
-                      cursorColor: themes.fgColor,
-                      maxLines: 1,
-                      textAlignVertical: TextAlignVertical.center,
+                      hintText: "选项 ${index + 1}",
+                      initialValue: item,
                       onChanged: (value) {
                         ref
                             .read(
@@ -468,7 +462,6 @@ class NoteCreateDialog extends HookConsumerWidget {
                                     .notifier)
                             .setPollChoices(index, value);
                       },
-                      initialValue: item,
                     ),
                   ),
                   const SizedBox(
@@ -893,7 +886,7 @@ class NoteCreateDialog extends HookConsumerWidget {
             ),
             buildActionBottom(
                 onPressed: () async {
-                  var list = await showDialog(
+                  var list = await showModel(
                     context: context,
                     builder: (context) {
                       return const UserSelectDialog();
@@ -918,7 +911,7 @@ class NoteCreateDialog extends HookConsumerWidget {
             ),
             buildActionBottom(
                 onPressed: () async {
-                  var list = await showDialog(
+                  var list = await showModel(
                     context: context,
                     builder: (context) {
                       return const HashtagSelectDialog();
@@ -1448,46 +1441,21 @@ class NoteCreateDialog extends HookConsumerWidget {
     );
   }
 
-  static PageRouteBuilder getRouter(
-      {String? noteId,
-      NoteType type = NoteType.note,
-      NoteModel? note,
-      String? initText}) {
-    return PageRouteBuilder(
-      opaque: false,
-      transitionDuration: const Duration(milliseconds: 200),
-      reverseTransitionDuration: const Duration(milliseconds: 110),
-      pageBuilder: (context, animation, secondaryAnimation) {
+  static open({
+    required BuildContext context,
+    String? noteId,
+    NoteType type = NoteType.note,
+    NoteModel? note,
+    String? initText,
+  }) {
+    showModel(
+      context: context,
+      builder: (p0) {
         return NoteCreateDialog(
           noteId: noteId,
           noteType: type,
           note: note,
           initText: initText,
-        );
-      },
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var tween = animation.drive(Tween(begin: 0.95, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeOut)));
-        var tween1 = animation.drive(Tween(begin: 0.0, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeOut)));
-        return Stack(
-          children: [
-            BackdropFilter(
-              filter: ImageFilter.blur(
-                  sigmaX: tween1.value * 5, sigmaY: tween1.value * 5),
-              child: Container(
-                color: Colors.black.withOpacity(0.5 * tween1.value),
-              ),
-            ),
-            FadeTransition(
-              opacity: tween,
-              child: ScaleTransition(
-                alignment: Alignment.bottomCenter,
-                scale: tween,
-                child: child,
-              ),
-            )
-          ],
         );
       },
     );
