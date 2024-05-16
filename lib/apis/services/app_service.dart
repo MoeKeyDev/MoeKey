@@ -6,7 +6,7 @@ class AppService extends MisskeyApiServices {
 
   Future<AppModel?> create() async {
     var data = await client.post(
-      path: "/app/create",
+      "/app/create",
       data: {
         "name": "MoeKey",
         "description": "app",

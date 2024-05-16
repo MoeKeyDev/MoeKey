@@ -20,8 +20,8 @@ class MisskeyApisHttpClient {
   String accessToken;
   late Dio client;
 
-  Future<Map<String, dynamic>?> post({
-    required String path,
+  Future<T> post<T>(
+    String path, {
     Map? data,
     auth = true,
     Options? options,
@@ -35,8 +35,8 @@ class MisskeyApisHttpClient {
         .data;
   }
 
-  Future<Map<String, dynamic>?> get({
-    required String path,
+  Future<Map<String, dynamic>?> get(
+    String path, {
     Map? data,
     auth = true,
     Options? options,

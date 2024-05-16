@@ -5,7 +5,7 @@ class AccountService extends MisskeyApiServices {
   AccountService({required super.client});
 
   Future<UserLiteModel?> i() async {
-    var data = await client.post(path: "/i");
+    var data = await client.post("/i");
     if (data != null) {
       return UserLiteModel.fromMap(data);
     }

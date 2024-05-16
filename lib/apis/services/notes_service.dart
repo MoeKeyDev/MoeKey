@@ -8,7 +8,7 @@ class NotesService extends MisskeyApiServices {
   NotesService({required super.client});
 
   translate({required String noteId}) async {
-    var data = await client.post(path: "/notes/translate", data: {
+    var data = await client.post("/notes/translate", data: {
       "noteId": noteId,
       "targetLang": Platform.localeName.replaceAll("_", "-"),
     });
@@ -20,7 +20,7 @@ class NotesService extends MisskeyApiServices {
 
   linkPreview({required String url}) {
     String myLocale = Platform.localeName.replaceAll("_", "-");
-    client.get(path: "${client.host}/url", data: {
+    client.get("${client.host}/url", data: {
       "url": url,
       "lang": myLocale,
     });

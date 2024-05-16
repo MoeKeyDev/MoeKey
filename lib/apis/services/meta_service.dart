@@ -7,7 +7,7 @@ class MetaService extends MisskeyApiServices {
   MetaService({required super.client});
 
   Future<MetaDetailedModel?> meta() async {
-    var res = await client.post(path: "/meta", data: {"detail": true});
+    var res = await client.post("/meta", data: {"detail": true});
     if (res != null) {
       return MetaDetailedModel.fromMap(res);
     }
@@ -15,7 +15,7 @@ class MetaService extends MisskeyApiServices {
   }
 
   Future<List<EmojiSimple>> emojis() async {
-    var data = await client.post(path: "/emojis");
+    var data = await client.post("/emojis");
     if (data == null) {
       return [];
     }

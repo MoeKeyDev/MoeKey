@@ -8,7 +8,7 @@ class AuthService extends MisskeyApiServices {
   Future<SessionGenerateModel?> sessionGenerate(
       {required String appSecret}) async {
     var data = await client.post(
-      path: "/auth/session/generate",
+      "/auth/session/generate",
       data: {"appSecret": appSecret},
       auth: false,
     );
@@ -23,7 +23,7 @@ class AuthService extends MisskeyApiServices {
   Future<Map<String, dynamic>?> sessionUserKey(
       {required String appSecret, required String token}) async {
     return await client.post(
-      path: "/auth/session/userkey",
+      "/auth/session/userkey",
       data: {"appSecret": appSecret, "token": token},
       auth: false,
       options: Options(

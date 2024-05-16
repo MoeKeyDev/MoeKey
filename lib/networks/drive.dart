@@ -1,5 +1,6 @@
 import "package:dio/dio.dart";
 import "package:moekey/networks/dio.dart";
+import "package:moekey/networks/misskey_api.dart";
 import "package:moekey/state/server.dart";
 import "package:moekey/utils/image_compression.dart";
 import "package:moekey/widgets/info_dialog.dart";
@@ -43,8 +44,7 @@ class DriverUploader extends _$DriverUploader {
   Future<List> createFiles(
       {required List<String> filesPath, bool compression = true}) async {
     try {
-      var http = await ref.read(httpProvider.future);
-      var user = await ref.read(currentLoginUserProvider.future);
+      var apis = await ref.read(misskeyApisProvider.future);
       var path = ref.read(drivePathProvider);
       var loadingFile = [];
       for (var file in state) {
@@ -93,27 +93,22 @@ class DriverUploader extends _$DriverUploader {
         }
 
         try {
-          var res = await http.post(
-            "/drive/files/create",
-            data: FormData.fromMap(
-              {
-                if (path.lastOrNull?["id"] != null)
-                  "folderId": path.lastOrNull?["id"],
-                "i": user!.token,
-                "force": true,
-                "name": filename,
-                "file": await file
-              },
-            ),
+          String? folderId;
+          if (path.lastOrNull?["id"] != null) {
+            folderId = path.lastOrNull?["id"];
+          }
+          var data = await apis.drive.upload(
+            filename: filename,
+            file: await file,
+            folderId: folderId,
             onSendProgress: (count, total) {
               state[index]["progress"] = count / total;
               ref.notifyListeners();
               logger.d("send: $count/$total");
             },
           );
-          var data = res.data;
           var notifier = ref.read(driveListProvider.notifier);
-          notifier.addFile(DriveFileModel.fromMap(data));
+          notifier.addFile(data);
           doneFiles.add(data);
           state[index]["done"] = true;
           state[index]["data"] = data;
@@ -147,28 +142,26 @@ class DriverUploader extends _$DriverUploader {
   }
 
   Future createFolder(String name) async {
-    var http = await ref.read(httpProvider.future);
-    var user = await ref.read(currentLoginUserProvider.future);
+    var apis = await ref.read(misskeyApisProvider.future);
     var path = ref.read(drivePathProvider);
-    var res = await http.post("/drive/folders/create", data: {
-      if (path.lastOrNull?["id"] != null) "parentId": path.lastOrNull?["id"],
-      "i": user!.token,
-      "name": name
-    });
+    String? parentId;
+    if (path.lastOrNull?["id"] != null) {
+      parentId = path.lastOrNull?["id"];
+    }
+    var data = await apis.drive.createFolder(name: name, parentId: parentId);
 
     var notifier = ref.read(driveListProvider.notifier);
-    notifier.addFolder(DriverFolderModel.fromMap(res.data));
+    notifier.addFolder(data);
   }
 
   Future uploadFromUrl(String url) async {
-    var http = await ref.read(httpProvider.future);
-    var user = await ref.read(currentLoginUserProvider.future);
     var path = ref.read(drivePathProvider);
-    http.post("/drive/files/upload-from-url", data: {
-      if (path.lastOrNull?["id"] != null) "folderId": path.lastOrNull?["id"],
-      "i": user!.token,
-      "url": url
-    });
+    var apis = await ref.read(misskeyApisProvider.future);
+    String? folderId;
+    if (path.lastOrNull?["id"] != null) {
+      folderId = path.lastOrNull?["id"];
+    }
+    apis.drive.uploadFromUrl(url: url, folderId: folderId);
   }
 
   Future updateFile({
@@ -178,19 +171,18 @@ class DriverUploader extends _$DriverUploader {
     bool? isSensitive,
     String? comment,
   }) async {
-    var http = await ref.read(httpProvider.future);
-    var user = await ref.read(currentLoginUserProvider.future);
-    var res = await http.post("/drive/files/update", data: {
-      "i": user!.token,
-      "fileId": fileId,
-      if (folderId != null) "folderId": folderId,
-      if (name != null) "name": name,
-      if (isSensitive != null) "isSensitive": isSensitive,
-      if (comment != null) "comment": comment,
-    });
+    var apis = await ref.read(misskeyApisProvider.future);
+
+    var res = await apis.drive.updateFile(
+      fileId: fileId,
+      folderId: folderId,
+      comment: comment,
+      isSensitive: isSensitive,
+      name: name,
+    );
 
     var notifier = ref.read(driveListProvider.notifier);
-    notifier.updateFile(fileId, DriveFileModel.fromMap(res.data));
+    notifier.updateFile(fileId, res);
   }
 
   Future updateFolders({
@@ -198,28 +190,23 @@ class DriverUploader extends _$DriverUploader {
     String? name,
     String? parentId,
   }) async {
-    var http = await ref.read(httpProvider.future);
-    var user = await ref.read(currentLoginUserProvider.future);
-    var res = await http.post("/drive/folders/update", data: {
-      "i": user!.token,
-      "folderId": folderId,
-      if (name != null) "name": name,
-      if (parentId != null) "parentId": parentId,
-    });
+    var apis = await ref.read(misskeyApisProvider.future);
+    var res = await apis.drive.updateFolders(
+      folderId: folderId,
+      name: name,
+      parentId: parentId,
+    );
 
     var notifier = ref.read(driveListProvider.notifier);
-    notifier.updateFolder(folderId, DriverFolderModel.fromMap(res.data));
+    notifier.updateFolder(folderId, res);
   }
 
   Future deleteFile(
     String fileId,
   ) async {
-    var http = await ref.read(httpProvider.future);
-    var user = await ref.read(currentLoginUserProvider.future);
-    var res = await http.post("/drive/files/delete", data: {
-      "i": user!.token,
-      "fileId": fileId,
-    });
+    var apis = await ref.read(misskeyApisProvider.future);
+    await apis.drive.deleteFile(fileId: fileId);
+
     var notifier = ref.read(driveListProvider.notifier);
     notifier.deleteFile(fileId);
   }
@@ -227,12 +214,8 @@ class DriverUploader extends _$DriverUploader {
   Future deleteFolder(
     String folderId,
   ) async {
-    var http = await ref.read(httpProvider.future);
-    var user = await ref.read(currentLoginUserProvider.future);
-    var res = await http.post("/drive/folders/delete", data: {
-      "i": user!.token,
-      "folderId": folderId,
-    });
+    var apis = await ref.read(misskeyApisProvider.future);
+    await apis.drive.deleteFolders(folderId: folderId);
     var notifier = ref.read(driveListProvider.notifier);
     notifier.deleteFolder(folderId);
   }
@@ -287,34 +270,30 @@ class DriveList extends _$DriveList {
     }
   }
 
-  Future<List> loadFiles({String? untilId}) async {
-    var http = await ref.watch(httpProvider.future);
-    var user = await ref.watch(currentLoginUserProvider.future);
+  Future<List<DriveFileModel>> loadFiles({String? untilId}) async {
     var path = ref.watch(drivePathProvider);
-    var res = await http.post("/drive/files", data: {
-      "folderId": path.lastOrNull?["id"],
-      "i": user!.token,
-      "limit": 30,
-      if (untilId != null) "untilId": untilId
-    });
 
-    return res.data;
+    var apis = await ref.watch(misskeyApisProvider.future);
+    var res = await apis.drive.files(
+      folderId: path.lastOrNull?["id"],
+      untilId: untilId,
+    );
+
+    return res;
   }
 
-  Future<List> loadFolders({String? untilId}) async {
-    var http = await ref.watch(httpProvider.future);
-    var user = await ref.watch(currentLoginUserProvider.future);
+  Future<List<DriveFileModel>> loadFolders({String? untilId}) async {
     var path = ref.watch(drivePathProvider);
-    var res = await http.post("/drive/folders", data: {
-      "folderId": path.lastOrNull?["id"],
-      "i": user!.token,
-      "limit": 30,
-      if (untilId != null) "untilId": untilId
-    });
-    if (res.data.length < 30) {
+    var apis = await ref.watch(misskeyApisProvider.future);
+    var res = await apis.drive.files(
+      folderId: path.lastOrNull?["id"],
+      untilId: untilId,
+    );
+
+    if (res.length < 30) {
       endFolder = true;
     }
-    return res.data;
+    return res;
   }
 
   addFile(dynamic data) {

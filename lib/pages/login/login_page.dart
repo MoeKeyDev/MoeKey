@@ -82,12 +82,12 @@ class LoginPage extends HookConsumerWidget {
             ),
           ),
           Positioned(
-          top: 24 + MediaQuery.paddingOf(context).top,
-          left: 24 + MediaQuery.paddingOf(context).left,
-          child: SvgPicture.asset(
-            "assets/misskey.svg",
-            width: 150,
-          )),
+              top: 24 + MediaQuery.paddingOf(context).top,
+              left: 24 + MediaQuery.paddingOf(context).left,
+              child: SvgPicture.asset(
+                "assets/misskey.svg",
+                width: 150,
+              )),
           const Center(
             child: SizedBox(
               width: 450,

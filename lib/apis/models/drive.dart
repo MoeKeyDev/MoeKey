@@ -12,6 +12,7 @@ class DriveFileModel {
   Map? properties;
   String? thumbnailUrl;
   UniqueKey? hero;
+
   DriveFileModel({
     this.blurhash,
     required this.type,
@@ -99,6 +100,7 @@ class DriverFolderModel {
       parentId: map['parentId']?.toString(),
     );
   }
+
   DriverFolderModel copyWith({
     String? createdAt,
     String? name,
