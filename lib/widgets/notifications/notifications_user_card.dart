@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/models/user_simple.dart';
 import 'package:moekey/state/themes.dart';
 import 'package:moekey/utils/time_ago_since_date.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/notes/note_card.dart';
 
+import '../../apis/models/user_lite.dart';
 import '../../pages/users/user_page.dart';
 import '../../router/main_router_delegate.dart';
 import '../mk_card.dart';
@@ -20,6 +20,7 @@ class NotificationsUserCard extends HookConsumerWidget {
       this.name,
       this.avatar,
       this.onTap});
+
   final dynamic data;
   final BorderRadius borderRadius;
   final Widget content;
@@ -27,6 +28,7 @@ class NotificationsUserCard extends HookConsumerWidget {
   final Widget? name;
   final Widget? avatar;
   final void Function(BuildContext context)? onTap;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -91,8 +93,7 @@ class NotificationsUserCard extends HookConsumerWidget {
                               ? name!
                               : data["user"] != null
                                   ? UserNameRichText(
-                                      data:
-                                          UserSimpleModel.fromMap(data["user"]))
+                                      data: UserLiteModel.fromMap(data["user"]))
                                   : const SizedBox()),
                       Opacity(
                         opacity: 0.8,

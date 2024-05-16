@@ -9,6 +9,7 @@ import 'package:moekey/widgets/mfm_text/animate/jelly.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../apis/models/emojis.dart';
 import '../../main.dart';
 import '../../pages/users/user_page.dart';
 import '../../router/main_router_delegate.dart';
@@ -30,6 +31,7 @@ class MFMText extends HookConsumerWidget {
   final List<MFMFeature>? feature;
   final String? currentServerHost;
   final TextAlign? textAlign;
+
   const MFMText({
     super.key,
     required this.text,
@@ -49,7 +51,7 @@ class MFMText extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-    var meta = ref.watch(apiMetaProvider);
+    var meta = ref.watch(instanceMetaProvider);
     var emoji = ref.watch(apiEmojisProvider);
     var lastText = useState<String?>(null);
     var mfmParse = useState<List<MfmNode>>([]);
@@ -63,7 +65,7 @@ class MFMText extends HookConsumerWidget {
       bigEmojiCode: bigEmojiCode,
       defaultServerHost: defaultServerHost,
       themes: themes,
-      loginServerUrl: meta.valueOrNull?["uri"] ?? "",
+      loginServerUrl: meta.valueOrNull?.uri ?? "",
       currentServerHost: currentServerHost,
       systemEmojis: emoji.valueOrNull ?? {},
     );
@@ -107,7 +109,7 @@ _getParse({
   required ThemeColorModel themes,
   required String loginServerUrl,
   String? currentServerHost,
-  required Map systemEmojis,
+  required Map<String, EmojiSimple> systemEmojis,
 }) {
   feature ??= [
     MFMFeature.hashtag,
@@ -228,7 +230,7 @@ _getParse({
             builder: (context) {
               var url = "";
               if (systemEmojis[item.props!["name"]] != null) {
-                url = systemEmojis[item.props!["name"]]["url"];
+                url = systemEmojis[item.props!["name"]]!.url;
               } else if (emojis?[item.props!["name"]] != null) {
                 url = emojis?[item.props!["name"]];
               }

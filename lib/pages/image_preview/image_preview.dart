@@ -11,7 +11,7 @@ import 'package:moekey/networks/dio.dart';
 import 'package:moekey/utils/save_image.dart';
 import 'package:moekey/widgets/mk_image.dart';
 
-import '../../models/drive.dart';
+import '../../apis/models/drive.dart';
 
 List<double> _doubleTapScales = <double>[1.0, 2.0];
 
@@ -72,7 +72,7 @@ class ImagePreviewPage extends HookConsumerWidget {
     var pageController = useExtendedPageController(initialPage: initialIndex);
     var currentIndex = useState(initialIndex);
     var http = ref.watch(httpProvider);
-    var meta = ref.watch(apiMetaProvider);
+    var meta = ref.watch(instanceMetaProvider);
     var doubleClickAnimationController =
         useAnimationController(duration: const Duration(milliseconds: 180));
     void Function() doubleClickAnimationListener = useMemoized(() => () {});
@@ -261,7 +261,7 @@ class ImagePreviewPage extends HookConsumerWidget {
                                 var res = await saveImage(
                                     http: http.valueOrNull!,
                                     url: galleryItems[currentIndex.value].url,
-                                    album: meta.valueOrNull?["name"]);
+                                    album: meta.valueOrNull?.name ?? "MoeKey");
                                 if (context.mounted) {
                                   var snackBar = SnackBar(
                                     content: Text(res ? "保存成功" : "保存失败"),

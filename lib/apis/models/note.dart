@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:moekey/models/translate.dart';
-import 'package:moekey/models/user_simple.dart';
+import 'package:moekey/apis/models/translate.dart';
+import 'package:moekey/apis/models/user_lite.dart';
 
 import 'drive.dart';
 
@@ -25,7 +25,7 @@ class NoteModel {
   String? replyId;
   String? text;
   String? uri;
-  UserSimpleModel user;
+  UserLiteModel user;
   String userId;
   NoteVisibility visibility;
   NotePollModel? poll;
@@ -104,7 +104,7 @@ class NoteModel {
       reply: map['reply'] != null ? NoteModel.fromMap(map['reply']) : null,
       text: map['text'],
       uri: map['uri'],
-      user: UserSimpleModel.fromMap(map['user']),
+      user: UserLiteModel.fromMap(map['user']),
       userId: map['userId'],
       visibility: NoteVisibility.fromString(
         map['visibility'],
@@ -132,7 +132,7 @@ class NoteModel {
       String? replyId,
       String? text,
       String? uri,
-      UserSimpleModel? user,
+      UserLiteModel? user,
       String? userId,
       NoteVisibility? visibility,
       NotePollModel? poll,

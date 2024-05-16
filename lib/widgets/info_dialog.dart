@@ -12,8 +12,10 @@ class InfoDialog extends HookConsumerWidget {
     required this.info,
     this.isError = false,
   });
+
   final String info;
   final bool isError;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -64,9 +66,10 @@ class InfoDialog extends HookConsumerWidget {
     bool isError = false,
   }) {
     showDialog(
-        context: globalNav.currentContext!,
-        builder: (context) {
-          return InfoDialog(info: info);
-        });
+      context: globalNav.currentContext!,
+      builder: (context) {
+        return InfoDialog(info: info);
+      },
+    );
   }
 }

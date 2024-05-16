@@ -7,7 +7,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/state/themes.dart';
 
-import '../../models/drive.dart';
+import '../../apis/models/drive.dart';
 import '../mk_image.dart';
 import '../video_player.dart';
 
@@ -19,10 +19,12 @@ class NoteImage extends HookConsumerWidget {
     this.onClick,
     this.minHeight,
   });
+
   final num? maxHeight;
   final num? minHeight;
   final DriveFileModel imageFile;
   final void Function()? onClick;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var theme = ref.watch(themeColorsProvider);

@@ -12,7 +12,7 @@ import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_overflow_show.dart';
 
-import '../../models/clips.dart';
+import '../../apis/models/clips.dart';
 import '../../state/themes.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../notes/note_card.dart';
@@ -80,28 +80,9 @@ class ClipsCardComponent extends HookConsumerWidget {
                       ),
                     );
                   },
-                  child: badges.Badge(
-                    badgeContent: Tooltip(
-                      message: data.user.onlineStatus == "online" ? "在线" : "离线",
-                      child: Container(
-                        width: 10.0,
-                        height: 10.0,
-                        decoration: BoxDecoration(
-                            color: data.user.onlineStatus == "online"
-                                ? const Color.fromARGB(255, 88, 212, 201)
-                                : const Color.fromARGB(255, 228, 188, 72),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(5))),
-                      ),
-                    ),
-                    badgeStyle: badges.BadgeStyle(
-                        badgeColor: themes.panelColor,
-                        padding: const EdgeInsets.all(3)),
-                    position: badges.BadgePosition.bottomStart(start: 1),
-                    child: MkImage(
-                      data.user.avatarUrl ?? "",
-                      shape: BoxShape.circle,
-                    ),
+                  child: MkImage(
+                    data.user.avatarUrl ?? "",
+                    shape: BoxShape.circle,
                   ),
                 ).applyConstraint(
                   top: parent.top,
@@ -147,7 +128,7 @@ class ClipsCardComponent extends HookConsumerWidget {
                           const SizedBox(
                             width: 6,
                           ),
-                          if (data.isPublic)
+                          if (!data.isPublic)
                             Icon(
                               TablerIcons.lock,
                               size: fontsize,
@@ -159,7 +140,10 @@ class ClipsCardComponent extends HookConsumerWidget {
                         // 两端对齐
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(data.name),
+                          Text(
+                            data.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           if (data.favoritedCount != 0)
                             Row(
                               children: [

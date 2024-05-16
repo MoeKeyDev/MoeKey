@@ -1,7 +1,8 @@
-import 'package:moekey/models/note.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:moekey/state/server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../apis/models/note.dart';
 
 part 'notifications.g.dart';
 

@@ -10,7 +10,7 @@ import '../state/server.dart';
 part 'websocket.g.dart';
 
 @Riverpod(keepAlive: true)
-class moekeyWebSocket extends _$moekeyWebSocket {
+class MoekeyWebSocket extends _$MoekeyWebSocket {
   @override
   FutureOr<WebSocketChannel> build() async {
     var user = await ref.watch(currentLoginUserProvider.future);
@@ -35,24 +35,24 @@ class moekeyWebSocket extends _$moekeyWebSocket {
   }
 }
 
-class moekeyEvent {
+class MoekeyEvent {
   late Map data;
-  late moekeyEventType type;
+  late MoekeyEventType type;
 
-  moekeyEvent({required this.data, required this.type});
+  MoekeyEvent({required this.data, required this.type});
 
-  moekeyEvent copyWith({
+  MoekeyEvent copyWith({
     Map? data,
-    moekeyEventType? type,
+    MoekeyEventType? type,
   }) {
-    return moekeyEvent(
+    return MoekeyEvent(
       data: data ?? this.data,
       type: type ?? this.type,
     );
   }
 }
 
-enum moekeyEventType {
+enum MoekeyEventType {
   /// 数据事件
   data,
 
@@ -60,11 +60,11 @@ enum moekeyEventType {
   load;
 }
 
-StreamController<moekeyEvent> moekeyStreamController =
+StreamController<MoekeyEvent> moekeyStreamController =
     StreamController.broadcast();
 
 @Riverpod(keepAlive: true)
-class moekeyGlobalEvent extends _$moekeyGlobalEvent {
+class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
   @override
   FutureOr build() async {
     var channel = await ref.watch(moekeyWebSocketProvider.future);
@@ -73,24 +73,24 @@ class moekeyGlobalEvent extends _$moekeyGlobalEvent {
 
       // t.cancel(); //关闭定时器
     });
-    moekeyStreamController.sink.add(moekeyEvent(
-      type: moekeyEventType.load,
+    moekeyStreamController.sink.add(MoekeyEvent(
+      type: MoekeyEventType.load,
       data: {},
     ));
     channel.stream.listen(
       (data) {
         logger.d("=========emit moekeyEvent=======");
         logger.d(data);
-        var event = moekeyEvent(
-          type: moekeyEventType.data,
+        var event = MoekeyEvent(
+          type: MoekeyEventType.data,
           data: jsonDecode(data),
         );
         moekeyStreamController.sink.add(event);
       },
       onDone: () {
         ref.invalidate(moekeyWebSocketProvider);
-        moekeyStreamController.sink.add(moekeyEvent(
-          type: moekeyEventType.load,
+        moekeyStreamController.sink.add(MoekeyEvent(
+          type: MoekeyEventType.load,
           data: {},
         ));
         if (timer.isActive) {
@@ -128,7 +128,8 @@ StreamController<Map> moekeyStreamMainChannelController =
 
 @Riverpod(keepAlive: true)
 class MoekeyMainChannel extends _$MoekeyMainChannel {
-  StreamSubscription<moekeyEvent>? listen;
+  StreamSubscription<MoekeyEvent>? listen;
+
   @override
   FutureOr build() async {
     try {
@@ -142,14 +143,14 @@ class MoekeyMainChannel extends _$MoekeyMainChannel {
         (event) async {
           logger.d("========= event channel main===================");
           logger.d(event);
-          if (event.type == moekeyEventType.load) {
+          if (event.type == MoekeyEventType.load) {
             logger.d("========= NotesListener load ===================");
             ref.read(moekeyGlobalEventProvider.notifier).send({
               "type": "connect",
               "body": {"channel": "main", "id": "1"}
             });
           }
-          if (event.type == moekeyEventType.data &&
+          if (event.type == MoekeyEventType.data &&
               event.data["type"] == "channel" &&
               event.data["body"]["id"] == "1") {
             logger.d(event.data);

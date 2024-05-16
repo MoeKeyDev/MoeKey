@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:moekey/models/note.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:moekey/state/server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../apis/models/note.dart';
 
 part 'timeline.g.dart';
 
@@ -39,19 +40,16 @@ class NoteList extends _$NoteList {
 @riverpod
 class Timeline extends _$Timeline {
   @override
-  FutureOr<List<NoteModel>> build(
-      {String api = "timeline", bool selectHttpProvider = false}) async {
+  FutureOr<List<NoteModel>> build({String api = "timeline"}) async {
     return timeline(api: api);
   }
 
   Future<List<NoteModel>> timeline(
       {String? untilId, String? sinceId, String api = "timeline"}) async {
-    var http = this.selectHttpProvider
-        ? ref.watch(selectHttpProvider)
-        : await ref.watch(httpProvider.future);
+    var http = await ref.watch(httpProvider.future);
     var user = await ref.watch(currentLoginUserProvider.future);
     var res = await http.post("/notes/$api", data: {
-      if (!this.selectHttpProvider) "i": user?.token,
+      "i": user?.token,
       "limit": 10,
       if (untilId != null) "untilId": untilId,
       if (sinceId != null) "sinceId": sinceId
@@ -67,6 +65,7 @@ class Timeline extends _$Timeline {
   }
 
   var loading = false;
+
   load({String api = "timeline"}) async {
     if (loading) return;
     loading = true;

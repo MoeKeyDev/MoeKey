@@ -4,14 +4,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/models/note.dart';
+import 'package:moekey/networks/misskey_api.dart';
 import 'package:moekey/networks/timeline.dart';
 import 'package:moekey/state/themes.dart';
+import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_header.dart';
 
+import '../../apis/models/note.dart';
+import '../../apis/models/translate.dart';
+import '../../apis/models/user_lite.dart';
 import '../../main.dart';
-import '../../models/translate.dart';
 import '../../networks/apis.dart';
 import '../../networks/notes.dart';
 import '../../router/main_router_delegate.dart';
@@ -64,16 +67,7 @@ class NotesPage extends HookConsumerWidget {
     }, [data]);
     return LayoutBuilder(
       builder: (context, constraints) {
-        double padding = 0;
-        if (constraints.maxWidth > 860) {
-          padding = (constraints.maxWidth - 800) / 2;
-        } else if (constraints.maxWidth > 500) {
-          padding = 30;
-        } else if (constraints.maxWidth > 400) {
-          padding = 8;
-        } else {
-          padding = 0;
-        }
+        double padding = getPaddingForNote(constraints);
         // var notifier = ref.read(notesListenerProvider.notifier);
         // var data =  dataProvider.valueOrNull?.data ?? {};
 
@@ -321,7 +315,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
     var data = ref.watch(
         noteListProvider.select((value) => value[this.data.id] ?? this.data));
     var links = extractLinksFromMarkdown(data.text ?? "");
-    var meta = ref.watch(apiMetaProvider).valueOrNull;
+    var meta = ref.watch(instanceMetaProvider).valueOrNull;
     var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -336,7 +330,16 @@ class NotesPageNoteCard extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              UserInfo(data: data),
+              UserInfo(
+                data: data.user,
+                suffix: NoteVisibility.getIcon(data.visibility) != null
+                    ? Icon(
+                        NoteVisibility.getIcon(data.visibility)!,
+                        size: 16,
+                        color: themes.fgColor,
+                      )
+                    : null,
+              ),
               const SizedBox(height: 8),
               if (data.cw != null) ...[
                 MFMText(
@@ -376,30 +379,23 @@ class NotesPageNoteCard extends HookConsumerWidget {
                     isSelection: true,
                   ),
                 if (meta != null &&
-                    meta.containsKey("translatorAvailable") &&
-                    meta["translatorAvailable"] &&
+                    meta.translatorAvailable &&
                     data.noteTranslate == null)
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         var note = ref.read(noteListProvider)[data.id] ?? data;
                         note = note.copyWith();
                         note.noteTranslate =
                             NoteTranslate(text: "", sourceLang: "");
                         ref.read(noteListProvider.notifier).registerNote(note);
-                        var res =
-                            ref.read(noteTranslateProvider(data.id).future);
-                        res.then(
-                          (res) {
-                            res.loading = false;
-                            note = note.copyWith();
-                            note.noteTranslate = res;
-                            ref
-                                .read(noteListProvider.notifier)
-                                .registerNote(note);
-                          },
-                        );
+                        var apis = await ref.read(misskeyApisProvider.future);
+                        var res = await apis.notes.translate(noteId: data.id);
+                        res.loading = false;
+                        note = note.copyWith();
+                        note.noteTranslate = res;
+                        ref.read(noteListProvider.notifier).registerNote(note);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6),
@@ -506,9 +502,14 @@ class NotesPageNoteCard extends HookConsumerWidget {
 }
 
 class UserInfo extends HookConsumerWidget {
-  const UserInfo({super.key, required this.data});
+  const UserInfo({
+    super.key,
+    required this.data,
+    this.suffix,
+  });
 
-  final NoteModel data;
+  final UserLiteModel data;
+  final Widget? suffix;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -517,16 +518,16 @@ class UserInfo extends HookConsumerWidget {
       children: [
         GestureDetector(
           child: MkImage(
-            data.user.avatarUrl ?? "",
+            data.avatarUrl ?? "",
             width: 56,
             height: 56,
             shape: BoxShape.circle,
           ),
           onTap: () {
             MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-              path: "user/${data.userId}",
+              path: "user/${data.id}",
               page: () {
-                return UserPage(userId: data.userId);
+                return UserPage(userId: data.id);
               },
             ));
           },
@@ -541,8 +542,8 @@ class UserInfo extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MFMText(
-                  text: data.user.name ?? data.user.username,
-                  emojis: data.user.emojis,
+                  text: data.name ?? data.username,
+                  emojis: data.emojis,
                   bigEmojiCode: false,
                   feature: const [MFMFeature.emojiCode],
                 ),
@@ -550,11 +551,11 @@ class UserInfo extends HookConsumerWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: "@${data.user.username}",
+                        text: "@${data.username}",
                       ),
-                      if (data.user.host != null)
+                      if (data.host != null)
                         TextSpan(
-                          text: "@${data.user.host}",
+                          text: "@${data.host}",
                           style: TextStyle(
                             color: themes.fgColor.withOpacity(0.7),
                           ),
@@ -565,25 +566,20 @@ class UserInfo extends HookConsumerWidget {
                 const SizedBox(
                   height: 2,
                 ),
-                if (data.user.instance != null) UserInstanceBar(data: data)
+                if (data.instance != null) UserInstanceBar(data: data)
               ],
             ),
             onTap: () {
               MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                path: "user/${data.userId}",
+                path: "user/${data.id}",
                 page: () {
-                  return UserPage(userId: data.userId);
+                  return UserPage(userId: data.id);
                 },
               ));
             },
           ),
         ),
-        if (NoteVisibility.getIcon(data.visibility) != null)
-          Icon(
-            NoteVisibility.getIcon(data.visibility)!,
-            size: 16,
-            color: themes.fgColor,
-          )
+        if (suffix != null) suffix!
       ],
     );
   }

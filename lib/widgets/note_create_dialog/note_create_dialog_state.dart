@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../apis/models/note.dart';
 import '../../main.dart';
-import '../../models/note.dart';
 import '../../networks/dio.dart';
 import '../../state/server.dart';
 import '../info_dialog.dart';
@@ -30,6 +30,7 @@ class NoteCreateDialogStateModel {
   bool isShowEmoji = false;
   bool preview = false;
   num emojiListHeight = 0;
+
   Map<String, dynamic> toMap() {
     return {
       'visibility': visibility.value,
@@ -56,6 +57,7 @@ class NotePollModel {
   int days = 0;
   int hours = 0;
   int minutes = 1;
+
   Map<String, dynamic> toMap() {
     var choices1 = [];
     for (var item in choices) {
@@ -240,6 +242,7 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
   }
 
   bool sendLoading = false;
+
   Future<dynamic> send() async {
     if (sendLoading) return;
     sendLoading = true;

@@ -21,6 +21,7 @@ class UserFullModel {
   String username;
   String? name;
   List<dynamic> fields;
+
   //private public followers
   String? ffVisibility;
   String? followersVisibility;
@@ -35,6 +36,7 @@ class UserFullModel {
   bool hasPendingFollowRequestFromYou;
   bool hasPendingFollowRequestToYou;
   bool isLocked;
+
   UserFullModel({
     this.avatarBlurhash,
     this.avatarUrl,
@@ -188,4 +190,6 @@ class UserFullModel {
       isLocked: isLocked ?? this.isLocked,
     );
   }
+
+  toMap() {}
 }

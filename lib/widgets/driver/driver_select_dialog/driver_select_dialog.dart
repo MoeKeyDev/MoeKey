@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/models/drive.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:moekey/widgets/driver/upload_file_dialog.dart';
 
+import '../../../apis/models/drive.dart';
 import '../../../main.dart';
 import '../../mk_card.dart';
 import '../../mk_switch.dart';
@@ -18,15 +18,17 @@ import '../driver_list.dart';
 class DriverSelectContextMenu extends HookConsumerWidget {
   const DriverSelectContextMenu(
       {super.key, required this.builder, required this.id});
+
   final String id;
-  final Widget Function(BuildContext context, void Function(Offset offset) open)
-      builder;
+  final Widget Function(BuildContext context, void Function() open) builder;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var isOriginal = useState(false);
     return ContextMenuBuilder(
       mode: const [],
       maskColor: Colors.black.withOpacity(0.4),
+      alignmentChild: true,
       menu: ContextMenuCard(
         initialChildSize: 0.6,
         minChildSize: 0.5,
@@ -142,16 +144,10 @@ class DriverSelectContextMenu extends HookConsumerWidget {
       ),
       child: Builder(
         builder: (context) {
-          return builder(context, (offset) {
-            if (Platform.isAndroid || Platform.isIOS) {
-              context
-                  .findAncestorStateOfType<ContextMenuBuilderState>()
-                  ?.showBottomSheet();
-              return;
-            }
+          return builder(context, () {
             context
                 .findAncestorStateOfType<ContextMenuBuilderState>()
-                ?.show(offset);
+                ?.show(Offset.zero);
           });
         },
       ),
@@ -161,7 +157,9 @@ class DriverSelectContextMenu extends HookConsumerWidget {
 
 class DriverSelectDialog extends HookConsumerWidget {
   const DriverSelectDialog({super.key, required this.id});
+
   final String id;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(

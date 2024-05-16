@@ -12,19 +12,16 @@ class TimeLineListPage extends HookConsumerWidget {
   const TimeLineListPage({
     super.key,
     required this.api,
-    this.selectHttp = false,
     this.nestedScroll = false,
   });
 
   final String api;
-  final bool selectHttp;
   final bool nestedScroll;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.of(context).padding;
-    var dataProvider =
-        timelineProvider(api: api, selectHttpProvider: selectHttp);
+    var dataProvider = timelineProvider(api: api);
     var data = ref.watch(dataProvider);
     var themes = ref.watch(themeColorsProvider);
     return LayoutBuilder(

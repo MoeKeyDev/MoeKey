@@ -4,6 +4,7 @@ import 'package:chinese_font_library/chinese_font_library.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../apis/models/meta.dart';
 import '../utils/parse-color.dart';
 
 part 'themes.g.dart';
@@ -44,10 +45,10 @@ class ThemeColors extends _$ThemeColors {
     return ThemeColorModel();
   }
 
-  updateThemes(Map metas) {
+  updateThemes(MetaDetailedModel metas) {
     var model = ThemeColorModel();
-    if (metas["defaultLightTheme"] != null) {
-      var themeData = jsonDecode(metas["defaultLightTheme"]);
+    if (metas.defaultLightTheme != null) {
+      var themeData = jsonDecode(metas.defaultLightTheme!);
       Map<String, dynamic> themes = themeData["props"];
       model.isDark = themeData["base"] == "dark";
       model.accentColor =

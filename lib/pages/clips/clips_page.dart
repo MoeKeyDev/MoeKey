@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/clips/clips_collection.dart';
 import 'package:moekey/pages/clips/clips_my.dart';
 import 'package:moekey/widgets/clips/clips_create_dialog.dart';
+import 'package:moekey/widgets/mk_modal.dart';
 
 import '../../router/main_router_delegate.dart';
 import '../../state/themes.dart';
@@ -12,9 +13,6 @@ import '../../widgets/keep_alive_wrapper.dart';
 import '../../widgets/mk_header.dart';
 import '../../widgets/mk_scaffold.dart';
 
-///Clips are a feature of Misskey that summarize notes.Clips are a feature of Misskey that summarize notes.They don't care if the notes are mine or someone else's. You can make more than one clips, and you can name them and give an explanation, and you can manage them.You can also choose between public and private clips.You can also choose between public and private clips.
-///To create clips, select "Add" on the Clip Management page.
-///To add notes to clips, select Clips on the appropriate note page and select the target clip.
 class ClipsPage extends HookConsumerWidget {
   const ClipsPage({super.key});
 
@@ -83,10 +81,10 @@ class ClipsPage extends HookConsumerWidget {
               children: [
                 IconButton(
                   onPressed: () {
-                    showDialog(
+                    showModel(
                       context: context,
                       builder: (context) {
-                        return ClipCreateDialog();
+                        return const ClipCreateDialog();
                       },
                     );
                   },

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:moekey/models/note.dart';
 import 'package:moekey/networks/timeline.dart';
 import 'package:moekey/networks/websocket.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../apis/models/note.dart';
 import '../main.dart';
 import '../state/server.dart';
 import 'dio.dart';
@@ -67,7 +67,7 @@ class Notes extends _$Notes {
 @Riverpod(keepAlive: true)
 class NotesListener extends _$NotesListener {
   Map<String, Map<String, dynamic>> noteList = {};
-  StreamSubscription<moekeyEvent>? listen;
+  StreamSubscription<MoekeyEvent>? listen;
 
   @override
   Future build() async {
@@ -81,7 +81,7 @@ class NotesListener extends _$NotesListener {
       listen?.cancel();
       listen = null;
       listen = moekeyStreamController.stream.listen((event) async {
-        if (event.type == moekeyEventType.data) {
+        if (event.type == MoekeyEventType.data) {
           if (event.data["type"] == "noteUpdated") {
             var eventData = event.data;
             logger.d(eventData);
@@ -129,7 +129,7 @@ class NotesListener extends _$NotesListener {
             }
           }
         }
-        if (event.type == moekeyEventType.load) {
+        if (event.type == MoekeyEventType.load) {
           logger.d("========= NotesListener load ===================");
           logger.d(noteList);
           for (var item in noteList.entries) {

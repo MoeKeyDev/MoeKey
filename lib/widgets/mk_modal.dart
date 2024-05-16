@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -27,7 +28,6 @@ class MkModal extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var queryPadding = MediaQuery.of(context).padding;
     var querySize = MediaQuery.of(context).size;
     var themes = ref.watch(themeColorsProvider);
 
@@ -103,8 +103,8 @@ showModel({
 }) {
   var page = PageRouteBuilder(
     opaque: false,
-    transitionDuration: const Duration(milliseconds: 250),
-    reverseTransitionDuration: const Duration(milliseconds: 250),
+    transitionDuration: const Duration(milliseconds: 150),
+    reverseTransitionDuration: const Duration(milliseconds: 210),
     pageBuilder: (context, animation, secondaryAnimation) {
       return builder(context);
     },
@@ -115,21 +115,25 @@ showModel({
           .chain(CurveTween(curve: Curves.easeInOut)));
       var tween2 = animation.drive(Tween(begin: 0.9, end: 1.0)
           .chain(CurveTween(curve: Curves.easeInOut)));
+      Widget background = Consumer(
+        builder: (context, ref, child) {
+          var themes = ref.watch(themeColorsProvider);
+          return Container(
+            color: themes.modalBgColor
+                .withOpacity(themes.modalBgColor.opacity * tween1.value),
+          );
+        },
+      );
+      if (!(Platform.isAndroid || Platform.isIOS)) {
+        background = BackdropFilter(
+          filter: ImageFilter.blur(
+              sigmaX: tween1.value * 5, sigmaY: tween1.value * 5),
+          child: background,
+        );
+      }
       return Stack(
         children: [
-          BackdropFilter(
-            filter: ImageFilter.blur(
-                sigmaX: tween1.value * 5, sigmaY: tween1.value * 5),
-            child: Consumer(
-              builder: (context, ref, child) {
-                var themes = ref.watch(themeColorsProvider);
-                return Container(
-                  color: themes.modalBgColor
-                      .withOpacity(themes.modalBgColor.opacity * tween1.value),
-                );
-              },
-            ),
-          ),
+          background,
           FadeTransition(
             opacity: tween,
             child: ScaleTransition(

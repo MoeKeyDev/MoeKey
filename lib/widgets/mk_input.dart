@@ -50,9 +50,12 @@ class MkInput extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null) ...[
-          Text(label!),
+          Text(
+            label!,
+            style: const TextStyle(fontSize: 13),
+          ),
           const SizedBox(
-            height: 4,
+            height: 6,
           ),
         ],
         TextFormField(

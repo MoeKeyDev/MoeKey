@@ -1,8 +1,8 @@
-import 'package:moekey/models/clips.dart';
-import 'package:moekey/models/note.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../apis/models/clips.dart';
+import '../../apis/models/note.dart';
 import '../../state/server.dart';
 
 part 'clips.g.dart';
@@ -96,7 +96,7 @@ class ClipsNotesList extends _$ClipsNotesList {
     if (loading) return;
     loading = true;
     try {
-      var untilId = state.valueOrNull?.list.last.id;
+      var untilId = state.valueOrNull?.list.lastOrNull?.id;
       var list = await clipsNotesList(clipId: clipId, untilId: untilId);
 
       if (list.isEmpty) {

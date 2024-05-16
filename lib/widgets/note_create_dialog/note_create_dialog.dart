@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/networks/apis.dart';
 import 'package:moekey/state/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
@@ -18,8 +19,8 @@ import 'package:moekey/widgets/mk_modal.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart';
 import 'package:moekey/widgets/user_select_dialog/user_select_dialog.dart';
 
+import '../../apis/models/note.dart';
 import '../../main.dart';
-import '../../models/note.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../driver/drive_thumbnail.dart';
 import '../driver/driver_select_dialog/driver_select_dialog.dart';
@@ -108,7 +109,7 @@ class NoteCreateDialog extends HookConsumerWidget {
       ThemeColorModel themes, bool fullscreen, double keyboardHeight) {
     return HookConsumer(
       builder: (context, ref, child) {
-        dynamic data = ref.watch(apiMetaProvider).valueOrNull;
+        dynamic data = ref.watch(instanceMetaProvider).valueOrNull;
         var driverMap = ref.watch(ref
             .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
             .getDriverSelectDialogStateProvider());
@@ -833,9 +834,7 @@ class NoteCreateDialog extends HookConsumerWidget {
               builder: (context, open) {
                 return buildActionBottom(
                     onPressed: () {
-                      var offset = (context.findRenderObject() as RenderBox)
-                          .localToGlobal(Offset.zero);
-                      open(offset + const Offset(-50, 40));
+                      open();
                     },
                     context: context,
                     tooltip: "插入附件",
@@ -1012,8 +1011,8 @@ class NoteCreateDialog extends HookConsumerWidget {
     });
   }
 
-  Widget buildTextField(
-      data, bool isFullscreen, TextEditingController contentController) {
+  Widget buildTextField(MetaDetailedModel meta, bool isFullscreen,
+      TextEditingController contentController) {
     return HookConsumer(
       builder: (context, ref, child) {
         var state = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
@@ -1057,7 +1056,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 ),
                 minLines: isFullscreen ? 4 : 4,
                 maxLines: isFullscreen ? 200 : 100,
-                maxLength: data?["maxNoteTextLength"] ?? 100,
+                maxLength: meta.maxNoteTextLength,
 
                 // initialValue: state.text,
                 onChanged: (value) {
@@ -1281,17 +1280,18 @@ class NoteCreateDialog extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 14, top: 8, bottom: 4),
-                            child: Opacity(
-                              opacity: 0.7,
-                              child: Text(
-                                "可见性",
-                                style: TextStyle(fontSize: large ? 14 : 11),
+                          if (!large)
+                            const Padding(
+                              padding:
+                                  EdgeInsets.only(left: 14, top: 8, bottom: 4),
+                              child: Opacity(
+                                opacity: 0.7,
+                                child: Text(
+                                  "可见性",
+                                  style: TextStyle(fontSize: 11),
+                                ),
                               ),
                             ),
-                          ),
                           buildVisibilityBottom(
                               state,
                               themes,
@@ -1300,7 +1300,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                               TablerIcons.world,
                               NoteVisibility.public,
                               state.visibility,
-                              onHidden),
+                              onHidden,
+                              large),
                           buildVisibilityBottom(
                               state,
                               themes,
@@ -1309,7 +1310,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                               TablerIcons.home,
                               NoteVisibility.home,
                               state.visibility,
-                              onHidden),
+                              onHidden,
+                              large),
                           buildVisibilityBottom(
                               state,
                               themes,
@@ -1318,7 +1320,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                               TablerIcons.lock,
                               NoteVisibility.followers,
                               state.visibility,
-                              onHidden),
+                              onHidden,
+                              large),
                           buildVisibilityBottom(
                               state,
                               themes,
@@ -1327,7 +1330,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                               TablerIcons.mail,
                               NoteVisibility.specified,
                               state.visibility,
-                              onHidden),
+                              onHidden,
+                              large),
                         ],
                       );
                     },
@@ -1335,6 +1339,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 },
               ),
               mode: const [ContextMenuMode.onTap],
+              alignmentChild: true,
               child: Builder(builder: (context) {
                 return TextButton(
                   style: ButtonStyle(
@@ -1351,14 +1356,9 @@ class NoteCreateDialog extends HookConsumerWidget {
                     ),
                   ),
                   onPressed: () {
-                    RenderBox box = context.findRenderObject() as RenderBox;
-                    var y = box.localToGlobal(Offset.zero).dy + box.size.height;
-                    var x = box.localToGlobal(Offset.zero).dx -
-                        125 +
-                        box.size.width / 2;
                     context
                         .findAncestorStateOfType<ContextMenuBuilderState>()
-                        ?.show(Offset(x, y));
+                        ?.show(Offset.zero);
                   },
                   child: Icon(
                     icon,
@@ -1372,14 +1372,16 @@ class NoteCreateDialog extends HookConsumerWidget {
   }
 
   Widget buildVisibilityBottom(
-      NoteCreateDialogStateModel state,
-      ThemeColorModel themes,
-      String title,
-      String desc,
-      IconData icon,
-      value,
-      currentValue,
-      onHidden) {
+    NoteCreateDialogStateModel state,
+    ThemeColorModel themes,
+    String title,
+    String desc,
+    IconData icon,
+    value,
+    currentValue,
+    onHidden,
+    bool large,
+  ) {
     return HookConsumer(
       builder: (context, ref, child) {
         return HoverBuilder(
@@ -1402,31 +1404,32 @@ class NoteCreateDialog extends HookConsumerWidget {
                   color: isHover
                       ? Colors.black.withOpacity(0.05)
                       : Colors.transparent,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: large ? 20 : 14, vertical: large ? 16 : 8),
                   child: Row(
                     children: [
                       Icon(
                         icon,
-                        size: 16,
+                        size: large ? 20 : 16,
                         color: value == currentValue
                             ? themes.accentColor
                             : themes.fgColor,
                       ),
-                      const SizedBox(
-                        width: 12,
+                      SizedBox(
+                        width: large ? 16 : 12,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             title,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 12),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: large ? 14 : 12),
                           ),
                           Text(
                             desc,
-                            style: const TextStyle(fontSize: 12),
+                            style: TextStyle(fontSize: large ? 13 : 12),
                           ),
                         ],
                       )

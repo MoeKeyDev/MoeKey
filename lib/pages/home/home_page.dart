@@ -45,8 +45,6 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var router = ref.watch(routerDelegateProvider);
-    var info = ref.watch(serverInfoStateProvider.future);
-    var meta = ref.watch(apiMetaProvider);
     var currentId = useState(router.currentConfiguration?.path);
     func() {
       currentId.value = router.currentConfiguration?.path;
@@ -78,6 +76,7 @@ class HomePage extends HookConsumerWidget {
       return Scaffold(
         key: _scaffoldKey,
         backgroundColor: themes.bgColor,
+        resizeToAvoidBottomInset: false,
         drawer: constraints.maxWidth < 500
             ? NavBar(
                 width: 250,
@@ -278,68 +277,61 @@ class ServerIconAndBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
-    var meta = ref.watch(apiMetaProvider.future);
-
+    var meta = ref.watch(instanceMetaProvider).valueOrNull;
     return LayoutBuilder(
       builder: (context, constraints) {
-        return FutureBuilder(
-          future: meta,
-          builder: (context, snapshot) {
-            var metaData = snapshot.data;
-            var icon = Builder(builder: (BuildContext context) {
-              if (metaData?["iconUrl"] != null) {
-                return MkImage(metaData!["iconUrl"], width: 30, height: 30);
-              } else {
-                return Image.asset(
-                  "assets/favicon.ico",
-                  width: 30,
-                  height: 30,
-                );
-              }
-            });
-
-            var extend = constraints.maxWidth >= 250;
-            if (extend) {
-              return SizedBox(
-                  width: double.infinity,
-                  height: 82 + mediaPadding.top,
-                  child: ShaderMask(
-                    shaderCallback: (rect) {
-                      return const LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.black, Colors.transparent],
-                              stops: [0, 0.9])
-                          .createShader(
-                              Rect.fromLTRB(0, 0, rect.width, rect.height));
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        MkImage(
-                          metaData?["bannerUrl"] ?? "",
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                        SizedBox(
-                          width: 38,
-                          height: 38,
-                          child: icon,
-                        )
-                      ],
-                    ),
-                  ));
-            }
-            var top = 10 + mediaPadding.top;
-            if (top < 20) {
-              top = 20;
-            }
-            return Padding(
-              padding: EdgeInsets.fromLTRB(0, top, 0, 20),
-              child: icon,
+        var icon = Builder(builder: (BuildContext context) {
+          if (meta?.iconUrl != null) {
+            return MkImage(meta!.iconUrl!, width: 30, height: 30);
+          } else {
+            return Image.asset(
+              "assets/favicon.ico",
+              width: 30,
+              height: 30,
             );
-          },
+          }
+        });
+
+        var extend = constraints.maxWidth >= 250;
+        if (extend) {
+          return SizedBox(
+              width: double.infinity,
+              height: 82 + mediaPadding.top,
+              child: ShaderMask(
+                shaderCallback: (rect) {
+                  return const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.black, Colors.transparent],
+                          stops: [0, 0.9])
+                      .createShader(
+                          Rect.fromLTRB(0, 0, rect.width, rect.height));
+                },
+                blendMode: BlendMode.dstIn,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    MkImage(
+                      meta?.bannerUrl ?? "",
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                    SizedBox(
+                      width: 38,
+                      height: 38,
+                      child: icon,
+                    )
+                  ],
+                ),
+              ));
+        }
+        var top = 10 + mediaPadding.top;
+        if (top < 20) {
+          top = 20;
+        }
+        return Padding(
+          padding: EdgeInsets.fromLTRB(0, top, 0, 20),
+          child: icon,
         );
       },
     );

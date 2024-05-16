@@ -30,6 +30,7 @@ class ReactionsListComponent extends HookConsumerWidget {
       required this.id,
       this.disableReactions = false,
       this.myReaction});
+
   final Map? emojis;
   final Map reactionsList;
   final bool disableReactions;
@@ -120,6 +121,7 @@ class ReactionsIcon extends HookConsumerWidget {
     required this.emojiCode,
     this.emojis,
   });
+
   final String emojiCode;
   final Map? emojis;
 
@@ -128,9 +130,9 @@ class ReactionsIcon extends HookConsumerWidget {
     var emoji = ref.watch(apiEmojisProvider);
     var code = parseString(emojiCode);
     if (code != null) {
-      var url = "";
+      String url = "";
       if (emoji.valueOrNull?[code] != null) {
-        url = emoji.valueOrNull![code]["url"];
+        url = emoji.valueOrNull![code]?.url ?? '';
       }
       if (emojis?[code] != null) {
         url = emojis?[code];

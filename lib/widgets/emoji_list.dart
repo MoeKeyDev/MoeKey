@@ -11,8 +11,10 @@ import 'mk_image.dart';
 
 class EmojiList extends HookConsumerWidget {
   const EmojiList({super.key, this.scrollController, required this.onInsert});
+
   final ScrollController? scrollController;
   final void Function(Map data) onInsert;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var data = ref.watch(apiEmojisByCategoryProvider);
@@ -39,15 +41,15 @@ class EmojiList extends HookConsumerWidget {
                     child: Tooltip(
                       message: item,
                       child: [
-                        if (data.valueOrNull![item][0]["url"] != null)
+                        if (data.valueOrNull![item]?[0].code == false)
                           SizedBox(
                             width: 30,
                             height: 30,
-                            child: MkImage(data.valueOrNull![item][0]["url"]),
+                            child: MkImage(data.valueOrNull![item]![0].url),
                           )
                         else
                           Twemoji(
-                            emoji: data.valueOrNull![item][0]["emoji"],
+                            emoji: data.valueOrNull![item]![0].url,
                             width: 30,
                             height: 30,
                           )
@@ -67,90 +69,90 @@ class EmojiList extends HookConsumerWidget {
               },
             ),
             Positioned(
-                top: 48,
-                child: SizedBox(
-                  width: constraints.maxWidth,
-                  height:
-                      (constraints.maxHeight - 48).clamp(0, double.infinity),
-                  child: ListViewObserver(
-                    onObserve: (p0) {
-                      tabController.animateTo(p0.displayingChildIndexList[0]);
-                    },
-                    controller: a,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      itemCount: list.length,
-                      controller: scrollController1,
-                      itemBuilder: (context, index) {
-                        var item = list[index];
-                        var i = data.valueOrNull![item];
+              top: 48,
+              child: SizedBox(
+                width: constraints.maxWidth,
+                height: (constraints.maxHeight - 48).clamp(0, double.infinity),
+                child: ListViewObserver(
+                  onObserve: (p0) {
+                    tabController.animateTo(p0.displayingChildIndexList[0]);
+                  },
+                  controller: a,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    itemCount: list.length,
+                    controller: scrollController1,
+                    itemBuilder: (context, index) {
+                      var item = list[index];
+                      var i = data.valueOrNull![item];
 
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Text(item),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              runAlignment: WrapAlignment.center,
-                              children: [
-                                for (var item in i)
-                                  if (item["url"] != null)
-                                    Tooltip(
-                                      message: item["name"],
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          var item1 = Map.from(item);
-                                          item1["name"] = ":${item1["name"]}:";
-                                          onInsert(item1);
-                                        },
-                                        child: SizedBox(
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Text(item),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            runAlignment: WrapAlignment.center,
+                            children: [
+                              for (var item in i!)
+                                if (item.code == false)
+                                  Tooltip(
+                                    message: item.name,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        var item1 = Map.from(item.toMap());
+                                        item1["name"] = ":${item1["name"]}:";
+                                        onInsert(item1);
+                                      },
+                                      child: SizedBox(
+                                        width: 44,
+                                        height: 44,
+                                        child: MkImage(
+                                          item.url,
                                           width: 44,
                                           height: 44,
-                                          child: MkImage(
-                                            item["url"],
-                                            width: 44,
-                                            height: 44,
-                                          ),
                                         ),
                                       ),
-                                    )
-                                  else
-                                    Tooltip(
-                                      message: item["name"],
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          var item1 = Map.from(item);
-                                          item1["name"] = item1["emoji"];
-                                          onInsert(item1);
-                                        },
-                                        child: SizedBox(
+                                    ),
+                                  )
+                                else
+                                  Tooltip(
+                                    message: item.name,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        var item1 = Map.from(item.toMap());
+                                        item1["name"] = item1["url"];
+                                        onInsert(item1);
+                                      },
+                                      child: SizedBox(
+                                        width: 32,
+                                        height: 32,
+                                        child: Twemoji(
                                           width: 32,
                                           height: 32,
-                                          child: Twemoji(
-                                            width: 32,
-                                            height: 32,
-                                            emoji: item["emoji"],
-                                          ),
+                                          emoji: item.url,
                                         ),
                                       ),
-                                    )
-                              ],
-                            )
-                          ],
-                        );
-                      },
-                    ),
+                                    ),
+                                  )
+                            ],
+                          )
+                        ],
+                      );
+                    },
                   ),
-                ))
+                ),
+              ),
+            )
           ],
         );
       },
@@ -175,9 +177,12 @@ class EmojiList extends HookConsumerWidget {
               },
               behavior: HitTestBehavior.opaque,
               child: DraggableScrollableSheet(
-                initialChildSize: 0.4, //set this as you want
-                maxChildSize: 0.8, //set this as you want
-                minChildSize: 0.4, //set this as you want
+                initialChildSize: 0.4,
+                //set this as you want
+                maxChildSize: 0.8,
+                //set this as you want
+                minChildSize: 0.4,
+                //set this as you want
                 expand: true,
                 builder: (context, scrollController) {
                   return Container(

@@ -1,48 +1,36 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:moekey/networks/dio.dart';
+import 'package:moekey/apis/models/meta.dart';
+import 'package:moekey/networks/misskey_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../models/translate.dart';
-import '../state/server.dart';
+import '../apis/models/emojis.dart';
 import '../state/themes.dart';
 
 part 'apis.g.dart';
 
 @Riverpod(keepAlive: true)
-Future<Map> apiMeta(ApiMetaRef ref) async {
-  var http = await ref.watch(httpProvider.future);
-  var data = await http.post("/meta", data: {
-    "detail": true,
-  });
-  return data.data;
+Future<MetaDetailedModel> instanceMeta(InstanceMetaRef ref) async {
+  var apis = await ref.watch(misskeyApisProvider.future);
+  var colors = ref.read(themeColorsProvider.notifier);
+  var meta = await apis.meta.meta();
+  colors.updateThemes(meta!);
+  return meta;
 }
 
 @Riverpod(keepAlive: true)
-class ServerInfoState extends _$ServerInfoState {
-  @override
-  FutureOr<Map> build() async {
-    var colors = ref.read(themeColorsProvider.notifier);
-    var meta = await ref.watch(apiMetaProvider.future);
-    colors.updateThemes(meta);
-    return meta;
-  }
+Future<List<EmojiSimple>> apiEmojisList(ApiEmojisListRef ref) async {
+  var apis = await ref.watch(misskeyApisProvider.future);
+  return apis.meta.emojis();
 }
 
 @Riverpod(keepAlive: true)
-Future<List> apiEmojisList(ApiEmojisListRef ref) async {
-  var http = await ref.watch(httpProvider.future);
-  var data = await http.get("/emojis");
-  return data.data["emojis"];
-}
-
-@Riverpod(keepAlive: true)
-Future<Map> apiEmojisByCategory(ApiEmojisByCategoryRef ref) async {
+Future<Map<String, List<EmojiSimple>>> apiEmojisByCategory(
+    ApiEmojisByCategoryRef ref) async {
   var data = await ref.watch(apiEmojisListProvider.future);
-  LinkedHashMap<String, List> emojiMap = LinkedHashMap();
+  LinkedHashMap<String, List<EmojiSimple>> emojiMap = LinkedHashMap();
   var user = [
     ["👍", "good"],
     ["❤️", "heart"],
@@ -60,11 +48,12 @@ Future<Map> apiEmojisByCategory(ApiEmojisByCategoryRef ref) async {
     if (emojiMap[cate] == null) {
       emojiMap[cate] = [];
     }
-    emojiMap[cate]!.add({"emoji": item[0], "name": item[1]});
+    emojiMap[cate]!.add(EmojiSimple(
+        aliases: [], category: "用户", name: item[1], url: item[0], code: true));
   }
 
   for (var item in data) {
-    var cate = item["category"] ?? "未分类";
+    var cate = item.category ?? "未分类";
     if (emojiMap[cate] == null) {
       emojiMap[cate] = [];
     }
@@ -73,12 +62,6 @@ Future<Map> apiEmojisByCategory(ApiEmojisByCategoryRef ref) async {
   var emojiListJson = await rootBundle.loadString("assets/emoji_list.json");
   var emojiList = jsonDecode(emojiListJson);
 
-  ///{
-  //     "aliases": [],
-  //     "name": "anenw01",
-  //     "category": "AmashiroNatsukiEars",
-  //     "url": "https://ca.nfs.pub/nyaone/1fa90197-dd0f-4488-abe0-1db01d9e243c.png"
-  // }
   var names = [
     "face",
     "people",
@@ -96,46 +79,24 @@ Future<Map> apiEmojisByCategory(ApiEmojisByCategoryRef ref) async {
     if (emojiMap[cate] == null) {
       emojiMap[cate] = [];
     }
-    emojiMap[cate]!.add({"emoji": item[0], "name": item[1]});
+    emojiMap[cate]!.add(EmojiSimple(
+        aliases: [], category: "用户", name: item[1], url: item[0], code: true));
   }
   return emojiMap;
 }
 
 @Riverpod(keepAlive: true)
-Future<Map> apiEmojis(ApiEmojisRef ref) async {
+Future<Map<String, EmojiSimple>> apiEmojis(ApiEmojisRef ref) async {
   var data = await ref.watch(apiEmojisListProvider.future);
-  Map emojiMap = {};
+  Map<String, EmojiSimple> emojiMap = {};
   for (var item in data) {
-    emojiMap[item["name"]] = item;
+    emojiMap[item.name] = item;
   }
   return emojiMap;
 }
 
 @Riverpod(keepAlive: true)
 Future<dynamic> getUriInfo(GetUriInfoRef ref, String url) async {
-  String myLocale = Platform.localeName;
-
-  var user = await ref.watch(currentLoginUserProvider.future);
-  var host = user?.serverUrl;
-  var http = await ref.watch(httpProvider.future);
-  // http.
-  var res = await http.get("$host/url", queryParameters: {
-    "url": url,
-    "lang": myLocale,
-  });
-
-  return res.data;
-}
-
-@riverpod
-Future<NoteTranslate> noteTranslate(NoteTranslateRef ref, String noteId) async {
-  var http = await ref.watch(httpProvider.future);
-  var user = await ref.watch(currentLoginUserProvider.future);
-
-  var res = await http.post("/notes/translate", data: {
-    "noteId": noteId,
-    "targetLang": Platform.localeName.replaceAll("_", "-"),
-    "i": user?.token ?? "",
-  });
-  return NoteTranslate.fromMap(res.data);
+  var apis = await ref.watch(misskeyApisProvider.future);
+  return apis.notes.linkPreview(url: url);
 }

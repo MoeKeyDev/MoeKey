@@ -79,6 +79,14 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   late Animation<double> tween2;
 
   show(Offset offset) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      showBottomSheet();
+      return;
+    }
+    _show(offset);
+  }
+
+  _show(Offset offset) {
     _animationController.reset();
     _animationController.forward();
     _contextMenuController.show(
@@ -148,7 +156,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   }
 
   void _onSecondaryTapUp(TapUpDetails details) {
-    show(details.globalPosition);
+    _show(details.globalPosition);
   }
 
   void _onTapUp(TapUpDetails details) {
@@ -156,7 +164,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
       showBottomSheet();
       return;
     }
-    show(details.globalPosition);
+    _show(details.globalPosition);
   }
 
   void _onLongPress() {

@@ -7,10 +7,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/main.dart';
-import 'package:moekey/models/note.dart';
-import 'package:moekey/models/translate.dart';
-import 'package:moekey/models/user_simple.dart';
 import 'package:moekey/networks/apis.dart';
 import 'package:moekey/networks/notes.dart';
 import 'package:moekey/pages/users/user_page.dart';
@@ -26,7 +24,11 @@ import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart'
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../models/drive.dart';
+import '../../apis/models/drive.dart';
+import '../../apis/models/note.dart';
+import '../../apis/models/translate.dart';
+import '../../apis/models/user_lite.dart';
+import '../../networks/misskey_api.dart';
 import '../../networks/timeline.dart';
 import '../../pages/image_preview/image_preview.dart';
 import '../../pages/notes/note_page.dart';
@@ -200,7 +202,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     }, [this.data.id]);
     var links = extractLinksFromMarkdown(data.text ?? "");
     var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
-    var meta = ref.watch(apiMetaProvider).valueOrNull;
+    var meta = ref.watch(instanceMetaProvider).valueOrNull;
     return LayoutBuilder(
       builder: (context, constraints) {
         var isSmall = constraints.maxWidth < 400;
@@ -279,7 +281,8 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                           if (data.user.instance != null)
                             const SizedBox(height: 4),
                           if (data.user.instance != null)
-                            RepaintBoundary(child: UserInstanceBar(data: data)),
+                            RepaintBoundary(
+                                child: UserInstanceBar(data: data.user)),
                           // start
                           MkOverflowShow(
                             content: Column(
@@ -664,7 +667,7 @@ class UserNameRichText extends HookConsumerWidget {
   const UserNameRichText(
       {super.key, required this.data, this.navigator = true});
 
-  final UserSimpleModel data;
+  final UserLiteModel data;
   final bool navigator;
 
   @override
@@ -696,7 +699,7 @@ class UserNameRichText extends HookConsumerWidget {
             const TextSpan(
               text: "  ",
             ),
-            for (var badge in data.badgeRoles)
+            for (var badge in data.badgeRoles ?? [])
               WidgetSpan(
                   child: Tooltip(
                     message: badge.name,
@@ -724,7 +727,7 @@ class UserInstanceBar extends HookConsumerWidget {
     required this.data,
   });
 
-  final NoteModel data;
+  final UserLiteModel data;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -739,24 +742,22 @@ class UserInstanceBar extends HookConsumerWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-              parseColor(data.user.instance?.themeColor ?? "#66ccff"),
+              parseColor(data.instance?.themeColor ?? "#66ccff"),
               themes.panelColor,
             ], end: FractionalOffset.centerRight, begin: Alignment.centerLeft),
           ),
           child: Row(
             children: [
-              if (data.user.instance?.faviconUrl != null ||
-                  data.user.instance?.iconUrl != null)
+              if (data.instance?.faviconUrl != null ||
+                  data.instance?.iconUrl != null)
                 MkImage(
-                  data.user.instance?.faviconUrl ??
-                      data.user.instance?.iconUrl ??
-                      "",
+                  data.instance?.faviconUrl ?? data.instance?.iconUrl ?? "",
                   width: 16,
                   height: 16,
                 ),
               Expanded(
                   child: Text(
-                data.user.instance?.name ?? "",
+                data.instance?.name ?? "",
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -944,8 +945,8 @@ class TimeLineImage extends StatelessWidget {
   }
 }
 
-ContextMenuCard buildNoteContextMenu(String serverUrl,
-    Map<dynamic, dynamic>? meta, NoteModel data, WidgetRef ref) {
+ContextMenuCard buildNoteContextMenu(
+    String serverUrl, MetaDetailedModel? meta, NoteModel data, WidgetRef ref) {
   return ContextMenuCard(
     menuListBuilder: () {
       return [
@@ -990,26 +991,21 @@ ContextMenuCard buildNoteContextMenu(String serverUrl,
               return false;
             },
           ),
-        if (meta != null &&
-            meta.containsKey("translatorAvailable") &&
-            meta["translatorAvailable"])
+        if (meta != null && meta.translatorAvailable)
           ContextMenuItem(
             icon: TablerIcons.language_hiragana,
             label: "翻译",
-            onTap: () {
+            onTap: () async {
               var note = ref.read(noteListProvider)[data.id] ?? data;
               note = note.copyWith();
               note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
               ref.read(noteListProvider.notifier).registerNote(note);
-              var res = ref.read(noteTranslateProvider(data.id).future);
-              res.then(
-                (res) {
-                  res.loading = false;
-                  note = note.copyWith();
-                  note.noteTranslate = res;
-                  ref.read(noteListProvider.notifier).registerNote(note);
-                },
-              );
+              var apis = await ref.read(misskeyApisProvider.future);
+              var res = await apis.notes.translate(noteId: data.id);
+              res.loading = false;
+              note = note.copyWith();
+              note.noteTranslate = res;
+              ref.read(noteListProvider.notifier).registerNote(note);
 
               return false;
             },
@@ -1032,7 +1028,7 @@ class TimeLineActions extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
-    var meta = ref.watch(apiMetaProvider).valueOrNull;
+    var meta = ref.watch(instanceMetaProvider).valueOrNull;
     return HookConsumer(
       builder: (context, ref, child) {
         var currentUser = ref.watch(currentLoginUserProvider);

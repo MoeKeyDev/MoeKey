@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/models/note.dart';
 import 'package:moekey/networks/notifications.dart';
 import 'package:moekey/pages/notes/note_page.dart';
 import 'package:moekey/state/themes.dart';
@@ -12,6 +11,7 @@ import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/notifications/notifications_user_card.dart';
 
+import '../../apis/models/note.dart';
 import '../../router/main_router_delegate.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/loading_weight.dart';
@@ -22,6 +22,7 @@ import '../users/user_page.dart';
 
 class NotificationsGroupList extends HookConsumerWidget {
   NotificationsGroupList({super.key});
+
   static openUser(BuildContext context, String userId) {
     MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
       path: "user/$userId",

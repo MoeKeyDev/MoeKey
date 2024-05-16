@@ -1,4 +1,4 @@
-import 'package:moekey/models/user_simple.dart';
+import 'package:moekey/apis/models/user_lite.dart';
 
 ///Clip
 class ClipsModel {
@@ -10,7 +10,7 @@ class ClipsModel {
   bool isPublic;
   DateTime? lastClippedAt;
   String name;
-  UserSimpleModel user;
+  UserLiteModel user;
   String userId;
 
   ClipsModel({
@@ -37,7 +37,7 @@ class ClipsModel {
             ? null
             : DateTime.parse(json["lastClippedAt"]),
         name: json["name"],
-        user: UserSimpleModel.fromMap(json["user"]),
+        user: UserLiteModel.fromMap(json["user"]),
         userId: json["userId"],
       );
 }

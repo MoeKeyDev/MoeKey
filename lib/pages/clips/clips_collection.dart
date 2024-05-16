@@ -5,7 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/networks/clips/clips.dart';
 
-import '../../models/clips.dart';
+import '../../apis/models/clips.dart';
 import '../../networks/notifications.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/clips/clips_folder.dart';
@@ -25,42 +25,33 @@ class ClipsCollection extends HookConsumerWidget {
         onRefresh: () => ref.refresh(clipsMyFavoritesProvider.future),
         edgeOffset: queryPadding.top,
         child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(
-            dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-            },
-          ),
-          child: ScrollConfiguration(
-            // 设置滑动配置，允许使用触摸和鼠标进行滑动
-            behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-            }),
-            child: LoadingAndEmpty(
-                loading: res.isLoading,
-                empty: res.valueOrNull?.isEmpty ?? true,
-                refresh: () {
-                  ref.invalidate(notificationsProvider);
+          // 设置滑动配置，允许使用触摸和鼠标进行滑动
+          behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+          }),
+          child: LoadingAndEmpty(
+              loading: res.isLoading,
+              empty: res.valueOrNull?.isEmpty ?? true,
+              refresh: () => ref.refresh(clipsMyFavoritesProvider.future),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  var padding = getPaddingForNote(constraints);
+                  return ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: res.valueOrNull!.length,
+                    padding: EdgeInsets.only(
+                        left: padding,
+                        right: padding,
+                        top: queryPadding.top,
+                        bottom: queryPadding.bottom),
+                    controller: scrollController,
+                    itemBuilder: (BuildContext context, int index) {
+                      return buildClipsListItem(res, index);
+                    },
+                  );
                 },
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    var padding = getPaddingForNote(constraints);
-                    return ListView.builder(
-                      itemCount: res.valueOrNull!.length,
-                      padding: EdgeInsets.only(
-                          left: padding,
-                          right: padding,
-                          top: queryPadding.top,
-                          bottom: queryPadding.bottom),
-                      controller: scrollController,
-                      itemBuilder: (BuildContext context, int index) {
-                        return buildClipsListItem(res, index);
-                      },
-                    );
-                  },
-                )),
-          ),
+              )),
         ));
   }
 

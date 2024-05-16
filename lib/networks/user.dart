@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:moekey/models/note.dart';
-import 'package:moekey/models/user_full.dart';
 import 'package:moekey/networks/dio.dart';
 import 'package:moekey/networks/websocket.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../apis/models/note.dart';
+import '../apis/models/user_full.dart';
 import '../main.dart';
 import '../state/server.dart';
 
@@ -35,6 +35,7 @@ class UserFollowing extends _$UserFollowing {
 @riverpod
 class UserInfo extends _$UserInfo {
   StreamSubscription<Map>? listen;
+
   @override
   FutureOr<UserFullModel> build(
       {String? username, String? host, String? userId}) async {
@@ -221,6 +222,7 @@ class UserNotesList extends _$UserNotesList {
   }
 
   var loading = false;
+
   load() async {
     if (!state.value!.hasMore) return;
     if (loading) return;
@@ -279,6 +281,7 @@ class UserReactionsList extends _$UserReactionsList {
   }
 
   var loading = false;
+
   load() async {
     if (!state.value!.hasMore) return;
     if (loading) return;
