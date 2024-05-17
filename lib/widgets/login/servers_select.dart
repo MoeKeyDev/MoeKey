@@ -9,8 +9,8 @@ import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
 
 import '../../main.dart';
-import '../../state/server.dart';
-import '../../state/themes.dart';
+import '../../status/server.dart';
+import '../../status/themes.dart';
 import '../mk_input.dart';
 import 'login_dialog.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../state/themes.dart';
+import '../../status/themes.dart';
 import '../../widgets/login/servers_select.dart';
 
 class Path1 extends CustomClipper<Path> {

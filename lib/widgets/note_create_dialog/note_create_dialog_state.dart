@@ -7,8 +7,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/note.dart';
 import '../../main.dart';
-import '../../networks/dio.dart';
-import '../../state/server.dart';
+import '../../status/dio.dart';
+import '../../status/server.dart';
 import '../info_dialog.dart';
 
 part 'note_create_dialog_state.g.dart';

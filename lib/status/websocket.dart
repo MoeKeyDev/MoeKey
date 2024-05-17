@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../main.dart';
-import '../state/server.dart';
+import 'server.dart';
 
 part 'websocket.g.dart';
 

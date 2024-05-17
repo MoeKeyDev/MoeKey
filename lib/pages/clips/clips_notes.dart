@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/networks/clips/clips.dart';
+import 'package:moekey/status/clips/clips.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_header.dart';
@@ -11,7 +11,7 @@ import 'package:moekey/widgets/mk_scaffold.dart';
 
 import '../../apis/models/clips.dart';
 import '../../router/main_router_delegate.dart';
-import '../../state/themes.dart';
+import '../../status/themes.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/loading_weight.dart';
 import '../../widgets/notes/note_card.dart';

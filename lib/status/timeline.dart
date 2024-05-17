@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:moekey/networks/dio.dart';
-import 'package:moekey/state/server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
+import 'misskey_api.dart';
 
 part 'timeline.g.dart';
 
@@ -46,22 +45,13 @@ class Timeline extends _$Timeline {
 
   Future<List<NoteModel>> timeline(
       {String? untilId, String? sinceId, String api = "timeline"}) async {
-    var http = await ref.watch(httpProvider.future);
-    var user = await ref.watch(currentLoginUserProvider.future);
-    var res = await http.post("/notes/$api", data: {
-      "i": user?.token,
-      "limit": 10,
-      if (untilId != null) "untilId": untilId,
-      if (sinceId != null) "sinceId": sinceId
-    });
-    var noteList = ref.read(noteListProvider.notifier);
-    List<NoteModel> list = [];
-    for (var item in res.data) {
-      var data = NoteModel.fromMap(item);
-      noteList.registerNote(data);
-      list.add(data);
-    }
-    return list;
+    var apis = await ref.watch(misskeyApisProvider.future);
+    return await apis.notes.timeline(
+      limit: 10,
+      untilId: untilId,
+      api: api,
+      sinceId: sinceId,
+    );
   }
 
   var loading = false;

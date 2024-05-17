@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:moekey/networks/dio.dart';
-import 'package:moekey/state/server.dart';
+import 'package:moekey/status/dio.dart';
+import 'package:moekey/status/server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/clips.dart';

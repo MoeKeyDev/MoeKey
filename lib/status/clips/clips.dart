@@ -1,9 +1,9 @@
-import 'package:moekey/networks/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/clips.dart';
 import '../../apis/models/note.dart';
-import '../../state/server.dart';
+import '../dio.dart';
+import '../server.dart';
 
 part 'clips.g.dart';
 

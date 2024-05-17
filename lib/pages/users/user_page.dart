@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/networks/user.dart';
+import 'package:moekey/status/user.dart';
 import 'package:moekey/pages/users/user_notes_list.dart';
 import 'package:moekey/pages/users/user_overview.dart';
 import 'package:moekey/pages/users/user_reactions_list.dart';
@@ -14,7 +14,7 @@ import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
 import '../../main.dart';
-import '../../state/themes.dart';
+import '../../status/themes.dart';
 
 class UserPage extends HookConsumerWidget {
   const UserPage({
@@ -23,9 +23,11 @@ class UserPage extends HookConsumerWidget {
     this.host,
     this.userId,
   });
+
   final String? username;
   final String? host;
   final String? userId;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -51,6 +53,10 @@ class UserPage extends HookConsumerWidget {
                 children: [
                   Text(
                     user.error.toString(),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    user.stackTrace.toString(),
                     textAlign: TextAlign.center,
                   ),
                   const Text("Click retry")
@@ -143,7 +149,8 @@ class UserPage extends HookConsumerWidget {
                       width: 8,
                     ),
                     ConstrainedBox(
-                      constraints: BoxConstraints.loose(const Size.fromWidth(200)),
+                      constraints:
+                          BoxConstraints.loose(const Size.fromWidth(200)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,

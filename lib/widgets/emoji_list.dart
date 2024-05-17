@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/networks/apis.dart';
-import 'package:moekey/state/themes.dart';
+import 'package:moekey/status/apis.dart';
+import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';

@@ -1,35 +1,23 @@
 import 'dart:async';
 
-import 'package:moekey/networks/timeline.dart';
-import 'package:moekey/networks/websocket.dart';
+import 'package:moekey/status/timeline.dart';
+import 'package:moekey/status/websocket.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
 import '../main.dart';
-import '../state/server.dart';
+import 'misskey_api.dart';
+import 'server.dart';
 import 'dio.dart';
 
 part 'notes.g.dart';
 
 @riverpod
-Future<NoteModel?> getNote(GetNoteRef ref, String noteId) async {
-  var http = await ref.watch(httpProvider.future);
-  var user = await ref.watch(currentLoginUserProvider.future);
-  var data = await http.post(
-    "/notes/show",
-    data: {
-      "i": user!.token,
-      "noteId": noteId,
-    },
-  );
-  return NoteModel.fromMap(data.data);
-}
-
-@riverpod
 class Notes extends _$Notes {
   @override
   FutureOr<NotesState> build(String noteId) async {
-    var data = await ref.watch(getNoteProvider(noteId).future);
+    var apis = await ref.watch(misskeyApisProvider.future);
+    var data = await apis.notes.show(noteId: noteId);
     var noteTranslate = ref.read(noteListProvider)[noteId]?.noteTranslate;
     data?.noteTranslate = noteTranslate;
     var note = NotesState();
@@ -100,7 +88,7 @@ class NotesListener extends _$NotesListener {
                 if (reactions[reaction] == null) {
                   reactions[reaction] = 0;
                 }
-                reactions[reaction]++;
+                reactions[reaction] = reactions[reaction]! + 1;
                 // 处理用户
                 if (userId == user?.id) {
                   data.myReaction = reaction;
@@ -111,8 +99,8 @@ class NotesListener extends _$NotesListener {
                 var reaction = eventData["body"]["body"]["reaction"];
                 var userId = eventData["body"]["body"]["userId"];
                 if (reactions[reaction] != null) {
-                  reactions[reaction]--;
-                  if (reactions[reaction] <= 0) {
+                  reactions[reaction] = reactions[reaction]! - 1;
+                  if (reactions[reaction]! <= 0) {
                     reactions.remove(reaction);
                   }
                 }
@@ -262,54 +250,11 @@ class NotesChildTimeline extends _$NotesChildTimeline {
 
   Future<List<NoteModel>> getData(
       {required String id, int? limit, String? untilId}) async {
-    var http = await ref.watch(httpProvider.future);
-    var user = await ref.watch(currentLoginUserProvider.future);
-    var data = await http.post("/notes/children", data: {
-      "noteId": id,
-      "i": user!.token,
-      "limit": limit ?? 30,
-      if (untilId != null) "untilId": untilId,
-    });
-    List<NoteModel> list = [];
-    for (var item in data.data) {
-      list.add(NoteModel.fromMap(item));
-    }
-    return list;
-  }
-}
+    var apis = await ref.read(misskeyApisProvider.future);
 
-@riverpod
-class NoteApis extends _$NoteApis {
-  @override
-  FutureOr<Map> build() async {
-    return {};
-  }
+    var data = await apis.notes
+        .children(noteId: noteId, untilId: untilId, limit: limit ?? 30);
 
-  Future<dynamic> reNote(String renoteId) async {
-    var http = await ref.watch(httpProvider.future);
-    var user = await ref.watch(currentLoginUserProvider.future);
-    var data = await http.post("/notes/create", data: {
-      "localOnly": false,
-      "visibility": "public",
-      "renoteId": renoteId,
-      "i": user?.token
-    });
-    return data.data;
-  }
-
-  createReactions(String renoteId, String reaction) async {
-    var http = await ref.watch(httpProvider.future);
-    var user = await ref.watch(currentLoginUserProvider.future);
-    var data = await http.post("/notes/reactions/create",
-        data: {"noteId": renoteId, "reaction": reaction, "i": user?.token});
-    return data.data;
-  }
-
-  deleteReactions(String renoteId) async {
-    var http = await ref.watch(httpProvider.future);
-    var user = await ref.watch(currentLoginUserProvider.future);
-    var data = await http.post("/notes/reactions/delete",
-        data: {"noteId": renoteId, "i": user?.token});
-    return data.data;
+    return data;
   }
 }

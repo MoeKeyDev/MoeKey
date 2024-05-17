@@ -1,15 +1,15 @@
-import 'package:moekey/networks/dio.dart';
-import 'package:moekey/state/server.dart';
+import 'package:moekey/apis/models/notification.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
+import 'misskey_api.dart';
 
 part 'notifications.g.dart';
 
 @riverpod
 class Notifications extends _$Notifications {
   @override
-  FutureOr<List> build() async {
+  FutureOr<List<NotificationModel>> build() async {
     return (await notificationsGrouped());
   }
 
@@ -20,24 +20,20 @@ class Notifications extends _$Notifications {
     if (loading) return;
     loading = true;
     try {
-      var http = await ref.watch(httpProvider.future);
-      var user = await ref.watch(currentLoginUserProvider.future);
-      var res = await http.post("/i/notifications-grouped", data: {
-        "limit": 20,
-        "i": user?.token,
-        if (untilId != null) "untilId": untilId,
-      });
-      return res.data;
+      var apis = await ref.read(misskeyApisProvider.future);
+      var res = await apis.account.notificationsGrouped(untilId: untilId);
+      return res;
+    } catch (e, s) {
+      print(e);
+      print(s);
     } finally {
       loading = false;
     }
-    // state = AsyncData(res.data);
   }
 
   loadMore() async {
     var list = state.valueOrNull ?? [];
-    var res =
-        await notificationsGrouped(untilId: state.valueOrNull?.last["id"]);
+    var res = await notificationsGrouped(untilId: state.valueOrNull?.last.id);
     if (res != null) {
       state = AsyncData(list + res);
     }
@@ -58,19 +54,9 @@ class MentionsNotifications extends _$MentionsNotifications {
     if (loading) return null;
     loading = true;
     try {
-      var http = await ref.watch(httpProvider.future);
-      var user = await ref.watch(currentLoginUserProvider.future);
-      var res = await http.post("/notes/mentions", data: {
-        "limit": 20,
-        "i": user?.token,
-        if (specified) "visibility": "specified",
-        if (untilId != null) "untilId": untilId,
-      });
-      List<NoteModel> list = [];
-      for (var item in res.data) {
-        list.add(NoteModel.fromMap(item));
-      }
-      return list;
+      var apis = await ref.watch(misskeyApisProvider.future);
+      return apis.notes
+          .mentions(untilId: untilId, limit: 20, specified: specified);
     } finally {
       loading = false;
     }

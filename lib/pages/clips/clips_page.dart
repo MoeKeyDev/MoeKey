@@ -7,8 +7,7 @@ import 'package:moekey/pages/clips/clips_my.dart';
 import 'package:moekey/widgets/clips/clips_create_dialog.dart';
 import 'package:moekey/widgets/mk_modal.dart';
 
-import '../../router/main_router_delegate.dart';
-import '../../state/themes.dart';
+import '../../status/themes.dart';
 import '../../widgets/keep_alive_wrapper.dart';
 import '../../widgets/mk_header.dart';
 import '../../widgets/mk_scaffold.dart';

@@ -3,11 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/networks/notifications.dart';
+import 'package:moekey/status/notifications.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 
 import '../../main.dart';
-import '../../state/themes.dart';
+import '../../status/themes.dart';
 import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_card.dart';
 import '../../widgets/notes/note_card.dart';
@@ -17,7 +17,9 @@ class MentionsList extends HookConsumerWidget {
     super.key,
     this.specified = false,
   });
+
   final bool specified;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var res = ref.watch(mentionsNotificationsProvider(specified: specified));

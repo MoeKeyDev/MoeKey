@@ -3,8 +3,10 @@ import 'package:moekey/apis/services/account_service.dart';
 import 'package:moekey/apis/services/app_service.dart';
 import 'package:moekey/apis/services/auth_service.dart';
 import 'package:moekey/apis/services/drive_service.dart';
+import 'package:moekey/apis/services/following_service.dart';
 import 'package:moekey/apis/services/meta_service.dart';
 import 'package:moekey/apis/services/notes_service.dart';
+import 'package:moekey/apis/services/user_service.dart';
 
 class MisskeyApis {
   MisskeyApis({
@@ -18,6 +20,8 @@ class MisskeyApis {
     meta = MetaService(client: client);
     notes = NotesService(client: client);
     drive = DriveService(client: client);
+    user = UserService(client: client);
+    following = FollowingService(client: client);
   }
 
   String instance;
@@ -29,4 +33,6 @@ class MisskeyApis {
   late MetaService meta;
   late NotesService notes;
   late DriveService drive;
+  late UserService user;
+  late FollowingService following;
 }

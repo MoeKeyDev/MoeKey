@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/networks/apis.dart';
-import 'package:moekey/networks/notes.dart';
-import 'package:moekey/state/themes.dart';
+import 'package:moekey/status/apis.dart';
+import 'package:moekey/status/notes.dart';
+import 'package:moekey/status/themes.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 
+import '../status/misskey_api.dart';
 import 'hover_builder.dart';
 import 'mk_image.dart';
 
@@ -32,7 +33,7 @@ class ReactionsListComponent extends HookConsumerWidget {
       this.myReaction});
 
   final Map? emojis;
-  final Map reactionsList;
+  final Map<String, int> reactionsList;
   final bool disableReactions;
   final String id;
   final String? myReaction;
@@ -66,13 +67,17 @@ class ReactionsListComponent extends HookConsumerWidget {
 
                       if (item.key != myReaction) {
                         ref
-                            .read(noteApisProvider.notifier)
-                            .createReactions(id, item.key);
+                            .read(misskeyApisProvider)
+                            .value
+                            ?.notes
+                            .createReactions(noteId: id, reaction: item.key);
                       } else {
                         if (myReaction != null) {
                           ref
-                              .read(noteApisProvider.notifier)
-                              .deleteReactions(id);
+                              .read(misskeyApisProvider)
+                              .value
+                              ?.notes
+                              .deleteReactions(noteId: id);
                         }
                       }
                     },

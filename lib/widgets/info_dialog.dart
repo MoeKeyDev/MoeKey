@@ -3,7 +3,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../main.dart';
-import '../state/themes.dart';
+import '../status/themes.dart';
 import 'mk_dialog.dart';
 
 class InfoDialog extends HookConsumerWidget {

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/state/themes.dart';
+import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/time_ago_since_date.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/notes/note_card.dart';
 
+import '../../apis/models/notification.dart';
 import '../../apis/models/user_lite.dart';
 import '../../pages/users/user_page.dart';
 import '../../router/main_router_delegate.dart';
@@ -13,7 +14,7 @@ import '../mk_card.dart';
 class NotificationsUserCard extends HookConsumerWidget {
   const NotificationsUserCard(
       {super.key,
-      this.data,
+      required this.data,
       required this.borderRadius,
       required this.content,
       this.avatarBadge,
@@ -21,7 +22,7 @@ class NotificationsUserCard extends HookConsumerWidget {
       this.avatar,
       this.onTap});
 
-  final dynamic data;
+  final NotificationModel data;
   final BorderRadius borderRadius;
   final Widget content;
   final Widget? avatarBadge;
@@ -56,7 +57,8 @@ class NotificationsUserCard extends HookConsumerWidget {
                         ? avatar!
                         : GestureDetector(
                             child: MkImage(
-                              data["user"]?["avatarUrl"] ?? "",
+                              data.user?.avatarUrl ?? "",
+                              blurHash: data.user?.avatarBlurhash,
                               shape: BoxShape.circle,
                               width: double.infinity,
                               height: double.infinity,
@@ -64,9 +66,9 @@ class NotificationsUserCard extends HookConsumerWidget {
                             onTap: () {
                               MainRouterDelegate.of(context)
                                   .setNewRoutePath(RouterItem(
-                                path: "user/${data["user"]["id"]}",
+                                path: "user/${data.user?.id}",
                                 page: () {
-                                  return UserPage(userId: data["user"]["id"]);
+                                  return UserPage(userId: data.user?.id);
                                 },
                               ));
                             },
@@ -91,14 +93,12 @@ class NotificationsUserCard extends HookConsumerWidget {
                       Expanded(
                           child: name != null
                               ? name!
-                              : data["user"] != null
-                                  ? UserNameRichText(
-                                      data: UserLiteModel.fromMap(data["user"]))
+                              : data.user != null
+                                  ? UserNameRichText(data: data.user!)
                                   : const SizedBox()),
                       Opacity(
                         opacity: 0.8,
-                        child: Text(timeAgoSinceDate(
-                            DateTime.parse(data["createdAt"]))),
+                        child: Text(timeAgoSinceDate(data.createdAt)),
                       )
                     ],
                   ),

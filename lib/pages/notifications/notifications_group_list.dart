@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/networks/notifications.dart';
+import 'package:moekey/status/notifications.dart';
 import 'package:moekey/pages/notes/note_page.dart';
-import 'package:moekey/state/themes.dart';
+import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/notifications/notifications_user_card.dart';
 
-import '../../apis/models/note.dart';
+import '../../apis/models/notification.dart';
 import '../../router/main_router_delegate.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/loading_weight.dart';
@@ -42,11 +42,11 @@ class NotificationsGroupList extends HookConsumerWidget {
   }
 
   final Map<
-          String,
-          Widget Function(
-              dynamic, BorderRadius borderRadius, ThemeColorModel themes)>
-      widgetList = {
-    "follow": (data, borderRadius, themes) => NotificationsUserCard(
+      NotificationType,
+      Widget Function(NotificationModel data, BorderRadius borderRadius,
+          ThemeColorModel themes)> widgetList = {
+    NotificationType.follow: (data, borderRadius, themes) =>
+        NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
           content: const Text("你有新的关注者"),
@@ -67,10 +67,10 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openUser(context, data["user"]["id"]);
+            openUser(context, data.user!.id);
           },
         ),
-    "followRequestAccepted": (data, borderRadius, themes) =>
+    NotificationType.followRequestAccepted: (data, borderRadius, themes) =>
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
@@ -92,19 +92,20 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openUser(context, data["user"]["id"]);
+            openUser(context, data.user!.id);
           },
         ),
-    "reaction": (data, borderRadius, themes) => NotificationsUserCard(
+    NotificationType.reaction: (data, borderRadius, themes) =>
+        NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
           content: MFMText(
-            text: "${data["note"]?["cw"] ?? ""}${data["note"]?["text"] ?? ""}"
+            text: "${data.note?.cw ?? ""}${data.note?.text ?? ""}"
                 .replaceAll('\n', ' '),
             bigEmojiCode: false,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            currentServerHost: data["note"]["user"]["host"],
+            currentServerHost: data.note?.user.host,
           ),
           avatarBadge: Container(
             decoration:
@@ -114,22 +115,22 @@ class NotificationsGroupList extends HookConsumerWidget {
               width: 20,
               height: 20,
               child: ReactionsIcon(
-                  emojiCode: data["reaction"],
-                  emojis: data["note"]["reactionEmojis"]),
+                  emojiCode: data.reaction!, emojis: data.note?.reactionEmojis),
             ),
           ),
           onTap: (context) {
-            openNote(context, data["note"]["id"]);
+            openNote(context, data.note!.id);
           },
         ),
-    "reaction:grouped": (data, borderRadius, themes) => NotificationsUserCard(
+    NotificationType.reactionGrouped: (data, borderRadius, themes) =>
+        NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
           content: Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (var item in data["reactions"])
+              for (var item in data.reactions ?? [])
                 Builder(builder: (context) {
                   return GestureDetector(
                     child: SizedBox(
@@ -139,7 +140,7 @@ class NotificationsGroupList extends HookConsumerWidget {
                         clipBehavior: Clip.none,
                         children: [
                           MkImage(
-                            item?["user"]?["avatarUrl"] ?? "",
+                            item.user.avatarUrl ?? "",
                             shape: BoxShape.circle,
                             width: double.infinity,
                             height: double.infinity,
@@ -156,8 +157,8 @@ class NotificationsGroupList extends HookConsumerWidget {
                                 width: 20,
                                 height: 20,
                                 child: ReactionsIcon(
-                                    emojiCode: item["reaction"],
-                                    emojis: data["note"]["reactionEmojis"]),
+                                    emojiCode: item.reaction,
+                                    emojis: data.note?.reactionEmojis),
                               ),
                             ),
                           )
@@ -165,8 +166,8 @@ class NotificationsGroupList extends HookConsumerWidget {
                       ),
                     ),
                     onTap: () {
-                      if (item?["user"]?["id"] != null) {
-                        openUser(context, item?["user"]?["id"]);
+                      if (item?.user?.id != null) {
+                        openUser(context, item.user.id);
                       }
                     },
                   );
@@ -174,12 +175,12 @@ class NotificationsGroupList extends HookConsumerWidget {
             ],
           ),
           name: MFMText(
-            text: ((data["note"]?["cw"] ?? "") + (data["note"]?["text"] ?? ""))
+            text: ((data.note?.cw ?? "") + (data.note?.text ?? ""))
                 .replaceAll('\n', ' '),
             bigEmojiCode: false,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            currentServerHost: data["note"]["user"]["host"],
+            currentServerHost: data.note?.user.host,
           ),
           avatar: Container(
             width: double.infinity,
@@ -194,22 +195,23 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data["note"]["id"]);
+            openNote(context, data.note!.id);
           },
         ),
-    "reply": (data, borderRadius, themes) => NoteCard(
-          data: NoteModel.fromMap(data["note"]),
+    NotificationType.reply: (data, borderRadius, themes) => NoteCard(
+          data: data.note!,
           borderRadius: borderRadius,
         ),
-    "renote": (data, borderRadius, themes) => NotificationsUserCard(
+    NotificationType.renote: (data, borderRadius, themes) =>
+        NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
           content: MFMText(
-            text: data["note"]["renote"]["text"] ?? "",
+            text: data.note?.renote?.text ?? "",
             bigEmojiCode: false,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            currentServerHost: data["note"]["user"]["host"],
+            currentServerHost: data.note?.user.host,
           ),
           avatarBadge: Container(
             width: 20,
@@ -228,17 +230,18 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data["note"]["id"]);
+            openNote(context, data.note!.id);
           },
         ),
-    "renote:grouped": (data, borderRadius, themes) => NotificationsUserCard(
+    NotificationType.renoteGrouped: (data, borderRadius, themes) =>
+        NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
           content: Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (var item in data["users"])
+              for (var item in data.users ?? [])
                 Builder(builder: (context) {
                   return GestureDetector(
                     child: SizedBox(
@@ -266,13 +269,13 @@ class NotificationsGroupList extends HookConsumerWidget {
             ],
           ),
           name: MFMText(
-            text: ((data["note"]?["renote"]?["cw"] ?? "") +
-                    (data["note"]?["renote"]?["text"] ?? ""))
+            text: ((data.note?.renote?.cw ?? "") +
+                    (data.note?.renote?.text ?? ""))
                 .replaceAll('\n', ' '),
             bigEmojiCode: false,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            currentServerHost: data["note"]["user"]["host"],
+            currentServerHost: data.note?.user.host,
           ),
           avatar: Container(
             width: double.infinity,
@@ -287,30 +290,31 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data["note"]["id"]);
+            openNote(context, data.note!.id);
           },
         ),
-    "quote": (data, borderRadius, themes) => NoteCard(
-          data: NoteModel.fromMap(data["note"]),
+    NotificationType.quote: (data, borderRadius, themes) => NoteCard(
+          data: data.note!,
           borderRadius: borderRadius,
         ),
-    "mention": (data, borderRadius, themes) => NoteCard(
-          data: NoteModel.fromMap(data["note"]),
+    NotificationType.mention: (data, borderRadius, themes) => NoteCard(
+          data: data.note!,
           borderRadius: borderRadius,
         ),
-    "note": (data, borderRadius, themes) => NoteCard(
-          data: NoteModel.fromMap(data["note"]),
+    NotificationType.note: (data, borderRadius, themes) => NoteCard(
+          data: data.note!,
           borderRadius: borderRadius,
         ),
-    "pollEnded": (data, borderRadius, themes) => NotificationsUserCard(
-          data: data["note"],
+    NotificationType.pollEnded: (data, borderRadius, themes) =>
+        NotificationsUserCard(
+          data: data,
           borderRadius: borderRadius,
           content: MFMText(
-            text: "${data["note"]?["text"]}(投票)",
+            text: "${data.note?.text}(投票)",
             bigEmojiCode: false,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            currentServerHost: data["note"]["user"]["host"],
+            currentServerHost: data.note?.user.host,
           ),
           name: const Text("投票结果已经生成"),
           avatarBadge: Container(
@@ -330,7 +334,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data["note"]["id"]);
+            openNote(context, data.note!.id);
           },
         ),
     // "reaction:grouped": (data, borderRadius, themes) {}
@@ -384,7 +388,7 @@ class NotificationsGroupList extends HookConsumerWidget {
                     } else {
                       borderRadius = const BorderRadius.all(Radius.zero);
                     }
-                    var type = res.valueOrNull![index]["type"];
+                    var type = res.valueOrNull![index].type;
                     if (widgetList[type] != null) {
                       return Padding(
                           padding: EdgeInsets.symmetric(horizontal: padding),
@@ -396,8 +400,8 @@ class NotificationsGroupList extends HookConsumerWidget {
                       child: MkCard(
                           shadow: false,
                           borderRadius: borderRadius,
-                          child: Text(
-                              "暂时不支持的通知:${res.valueOrNull?[index]["type"]}")),
+                          child:
+                              Text("暂时不支持的通知:${res.valueOrNull?[index].type}")),
                     );
                     // return SizedBox();
                   },

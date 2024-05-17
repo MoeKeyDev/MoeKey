@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../state/themes.dart';
+import '../status/themes.dart';
 
 inputDecoration(ThemeColorModel themes, String? hintText,
     {Widget? prefixIcon, Widget? suffixIcon}) {

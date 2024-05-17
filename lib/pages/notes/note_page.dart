@@ -4,9 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/networks/misskey_api.dart';
-import 'package:moekey/networks/timeline.dart';
-import 'package:moekey/state/themes.dart';
+import 'package:moekey/status/misskey_api.dart';
+import 'package:moekey/status/timeline.dart';
+import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_header.dart';
@@ -15,10 +15,10 @@ import '../../apis/models/note.dart';
 import '../../apis/models/translate.dart';
 import '../../apis/models/user_lite.dart';
 import '../../main.dart';
-import '../../networks/apis.dart';
-import '../../networks/notes.dart';
+import '../../status/apis.dart';
+import '../../status/notes.dart';
 import '../../router/main_router_delegate.dart';
-import '../../state/server.dart';
+import '../../status/server.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../../utils/time_to_desired_format.dart';
 import '../../widgets/context_menu.dart';
@@ -112,13 +112,14 @@ class NotesPage extends HookConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          Opacity(
-                            opacity: 0.6,
-                            child: Text(
-                              timeAgoSinceDate(data!.createdAt),
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          )
+                          if (data?.createdAt != null)
+                            Opacity(
+                              opacity: 0.6,
+                              child: Text(
+                                timeAgoSinceDate(data!.createdAt),
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            )
                         ],
                       ),
                     ),
@@ -128,7 +129,7 @@ class NotesPage extends HookConsumerWidget {
               // trailing: TextButton(onPressed: () {}, child: const Text("关注")),
             ),
             body: [
-              if (!dataProvider.isLoading || data != null)
+              if (!dataProvider.isLoading && data != null)
                 SingleChildScrollView(
                     padding: EdgeInsets.fromLTRB(
                         padding, 56 + mediaPadding.top, padding, 0),

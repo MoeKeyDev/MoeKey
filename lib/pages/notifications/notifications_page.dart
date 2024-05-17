@@ -7,7 +7,7 @@ import 'package:moekey/widgets/keep_alive_wrapper.dart';
 import 'package:moekey/widgets/mk_header.dart';
 
 import '../../router/main_router_delegate.dart';
-import '../../state/themes.dart';
+import '../../status/themes.dart';
 import '../../widgets/mk_scaffold.dart';
 import 'notifications_mentions_list.dart';
 

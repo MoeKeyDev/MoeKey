@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:moekey/networks/dio.dart';
+import 'package:moekey/status/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../networks/user.dart';
-import '../../state/server.dart';
+import '../../status/user.dart';
+import '../../status/server.dart';
 
 part 'user_select_dialog_state.g.dart';
 
@@ -13,6 +13,7 @@ class UserSelectDialogState extends _$UserSelectDialogState {
   String name = "";
   String host = "";
   Timer? timer;
+
   @override
   FutureOr<List> build() async {
     return loadFollowing();
@@ -23,7 +24,7 @@ class UserSelectDialogState extends _$UserSelectDialogState {
     var userList = await ref.read(userFollowingProvider(user?.id ?? "").future);
     var list = [];
     for (var item in userList) {
-      list.add(item["followee"]);
+      list.add(item.followee);
     }
     return list;
   }

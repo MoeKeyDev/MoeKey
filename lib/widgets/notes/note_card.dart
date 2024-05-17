@@ -9,11 +9,11 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/main.dart';
-import 'package:moekey/networks/apis.dart';
-import 'package:moekey/networks/notes.dart';
+import 'package:moekey/status/apis.dart';
+import 'package:moekey/status/notes.dart';
 import 'package:moekey/pages/users/user_page.dart';
-import 'package:moekey/state/server.dart';
-import 'package:moekey/state/themes.dart';
+import 'package:moekey/status/server.dart';
+import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/format_duration.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/emoji_list.dart';
@@ -28,8 +28,8 @@ import '../../apis/models/drive.dart';
 import '../../apis/models/note.dart';
 import '../../apis/models/translate.dart';
 import '../../apis/models/user_lite.dart';
-import '../../networks/misskey_api.dart';
-import '../../networks/timeline.dart';
+import '../../status/misskey_api.dart';
+import '../../status/timeline.dart';
 import '../../pages/image_preview/image_preview.dart';
 import '../../pages/notes/note_page.dart';
 import '../../router/main_router_delegate.dart' as main_router;
@@ -1071,10 +1071,8 @@ class TimeLineActions extends HookConsumerWidget {
                 EmojiList.showBottomSheet(
                   context,
                   onInsert: (emoji) {
-                    ref
-                        .read(noteApisProvider.notifier)
-                        .createReactions(data.id, emoji["name"]);
-                    globalNav.currentState?.pop();
+                    ref.read(misskeyApisProvider).value?.notes.createReactions(
+                        noteId: data.id, reaction: emoji['name']);
                   },
                 );
               },
@@ -1108,7 +1106,11 @@ class TimeLineActions extends HookConsumerWidget {
             icon: TablerIcons.repeat,
             label: "转发",
             onTap: () {
-              ref.read(noteApisProvider.notifier).reNote(data.id);
+              ref
+                  .read(misskeyApisProvider)
+                  .value
+                  ?.notes
+                  .reNote(renoteId: data.id);
               return false;
             },
           ),

@@ -1,7 +1,5 @@
 import "package:dio/dio.dart";
-import "package:moekey/networks/dio.dart";
-import "package:moekey/networks/misskey_api.dart";
-import "package:moekey/state/server.dart";
+import "package:moekey/status/server.dart";
 import "package:moekey/utils/image_compression.dart";
 import "package:moekey/widgets/info_dialog.dart";
 import "package:path/path.dart";
@@ -10,6 +8,7 @@ import "package:riverpod_annotation/riverpod_annotation.dart";
 import "../apis/models/drive.dart";
 import "../generated/l10n.dart";
 import "../main.dart";
+import "misskey_api.dart";
 
 part "drive.g.dart";
 
@@ -233,13 +232,13 @@ class DriveList extends _$DriveList {
       state = const AsyncData([]);
     });
     for (var item in res) {
-      list.add({"type": "folder", "data": DriverFolderModel.fromMap(item)});
+      list.add({"type": "folder", "data": item});
     }
     // 继续加载文件
     if (endFolder) {
       var res = await loadFiles();
       for (var item in res) {
-        list.add({"type": "file", "data": DriveFileModel.fromMap(item)});
+        list.add({"type": "file", "data": item});
       }
     }
 
@@ -247,6 +246,7 @@ class DriveList extends _$DriveList {
   }
 
   loadMore() async {
+    print("load");
     if (state.isLoading) return;
     state = const AsyncLoading();
     try {
@@ -255,13 +255,13 @@ class DriveList extends _$DriveList {
         // 继续加载文件夹
         var res = await loadFolders(untilId: list.lastOrNull["data"].id);
         for (var item in res) {
-          list.add({"type": "folder", "data": DriverFolderModel.fromMap(item)});
+          list.add({"type": "folder", "data": item});
         }
       } else {
         // 加载文件
         var res = await loadFiles(untilId: list.lastOrNull["data"].id);
         for (var item in res) {
-          list.add({"type": "file", "data": DriveFileModel.fromMap(item)});
+          list.add({"type": "file", "data": item});
         }
       }
       state = AsyncData(list);
@@ -282,10 +282,10 @@ class DriveList extends _$DriveList {
     return res;
   }
 
-  Future<List<DriveFileModel>> loadFolders({String? untilId}) async {
+  Future<List<DriverFolderModel>> loadFolders({String? untilId}) async {
     var path = ref.watch(drivePathProvider);
     var apis = await ref.watch(misskeyApisProvider.future);
-    var res = await apis.drive.files(
+    var res = await apis.drive.folders(
       folderId: path.lastOrNull?["id"],
       untilId: untilId,
     );

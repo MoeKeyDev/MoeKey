@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../main.dart';
-import '../../networks/user_login.dart';
+import '../../status/user_login.dart';
 import '../../pages/home/home_page.dart';
-import '../../state/server.dart';
+import '../../status/server.dart';
 import '../mk_dialog.dart';
 
 class LoginDialog extends HookConsumerWidget {

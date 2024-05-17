@@ -13,7 +13,7 @@ import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_overflow_show.dart';
 
 import '../../apis/models/clips.dart';
-import '../../state/themes.dart';
+import '../../status/themes.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../notes/note_card.dart';
 

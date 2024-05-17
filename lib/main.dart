@@ -8,12 +8,12 @@ import 'package:logger/logger.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/pages/login/login_page.dart';
-import 'package:moekey/state/server.dart';
-import 'package:moekey/state/themes.dart';
+import 'package:moekey/status/server.dart';
+import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 
 import 'generated/l10n.dart';
-import 'networks/websocket.dart';
+import 'status/websocket.dart';
 
 var logger = Logger();
 

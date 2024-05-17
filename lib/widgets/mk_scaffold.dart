@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../state/themes.dart';
+import '../status/themes.dart';
 
 class MkScaffold extends ConsumerWidget {
   const MkScaffold({super.key, this.header, required this.body});
+
   final PreferredSizeWidget? header;
   final Widget body;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);

@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/state/themes.dart';
+import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mk_header.dart';
 
-import '../../networks/user.dart';
+import '../../status/user.dart';
 import '../../widgets/loading_weight.dart';
 import '../../widgets/notes/note_card.dart';
 
@@ -46,6 +46,7 @@ class UserNotesPage extends HookConsumerWidget {
     super.key,
     required this.userId,
   });
+
   final String userId;
 
   @override
@@ -233,9 +234,11 @@ class _NotesSelectButton extends HookConsumerWidget {
     required this.text,
     required this.onTap,
   });
+
   final bool active;
   final String text;
   final void Function() onTap;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);

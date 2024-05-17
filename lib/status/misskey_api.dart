@@ -1,7 +1,7 @@
 import 'package:moekey/apis/index.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../state/server.dart';
+import 'server.dart';
 
 part 'misskey_api.g.dart';
 

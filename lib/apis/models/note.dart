@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:moekey/apis/models/translate.dart';
@@ -15,7 +17,7 @@ class NoteModel {
   bool localOnly;
   NoteReactionAcceptance? reactionAcceptance;
   Map reactionEmojis;
-  Map reactions;
+  Map<String, int> reactions;
   String? myReaction;
   NoteModel? renote;
   int renoteCount;
@@ -94,7 +96,8 @@ class NoteModel {
       reactionAcceptance:
           NoteReactionAcceptance.fromString(map['reactionAcceptance']),
       reactionEmojis: map['reactionEmojis'],
-      reactions: map['reactions'],
+      reactions: Map<String, int>.from(
+          map['reactions'].map((k, v) => MapEntry<String, int>(k, v.toInt()))),
       myReaction: map['myReaction'],
       renote: map['renote'] != null ? NoteModel.fromMap(map['renote']) : null,
       renoteCount: map['renoteCount'],
@@ -123,7 +126,7 @@ class NoteModel {
       bool? localOnly,
       NoteReactionAcceptance? reactionAcceptance,
       Map? reactionEmojis,
-      Map? reactions,
+      Map<String, int>? reactions,
       NoteModel? renote,
       int? renoteCount,
       String? renoteId,
@@ -162,6 +165,10 @@ class NoteModel {
       poll: poll ?? this.poll,
       noteTranslate: noteTranslate ?? this.noteTranslate,
     );
+  }
+
+  toMap() {
+    return {};
   }
 }
 

@@ -132,6 +132,6 @@ class DriveService extends MisskeyApiServices {
       return [];
     }
     return List<DriverFolderModel>.from(
-        res.map((x) => DriveFileModel.fromMap(x)));
+        res.map((x) => DriverFolderModel.fromMap(x)));
   }
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/networks/clips/clips.dart';
+import 'package:moekey/status/clips/clips.dart';
 import 'package:moekey/widgets/clips/clips_create_dialog_state.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_modal.dart';
 import 'package:moekey/widgets/mk_switch.dart';
 
-import '../../state/themes.dart';
+import '../../status/themes.dart';
 
 class ClipCreateDialog extends HookConsumerWidget {
   const ClipCreateDialog({
