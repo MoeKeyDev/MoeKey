@@ -31,8 +31,13 @@ class NoteList extends _$NoteList {
         state[data.renote!.id] = data.renote!;
       }
     }
-
     ref.notifyListeners();
+  }
+
+  registerNotes(List<NoteModel> data, {bool notUpdateReplyAndRenote = false}) {
+    for (var value in data) {
+      registerNote(value);
+    }
   }
 }
 
@@ -46,12 +51,15 @@ class Timeline extends _$Timeline {
   Future<List<NoteModel>> timeline(
       {String? untilId, String? sinceId, String api = "timeline"}) async {
     var apis = await ref.watch(misskeyApisProvider.future);
-    return await apis.notes.timeline(
+    var list = await apis.notes.timeline(
       limit: 10,
       untilId: untilId,
       api: api,
       sinceId: sinceId,
     );
+    var noteList = ref.read(noteListProvider.notifier);
+    noteList.registerNotes(list);
+    return list;
   }
 
   var loading = false;

@@ -2,8 +2,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/clips.dart';
 import '../../apis/models/note.dart';
-import '../dio.dart';
-import '../server.dart';
+import '../../status/dio.dart';
+import '../../status/server.dart';
 
 part 'clips.g.dart';
 

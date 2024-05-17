@@ -10,7 +10,7 @@ import 'package:moekey/widgets/hover_builder.dart';
 import 'package:path/path.dart';
 
 import '../../apis/models/drive.dart';
-import '../../status/drive.dart';
+import 'drive.dart';
 import '../mk_dialog.dart';
 import '../mk_image.dart';
 

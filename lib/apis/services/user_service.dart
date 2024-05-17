@@ -80,6 +80,6 @@ class UserService extends MisskeyApiServices {
     if (res == null) {
       return [];
     }
-    return List<NoteModel>.from(res.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(res.map((e) => NoteModel.fromMap(e["note"])));
   }
 }

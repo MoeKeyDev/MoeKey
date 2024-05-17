@@ -5,7 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../apis/models/clips.dart';
-import '../../status/clips/clips.dart';
+import 'clips.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/clips/clips_folder.dart';
 import '../../widgets/loading_weight.dart';

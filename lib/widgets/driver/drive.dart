@@ -5,10 +5,10 @@ import "package:moekey/widgets/info_dialog.dart";
 import "package:path/path.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
-import "../apis/models/drive.dart";
-import "../generated/l10n.dart";
-import "../main.dart";
-import "misskey_api.dart";
+import "../../apis/models/drive.dart";
+import "../../generated/l10n.dart";
+import "../../main.dart";
+import "../../status/misskey_api.dart";
 
 part "drive.g.dart";
 

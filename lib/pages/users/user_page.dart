@@ -70,7 +70,6 @@ class UserPage extends HookConsumerWidget {
     }
     var userData = user.valueOrNull;
     var userId = userData!.id;
-    logger.d(user);
     var tabs = [
       const Tab(
         child: Row(

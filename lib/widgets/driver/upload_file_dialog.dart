@@ -8,7 +8,7 @@ import 'package:moekey/widgets/driver/driver_upload_bar.dart';
 import 'package:path/path.dart';
 
 import '../../main.dart';
-import '../../status/drive.dart';
+import 'drive.dart';
 import '../mk_dialog.dart';
 
 class DriverUploadFileDialog extends HookConsumerWidget {

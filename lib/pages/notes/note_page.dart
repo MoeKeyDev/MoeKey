@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_header.dart';
+import 'package:moekey/widgets/notes/note_children.dart';
 
 import '../../apis/models/note.dart';
 import '../../apis/models/translate.dart';
@@ -40,19 +42,12 @@ class NotesPage extends HookConsumerWidget {
     var mediaPadding = MediaQuery.of(context).padding;
     var themes = ref.watch(themeColorsProvider);
     var notes = notesProvider(noteId);
-    var children = notesChildTimelineProvider(noteId);
     var dataProvider = ref.watch(notes);
-    var childrenProvider = ref.watch(children);
 
     var loadConversation = useState<Future?>(null);
     var loadConversationSnapshot = useFuture(loadConversation.value);
 
     var data = ref.watch(noteListProvider.select((value) => value[noteId]));
-    logger.d(childrenProvider.error);
-    logger.d(childrenProvider.stackTrace);
-    logger.d(dataProvider.error);
-    logger.d(dataProvider.stackTrace);
-    var childrenList = childrenProvider.valueOrNull ?? [];
     var conversation = dataProvider.valueOrNull?.conversation ?? [];
     NotesListener note = ref.watch(notesListenerProvider.notifier);
     useEffect(() {
@@ -68,10 +63,6 @@ class NotesPage extends HookConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
-        // var notifier = ref.read(notesListenerProvider.notifier);
-        // var data =  dataProvider.valueOrNull?.data ?? {};
-
-        // logger.d(data);
         return MkScaffold(
             header: MkAppbar(
               showBack: true,
@@ -128,177 +119,86 @@ class NotesPage extends HookConsumerWidget {
               ),
               // trailing: TextButton(onPressed: () {}, child: const Text("关注")),
             ),
-            body: [
-              if (!dataProvider.isLoading && data != null)
-                SingleChildScrollView(
+            body: CustomScrollView(
+              slivers: [
+                if (data != null)
+                  SliverPadding(
                     padding: EdgeInsets.fromLTRB(
                         padding, 56 + mediaPadding.top, padding, 0),
-                    child: Column(
-                      children: [
-                        MkCard(
-                          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                          shadow: false,
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (conversation.isNotEmpty &&
-                                  conversation.first.replyId != null) ...[
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: loadConversationSnapshot
-                                              .connectionState ==
-                                          ConnectionState.waiting
-                                      ? TextButton(
-                                          onPressed: () {},
-                                          child: const LoadingCircularProgress(
-                                              size: 16, strokeWidth: 4),
-                                        )
-                                      : TextButton(
-                                          onPressed: () {
-                                            loadConversation.value = ref
-                                                .read(notes.notifier)
-                                                .loadConversation();
-                                          },
-                                          child: const Text("查看对话"),
-                                        ),
-                                )
-                              ],
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              // 聊天
-                              for (var item in conversation)
-                                TimeLineNoteCardComponent(
-                                  data: item,
-                                  reply: true,
-                                  disableReactions: true,
-                                ),
-                              NotesPageNoteCard(data: data!)
+                    sliver: SliverToBoxAdapter(
+                      child: MkCard(
+                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                        shadow: false,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (conversation.isNotEmpty &&
+                                conversation.first.replyId != null) ...[
+                              Align(
+                                alignment: Alignment.center,
+                                child: loadConversationSnapshot
+                                            .connectionState ==
+                                        ConnectionState.waiting
+                                    ? TextButton(
+                                        onPressed: () {},
+                                        child: const LoadingCircularProgress(
+                                            size: 16, strokeWidth: 4),
+                                      )
+                                    : TextButton(
+                                        onPressed: () {
+                                          loadConversation.value = ref
+                                              .read(notes.notifier)
+                                              .loadConversation();
+                                        },
+                                        child: const Text("查看对话"),
+                                      ),
+                              )
                             ],
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(color: themes.dividerColor),
-                          height: 1,
-                        ),
-                        if (childrenProvider.isLoading)
-                          const SizedBox(
-                            width: double.infinity,
-                            child: MkCard(
-                              padding: EdgeInsets.fromLTRB(24, 16, 24, 24),
-                              shadow: false,
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(12),
-                                  bottomRight: Radius.circular(12)),
-                              child: Column(
-                                children: [LoadingCircularProgress()],
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            // 聊天
+                            for (var item in conversation)
+                              TimeLineNoteCardComponent(
+                                data: item,
+                                reply: true,
+                                disableReactions: true,
                               ),
-                            ),
-                          ),
-                        if (childrenProvider.hasError)
-                          MkCard(
-                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                            shadow: false,
-                            borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(12),
-                                bottomRight: Radius.circular(12)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(childrenProvider.error.toString()),
-                                Text(childrenProvider.stackTrace.toString()),
-                              ],
-                            ),
-                          ),
-                        if (!childrenProvider.isLoading && childrenList.isEmpty)
-                          const MkCard(
-                            padding: EdgeInsets.fromLTRB(24, 16, 24, 24),
-                            shadow: false,
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(12),
-                                bottomRight: Radius.circular(12)),
-                            child: Center(
-                              child: Text("回复为空"),
-                            ),
-                          ),
-                        for (var (index, item) in childrenList.indexed) ...[
-                          Container(
-                            decoration:
-                                BoxDecoration(color: themes.dividerColor),
-                            height: 1,
-                          ),
-                          MkCard(
-                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                            shadow: false,
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: (childrenList.length == index + 1)
-                                  ? const Radius.circular(12)
-                                  : Radius.zero,
-                              bottomRight: (childrenList.length == index + 1)
-                                  ? const Radius.circular(12)
-                                  : Radius.zero,
-                            ),
-                            child: Builder(builder: (context) {
-                              List<NoteModel> list = item;
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  for (var (index, item1) in list.indexed)
-                                    TimeLineNoteCardComponent(
-                                      data: item1,
-                                      reply: index != (list.length - 1),
-                                    )
-                                ],
-                              );
-                            }),
-                          ),
-                        ],
-                        const SizedBox(
-                          height: 88,
-                        )
-                      ],
-                    ))
-              else if (dataProvider.hasError)
-                SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(
-                        padding, 56 + mediaPadding.top, padding, 0),
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            ref.invalidate(children);
-                          },
-                          child: MkCard(
-                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                            shadow: false,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (dataProvider.error is DioException)
-                                  Text((dataProvider.error as DioException)
-                                      .response
-                                      .toString())
-                                else
-                                  Text(dataProvider.error.toString()),
-                                Text(dataProvider.stackTrace.toString()),
-                              ],
-                            ),
-                          ),
+                            NotesPageNoteCard(data: data!)
+                          ],
                         ),
-                      ],
-                    ))
-              else
-                const LoadingWidget()
-            ][0]);
+                      ),
+                    ),
+                  ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: MkCard(
+                      shadow: false,
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                      borderRadius: BorderRadius.zero,
+                      child: Container(
+                        decoration: BoxDecoration(color: themes.dividerColor),
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(padding, 0, padding, 16),
+                  sliver: NoteChildren(
+                    noteId: noteId,
+                    deep: 0,
+                    first: false,
+                    last: true,
+                  ),
+                )
+              ],
+            ));
       },
     );
   }
