@@ -1228,16 +1228,16 @@ class NoteCreateDialog extends HookConsumerWidget {
                     .setLocalOnly(!state.localOnly);
               },
               style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(
+                foregroundColor: WidgetStateProperty.all(
                     state.localOnly ? themes.errorColor : themes.fgColor),
-                shape: MaterialStateProperty.all(
+                shape: WidgetStateProperty.all(
                   const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(8),
                     ),
                   ),
                 ),
-                padding: MaterialStateProperty.all(
+                padding: WidgetStateProperty.all(
                   const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 ),
               ),

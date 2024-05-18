@@ -282,7 +282,8 @@ class ContextDraggableBottomSheet extends HookConsumerWidget {
                         },
                         onTap: () async {
                           if (item.child != null) {
-                            Future.delayed(Duration.zero).then((value) {
+                            Future.delayed(const Duration(milliseconds: 100))
+                                .then((value) {
                               showModalBottomSheet(
                                 context: context,
                                 backgroundColor: Colors.transparent,

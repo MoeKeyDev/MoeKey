@@ -21,6 +21,7 @@ class LoginDialog extends HookConsumerWidget {
     return MkDialog(
       padding: const EdgeInsets.all(16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: switch (user) {
           AsyncData(:final valueOrNull) => [
               // logger.d(valueOrNull)
