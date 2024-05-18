@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/status/user.dart';
 import 'package:moekey/pages/users/user_notes_list.dart';
 import 'package:moekey/pages/users/user_overview.dart';
 import 'package:moekey/pages/users/user_reactions_list.dart';
+import 'package:moekey/status/user.dart';
 import 'package:moekey/widgets/keep_alive_wrapper.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
@@ -13,7 +13,6 @@ import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
-import '../../main.dart';
 import '../../status/themes.dart';
 
 class UserPage extends HookConsumerWidget {

@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/misskey_api.dart';
-import 'package:moekey/status/timeline.dart';
 import 'package:moekey/status/themes.dart';
+import 'package:moekey/status/timeline.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_header.dart';
@@ -16,10 +14,9 @@ import 'package:moekey/widgets/notes/note_children.dart';
 import '../../apis/models/note.dart';
 import '../../apis/models/translate.dart';
 import '../../apis/models/user_lite.dart';
-import '../../main.dart';
+import '../../router/main_router_delegate.dart';
 import '../../status/apis.dart';
 import '../../status/notes.dart';
-import '../../router/main_router_delegate.dart';
 import '../../status/server.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../../utils/time_to_desired_format.dart';
@@ -257,15 +254,15 @@ class NotesPageNoteCard extends HookConsumerWidget {
                     },
                     style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.hovered)) {
+                            WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.hovered)) {
                             return themes.buttonHoverBgColor;
                           }
                           return themes.buttonBgColor;
                         }),
                         foregroundColor:
-                            MaterialStateProperty.all(themes.fgColor),
-                        elevation: MaterialStateProperty.all(0)),
+                            WidgetStateProperty.all(themes.fgColor),
+                        elevation: WidgetStateProperty.all(0)),
                     child: Text(isHiddenCw.value ? "查看更多" : "收起"),
                   ),
                 ),

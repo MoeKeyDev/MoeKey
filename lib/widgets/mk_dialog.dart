@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moekey/widgets/mk_modal.dart';
 
-import '../main.dart';
 import 'mk_card.dart';
 
 class MkDialog extends StatelessWidget {
@@ -15,7 +14,7 @@ class MkDialog extends StatelessWidget {
     // 设置
     return ModalWrapper(
         child: MkCard(
-      borderRadius: BorderRadius.all(Radius.circular(24)),
+      borderRadius: const BorderRadius.all(Radius.circular(24)),
       padding: padding,
       child: child,
     ));

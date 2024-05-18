@@ -1,11 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:moekey/pages/clips/clips.dart';
-import 'package:moekey/status/dio.dart';
 import 'package:moekey/status/misskey_api.dart';
-import 'package:moekey/status/server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../apis/models/clips.dart';
 import '../../main.dart';
 import '../mk_info_dialog.dart';
 

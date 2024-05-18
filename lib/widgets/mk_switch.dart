@@ -22,7 +22,7 @@ class MkSwitch extends ConsumerWidget {
       inactiveThumbColor: themes.switchOffFgColor,
       activeTrackColor: themes.switchOnBgColor,
       inactiveTrackColor: themes.switchOffBgColor,
-      trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
+      trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
       onChanged: onChanged,
     );
   }

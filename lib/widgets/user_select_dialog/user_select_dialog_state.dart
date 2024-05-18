@@ -4,8 +4,8 @@ import 'package:moekey/status/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/user_full.dart';
-import '../../status/user.dart';
 import '../../status/server.dart';
+import '../../status/user.dart';
 
 part 'user_select_dialog_state.g.dart';
 

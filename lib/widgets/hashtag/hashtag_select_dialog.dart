@@ -3,13 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/widgets/loading_weight.dart';
-import 'package:moekey/widgets/mk_dialog.dart';
 import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_modal.dart';
 
 import '../../status/themes.dart';
-import '../blur_widget.dart';
-import '../mk_card.dart';
 import 'hashtag_select_dialog_state.dart';
 
 class HashtagSelectDialog extends HookConsumerWidget {

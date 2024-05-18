@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart' as badges;
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';

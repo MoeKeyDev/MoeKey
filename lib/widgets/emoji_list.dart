@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/loading_weight.dart';
-import 'package:path/path.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -179,16 +177,16 @@ class NoteCreateDialog extends HookConsumerWidget {
                       },
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(themes.accentColor),
-                        shape: MaterialStateProperty.all(
+                            WidgetStateProperty.all(themes.accentColor),
+                        shape: WidgetStateProperty.all(
                           const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(8),
                             ),
                           ),
                         ),
-                        elevation: MaterialStateProperty.all(0),
-                        padding: MaterialStateProperty.all(
+                        elevation: WidgetStateProperty.all(0),
+                        padding: WidgetStateProperty.all(
                           const EdgeInsets.fromLTRB(12, 0, 12, 0),
                         ),
                       ),
@@ -403,16 +401,16 @@ class NoteCreateDialog extends HookConsumerWidget {
                     },
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(themes.accentColor),
-                      shape: MaterialStateProperty.all(
+                          WidgetStateProperty.all(themes.accentColor),
+                      shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(8),
                           ),
                         ),
                       ),
-                      elevation: MaterialStateProperty.all(0),
-                      padding: MaterialStateProperty.all(
+                      elevation: WidgetStateProperty.all(0),
+                      padding: WidgetStateProperty.all(
                         const EdgeInsets.fromLTRB(0, 0, 0, 0),
                       ),
                     ),
@@ -508,16 +506,16 @@ class NoteCreateDialog extends HookConsumerWidget {
                         },
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(themes.buttonBgColor),
-                    shape: MaterialStateProperty.all(
+                        WidgetStateProperty.all(themes.buttonBgColor),
+                    shape: WidgetStateProperty.all(
                       const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(8),
                         ),
                       ),
                     ),
-                    elevation: MaterialStateProperty.all(0),
-                    padding: MaterialStateProperty.all(
+                    elevation: WidgetStateProperty.all(0),
+                    padding: WidgetStateProperty.all(
                       const EdgeInsets.fromLTRB(32, 0, 32, 0),
                     ),
                   ),
@@ -994,15 +992,15 @@ class NoteCreateDialog extends HookConsumerWidget {
         child: IconButton(
           onPressed: onPressed,
           style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all(themes.fgColor),
-            shape: MaterialStateProperty.all(
+            foregroundColor: WidgetStateProperty.all(themes.fgColor),
+            shape: WidgetStateProperty.all(
               const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(8),
                 ),
               ),
             ),
-            padding: MaterialStateProperty.all(
+            padding: WidgetStateProperty.all(
               const EdgeInsets.fromLTRB(0, 0, 0, 0),
             ),
           ),
@@ -1186,15 +1184,15 @@ class NoteCreateDialog extends HookConsumerWidget {
                         ?.show(Offset(x, y));
                   },
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(themes.fgColor),
-                    shape: MaterialStateProperty.all(
+                    foregroundColor: WidgetStateProperty.all(themes.fgColor),
+                    shape: WidgetStateProperty.all(
                       const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(8),
                         ),
                       ),
                     ),
-                    padding: MaterialStateProperty.all(
+                    padding: WidgetStateProperty.all(
                       const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     ),
                   ),
@@ -1344,15 +1342,15 @@ class NoteCreateDialog extends HookConsumerWidget {
               child: Builder(builder: (context) {
                 return TextButton(
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(themes.fgColor),
-                    shape: MaterialStateProperty.all(
+                    foregroundColor: WidgetStateProperty.all(themes.fgColor),
+                    shape: WidgetStateProperty.all(
                       const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(8),
                         ),
                       ),
                     ),
-                    padding: MaterialStateProperty.all(
+                    padding: WidgetStateProperty.all(
                       const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     ),
                   ),

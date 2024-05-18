@@ -3,9 +3,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/widgets/mk_input.dart';
 
-import 'drive.dart';
 import '../../status/themes.dart';
 import '../mk_dialog.dart';
+import 'drive.dart';
 
 class DriverCreateFromUrlDialog extends HookConsumerWidget {
   const DriverCreateFromUrlDialog({super.key});
@@ -55,10 +55,10 @@ class DriverCreateFromUrlDialog extends HookConsumerWidget {
                     },
                     style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(themes.accentColor),
+                            WidgetStateProperty.all(themes.accentColor),
                         foregroundColor:
-                            MaterialStateProperty.all(themes.fgOnAccentColor),
-                        elevation: MaterialStateProperty.all(0)),
+                            WidgetStateProperty.all(themes.fgOnAccentColor),
+                        elevation: WidgetStateProperty.all(0)),
                     child: const Text("OK"),
                   ),
                 ),
@@ -70,10 +70,10 @@ class DriverCreateFromUrlDialog extends HookConsumerWidget {
                       },
                       style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(themes.buttonBgColor),
+                              WidgetStateProperty.all(themes.buttonBgColor),
                           foregroundColor:
-                              MaterialStateProperty.all(themes.fgColor),
-                          elevation: MaterialStateProperty.all(0)),
+                              WidgetStateProperty.all(themes.fgColor),
+                          elevation: WidgetStateProperty.all(0)),
                       child: const Text("取消")),
                 )
               ],

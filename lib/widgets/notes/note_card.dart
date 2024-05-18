@@ -10,9 +10,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/main.dart';
 import 'package:moekey/pages/clips/clips.dart';
+import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/notes.dart';
-import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/format_duration.dart';
@@ -31,15 +31,14 @@ import '../../apis/models/drive.dart';
 import '../../apis/models/note.dart';
 import '../../apis/models/translate.dart';
 import '../../apis/models/user_lite.dart';
-import '../../status/misskey_api.dart';
-import '../../status/timeline.dart';
 import '../../pages/image_preview/image_preview.dart';
 import '../../pages/notes/note_page.dart';
 import '../../router/main_router_delegate.dart' as main_router;
-import '../../utils/parse-color.dart';
+import '../../status/misskey_api.dart';
+import '../../status/timeline.dart';
+import '../../utils/parse_color.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../hover_builder.dart';
-import '../mk_info_dialog.dart';
 import '../mfm_text/mfm_text.dart';
 import '../mk_card.dart';
 import '../mk_image.dart';
@@ -317,19 +316,19 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                                       },
                                       style: ButtonStyle(
                                           backgroundColor:
-                                              MaterialStateProperty.resolveWith(
+                                              WidgetStateProperty.resolveWith(
                                                   (states) {
                                             if (states.contains(
-                                                MaterialState.hovered)) {
+                                                WidgetState.hovered)) {
                                               return themes.buttonHoverBgColor;
                                             }
                                             return themes.buttonBgColor;
                                           }),
                                           foregroundColor:
-                                              MaterialStateProperty.all(
+                                              WidgetStateProperty.all(
                                                   themes.fgColor),
                                           elevation:
-                                              MaterialStateProperty.all(0)),
+                                              WidgetStateProperty.all(0)),
                                       child: Text(
                                           isHiddenCw.value ? "查看更多" : "收起"),
                                     ),
@@ -1054,7 +1053,8 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
                     label: "新建",
                     icon: TablerIcons.plus,
                     onTap: () {
-                      Future.delayed(Duration(milliseconds: 100)).then((value) {
+                      Future.delayed(const Duration(milliseconds: 100))
+                          .then((value) {
                         showModel(
                           context: context,
                           builder: (context) {

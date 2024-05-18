@@ -1,12 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:moekey/apis/index.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../apis/models/login_user.dart';
+import '../utils/get_token.dart';
 import 'server.dart';
-import '../utils/getToken.dart';
-import 'dio.dart';
 
 part 'user_login.g.dart';
 

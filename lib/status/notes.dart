@@ -6,9 +6,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
 import '../main.dart';
+import 'dio.dart';
 import 'misskey_api.dart';
 import 'server.dart';
-import 'dio.dart';
 
 part 'notes.g.dart';
 

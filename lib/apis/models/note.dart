@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:moekey/apis/models/translate.dart';
@@ -297,8 +295,6 @@ enum NoteVisibility {
         return public;
       case "home":
         return home;
-      case "followers":
-        return followers;
       case "followers":
         return followers;
       case "specified":

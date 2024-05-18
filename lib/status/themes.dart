@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/meta.dart';
-import '../utils/parse-color.dart';
+import '../utils/parse_color.dart';
 
 part 'themes.g.dart';
 
@@ -138,9 +138,8 @@ class Themes extends _$Themes {
     String? font;
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: colors.accentColor).copyWith(
-        surface: colors.panelColor,
+        surface: colors.bgColor,
         onSurface: colors.fgColor,
-        background: colors.bgColor,
         primary: colors.accentColor,
         onPrimary: colors.fgOnAccentColor,
       ),

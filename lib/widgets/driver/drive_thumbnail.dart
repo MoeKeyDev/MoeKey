@@ -10,9 +10,9 @@ import 'package:moekey/widgets/hover_builder.dart';
 import 'package:path/path.dart';
 
 import '../../apis/models/drive.dart';
-import 'drive.dart';
 import '../mk_dialog.dart';
 import '../mk_image.dart';
+import 'drive.dart';
 
 class DriveImageThumbnail extends HookConsumerWidget {
   DriveImageThumbnail(
@@ -315,10 +315,10 @@ class DriveImageThumbnail extends HookConsumerWidget {
                         },
                         style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all(themes.accentColor),
-                            foregroundColor: MaterialStateProperty.all(
-                                themes.fgOnAccentColor),
-                            elevation: MaterialStateProperty.all(0)),
+                                WidgetStateProperty.all(themes.accentColor),
+                            foregroundColor:
+                                WidgetStateProperty.all(themes.fgOnAccentColor),
+                            elevation: WidgetStateProperty.all(0)),
                         child: const Text("OK"),
                       ),
                     ),
@@ -329,11 +329,11 @@ class DriveImageThumbnail extends HookConsumerWidget {
                             Navigator.of(context).pop();
                           },
                           style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  themes.buttonBgColor),
+                              backgroundColor:
+                                  WidgetStateProperty.all(themes.buttonBgColor),
                               foregroundColor:
-                                  MaterialStateProperty.all(themes.fgColor),
-                              elevation: MaterialStateProperty.all(0)),
+                                  WidgetStateProperty.all(themes.fgColor),
+                              elevation: WidgetStateProperty.all(0)),
                           child: const Text("取消")),
                     )
                   ],
@@ -415,10 +415,10 @@ class DriveImageThumbnail extends HookConsumerWidget {
                         },
                         style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all(themes.accentColor),
-                            foregroundColor: MaterialStateProperty.all(
-                                themes.fgOnAccentColor),
-                            elevation: MaterialStateProperty.all(0)),
+                                WidgetStateProperty.all(themes.accentColor),
+                            foregroundColor:
+                                WidgetStateProperty.all(themes.fgOnAccentColor),
+                            elevation: WidgetStateProperty.all(0)),
                         child: const Text("OK"),
                       ),
                     ),
@@ -429,11 +429,11 @@ class DriveImageThumbnail extends HookConsumerWidget {
                             Navigator.of(context).pop();
                           },
                           style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  themes.buttonBgColor),
+                              backgroundColor:
+                                  WidgetStateProperty.all(themes.buttonBgColor),
                               foregroundColor:
-                                  MaterialStateProperty.all(themes.fgColor),
-                              elevation: MaterialStateProperty.all(0)),
+                                  WidgetStateProperty.all(themes.fgColor),
+                              elevation: WidgetStateProperty.all(0)),
                           child: const Text("取消")),
                     )
                   ],
@@ -505,10 +505,10 @@ class DriveImageThumbnail extends HookConsumerWidget {
                           },
                           style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all(themes.accentColor),
-                              foregroundColor: MaterialStateProperty.all(
+                                  WidgetStateProperty.all(themes.accentColor),
+                              foregroundColor: WidgetStateProperty.all(
                                   themes.fgOnAccentColor),
-                              elevation: MaterialStateProperty.all(0)),
+                              elevation: WidgetStateProperty.all(0)),
                           child: const Text("OK"),
                         ),
                       ),
@@ -522,11 +522,11 @@ class DriveImageThumbnail extends HookConsumerWidget {
                               Navigator.of(context).pop();
                             },
                             style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
+                                backgroundColor: WidgetStateProperty.all(
                                     themes.buttonBgColor),
                                 foregroundColor:
-                                    MaterialStateProperty.all(themes.fgColor),
-                                elevation: MaterialStateProperty.all(0)),
+                                    WidgetStateProperty.all(themes.fgColor),
+                                elevation: WidgetStateProperty.all(0)),
                             child: const Text("取消")),
                       )
                     ],

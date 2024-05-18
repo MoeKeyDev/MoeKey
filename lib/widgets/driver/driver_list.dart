@@ -9,7 +9,6 @@ import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
 import '../../main.dart';
-import 'drive.dart';
 import '../../status/themes.dart';
 import '../context_menu.dart';
 import '../hover_builder.dart';
@@ -17,6 +16,7 @@ import '../loading_weight.dart';
 import '../mk_dialog.dart';
 import '../mk_switch.dart';
 import 'create_from_url_dialog.dart';
+import 'drive.dart';
 import 'drive_thumbnail.dart';
 import 'driver_select_dialog/driver_select_dialog_state.dart';
 import 'upload_file_dialog.dart';
@@ -226,10 +226,10 @@ class DriverList extends HookConsumerWidget {
                         onPressed: submit,
                         style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all(themes.accentColor),
-                            foregroundColor: MaterialStateProperty.all(
-                                themes.fgOnAccentColor),
-                            elevation: MaterialStateProperty.all(0)),
+                                WidgetStateProperty.all(themes.accentColor),
+                            foregroundColor:
+                                WidgetStateProperty.all(themes.fgOnAccentColor),
+                            elevation: WidgetStateProperty.all(0)),
                         child: const Text("OK"),
                       ),
                     ),
@@ -240,11 +240,11 @@ class DriverList extends HookConsumerWidget {
                             Navigator.of(context).pop();
                           },
                           style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  themes.buttonBgColor),
+                              backgroundColor:
+                                  WidgetStateProperty.all(themes.buttonBgColor),
                               foregroundColor:
-                                  MaterialStateProperty.all(themes.fgColor),
-                              elevation: MaterialStateProperty.all(0)),
+                                  WidgetStateProperty.all(themes.fgColor),
+                              elevation: WidgetStateProperty.all(0)),
                           child: const Text("取消")),
                     )
                   ],

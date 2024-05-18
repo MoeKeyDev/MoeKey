@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
 import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
-import 'package:moekey/status/timeline.dart';
 import 'package:moekey/status/themes.dart';
+import 'package:moekey/status/timeline.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 
 import '../../apis/models/note.dart';

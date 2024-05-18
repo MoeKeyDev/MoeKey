@@ -6,7 +6,6 @@ import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/notes/note_card.dart';
 
 import '../../apis/models/notification.dart';
-import '../../apis/models/user_lite.dart';
 import '../../pages/users/user_page.dart';
 import '../../router/main_router_delegate.dart';
 import '../mk_card.dart';

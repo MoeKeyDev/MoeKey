@@ -4,16 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/status/apis.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
+import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/login/servers_select.dart';
 
-import '../../main.dart';
 import '../../widgets/blur_widget.dart';
 import '../../widgets/hover_builder.dart';
 import '../../widgets/mk_image.dart';
@@ -70,7 +69,7 @@ class HomePage extends HookConsumerWidget {
     var media = MediaQuery.of(context);
     return LayoutBuilder(builder: (context, constraints) {
       var btnStyle =
-          ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) {
+          ButtonStyle(backgroundColor: WidgetStateColor.resolveWith((states) {
         return themes.panelColor.withOpacity(0.5);
       }));
       return Scaffold(
@@ -649,14 +648,14 @@ class CreateBottom extends ConsumerWidget {
             style: ButtonStyle(
               splashFactory: InkSparkle.splashFactory,
               animationDuration: Duration.zero,
-              shadowColor: MaterialStateProperty.all(Colors.transparent),
-              backgroundColor: MaterialStateProperty.resolveWith((states) {
-                if (states.contains(MaterialState.hovered)) {
+              shadowColor: WidgetStateProperty.all(Colors.transparent),
+              backgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.hovered)) {
                   return themes.buttonGradateBColor;
                 }
                 return themes.buttonGradateAColor;
               }),
-              foregroundColor: MaterialStateProperty.resolveWith((states) {
+              foregroundColor: WidgetStateProperty.resolveWith((states) {
                 return themes.fgOnAccentColor;
               }),
             ),
@@ -684,16 +683,16 @@ class CreateBottom extends ConsumerWidget {
         tooltip: "帖子",
         isSelected: false,
         style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.hovered)) {
+            backgroundColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.hovered)) {
                 return themes.buttonGradateBColor;
               }
               return themes.buttonGradateAColor;
             }),
-            foregroundColor: MaterialStateProperty.resolveWith((states) {
+            foregroundColor: WidgetStateProperty.resolveWith((states) {
               return themes.fgOnAccentColor;
             }),
-            iconSize: MaterialStateProperty.all(20)),
+            iconSize: WidgetStateProperty.all(20)),
       );
     });
   }

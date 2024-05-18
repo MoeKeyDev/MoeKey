@@ -9,16 +9,19 @@ class MkOverflowShow extends StatefulWidget {
     required this.limit,
     required this.height,
   });
+
   final Widget content;
   final Widget Function(bool isShow, void Function(bool isShow)) action;
   final double limit;
   final double height;
+
   @override
   State<MkOverflowShow> createState() => _MkOverflowShowState();
 }
 
 class _MkOverflowShowState extends State<MkOverflowShow> {
   bool isShow = false;
+
   @override
   Widget build(BuildContext context) {
     return ClipRect(
@@ -49,12 +52,12 @@ class _MkOverflowShowState extends State<MkOverflowShow> {
                         });
                       },
                       style: ButtonStyle(
-                        textStyle: MaterialStatePropertyAll<TextStyle>(
+                        textStyle: WidgetStatePropertyAll<TextStyle>(
                           DefaultTextStyle.of(context)
                               .style
                               .copyWith(fontSize: 12),
                         ),
-                        foregroundColor: MaterialStatePropertyAll<Color>(
+                        foregroundColor: WidgetStatePropertyAll<Color>(
                             DefaultTextStyle.of(context).style.color!),
                       ),
                       child: const Text("查看更多"),
@@ -78,9 +81,11 @@ class _RenderObjectLayoutBox extends MultiChildRenderObjectWidget {
     required this.height,
     required this.enable,
   });
+
   final double limit;
   final double height;
   final bool enable;
+
   @override
   RenderObject createRenderObject(BuildContext context) {
     return _RenderObject(height: height, limit: limit, enable: enable);
@@ -111,6 +116,7 @@ class _RenderObject extends RenderBox
     required this.height,
     required this.enable,
   });
+
   double limit;
   double height;
   bool enable;
