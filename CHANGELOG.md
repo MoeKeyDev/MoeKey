@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.1
+
+### Feature
+
+- Update Clip feature
+
+### Refactor
+
+- Network code move to Api Folder
+
 ## 0.2.18
 
 ### Feature

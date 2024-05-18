@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/loading_weight.dart';
+import 'package:path/path.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 
@@ -160,7 +161,7 @@ class EmojiList extends HookConsumerWidget {
   }
 
   static showBottomSheet(BuildContext context,
-      {required void Function(Map data) onInsert}) {
+      {required void Function(Map data, BuildContext context) onInsert}) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -196,8 +197,11 @@ class EmojiList extends HookConsumerWidget {
                     child: GestureDetector(
                       onTap: () {},
                       child: EmojiList(
-                          scrollController: scrollController,
-                          onInsert: onInsert),
+                        scrollController: scrollController,
+                        onInsert: (data) {
+                          onInsert(data, context);
+                        },
+                      ),
                     ),
                   );
                 },

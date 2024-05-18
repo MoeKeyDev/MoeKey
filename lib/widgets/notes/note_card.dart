@@ -9,15 +9,18 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/main.dart';
+import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/notes.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/format_duration.dart';
+import 'package:moekey/widgets/clips/clips_create_dialog.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/emoji_list.dart';
 import 'package:moekey/widgets/loading_weight.dart';
+import 'package:moekey/widgets/mk_modal.dart';
 import 'package:moekey/widgets/mk_overflow_show.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart';
@@ -36,6 +39,7 @@ import '../../router/main_router_delegate.dart' as main_router;
 import '../../utils/parse-color.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../hover_builder.dart';
+import '../mk_info_dialog.dart';
 import '../mfm_text/mfm_text.dart';
 import '../mk_card.dart';
 import '../mk_image.dart';
@@ -63,12 +67,14 @@ class NoteCard extends ConsumerWidget {
   final NoteModel data;
   final BorderRadius borderRadius;
   final bool pined;
+  final List<ContextMenuItem>? customContextmenu;
 
   const NoteCard({
     super.key,
     required this.data,
     required this.borderRadius,
     this.pined = false,
+    this.customContextmenu,
   });
 
   @override
@@ -128,6 +134,7 @@ class NoteCard extends ConsumerWidget {
                 TimeLineNoteCardComponent(
                   data: thisData,
                   isShowUrlPreview: true,
+                  customMenuItem: customContextmenu,
                   innerWidget: thisData.renote != null
                       ? Container(
                           margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
@@ -169,6 +176,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     this.disableReactions = false,
     this.limit = 1000,
     this.height = 400,
+    this.customMenuItem,
   });
 
   final NoteModel data;
@@ -182,6 +190,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
   final ConstraintId content = ConstraintId('content');
   final double limit;
   final double height;
+  final List<ContextMenuItem>? customMenuItem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -224,7 +233,8 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                 ContextMenuMode.onSecondaryTap,
                 ContextMenuMode.onLongPress
               ],
-              menu: buildNoteContextMenu(serverUrl, meta, data, ref),
+              menu: buildNoteContextMenu(serverUrl, meta, data, ref, context,
+                  customMenuItem: customMenuItem),
               child: Container(
                 color: Colors.transparent,
                 child: ConstraintLayout(
@@ -412,6 +422,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                             TimeLineActions(
                               fontsize: fontsize,
                               data: data,
+                              customMenuItem: customMenuItem,
                             )
                         ],
                       ),
@@ -945,85 +956,136 @@ class TimeLineImage extends StatelessWidget {
   }
 }
 
-ContextMenuCard buildNoteContextMenu(
-    String serverUrl, MetaDetailedModel? meta, NoteModel data, WidgetRef ref) {
+ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
+    NoteModel data, WidgetRef ref, BuildContext context,
+    {List<ContextMenuItem>? customMenuItem}) {
   return ContextMenuCard(
-    menuListBuilder: () {
-      return [
-        ContextMenuItem(
-          icon: TablerIcons.copy,
-          label: "复制内容",
-          onTap: () {
-            Clipboard.setData(
-              ClipboardData(text: data.text ?? ""),
-            );
-            return false;
-          },
-        ),
-        ContextMenuItem(
-          icon: TablerIcons.link,
-          label: "复制本站链接",
-          onTap: () {
-            Clipboard.setData(
-              ClipboardData(text: "$serverUrl/notes/${data.id}"),
-            );
-            return false;
-          },
-        ),
-        ContextMenuItem(
-          icon: TablerIcons.share,
-          label: "分享",
-          onTap: () {
-            // ref.read(noteApisProvider.notifier).reNote(data.id);
-            Share.shareUri(Uri.parse("$serverUrl/notes/${data.id}"));
-            return false;
-          },
-        ),
-        if (data.user.host != null)
+      menuListBuilder: () {
+        return [
+          if (customMenuItem != null) ...customMenuItem,
           ContextMenuItem(
-            icon: TablerIcons.external_link,
-            label: "转到所在服务器显示",
+            icon: TablerIcons.copy,
+            label: "复制内容",
             onTap: () {
-              if (data.uri != null) {
-                launchUrlString(data.uri!);
-              }
-              // ref.read(noteApisProvider.notifier).reNote(data.id);
+              Clipboard.setData(
+                ClipboardData(text: data.text ?? ""),
+              );
               return false;
             },
           ),
-        if (meta != null && meta.translatorAvailable)
           ContextMenuItem(
-            icon: TablerIcons.language_hiragana,
-            label: "翻译",
-            onTap: () async {
-              var note = ref.read(noteListProvider)[data.id] ?? data;
-              note = note.copyWith();
-              note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
-              ref.read(noteListProvider.notifier).registerNote(note);
-              var apis = await ref.read(misskeyApisProvider.future);
-              var res = await apis.notes.translate(noteId: data.id);
-              res.loading = false;
-              note = note.copyWith();
-              note.noteTranslate = res;
-              ref.read(noteListProvider.notifier).registerNote(note);
-
+            icon: TablerIcons.link,
+            label: "复制本站链接",
+            onTap: () {
+              Clipboard.setData(
+                ClipboardData(text: "$serverUrl/notes/${data.id}"),
+              );
               return false;
             },
           ),
-      ];
-    },
-  );
+          ContextMenuItem(
+            icon: TablerIcons.share,
+            label: "分享",
+            onTap: () {
+              // ref.read(noteApisProvider.notifier).reNote(data.id);
+              Share.shareUri(Uri.parse("$serverUrl/notes/${data.id}"));
+              return false;
+            },
+          ),
+          if (data.user.host != null)
+            ContextMenuItem(
+              icon: TablerIcons.external_link,
+              label: "转到所在服务器显示",
+              onTap: () {
+                if (data.uri != null) {
+                  launchUrlString(data.uri!);
+                }
+                // ref.read(noteApisProvider.notifier).reNote(data.id);
+                return false;
+              },
+            ),
+          if (meta != null && meta.translatorAvailable)
+            ContextMenuItem(
+              divider: true,
+              icon: TablerIcons.language_hiragana,
+              label: "翻译",
+              onTap: () async {
+                var note = ref.read(noteListProvider)[data.id] ?? data;
+                note = note.copyWith();
+                note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
+                ref.read(noteListProvider.notifier).registerNote(note);
+                var apis = await ref.read(misskeyApisProvider.future);
+                var res = apis.notes.translate(noteId: data.id);
+                res.then((value) {
+                  if (value != null) {
+                    value.loading = false;
+                    note = note.copyWith();
+                    note.noteTranslate = value;
+                    ref.read(noteListProvider.notifier).registerNote(note);
+                  }
+                });
+
+                return false;
+              },
+            ),
+          ContextMenuItem(
+            icon: TablerIcons.paperclip,
+            label: "便签",
+            child: ContextMenuCard(
+              menuListBuilder: () async {
+                var list = await ref.read(clipsProvider.future);
+                return [
+                  for (var item in list.indexed)
+                    ContextMenuItem(
+                      icon: TablerIcons.paperclip,
+                      label: item.$2.name,
+                      divider: item.$1 == (list.length - 1),
+                      onTap: () {
+                        ref
+                            .read(misskeyApisProvider)
+                            .value
+                            ?.clips
+                            .addNote(clipId: item.$2.id, noteId: data.id);
+
+                        return false;
+                      },
+                    ),
+                  ContextMenuItem(
+                    label: "新建",
+                    icon: TablerIcons.plus,
+                    onTap: () {
+                      Future.delayed(Duration.zero).then((value) {
+                        showModel(
+                          context: context,
+                          builder: (context) {
+                            return const ClipCreateDialog();
+                          },
+                        );
+                      });
+
+                      return false;
+                    },
+                  )
+                ];
+              },
+            ),
+          )
+        ];
+      },
+      initialChildSize: 0.6,
+      maxChildSize: 0.7);
 }
 
 class TimeLineActions extends HookConsumerWidget {
-  const TimeLineActions({
-    super.key,
-    required this.fontsize,
-    required this.data,
-  });
+  const TimeLineActions(
+      {super.key,
+      required this.fontsize,
+      required this.data,
+      this.customMenuItem});
 
   final NoteModel data;
   final double fontsize;
+  final List<ContextMenuItem>? customMenuItem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1070,7 +1132,8 @@ class TimeLineActions extends HookConsumerWidget {
               onTap: () {
                 EmojiList.showBottomSheet(
                   context,
-                  onInsert: (emoji) {
+                  onInsert: (emoji, context) {
+                    Navigator.of(context).pop();
                     ref.read(misskeyApisProvider).value?.notes.createReactions(
                         noteId: data.id, reaction: emoji['name']);
                   },
@@ -1082,7 +1145,8 @@ class TimeLineActions extends HookConsumerWidget {
             ),
             ContextMenuBuilder(
               mode: const [ContextMenuMode.onTap],
-              menu: buildNoteContextMenu(serverUrl, meta, data, ref),
+              menu: buildNoteContextMenu(serverUrl, meta, data, ref, context,
+                  customMenuItem: customMenuItem),
               child: TimelineActionButton(
                 fontsize: fontsize,
                 icon: TablerIcons.dots,

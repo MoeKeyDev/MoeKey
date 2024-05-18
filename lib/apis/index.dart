@@ -2,6 +2,7 @@ import 'package:moekey/apis/dio.dart';
 import 'package:moekey/apis/services/account_service.dart';
 import 'package:moekey/apis/services/app_service.dart';
 import 'package:moekey/apis/services/auth_service.dart';
+import 'package:moekey/apis/services/clips_service.dart';
 import 'package:moekey/apis/services/drive_service.dart';
 import 'package:moekey/apis/services/following_service.dart';
 import 'package:moekey/apis/services/meta_service.dart';
@@ -22,6 +23,7 @@ class MisskeyApis {
     drive = DriveService(client: client);
     user = UserService(client: client);
     following = FollowingService(client: client);
+    clips = ClipsService(client: client);
   }
 
   String instance;
@@ -35,4 +37,5 @@ class MisskeyApis {
   late DriveService drive;
   late UserService user;
   late FollowingService following;
+  late ClipsService clips;
 }

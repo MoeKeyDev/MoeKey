@@ -943,7 +943,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                     maxSize = maxSize.clamp(250, 350);
                   }
                   if (isFullscreen) {
-                    EmojiList.showBottomSheet(context, onInsert: (data) {
+                    EmojiList.showBottomSheet(context,
+                        onInsert: (data, context) {
                       contentController.text =
                           "${contentController.text}${data["name"]}";
                     });

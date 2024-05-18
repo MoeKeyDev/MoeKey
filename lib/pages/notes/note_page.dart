@@ -225,7 +225,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
             ContextMenuMode.onSecondaryTap,
             ContextMenuMode.onLongPress
           ],
-          menu: buildNoteContextMenu(serverUrl, meta, data, ref),
+          menu: buildNoteContextMenu(serverUrl, meta, data, ref, context),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +293,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                         ref.read(noteListProvider.notifier).registerNote(note);
                         var apis = await ref.read(misskeyApisProvider.future);
                         var res = await apis.notes.translate(noteId: data.id);
-                        res.loading = false;
+                        res?.loading = false;
                         note = note.copyWith();
                         note.noteTranslate = res;
                         ref.read(noteListProvider.notifier).registerNote(note);

@@ -25,7 +25,7 @@ class NotesService extends MisskeyApiServices {
     return List<NoteModel>.from(res.map((e) => NoteModel.fromMap(e)));
   }
 
-  translate({required String noteId}) async {
+  Future<NoteTranslate?> translate({required String noteId}) async {
     var data = await client.post("/notes/translate", data: {
       "noteId": noteId,
       "targetLang": Platform.localeName.replaceAll("_", "-"),

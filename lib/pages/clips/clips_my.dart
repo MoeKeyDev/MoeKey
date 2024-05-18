@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
+import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
 import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/widgets/clips/clips_folder.dart';
 
@@ -36,18 +38,25 @@ class ClipsMy extends HookConsumerWidget {
               loading: res.isLoading,
               empty: res.valueOrNull?.isEmpty ?? true,
               refresh: () => ref.refresh(clipsProvider.future),
-              child: ListView.builder(
+              child: ImplicitlyAnimatedList<ClipsModel>(
                 physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: res.valueOrNull?.length ?? 0,
+                controller: scrollController,
+                items: res.valueOrNull ?? [],
                 padding: EdgeInsets.only(
                   left: padding,
                   right: padding,
                   top: queryPadding.top,
                   bottom: queryPadding.bottom,
                 ),
-                controller: scrollController,
-                itemBuilder: (BuildContext context, int index) {
-                  return buildClipsListItem(res, index);
+                itemBuilder: (BuildContext context, Animation<double> animation,
+                    item, int i) {
+                  return SizeFadeTransition(
+                    animation: animation,
+                    child: buildClipsListItem(item),
+                  );
+                },
+                areItemsTheSame: (oldItem, newItem) {
+                  return oldItem.id == newItem.id;
                 },
               ),
             ),
@@ -57,14 +66,14 @@ class ClipsMy extends HookConsumerWidget {
     );
   }
 
-  Widget buildClipsListItem(AsyncValue<List<ClipsModel>> clipsList, int index) {
+  Widget buildClipsListItem(ClipsModel clips) {
     return Column(
       children: [
         ClipsFolder(
-          data: clipsList.valueOrNull![index],
+          data: clips,
         ),
         const SizedBox(
-          height: 20,
+          height: 10,
         )
       ],
     );

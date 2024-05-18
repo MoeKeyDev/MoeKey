@@ -1,58 +1,25 @@
+import 'package:moekey/status/misskey_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/clips.dart';
 import '../../apis/models/note.dart';
-import '../../status/dio.dart';
-import '../../status/server.dart';
 
 part 'clips.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Clips extends _$Clips {
   @override
   FutureOr<List<ClipsModel>> build() async {
     return clipsList();
   }
 
-  Future<List<ClipsModel>> clipsList(
-      {num? limit = 10, bool? allowPartial = true}) async {
-    try {
-      // 获取httpProvider和currentLoginUserProvider的实例
-      var http = await ref.watch(httpProvider.future);
-      var user = await ref.watch(currentLoginUserProvider.future);
-      // 发送post请求，获取数据
-      var res = await http.post("/clips/list", data: {
-        "allowPartial": allowPartial,
-        "i": user?.token,
-        "limit": limit,
-      });
+  Future<List<ClipsModel>> clipsList() async {
+    var apis = await ref.read(misskeyApisProvider.future);
 
-      // 将数据转换为ClipsModel列表
-      List<ClipsModel> list = [];
-      for (var item in res.data) {
-        var data = ClipsModel.fromMap(item);
-        list.add(data);
-      }
-      // 将list反序排列
-      list = list.reversed.toList();
-
-      return list;
-    } finally {
-      // 设置加载状态为false
-      loading = false;
-    }
-  }
-
-  var loading = false;
-
-  load() async {
-    if (loading) return;
-    loading = true;
-    try {
-      state = AsyncData((state.valueOrNull ?? []) + await clipsList());
-    } finally {
-      loading = false;
-    }
+    var list = await apis.clips.list();
+    // 将list反序排列
+    list = list.reversed.toList();
+    return list;
   }
 }
 
@@ -65,28 +32,22 @@ class ClipsNoteListState {
 class ClipsNotesList extends _$ClipsNotesList {
   @override
   FutureOr<ClipsNoteListState> build(String clipId) async {
-    return ClipsNoteListState();
+    var state = ClipsNoteListState();
+    try {
+      loading = true;
+      state.list = await clipsNotesList(clipId: clipId);
+    } finally {
+      loading = false;
+    }
+    return state;
   }
 
   Future<List<NoteModel>> clipsNotesList(
-      {required String clipId, num? limit = 10, String? untilId}) async {
+      {required String clipId, int limit = 10, String? untilId}) async {
     try {
-      var http = await ref.watch(httpProvider.future);
-      var user = await ref.watch(currentLoginUserProvider.future);
-      var res = await http.post("/clips/notes", data: {
-        "clipId": clipId,
-        "limit": limit,
-        if (untilId != null) "untilId": untilId,
-        "i": user?.token,
-      });
-
-      List<NoteModel> list = [];
-      for (var item in res.data) {
-        var data = NoteModel.fromMap(item);
-        list.add(data);
-      }
-
-      return list;
+      var apis = await ref.read(misskeyApisProvider.future);
+      return await apis.clips
+          .notes(clipId: clipId, untilId: untilId, limit: limit);
     } finally {}
   }
 
@@ -115,17 +76,11 @@ class ClipsNotesList extends _$ClipsNotesList {
 @riverpod
 class ClipsShow extends _$ClipsShow {
   @override
-  FutureOr<ClipsModel> build(String clipId) async {
+  FutureOr<ClipsModel?> build(String clipId) async {
     try {
-      var http = await ref.watch(httpProvider.future);
-      var user = await ref.watch(currentLoginUserProvider.future);
-      var res = await http.post("/clips/show", data: {
-        "clipId": clipId,
-        "i": user?.token,
-      });
+      var apis = await ref.read(misskeyApisProvider.future);
 
-      var data = ClipsModel.fromMap(res.data);
-      return data;
+      return await apis.clips.show(clipId: clipId);
     } finally {}
   }
 }
@@ -137,16 +92,8 @@ class ClipsMyFavorites extends _$ClipsMyFavorites {
     return clipsMyFavorites();
   }
 
-  Future<List<ClipsModel>> clipsMyFavorites(
-      {num? limit = 10, bool? allowPartial = true}) async {
-    var http = await ref.watch(httpProvider.future);
-    var user = await ref.watch(currentLoginUserProvider.future);
-    var res = await http.post("/clips/my-favorites", data: {"i": user?.token});
-    List<ClipsModel> list = [];
-    for (var item in res.data) {
-      var clip = ClipsModel.fromMap(item);
-      list.add(clip);
-    }
-    return list;
+  Future<List<ClipsModel>> clipsMyFavorites() async {
+    var apis = await ref.read(misskeyApisProvider.future);
+    return apis.clips.myFavorites();
   }
 }

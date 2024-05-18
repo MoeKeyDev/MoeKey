@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/user_full.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_image.dart';
@@ -19,6 +20,7 @@ class UserSelectDialog extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var userList = ref.watch(userSelectDialogStateProvider);
     var selectList = useState({});
+
     return MkModal(
       body: buildUserListView(userList, selectList, themes),
       appbar: buildHeader(selectList.value),
@@ -27,8 +29,10 @@ class UserSelectDialog extends HookConsumerWidget {
     );
   }
 
-  SingleChildScrollView buildUserListView(AsyncValue<List<dynamic>> userList,
-      ValueNotifier<Map<dynamic, dynamic>> selectList, ThemeColorModel themes) {
+  SingleChildScrollView buildUserListView(
+      AsyncValue<List<UserFullModel>> userList,
+      ValueNotifier<Map<dynamic, dynamic>> selectList,
+      ThemeColorModel themes) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -38,10 +42,10 @@ class UserSelectDialog extends HookConsumerWidget {
           for (var item in userList.valueOrNull ?? [])
             GestureDetector(
               onTap: () {
-                if (selectList.value.containsKey(item["id"])) {
-                  selectList.value.remove(item["id"]);
+                if (selectList.value.containsKey(item.id)) {
+                  selectList.value.remove(item.id);
                 } else {
-                  selectList.value[item["id"]] = item;
+                  selectList.value[item.id] = item;
                 }
 
                 selectList.value = Map.from(selectList.value);
@@ -51,7 +55,7 @@ class UserSelectDialog extends HookConsumerWidget {
                 themes,
                 item,
                 selectList.value.containsKey(
-                  item["id"],
+                  item.id,
                 ),
               ),
             )
@@ -154,7 +158,7 @@ class UserSelectDialog extends HookConsumerWidget {
   }
 
   Widget buildUserItem(ThemeColorModel themes, item, isActive) {
-    var name = item["name"] ?? item["username"] ?? "";
+    var name = item.name ?? item.name ?? "";
     var color = isActive ? themes.fgOnAccentColor : themes.fgColor;
     var style = TextStyle(color: color);
     return AnimatedDefaultTextStyle(
@@ -170,8 +174,8 @@ class UserSelectDialog extends HookConsumerWidget {
               width: 48,
               height: 48,
               child: MkImage(
-                item["avatarUrl"] ?? "",
-                blurHash: item["avatarBlurhash"],
+                item.avatarUrl ?? "",
+                blurHash: item.avatarBlurhash ?? "",
                 width: 48,
                 height: 48,
                 shape: BoxShape.circle,
@@ -201,10 +205,10 @@ class UserSelectDialog extends HookConsumerWidget {
                       return Text.rich(
                         TextSpan(
                           children: [
-                            TextSpan(text: "@${item["username"]}"),
-                            if (item["host"] != null)
+                            TextSpan(text: "@${item.username}"),
+                            if (item.host != null)
                               TextSpan(
-                                  text: "@${item["host"]}",
+                                  text: "@${item.host}",
                                   style: TextStyle(
                                       color: DefaultTextStyle.of(context)
                                           .style

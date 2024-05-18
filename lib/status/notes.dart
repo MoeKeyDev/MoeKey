@@ -85,10 +85,14 @@ class NotesListener extends _$NotesListener {
               if (type == "reacted") {
                 var reaction = eventData["body"]["body"]["reaction"];
                 var userId = eventData["body"]["body"]["userId"];
+                var emoji = eventData["body"]["body"]["emoji"];
                 if (reactions[reaction] == null) {
                   reactions[reaction] = 0;
                 }
                 reactions[reaction] = reactions[reaction]! + 1;
+                if (emoji != null) {
+                  data.reactionEmojis[emoji["name"]] = emoji["url"];
+                }
                 // 处理用户
                 if (userId == user?.id) {
                   data.myReaction = reaction;

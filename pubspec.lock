@@ -589,6 +589,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.5"
+  implicitly_animated_reorderable_list_2:
+    dependency: "direct main"
+    description:
+      name: implicitly_animated_reorderable_list_2
+      sha256: "1fe22c38ca53067042e7f07e40d970bb8405ffc2a991fe774bf9ad34925712c8"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.6.0"
   intl:
     dependency: "direct main"
     description:

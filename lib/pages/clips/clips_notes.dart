@@ -3,17 +3,24 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
+import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
 import 'package:moekey/pages/clips/clips.dart';
+import 'package:moekey/status/misskey_api.dart';
+import 'package:moekey/widgets/clips/clips_create_dialog.dart';
+import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_header.dart';
+import 'package:moekey/widgets/mk_modal.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
 import '../../apis/models/clips.dart';
-import '../../router/main_router_delegate.dart';
+import '../../apis/models/note.dart';
 import '../../status/themes.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/loading_weight.dart';
+import '../../widgets/mk_info_dialog.dart';
 import '../../widgets/notes/note_card.dart';
 import '../notes/note_page.dart';
 
@@ -32,8 +39,9 @@ class ClipsNotes extends HookConsumerWidget {
       var padding = getPaddingForNote(constraints);
 
       return MkScaffold(
-          header: buildMkAppbar(themes, showDate, context),
-          body: buildBody(ref, dataProvider, padding, showDate, themes, data));
+          header: buildMkAppbar(themes, showDate.value, context, ref),
+          body: buildBody(
+              ref, dataProvider, padding, showDate.value, themes, data.value));
     });
   }
 
@@ -41,9 +49,9 @@ class ClipsNotes extends HookConsumerWidget {
       WidgetRef ref,
       ClipsNotesListProvider dataProvider,
       double padding,
-      AsyncValue<ClipsModel> showDate,
+      ClipsModel? showDate,
       ThemeColorModel themes,
-      AsyncValue<ClipsNoteListState> data) {
+      ClipsNoteListState? data) {
     return Builder(
       builder: (context) {
         var mediaPadding = MediaQuery.paddingOf(context);
@@ -66,7 +74,7 @@ class ClipsNotes extends HookConsumerWidget {
                       padding, mediaPadding.top, padding, mediaPadding.bottom),
                   sliver: SliverMainAxisGroup(
                     slivers: [
-                      if (showDate.valueOrNull != null)
+                      if (showDate != null)
                         SliverToBoxAdapter(
                           child: _ClipContentCard(
                             clipId: clipId,
@@ -77,35 +85,51 @@ class ClipsNotes extends HookConsumerWidget {
                           height: 10,
                         ),
                       ),
-                      SliverList.separated(
-                        addAutomaticKeepAlives: true,
-                        itemBuilder: (BuildContext context, int index) {
+                      SliverImplicitlyAnimatedList<NoteModel>(
+                        items: data?.list ?? [],
+                        itemBuilder: (BuildContext context,
+                            Animation<double> animation, item, int i) {
                           BorderRadius borderRadius =
                               const BorderRadius.all(Radius.circular(12));
-                          return NoteCard(
-                              key: ValueKey(data.valueOrNull!.list[index].id),
-                              borderRadius: borderRadius,
-                              data: data.valueOrNull!.list[index]);
+                          return SizeFadeTransition(
+                            animation: animation,
+                            axis: Axis.vertical,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: NoteCard(
+                                key: ValueKey(item.id),
+                                borderRadius: borderRadius,
+                                data: item,
+                                customContextmenu: [
+                                  ContextMenuItem(
+                                    danger: true,
+                                    label: "移除便签",
+                                    icon: TablerIcons.trash,
+                                    divider: true,
+                                    onTap: () {
+                                      var apis = ref.read(misskeyApisProvider);
+                                      apis.value?.clips
+                                          .removeNote(
+                                              clipId: clipId, noteId: item.id)
+                                          .then((value) {
+                                        ref.invalidate(dataProvider);
+                                      });
 
-                          // return KeepAliveWrapper(
-                          //   child: NoteCard(
-                          //     key: ValueKey(data.valueOrNull![index].id),
-                          //     borderRadius: borderRadius,
-                          //     data: data.valueOrNull![index],
-                          //   ),
-                          // );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(
-                            width: double.infinity,
-                            height: 10,
+                                      return false;
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
                           );
                         },
-                        itemCount: data.valueOrNull?.list.length ?? 0,
+                        areItemsTheSame: (oldItem, newItem) {
+                          return oldItem.id == newItem.id;
+                        },
                       ),
                       SliverLayoutBuilder(
                         builder: (context, constraints) {
-                          if (data.valueOrNull?.haveMore ?? true) {
+                          if (data?.haveMore ?? true) {
                             if (constraints.remainingPaintExtent > 0) {
                               ref.read(dataProvider.notifier).load();
                             }
@@ -136,8 +160,8 @@ class ClipsNotes extends HookConsumerWidget {
     );
   }
 
-  MkAppbar buildMkAppbar(ThemeColorModel themes,
-      AsyncValue<ClipsModel> showDate, BuildContext context) {
+  MkAppbar buildMkAppbar(ThemeColorModel themes, ClipsModel? showDate,
+      BuildContext context, WidgetRef ref) {
     return MkAppbar(
         showBack: true,
         isSmallLeadingCenter: false,
@@ -154,7 +178,7 @@ class ClipsNotes extends HookConsumerWidget {
               const SizedBox(
                 width: 8,
               ),
-              Text(showDate.valueOrNull?.name ?? ""),
+              Text(showDate?.name ?? ""),
             ],
           ),
         ),
@@ -167,15 +191,45 @@ class ClipsNotes extends HookConsumerWidget {
           children: [
             IconButton(
               onPressed: () {
-                MainRouterDelegate.of(context).popRoute();
+                showModel(
+                  context: context,
+                  builder: (context) {
+                    return ClipCreateDialog(
+                      clipId: clipId,
+                    );
+                  },
+                );
               },
               tooltip: "编辑",
               icon: const Icon(TablerIcons.pencil, size: 18),
               color: themes.fgColor,
             ),
             IconButton(
-              onPressed: () {
-                MainRouterDelegate.of(context).popRoute();
+              onPressed: () async {
+                var res = await MkConfirm.show(children: [
+                      Icon(
+                        TablerIcons.alert_triangle,
+                        size: 36,
+                        color: themes.warnColor,
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      Text(
+                        "要删掉「${showDate?.name ?? ""}」吗？",
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                    ]) ??
+                    false;
+                if (res) {
+                  var apis = ref.read(misskeyApisProvider).value;
+
+                  await apis?.clips.delete(clipId: clipId);
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                  ref.invalidate(clipsProvider);
+                }
               },
               tooltip: "删除",
               icon: const Icon(TablerIcons.trash, size: 18),
@@ -193,7 +247,8 @@ class _ClipContentCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var showDate = ref.watch(clipsShowProvider(clipId));
+    var provider = clipsShowProvider(clipId);
+    var showDate = ref.watch(provider);
     var themes = ref.watch(themeColorsProvider);
     if (showDate.value == null) {
       return const MkCard(child: SizedBox());
@@ -203,28 +258,56 @@ class _ClipContentCard extends HookConsumerWidget {
       shadow: false,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            child: UserInfo(
-              data: showDate.value!.user,
-              suffix: Tooltip(
-                message: "添加到收藏",
-                child: IconButton(
-                  onPressed: () => {
-                    // Toast提示
-                    // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    //   content: Text('已添加到收藏夹'),
-                    // ))
-                  },
-                  icon: Icon(
-                    TablerIcons.heart,
-                    size: 20,
-                    color: themes.fgColor,
+          if (showDate.value != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              child: UserInfo(
+                data: showDate.value!.user,
+                suffix: Tooltip(
+                  message: "添加到收藏",
+                  child: IconButton(
+                    onPressed: () async {
+                      var apis = ref.read(misskeyApisProvider).value;
+                      try {
+                        if (showDate.value!.isFavorited) {
+                          var res = await MkConfirm.show(children: [
+                                Icon(
+                                  TablerIcons.alert_triangle,
+                                  size: 36,
+                                  color: themes.warnColor,
+                                ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                const Text(
+                                  "确定要取消收藏吗？",
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ]) ??
+                              false;
+                          if (res) {
+                            await apis?.clips.unFavorite(clipId: clipId);
+                          }
+                        } else {
+                          await apis?.clips.favorite(clipId: clipId);
+                        }
+                      } finally {
+                        ref.invalidate(provider);
+                      }
+                    },
+                    icon: Icon(
+                      showDate.value!.isFavorited
+                          ? TablerIcons.heart_filled
+                          : TablerIcons.heart,
+                      size: 20,
+                      color: showDate.value!.isFavorited
+                          ? const Color.fromARGB(255, 241, 97, 132)
+                          : themes.fgColor,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(

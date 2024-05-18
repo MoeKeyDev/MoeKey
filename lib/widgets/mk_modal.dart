@@ -6,13 +6,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../status/themes.dart';
 import 'blur_widget.dart';
-import 'mk_card.dart';
 
 class MkModal extends HookConsumerWidget {
   const MkModal({
     super.key,
     required this.body,
-    required this.appbar,
+    this.appbar,
     this.width = 450,
     this.height = 500,
     this.padding,
@@ -20,7 +19,7 @@ class MkModal extends HookConsumerWidget {
   });
 
   final Widget body;
-  final Widget appbar;
+  final Widget? appbar;
   final double width;
   final double height;
   final EdgeInsetsGeometry? padding;
@@ -34,6 +33,53 @@ class MkModal extends HookConsumerWidget {
     var borderRadius = const BorderRadius.all(
       Radius.circular(12),
     );
+    return ModalWrapper(
+        child: AnimatedContainer(
+      width: querySize.width > width ? width : querySize.width,
+      height: querySize.height > height ? height : querySize.height,
+      duration: const Duration(milliseconds: 500),
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: Column(
+          children: [
+            if (appbar != null)
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: BlurWidget(
+                  color: themes.windowHeaderColor,
+                  child: appbar,
+                ),
+              ),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: themes.panelColor,
+                child: body,
+              ),
+            )
+          ],
+        ),
+      ),
+    ));
+  }
+}
+
+class ModalWrapper extends StatelessWidget {
+  const ModalWrapper({
+    super.key,
+    this.maskClosable = true,
+    required this.child,
+    this.padding,
+  });
+
+  final bool maskClosable;
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: maskClosable
           ? () {
@@ -57,35 +103,7 @@ class MkModal extends HookConsumerWidget {
                   onTap: () {},
                   child: Padding(
                     padding: padding ?? const EdgeInsets.all(12),
-                    child: AnimatedContainer(
-                      width: querySize.width > width ? width : querySize.width,
-                      height:
-                          querySize.height > height ? height : querySize.height,
-                      duration: const Duration(milliseconds: 500),
-                      child: ClipRRect(
-                        borderRadius: borderRadius,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: BlurWidget(
-                                color: themes.windowHeaderColor,
-                                child: appbar,
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                color: themes.panelColor,
-                                child: body,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    child: child,
                   ),
                 ),
               )
@@ -97,11 +115,11 @@ class MkModal extends HookConsumerWidget {
   }
 }
 
-showModel({
+showModel<T>({
   required BuildContext context,
   required Widget Function(BuildContext) builder,
 }) {
-  var page = PageRouteBuilder(
+  var page = PageRouteBuilder<T>(
     opaque: false,
     transitionDuration: const Duration(milliseconds: 150),
     reverseTransitionDuration: const Duration(milliseconds: 210),
@@ -146,5 +164,5 @@ showModel({
       );
     },
   );
-  Navigator.of(context, rootNavigator: true).push(page);
+  return Navigator.of(context, rootNavigator: true).push<T>(page);
 }

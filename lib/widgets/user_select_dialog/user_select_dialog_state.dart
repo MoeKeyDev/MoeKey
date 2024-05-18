@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:moekey/status/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../apis/models/user_full.dart';
 import '../../status/user.dart';
 import '../../status/server.dart';
 
@@ -15,16 +16,18 @@ class UserSelectDialogState extends _$UserSelectDialogState {
   Timer? timer;
 
   @override
-  FutureOr<List> build() async {
+  FutureOr<List<UserFullModel>> build() async {
     return loadFollowing();
   }
 
-  FutureOr<List> loadFollowing() async {
+  FutureOr<List<UserFullModel>> loadFollowing() async {
     var user = await ref.read(currentLoginUserProvider.future);
     var userList = await ref.read(userFollowingProvider(user?.id ?? "").future);
-    var list = [];
+    var list = <UserFullModel>[];
     for (var item in userList) {
-      list.add(item.followee);
+      if (item.followee != null) {
+        list.add(item.followee!);
+      }
     }
     return list;
   }
@@ -49,14 +52,17 @@ class UserSelectDialogState extends _$UserSelectDialogState {
     if (this.host != "" || this.name != "") {
       var http = await ref.read(httpProvider.future);
       var user = await ref.read(currentLoginUserProvider.future);
-      var data = await http.post("/users/search-by-username-and-host", data: {
+      var data =
+          await http.post<List>("/users/search-by-username-and-host", data: {
         "username": this.name,
         "host": this.host,
         "limit": 30,
-        "detail": false,
+        "detail": true,
         "i": user!.token
       });
-      state = AsyncData(data.data);
+
+      state = AsyncData(List<UserFullModel>.from(
+          data.data!.map((e) => UserFullModel.fromMap(e))));
     } else {
       var data = await loadFollowing();
       state = AsyncData(data);

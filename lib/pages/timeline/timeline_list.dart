@@ -1,11 +1,15 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
+import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
 import 'package:moekey/status/timeline.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 
+import '../../apis/models/note.dart';
 import '../../widgets/loading_weight.dart';
 import '../../widgets/notes/note_card.dart';
 
@@ -45,7 +49,8 @@ class TimeLineListPage extends HookConsumerWidget {
                   ref.invalidate(dataProvider);
                 },
                 child: CustomScrollView(
-                  cacheExtent: 4000,
+                  cacheExtent:
+                      (Platform.isAndroid || Platform.isIOS) ? null : 4000,
                   // controller: scrollController,
                   slivers: [
                     if (nestedScroll)
@@ -60,9 +65,14 @@ class TimeLineListPage extends HookConsumerWidget {
                           padding, mediaPadding.bottom),
                       sliver: SliverMainAxisGroup(
                         slivers: [
-                          SliverList.separated(
-                            addAutomaticKeepAlives: true,
-                            itemBuilder: (BuildContext context, int index) {
+                          SliverImplicitlyAnimatedList<NoteModel>(
+                            items: data.valueOrNull ?? [],
+                            areItemsTheSame: (oldItem, newItem) =>
+                                oldItem.id == newItem.id,
+                            itemBuilder: (BuildContext context,
+                                Animation<double> animation,
+                                NoteModel item,
+                                int index) {
                               BorderRadius borderRadius;
                               if (index == 0) {
                                 borderRadius = const BorderRadius.only(
@@ -72,32 +82,27 @@ class TimeLineListPage extends HookConsumerWidget {
                                 borderRadius =
                                     const BorderRadius.all(Radius.zero);
                               }
-                              return NoteCard(
-                                  key: ValueKey(data.valueOrNull![index].id),
-                                  borderRadius: borderRadius,
-                                  data: data.valueOrNull![index]);
-
-                              // return KeepAliveWrapper(
-                              //   child: NoteCard(
-                              //     key: ValueKey(data.valueOrNull![index].id),
-                              //     borderRadius: borderRadius,
-                              //     data: data.valueOrNull![index],
-                              //   ),
-                              // );
-                            },
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return SizedBox(
-                                width: double.infinity,
-                                height: 1,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: themes.dividerColor,
-                                  ),
+                              return SizeFadeTransition(
+                                animation: animation,
+                                child: Column(
+                                  children: [
+                                    NoteCard(
+                                        key: ValueKey(item.id),
+                                        borderRadius: borderRadius,
+                                        data: item),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 1,
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          color: themes.dividerColor,
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               );
                             },
-                            itemCount: data.valueOrNull?.length ?? 0,
                           ),
                           SliverLayoutBuilder(
                             builder: (context, constraints) {

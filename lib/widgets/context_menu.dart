@@ -98,6 +98,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   }
 
   showBottomSheet() {
+    print(context.hashCode);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -105,6 +106,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
       useRootNavigator: true,
       isScrollControlled: true,
       builder: (context) {
+        print(this.context.hashCode);
         return ContextDraggableBottomSheet(menu: widget.menu);
       },
     );
@@ -171,7 +173,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     if (Platform.isAndroid || Platform.isIOS) {
       showBottomSheet();
       // 长按震动
-      HapticFeedback.lightImpact();
+      HapticFeedback.heavyImpact();
     }
   }
 
@@ -265,6 +267,10 @@ class ContextDraggableBottomSheet extends HookConsumerWidget {
                 const SizedBox(
                   height: 8,
                 ),
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  const Center(
+                    child: LoadingCircularProgress(size: 18, strokeWidth: 4),
+                  ),
                 if (snapshot.connectionState == ConnectionState.done)
                   if (menu.menuListBuilder != null)
                     for (var item in snapshot.data! as List<ContextMenuItem>)
@@ -274,20 +280,22 @@ class ContextDraggableBottomSheet extends HookConsumerWidget {
                         onHidden: () {
                           Navigator.of(context).pop();
                         },
-                        onTap: () {
+                        onTap: () async {
                           if (item.child != null) {
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Colors.transparent,
-                              elevation: 0,
-                              useRootNavigator: true,
-                              showDragHandle: false,
-                              isScrollControlled: true,
-                              builder: (context) {
-                                return ContextDraggableBottomSheet(
-                                    menu: item.child!);
-                              },
-                            );
+                            Future.delayed(Duration.zero).then((value) {
+                              showModalBottomSheet(
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                useRootNavigator: true,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return ContextDraggableBottomSheet(
+                                    menu: item.child!,
+                                  );
+                                },
+                              );
+                            });
                           }
                         },
                       )
@@ -386,7 +394,9 @@ class _ContextMenuLayoutWidgetState extends State<ContextMenuLayoutWidget> {
                   },
                 )
             else
-              const LoadingCircularProgress(size: 18, strokeWidth: 4)
+              const Center(
+                child: LoadingCircularProgress(size: 18, strokeWidth: 4),
+              )
           ],
         );
       },
@@ -623,6 +633,10 @@ class _ContextMenuItem extends ConsumerWidget {
               ),
               child: GestureDetector(
                 onTap: () async {
+                  if (contextMenuItem.child != null) {
+                    return;
+                  }
+
                   if (contextMenuItem.onTap != null) {
                     var res = await contextMenuItem.onTap!();
                     if (res) return;

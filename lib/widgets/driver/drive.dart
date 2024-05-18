@@ -1,7 +1,7 @@
 import "package:dio/dio.dart";
 import "package:moekey/status/server.dart";
 import "package:moekey/utils/image_compression.dart";
-import "package:moekey/widgets/info_dialog.dart";
+import "package:moekey/widgets/mk_info_dialog.dart";
 import "package:path/path.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
@@ -135,7 +135,7 @@ class DriverUploader extends _$DriverUploader {
   }
 
   void _showErrorDialog(DioException e) {
-    InfoDialog.show(
+    MkInfoDialog.show(
         info: "上传失败\n ${e.response?.data.toString() ?? e.toString()}",
         isError: true);
   }

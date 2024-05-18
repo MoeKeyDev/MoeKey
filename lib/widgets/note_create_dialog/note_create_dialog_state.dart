@@ -9,7 +9,7 @@ import '../../apis/models/note.dart';
 import '../../main.dart';
 import '../../status/dio.dart';
 import '../../status/server.dart';
-import '../info_dialog.dart';
+import '../mk_info_dialog.dart';
 
 part 'note_create_dialog_state.g.dart';
 
@@ -283,11 +283,11 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
       return res.data;
     } on DioException catch (e) {
       logger.d(e.response);
-      InfoDialog.show(
+      MkInfoDialog.show(
           info: "发布失败\n\n ${e.response?.data.toString() ?? e.toString()}",
           isError: true);
     } catch (e) {
-      InfoDialog.show(info: "$e", isError: true);
+      MkInfoDialog.show(info: "$e", isError: true);
     }
     sendLoading = false;
     return null;
