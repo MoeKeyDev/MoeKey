@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.3
+
+### Chore
+
+- update flutter version to 3.22
+- update dependencies version
+
 ## 0.3.1
 
 ### Feature
