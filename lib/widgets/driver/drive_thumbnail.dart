@@ -15,14 +15,14 @@ import '../mk_image.dart';
 import 'drive.dart';
 
 class DriveImageThumbnail extends HookConsumerWidget {
-  DriveImageThumbnail(
-      {super.key, required data, this.isSelect = false, this.onRemove}) {
-    this.data = data["data"];
-    type = data["type"];
-  }
+  const DriveImageThumbnail({
+    super.key,
+    this.isSelect = false,
+    this.onRemove,
+    required this.data,
+  });
 
-  late final dynamic data;
-  late final String type;
+  final DriveModel data;
   final bool isSelect;
   final void Function()? onRemove;
 
@@ -36,13 +36,13 @@ class DriveImageThumbnail extends HookConsumerWidget {
           ContextMenuMode.onLongPress
         ],
         menu: ContextMenuCard(
-          initialChildSize: type == "folder" ? 0.3 : 0.6,
-          maxChildSize: type == "folder" ? 0.3 : 0.6,
-          minChildSize: type == "folder" ? 0.3 : 0.6,
+          initialChildSize: data.runtimeType == DriverFolderModel ? 0.3 : 0.6,
+          maxChildSize: data.runtimeType == DriverFolderModel ? 0.3 : 0.6,
+          minChildSize: data.runtimeType == DriverFolderModel ? 0.3 : 0.6,
           width: 200,
           menuListBuilder: () {
             return [
-              if (type == "folder") ...[
+              if (data.runtimeType == DriverFolderModel) ...[
                 ContextMenuItem(
                   label: "重命名",
                   icon: TablerIcons.forms,
@@ -82,7 +82,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
 
                       return false;
                     })
-              ] else ...[
+              ] else if (data.runtimeType == DriveFileModel) ...[
                 ContextMenuItem(
                   label: "重命名",
                   icon: TablerIcons.forms,
@@ -102,7 +102,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     return false;
                   },
                 ),
-                if (data.isSensitive)
+                if ((data as DriveFileModel).isSensitive)
                   ContextMenuItem(
                       label: "取消标记为敏感内容",
                       icon: TablerIcons.eye,
@@ -175,7 +175,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
           },
         ),
         child: GestureDetector(
-          onTap: type == "folder"
+          onTap: data.runtimeType == DriverFolderModel
               ? () {
                   ref
                       .read(drivePathProvider.notifier)
@@ -206,8 +206,9 @@ class DriveImageThumbnail extends HookConsumerWidget {
                       child: AspectRatio(
                         aspectRatio: 1,
                         child: [
-                          if (type == "file")
-                            DriverFileIcon(themes: themes, data: data)
+                          if (data.runtimeType == DriveFileModel)
+                            DriverFileIcon(
+                                themes: themes, data: data as DriveFileModel)
                           else
                             DecoratedBox(
                               decoration: BoxDecoration(
@@ -245,101 +246,100 @@ class DriveImageThumbnail extends HookConsumerWidget {
         var name = useState(data.name);
         return MkDialog(
           padding: const EdgeInsets.all(32),
-          child: SizedBox(
-            width: 210,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "重命名文件",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  data.runtimeType == DriveFileModel ? "重命名文件" : "重命名文件夹",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15),
                 ),
-                const SizedBox(
-                  height: 12,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(6)),
-                          borderSide:
-                              BorderSide(width: 1, color: themes.fgColor)),
-                      contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
-                      isDense: true,
-                      hintText: "请输入新文件名",
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(6)),
-                          borderSide:
-                              BorderSide(width: 1, color: themes.dividerColor)),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(6)),
-                          borderSide:
-                              BorderSide(width: 1, color: themes.accentColor))),
-                  style: const TextStyle(fontSize: 14),
-                  cursorWidth: 1,
-                  cursorColor: themes.fgColor,
-                  maxLines: 2,
-                  textAlignVertical: TextAlignVertical.center,
-                  onChanged: (value) {
-                    name.value = value;
-                  },
-                  initialValue: name.value,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          var notifier =
-                              ref.read(driverUploaderProvider.notifier);
-                          if (type == "file") {
-                            notifier.updateFile(
-                                fileId: data.id, name: name.value);
-                          } else {
-                            notifier.updateFolders(
-                                folderId: data.id, name: name.value);
-                          }
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        borderSide:
+                            BorderSide(width: 1, color: themes.fgColor)),
+                    contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
+                    isDense: true,
+                    hintText: "请输入新文件名",
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        borderSide:
+                            BorderSide(width: 1, color: themes.dividerColor)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        borderSide:
+                            BorderSide(width: 1, color: themes.accentColor))),
+                style: const TextStyle(fontSize: 14),
+                cursorWidth: 1,
+                cursorColor: themes.fgColor,
+                maxLines: 2,
+                textAlignVertical: TextAlignVertical.center,
+                onChanged: (value) {
+                  name.value = value;
+                },
+                initialValue: name.value,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        var notifier =
+                            ref.read(driverUploaderProvider.notifier);
+                        if (data.runtimeType == DriveFileModel) {
+                          notifier.updateFile(
+                              fileId: data.id, name: name.value);
+                        } else {
+                          notifier.updateFolders(
+                              folderId: data.id, name: name.value);
+                        }
 
+                        Navigator.of(context).pop();
+                      },
+                      style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStateProperty.all(themes.accentColor),
+                          foregroundColor:
+                              WidgetStateProperty.all(themes.fgOnAccentColor),
+                          elevation: WidgetStateProperty.all(0)),
+                      child: const Text("OK"),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 100,
+                    child: FilledButton(
+                        onPressed: () {
                           Navigator.of(context).pop();
                         },
                         style: ButtonStyle(
                             backgroundColor:
-                                WidgetStateProperty.all(themes.accentColor),
+                                WidgetStateProperty.all(themes.buttonBgColor),
                             foregroundColor:
-                                WidgetStateProperty.all(themes.fgOnAccentColor),
+                                WidgetStateProperty.all(themes.fgColor),
                             elevation: WidgetStateProperty.all(0)),
-                        child: const Text("OK"),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 100,
-                      child: FilledButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  WidgetStateProperty.all(themes.buttonBgColor),
-                              foregroundColor:
-                                  WidgetStateProperty.all(themes.fgColor),
-                              elevation: WidgetStateProperty.all(0)),
-                          child: const Text("取消")),
-                    )
-                  ],
-                )
-              ],
-            ),
+                        child: const Text("取消")),
+                  )
+                ],
+              )
+            ],
           ),
         );
       },
@@ -349,97 +349,95 @@ class DriveImageThumbnail extends HookConsumerWidget {
   Widget getCommentDialog(ThemeColorModel themes) {
     return HookConsumer(
       builder: (context, ref, child) {
-        var name = useState(data.comment);
+        var name = useState((data as DriveFileModel).comment);
         return MkDialog(
           padding: const EdgeInsets.all(32),
-          child: SizedBox(
-            width: 210,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "添加标题",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "添加标题",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        borderSide:
+                            BorderSide(width: 1, color: themes.fgColor)),
+                    contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
+                    isDense: true,
+                    hintText: "请输入新标题",
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        borderSide:
+                            BorderSide(width: 1, color: themes.dividerColor)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        borderSide:
+                            BorderSide(width: 1, color: themes.accentColor))),
+                style: const TextStyle(fontSize: 14),
+                cursorWidth: 1,
+                cursorColor: themes.fgColor,
+                maxLines: 4,
+                textAlignVertical: TextAlignVertical.center,
+                onChanged: (value) {
+                  name.value = value;
+                },
+                initialValue: name.value,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ref
+                            .read(driverUploaderProvider.notifier)
+                            .updateFile(fileId: data.id, comment: name.value);
+                        Navigator.of(context).pop();
+                      },
+                      style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStateProperty.all(themes.accentColor),
+                          foregroundColor:
+                              WidgetStateProperty.all(themes.fgOnAccentColor),
+                          elevation: WidgetStateProperty.all(0)),
+                      child: const Text("OK"),
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(6)),
-                          borderSide:
-                              BorderSide(width: 1, color: themes.fgColor)),
-                      contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
-                      isDense: true,
-                      hintText: "请输入新标题",
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(6)),
-                          borderSide:
-                              BorderSide(width: 1, color: themes.dividerColor)),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(6)),
-                          borderSide:
-                              BorderSide(width: 1, color: themes.accentColor))),
-                  style: const TextStyle(fontSize: 14),
-                  cursorWidth: 1,
-                  cursorColor: themes.fgColor,
-                  maxLines: 4,
-                  textAlignVertical: TextAlignVertical.center,
-                  onChanged: (value) {
-                    name.value = value;
-                  },
-                  initialValue: name.value,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      child: ElevatedButton(
+                  SizedBox(
+                    width: 100,
+                    child: FilledButton(
                         onPressed: () {
-                          ref
-                              .read(driverUploaderProvider.notifier)
-                              .updateFile(fileId: data.id, comment: name.value);
                           Navigator.of(context).pop();
                         },
                         style: ButtonStyle(
                             backgroundColor:
-                                WidgetStateProperty.all(themes.accentColor),
+                                WidgetStateProperty.all(themes.buttonBgColor),
                             foregroundColor:
-                                WidgetStateProperty.all(themes.fgOnAccentColor),
+                                WidgetStateProperty.all(themes.fgColor),
                             elevation: WidgetStateProperty.all(0)),
-                        child: const Text("OK"),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 100,
-                      child: FilledButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  WidgetStateProperty.all(themes.buttonBgColor),
-                              foregroundColor:
-                                  WidgetStateProperty.all(themes.fgColor),
-                              elevation: WidgetStateProperty.all(0)),
-                          child: const Text("取消")),
-                    )
-                  ],
-                )
-              ],
-            ),
+                        child: const Text("取消")),
+                  )
+                ],
+              )
+            ],
           ),
         );
       },
@@ -451,88 +449,87 @@ class DriveImageThumbnail extends HookConsumerWidget {
       builder: (context, ref, child) {
         return MkDialog(
           padding: const EdgeInsets.all(32),
-          child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 350),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Icon(
+                  TablerIcons.alert_triangle,
+                  size: 28,
+                  color: themes.warnColor,
+                ),
+              ),
+              if (data.runtimeType == DriveFileModel)
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "要删除「${data.name}」文件吗？附加此文件的帖子也会被删除。",
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              else
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "要删除「${data.name}」 文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              const SizedBox(
+                height: 16,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Icon(
-                      TablerIcons.alert_triangle,
-                      size: 28,
-                      color: themes.warnColor,
+                  SizedBox(
+                    width: 100,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        var notifier =
+                            ref.read(driverUploaderProvider.notifier);
+                        if (data.runtimeType == DriveFileModel) {
+                          notifier.deleteFile(data.id);
+                        } else {
+                          notifier.deleteFolder(data.id);
+                        }
+                        if (onRemove != null) {
+                          onRemove!();
+                        }
+                        Navigator.of(context).pop();
+                      },
+                      style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStateProperty.all(themes.accentColor),
+                          foregroundColor:
+                              WidgetStateProperty.all(themes.fgOnAccentColor),
+                          elevation: WidgetStateProperty.all(0)),
+                      child: const Text("OK"),
                     ),
                   ),
-                  if (type == "file")
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "要删除「${data.name}」文件吗？附加此文件的帖子也会被删除。",
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  else
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "要删除「${data.name}」 文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
                   const SizedBox(
-                    height: 16,
+                    width: 15,
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            var notifier =
-                                ref.read(driverUploaderProvider.notifier);
-                            if (type == "file") {
-                              notifier.deleteFile(data.id);
-                            } else {
-                              notifier.deleteFolder(data.id);
-                            }
-                            if (onRemove != null) {
-                              onRemove!();
-                            }
-                            Navigator.of(context).pop();
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  WidgetStateProperty.all(themes.accentColor),
-                              foregroundColor: WidgetStateProperty.all(
-                                  themes.fgOnAccentColor),
-                              elevation: WidgetStateProperty.all(0)),
-                          child: const Text("OK"),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: FilledButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                    themes.buttonBgColor),
-                                foregroundColor:
-                                    WidgetStateProperty.all(themes.fgColor),
-                                elevation: WidgetStateProperty.all(0)),
-                            child: const Text("取消")),
-                      )
-                    ],
+                  SizedBox(
+                    width: 100,
+                    child: FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStateProperty.all(themes.buttonBgColor),
+                            foregroundColor:
+                                WidgetStateProperty.all(themes.fgColor),
+                            elevation: WidgetStateProperty.all(0)),
+                        child: const Text("取消")),
                   )
                 ],
-              )),
+              )
+            ],
+          ),
         );
       },
     );

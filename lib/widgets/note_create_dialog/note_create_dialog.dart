@@ -107,7 +107,7 @@ class NoteCreateDialog extends HookConsumerWidget {
       ThemeColorModel themes, bool fullscreen, double keyboardHeight) {
     return HookConsumer(
       builder: (context, ref, child) {
-        dynamic data = ref.watch(instanceMetaProvider).valueOrNull;
+        MetaDetailedModel? data = ref.watch(instanceMetaProvider).valueOrNull;
         var driverMap = ref.watch(ref
             .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
             .getDriverSelectDialogStateProvider());
@@ -1010,7 +1010,7 @@ class NoteCreateDialog extends HookConsumerWidget {
     });
   }
 
-  Widget buildTextField(MetaDetailedModel meta, bool isFullscreen,
+  Widget buildTextField(MetaDetailedModel? meta, bool isFullscreen,
       TextEditingController contentController) {
     return HookConsumer(
       builder: (context, ref, child) {
@@ -1055,7 +1055,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 ),
                 minLines: isFullscreen ? 4 : 4,
                 maxLines: isFullscreen ? 200 : 100,
-                maxLength: meta.maxNoteTextLength,
+                maxLength: meta?.maxNoteTextLength ?? 300,
 
                 // initialValue: state.text,
                 onChanged: (value) {

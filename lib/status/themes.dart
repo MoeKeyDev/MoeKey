@@ -143,6 +143,8 @@ class Themes extends _$Themes {
         primary: colors.accentColor,
         onPrimary: colors.fgOnAccentColor,
       ),
+      canvasColor: colors.bgColor,
+      cardColor: colors.panelColor,
       useMaterial3: true,
       // fontFamily: Platform.isWindows ? "微软雅黑" : null,
       fontFamilyFallback: [...SystemChineseFont.fontFamilyFallback],

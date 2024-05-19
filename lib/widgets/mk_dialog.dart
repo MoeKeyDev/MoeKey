@@ -16,7 +16,10 @@ class MkDialog extends StatelessWidget {
         child: MkCard(
       borderRadius: const BorderRadius.all(Radius.circular(24)),
       padding: padding,
-      child: child,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600, minWidth: 300),
+        child: child,
+      ),
     ));
   }
 }

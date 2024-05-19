@@ -22,46 +22,43 @@ class MkInfoDialog extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     return MkDialog(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600, minWidth: 300),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isError)
-              Icon(
-                TablerIcons.circle_x,
-                size: 30,
-                color: themes.errorColor,
-              )
-            else
-              Icon(
-                TablerIcons.alert_circle,
-                size: 30,
-                color: themes.warnColor,
-              ),
-            const SizedBox(
-              height: 12,
-            ),
-            Text(
-              info,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(themes.accentColor),
-                  foregroundColor:
-                      WidgetStateProperty.all(themes.fgOnAccentColor),
-                  elevation: WidgetStateProperty.all(0)),
-              child: const Text("我知道了"),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isError)
+            Icon(
+              TablerIcons.circle_x,
+              size: 30,
+              color: themes.errorColor,
             )
-          ],
-        ),
+          else
+            Icon(
+              TablerIcons.alert_circle,
+              size: 30,
+              color: themes.warnColor,
+            ),
+          const SizedBox(
+            height: 12,
+          ),
+          Text(
+            info,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(themes.accentColor),
+                foregroundColor:
+                    WidgetStateProperty.all(themes.fgOnAccentColor),
+                elevation: WidgetStateProperty.all(0)),
+            child: const Text("我知道了"),
+          )
+        ],
       ),
     );
   }
@@ -89,56 +86,52 @@ class MkConfirm extends ConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     return MkDialog(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 32),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600, minWidth: 300),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ...children,
-            const SizedBox(
-              height: 12,
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 120),
-                  child: FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStateProperty.all(themes.accentColor),
-                        foregroundColor:
-                            WidgetStateProperty.all(themes.fgOnAccentColor),
-                        elevation: WidgetStateProperty.all(0)),
-                    child: const Text("OK"),
-                  ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...children,
+          const SizedBox(
+            height: 12,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 120),
+                child: FilledButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStateProperty.all(themes.accentColor),
+                      foregroundColor:
+                          WidgetStateProperty.all(themes.fgOnAccentColor),
+                      elevation: WidgetStateProperty.all(0)),
+                  child: const Text("OK"),
                 ),
-                const SizedBox(
-                  width: 12,
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 120),
+                child: FilledButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStateProperty.all(themes.buttonBgColor),
+                      foregroundColor: WidgetStateProperty.all(themes.fgColor),
+                      elevation: WidgetStateProperty.all(0)),
+                  child: const Text("取消"),
                 ),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 120),
-                  child: FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStateProperty.all(themes.buttonBgColor),
-                        foregroundColor:
-                            WidgetStateProperty.all(themes.fgColor),
-                        elevation: WidgetStateProperty.all(0)),
-                    child: const Text("取消"),
-                  ),
-                )
-              ],
-            )
-          ],
-        ),
+              )
+            ],
+          )
+        ],
       ),
     );
   }

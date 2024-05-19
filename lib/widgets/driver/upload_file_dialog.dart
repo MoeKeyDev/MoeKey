@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/widgets/driver/driver_upload_bar.dart';
 import 'package:path/path.dart';
 
+import '../../apis/models/drive.dart';
 import '../../main.dart';
 import '../mk_dialog.dart';
 import 'drive.dart';
@@ -81,7 +82,7 @@ class DriverUploadFileDialog extends HookConsumerWidget {
 
   static OverlayEntry? overlayEntry;
 
-  static Future<List> showUploadDialog(
+  static Future<List<DriveFileModel>> showUploadDialog(
       {required BuildContext context,
       required bool isOriginal,
       required WidgetRef ref}) async {

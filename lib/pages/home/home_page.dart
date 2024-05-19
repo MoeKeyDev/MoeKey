@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
@@ -383,17 +384,21 @@ class UserAvatarButton extends ConsumerWidget {
                   );
                 },
                 onTap: () {
-                  Timer(const Duration(milliseconds: 150), () {
-                    var logic = ref.read(homePageStateProvider.notifier);
-                    logic.changePageByRouterItem(RouterItem(
-                      path: "member/${user?.id}",
-                      page: () {
-                        return UserPage(
-                          userId: user?.id,
-                        );
-                      },
-                    ));
-                  });
+                  var logic = ref.read(homePageStateProvider.notifier);
+                  Navigator.pop(context);
+                  Future.delayed(
+                    Durations.medium1,
+                    () {
+                      logic.changePageByRouterItem(RouterItem(
+                        path: "member/${user?.id}",
+                        page: () {
+                          return UserPage(
+                            userId: user?.id,
+                          );
+                        },
+                      ));
+                    },
+                  );
                   return false;
                 },
               ),

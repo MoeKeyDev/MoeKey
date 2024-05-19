@@ -1053,8 +1053,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
                     label: "新建",
                     icon: TablerIcons.plus,
                     onTap: () {
-                      Future.delayed(const Duration(milliseconds: 100))
-                          .then((value) {
+                      Future.delayed(Duration.zero).then((value) {
                         showModel(
                           context: context,
                           builder: (context) {

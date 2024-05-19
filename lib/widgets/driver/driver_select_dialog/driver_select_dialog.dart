@@ -95,7 +95,7 @@ class DriverSelectContextMenu extends HookConsumerWidget {
                     for (var item in value) {
                       ref
                           .read(driverSelectDialogStateProvider(id).notifier)
-                          .add(item["id"], DriveFileModel.fromMap(item));
+                          .add(item.id, item);
                     }
                   },
                 );

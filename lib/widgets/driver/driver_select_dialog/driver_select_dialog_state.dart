@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:moekey/apis/models/drive.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'driver_select_dialog_state.g.dart';
@@ -8,10 +9,10 @@ part 'driver_select_dialog_state.g.dart';
 class DriverSelectDialogState extends _$DriverSelectDialogState {
   @override
   LinkedHashMap build(String id) {
-    return LinkedHashMap();
+    return LinkedHashMap<String, DriveModel>();
   }
 
-  add(String id, dynamic data) {
+  add(String id, DriveModel data) {
     state[id] = data;
     ref.notifyListeners();
   }

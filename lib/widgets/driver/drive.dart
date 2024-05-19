@@ -40,7 +40,7 @@ class DriverUploader extends _$DriverUploader {
     return [];
   }
 
-  Future<List> createFiles(
+  Future<List<DriveFileModel>> createFiles(
       {required List<String> filesPath, bool compression = true}) async {
     try {
       var apis = await ref.read(misskeyApisProvider.future);
@@ -64,7 +64,7 @@ class DriverUploader extends _$DriverUploader {
       state = loadingFile;
       ref.notifyListeners();
 
-      var doneFiles = [];
+      List<DriveFileModel> doneFiles = [];
 
       for (var (index, filePath) in state.indexed) {
         if (filePath["done"]) continue;
@@ -108,7 +108,7 @@ class DriverUploader extends _$DriverUploader {
           );
           var notifier = ref.read(driveListProvider.notifier);
           notifier.addFile(data);
-          doneFiles.add(data);
+          doneFiles.add(data!);
           state[index]["done"] = true;
           state[index]["data"] = data;
 
@@ -225,20 +225,20 @@ class DriveList extends _$DriveList {
   bool endFolder = false;
 
   @override
-  FutureOr<List> build() async {
-    var list = [];
+  FutureOr<List<DriveModel>> build() async {
+    var list = <DriveModel>[];
     var res = await loadFolders();
     ref.listen(drivePathProvider, (previous, next) {
       state = const AsyncData([]);
     });
     for (var item in res) {
-      list.add({"type": "folder", "data": item});
+      list.add(item);
     }
     // 继续加载文件
     if (endFolder) {
       var res = await loadFiles();
       for (var item in res) {
-        list.add({"type": "file", "data": item});
+        list.add(item);
       }
     }
 
@@ -250,18 +250,18 @@ class DriveList extends _$DriveList {
     if (state.isLoading) return;
     state = const AsyncLoading();
     try {
-      var list = state.valueOrNull ?? [];
+      List<DriveModel> list = state.valueOrNull ?? [];
       if (endFolder == false) {
         // 继续加载文件夹
-        var res = await loadFolders(untilId: list.lastOrNull["data"].id);
+        var res = await loadFolders(untilId: list.lastOrNull?.id);
         for (var item in res) {
-          list.add({"type": "folder", "data": item});
+          list.add(item);
         }
       } else {
         // 加载文件
-        var res = await loadFiles(untilId: list.lastOrNull["data"].id);
+        var res = await loadFiles(untilId: list.lastOrNull?.id);
         for (var item in res) {
-          list.add({"type": "file", "data": item});
+          list.add(item);
         }
       }
       state = AsyncData(list);
@@ -300,28 +300,27 @@ class DriveList extends _$DriveList {
     var list = state.valueOrNull ?? [];
     var fileIndex = -1;
     for (var (index, item) in list.indexed) {
-      if (item["type"] == "file") {
+      if (item.runtimeType == DriveFileModel) {
         fileIndex = index;
         break;
       }
     }
 
-    list.insert(fileIndex == -1 ? list.length : fileIndex,
-        {"type": "file", "data": data});
+    list.insert(fileIndex == -1 ? list.length : fileIndex, data);
     state = AsyncData(list);
   }
 
   addFolder(dynamic data) {
     var list = state.valueOrNull ?? [];
-    list.insert(0, {"type": "folder", "data": data});
+    list.insert(0, data);
     state = AsyncData(list);
   }
 
   updateFile(String id, dynamic data) {
     var list = state.valueOrNull ?? [];
     for (var (index, item) in list.indexed) {
-      if (item["type"] == "file" && item["data"].id == id) {
-        list[index] = {"type": "file", "data": data};
+      if (item.runtimeType == DriveFileModel && item.id == id) {
+        list[index] = data;
         break;
       }
     }
@@ -331,8 +330,8 @@ class DriveList extends _$DriveList {
   updateFolder(String id, dynamic data) {
     var list = state.valueOrNull ?? [];
     for (var (index, item) in list.indexed) {
-      if (item["type"] == "folder" && item["data"].id == id) {
-        list[index] = {"type": "folder", "data": data};
+      if (item.runtimeType == DriverFolderModel && item.id == id) {
+        list[index] = data;
         break;
       }
     }
@@ -343,7 +342,7 @@ class DriveList extends _$DriveList {
     var list = state.valueOrNull ?? [];
     var fileIndex = 0;
     for (var (index, item) in list.indexed) {
-      if (item["type"] == "file" && item["data"].id == fileId) {
+      if (item.runtimeType == DriveFileModel && item.id == fileId) {
         fileIndex = index;
         break;
       }
@@ -356,7 +355,7 @@ class DriveList extends _$DriveList {
     var list = state.valueOrNull ?? [];
     var fileIndex = 0;
     for (var (index, item) in list.indexed) {
-      if (item["type"] == "folder" && item["data"].id == folderId) {
+      if (item.runtimeType == DriverFolderModel && item.id == folderId) {
         fileIndex = index;
         break;
       }

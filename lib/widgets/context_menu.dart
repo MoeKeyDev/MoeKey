@@ -282,8 +282,7 @@ class ContextDraggableBottomSheet extends HookConsumerWidget {
                         },
                         onTap: () async {
                           if (item.child != null) {
-                            Future.delayed(const Duration(milliseconds: 100))
-                                .then((value) {
+                            Future.delayed(Duration.zero).then((value) {
                               showModalBottomSheet(
                                 context: context,
                                 backgroundColor: Colors.transparent,
@@ -634,7 +633,7 @@ class _ContextMenuItem extends ConsumerWidget {
               ),
               child: GestureDetector(
                 onTap: () async {
-                  if (contextMenuItem.child != null) {
+                  if (contextMenuItem.child != null && onTap == null) {
                     return;
                   }
 

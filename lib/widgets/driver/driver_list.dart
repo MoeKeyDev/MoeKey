@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/drive.dart';
 import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
@@ -300,7 +301,7 @@ class DriverList extends HookConsumerWidget {
                       ),
                       sliver: SliverAlignedGrid.extent(
                         itemBuilder: (context, index) {
-                          return buildDriverListItem(data, index);
+                          return buildDriverListItem(data.valueOrNull![index]);
                         },
                         maxCrossAxisExtent: 150,
                         crossAxisSpacing: 18,
@@ -331,12 +332,11 @@ class DriverList extends HookConsumerWidget {
     );
   }
 
-  HookConsumer buildDriverListItem(AsyncValue<List<dynamic>> data, int index) {
+  HookConsumer buildDriverListItem(DriveModel driverModel) {
     return HookConsumer(
       builder: (context, ref, child) {
         var selectList = ref.watch(driverSelectDialogStateProvider(this.id));
-        var id = data.valueOrNull![index]["data"].id;
-        var file = data.valueOrNull![index];
+        var id = driverModel.id;
         var isSelect = useState(selectList.containsKey(id));
         if (selectModel) {
           return GestureDetector(
@@ -344,20 +344,20 @@ class DriverList extends HookConsumerWidget {
               // if (selectList.length >= maxSelect) return;
               var notifier =
                   ref.read(driverSelectDialogStateProvider(this.id).notifier);
-              if (file["type"] == "file") {
+              if (driverModel.runtimeType == DriveFileModel) {
                 if (isSelect.value) {
                   notifier.remove(id);
                   isSelect.value = false;
                 } else {
                   if (selectList.length >= maxSelect) return;
-                  notifier.add(id, file["data"]);
+                  notifier.add(id, driverModel);
                   isSelect.value = true;
                 }
               }
             },
             child: DriveImageThumbnail(
               key: ValueKey(id),
-              data: file,
+              data: driverModel,
               isSelect: isSelect.value,
               onRemove: () {
                 if (isSelect.value) {
@@ -372,7 +372,7 @@ class DriverList extends HookConsumerWidget {
         }
         return DriveImageThumbnail(
           key: ValueKey(id),
-          data: file,
+          data: driverModel,
           isSelect: false,
         );
       },

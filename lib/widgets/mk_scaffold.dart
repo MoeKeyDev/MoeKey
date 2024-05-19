@@ -13,7 +13,6 @@ class MkScaffold extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     // logger.d(mediaQueryData);
-    var themes = ref.watch(themeColorsProvider);
     var topPaddingHeight = mediaQueryData.padding.top;
     var body = this.body;
 
