@@ -1,3 +1,4 @@
+import 'package:moekey/apis/models/clips.dart';
 import 'package:moekey/apis/models/following.dart';
 import 'package:moekey/apis/models/note.dart';
 import 'package:moekey/apis/models/user_full.dart';
@@ -81,5 +82,22 @@ class UserService extends MisskeyApiServices {
       return [];
     }
     return List<NoteModel>.from(res.map((e) => NoteModel.fromMap(e["note"])));
+  }
+
+  Future<List<ClipsModel>> clips({
+    required String userId,
+    int limit = 10,
+    String? sinceId,
+    String? untilId,
+  }) async {
+    var res = await client.post<List>("/users/clips", data: {
+      "userId": userId,
+      "limit": 10,
+      if (sinceId != null) "sinceId": sinceId,
+      if (untilId != null) "untilId": untilId,
+    });
+    return List<ClipsModel>.from(res.map(
+      (e) => ClipsModel.fromMap(e),
+    ));
   }
 }

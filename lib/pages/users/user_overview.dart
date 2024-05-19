@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/status/user.dart';
+import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/utils/time_to_desired_format.dart';
 import 'package:moekey/widgets/blur_widget.dart';
 import 'package:moekey/widgets/context_menu.dart';
@@ -32,16 +33,7 @@ class UserOverview extends HookConsumerWidget {
     var mediaPadding = MediaQuery.paddingOf(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        double padding = 0;
-        if (constraints.maxWidth > 860) {
-          padding = (constraints.maxWidth - 800) / 2;
-        } else if (constraints.maxWidth > 500) {
-          padding = 30;
-        } else if (constraints.maxWidth > 400) {
-          padding = 8;
-        } else {
-          padding = 0;
-        }
+        double padding = getPaddingForNote(constraints);
         var dataProvider = userNotesListProvider(userId: userId);
         var data = ref.watch(dataProvider);
         var themes = ref.watch(themeColorsProvider);

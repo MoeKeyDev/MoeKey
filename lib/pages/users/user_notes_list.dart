@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/themes.dart';
+import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/mk_header.dart';
 
 import '../../status/user.dart';
@@ -67,16 +68,7 @@ class UserNotesPage extends HookConsumerWidget {
     print(data.error);
     return LayoutBuilder(
       builder: (context, constraints) {
-        double padding = 0;
-        if (constraints.maxWidth > 860) {
-          padding = (constraints.maxWidth - 800) / 2;
-        } else if (constraints.maxWidth > 500) {
-          padding = 30;
-        } else if (constraints.maxWidth > 400) {
-          padding = 8;
-        } else {
-          padding = 0;
-        }
+        double padding = getPaddingForNote(constraints);
 
         return Stack(
           children: [
