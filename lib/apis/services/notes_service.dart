@@ -36,12 +36,16 @@ class NotesService extends MisskeyApiServices {
     return NoteTranslate.fromMap(data);
   }
 
-  linkPreview({required String url}) {
+  Future<LinkPreview?> linkPreview({required String url}) async {
     String myLocale = Platform.localeName.replaceAll("_", "-");
-    client.get("${client.host}/url", data: {
+    var res = await client.get("${client.host}/url", data: {
       "url": url,
       "lang": myLocale,
     });
+    if (res == null) {
+      return null;
+    }
+    return LinkPreview.fromMap(res);
   }
 
   Future<NoteModel?> show({required String noteId}) async {

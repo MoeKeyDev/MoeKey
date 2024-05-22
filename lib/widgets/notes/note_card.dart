@@ -209,7 +209,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
       return () => note.unsubNote(data, code);
     }, [this.data.id]);
     var links = extractLinksFromMarkdown(data.text ?? "");
-    var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
+    var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
     var meta = ref.watch(instanceMetaProvider).valueOrNull;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -499,7 +499,7 @@ class NoteLinkPreview extends HookConsumerWidget {
               },
               child: Row(
                 children: [
-                  if (data["thumbnail"] != null)
+                  if (data?.thumbnail != null)
                     ClipRRect(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(5),
@@ -509,7 +509,7 @@ class NoteLinkPreview extends HookConsumerWidget {
                         width: fontsize * 7,
                         height: fontsize * 7,
                         child: MkImage(
-                          data["thumbnail"],
+                          data!.thumbnail!,
                           height: fontsize * 8,
                           width: fontsize * 8,
                         ),
@@ -525,7 +525,7 @@ class NoteLinkPreview extends HookConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          data["title"] ?? "",
+                          data?.title ?? "",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -534,7 +534,7 @@ class NoteLinkPreview extends HookConsumerWidget {
                           ),
                         ),
                         Text(
-                          data["description"] ?? "",
+                          data?.description ?? "",
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -543,12 +543,12 @@ class NoteLinkPreview extends HookConsumerWidget {
                         ),
                         Row(
                           children: [
-                            if (data["icon"] != null) ...[
+                            if (data?.icon != null) ...[
                               SizedBox(
                                 width: 16,
                                 height: 16,
                                 child: MkImage(
-                                  data["icon"],
+                                  data!.icon!,
                                   height: 16,
                                   width: 16,
                                 ),
@@ -559,7 +559,7 @@ class NoteLinkPreview extends HookConsumerWidget {
                             ],
                             Expanded(
                               child: Text(
-                                data["sitename"] ?? "",
+                                data?.sitename ?? "",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -1013,7 +1013,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
                 note = note.copyWith();
                 note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
                 ref.read(noteListProvider.notifier).registerNote(note);
-                var apis = await ref.read(misskeyApisProvider.future);
+                var apis = ref.read(misskeyApisProvider);
                 var res = apis.notes.translate(noteId: data.id);
                 res.then((value) {
                   if (value != null) {
@@ -1042,8 +1042,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
                       onTap: () {
                         ref
                             .read(misskeyApisProvider)
-                            .value
-                            ?.clips
+                            .clips
                             .addNote(clipId: item.$2.id, noteId: data.id);
 
                         return false;
@@ -1088,7 +1087,7 @@ class TimeLineActions extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
+    var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
     var meta = ref.watch(instanceMetaProvider).valueOrNull;
     return HookConsumer(
       builder: (context, ref, child) {
@@ -1104,7 +1103,7 @@ class TimeLineActions extends HookConsumerWidget {
                   noteId: data.id,
                   type: NoteType.reply,
                   note: data,
-                  initText: "${data.createReplyAtText(currentUser.value!.id)} ",
+                  initText: "${data.createReplyAtText(currentUser!.id)} ",
                   context: context,
                 );
               },
@@ -1133,7 +1132,7 @@ class TimeLineActions extends HookConsumerWidget {
                   context,
                   onInsert: (emoji, context) {
                     Navigator.of(context).pop();
-                    ref.read(misskeyApisProvider).value?.notes.createReactions(
+                    ref.read(misskeyApisProvider).notes.createReactions(
                         noteId: data.id, reaction: emoji['name']);
                   },
                 );
@@ -1169,11 +1168,7 @@ class TimeLineActions extends HookConsumerWidget {
             icon: TablerIcons.repeat,
             label: "转发",
             onTap: () {
-              ref
-                  .read(misskeyApisProvider)
-                  .value
-                  ?.notes
-                  .reNote(renoteId: data.id);
+              ref.read(misskeyApisProvider).notes.reNote(renoteId: data.id);
               return false;
             },
           ),

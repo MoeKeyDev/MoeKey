@@ -248,7 +248,7 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     sendLoading = true;
     try {
       var http = await ref.read(httpProvider.future);
-      var user = await ref.read(currentLoginUserProvider.future);
+      var user = ref.read(currentLoginUserProvider);
       var imageSelect = ref.read(getDriverSelectDialogStateProvider());
       state.fileIds = imageSelect.keys.toList();
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:moekey/apis/models/translate.dart';
@@ -165,9 +167,37 @@ class NoteModel {
     );
   }
 
-  toMap() {
-    return {};
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'clippedCount': clippedCount,
+      'createdAt': createdAt.toIso8601String(),
+      'cw': cw,
+      'emojis': emojis,
+      'files': files.map((file) => file.toMap()).toList(),
+      'localOnly': localOnly,
+      'reactionAcceptance': reactionAcceptance?.value,
+      'reactionEmojis': reactionEmojis,
+      'reactions': reactions,
+      'myReaction': myReaction,
+      'renote': renote?.toMap(),
+      'renoteCount': renoteCount,
+      'renoteId': renoteId,
+      'repliesCount': repliesCount,
+      'reply': reply?.toMap(),
+      'replyId': replyId,
+      'text': text,
+      'uri': uri,
+      'user': user.toMap(),
+      'userId': userId,
+      'visibility': visibility.toString(), // Convert enum to string
+      'poll': poll?.toMap(),
+    };
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory NoteModel.fromJson(String str) => NoteModel.fromMap(json.decode(str));
 }
 
 class NotePollModelChoices {
@@ -186,35 +216,41 @@ class NotePollModelChoices {
     required this.isVoted,
   });
 
-  factory NotePollModelChoices.fromMap(dynamic map) {
-    return NotePollModelChoices(
-      votes: map['votes'],
-      text: map['text'],
-      isVoted: map['isVoted'],
-    );
-  }
-
   NotePollModelChoices copyWith({
-    int? votes,
-    String? text,
     bool? isVoted,
-  }) {
-    return NotePollModelChoices(
-      votes: votes ?? this.votes,
-      text: text ?? this.text,
-      isVoted: isVoted ?? this.isVoted,
-    );
-  }
+    String? text,
+    int? votes,
+  }) =>
+      NotePollModelChoices(
+        isVoted: isVoted ?? this.isVoted,
+        text: text ?? this.text,
+        votes: votes ?? this.votes,
+      );
+
+  factory NotePollModelChoices.fromJson(String str) =>
+      NotePollModelChoices.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory NotePollModelChoices.fromMap(Map<String, dynamic> json) =>
+      NotePollModelChoices(
+        isVoted: json["isVoted"],
+        text: json["text"],
+        votes: json["votes"]?.toInt(),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "isVoted": isVoted,
+        "text": text,
+        "votes": votes,
+      };
 }
 
 class NotePollModel {
-//JsonName:multiple
   bool multiple;
 
-//JsonName:choices
   List<NotePollModelChoices> choices;
 
-//JsonName:expiresAt
   DateTime? expiresAt;
 
   NotePollModel({
@@ -223,18 +259,36 @@ class NotePollModel {
     this.expiresAt,
   });
 
-  factory NotePollModel.fromMap(dynamic map) {
-    List<NotePollModelChoices> choices = [];
-    for (var item in map['choices']) {
-      choices.add(NotePollModelChoices.fromMap(item));
-    }
-    return NotePollModel(
-      multiple: map['multiple'],
-      choices: choices,
-      expiresAt:
-          map["expiresAt"] != null ? DateTime.tryParse(map["expiresAt"]) : null,
-    );
-  }
+  NotePollModel copyWith({
+    List<NotePollModelChoices>? choices,
+    DateTime? expiresAt,
+    bool? multiple,
+  }) =>
+      NotePollModel(
+        choices: choices ?? this.choices,
+        expiresAt: expiresAt ?? this.expiresAt,
+        multiple: multiple ?? this.multiple,
+      );
+
+  factory NotePollModel.fromJson(String str) =>
+      NotePollModel.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory NotePollModel.fromMap(Map<String, dynamic> json) => NotePollModel(
+        choices: List<NotePollModelChoices>.from(
+            json["choices"].map((x) => NotePollModel.fromMap(x))),
+        expiresAt: json["expiresAt"] == null
+            ? null
+            : DateTime.parse(json["expiresAt"]),
+        multiple: json["multiple"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "choices": List<dynamic>.from(choices.map((x) => x.toMap())),
+        "expiresAt": expiresAt?.toIso8601String(),
+        "multiple": multiple,
+      };
 }
 
 /// Note表情回复限制
@@ -315,4 +369,69 @@ enum NoteVisibility {
         return TablerIcons.mail;
     }
   }
+}
+
+/// 链接预览
+class LinkPreview {
+  final String? description;
+  final String? icon;
+  final bool? sensitive;
+  final String? sitename;
+  final String? thumbnail;
+  final String? title;
+  final String? url;
+
+  LinkPreview({
+    this.description,
+    this.icon,
+    this.sensitive,
+    this.sitename,
+    this.thumbnail,
+    this.title,
+    this.url,
+  });
+
+  LinkPreview copyWith({
+    String? description,
+    String? icon,
+    bool? sensitive,
+    String? sitename,
+    String? thumbnail,
+    String? title,
+    String? url,
+  }) =>
+      LinkPreview(
+        description: description ?? this.description,
+        icon: icon ?? this.icon,
+        sensitive: sensitive ?? this.sensitive,
+        sitename: sitename ?? this.sitename,
+        thumbnail: thumbnail ?? this.thumbnail,
+        title: title ?? this.title,
+        url: url ?? this.url,
+      );
+
+  factory LinkPreview.fromJson(String str) =>
+      LinkPreview.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory LinkPreview.fromMap(Map<String, dynamic> json) => LinkPreview(
+        description: json["description"],
+        icon: json["icon"],
+        sensitive: json["sensitive"],
+        sitename: json["sitename"],
+        thumbnail: json["thumbnail"],
+        title: json["title"],
+        url: json["url"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "description": description,
+        "icon": icon,
+        "sensitive": sensitive,
+        "sitename": sitename,
+        "thumbnail": thumbnail,
+        "title": title,
+        "url": url,
+      };
 }

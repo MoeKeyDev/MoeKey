@@ -13,7 +13,7 @@ part 'websocket.g.dart';
 class MoekeyWebSocket extends _$MoekeyWebSocket {
   @override
   FutureOr<WebSocketChannel> build() async {
-    var user = await ref.watch(currentLoginUserProvider.future);
+    var user = ref.watch(currentLoginUserProvider);
     var host = user!.serverUrl;
     var scheme = "wss";
     if (Uri.parse(host).scheme == "http") {

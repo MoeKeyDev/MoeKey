@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 
 abstract class DriveModel {
@@ -19,7 +21,7 @@ class DriveFileModel extends DriveModel {
   int size;
   bool isSensitive;
   String? comment;
-  Map? properties;
+  Properties? properties;
   String? thumbnailUrl;
   UniqueKey? hero;
 
@@ -52,13 +54,32 @@ class DriveFileModel extends DriveModel {
       size: map['size'],
       name: map['name'],
       id: map['id'],
-      properties: map['properties'],
+      properties: Properties.fromMap(map['properties']),
       isSensitive: map['isSensitive'] ?? false,
       thumbnailUrl: map['thumbnailUrl'],
       comment: map['comment'],
       hero: null,
     );
   }
+
+  factory DriveFileModel.fromJson(String str) =>
+      DriveFileModel.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  Map<String, dynamic> toMap() => {
+        "blurhash": blurhash,
+        "comment": comment,
+        "createdAt": createdAt,
+        "id": id,
+        "isSensitive": isSensitive,
+        "name": name,
+        "properties": properties?.toMap(),
+        "size": size,
+        "thumbnailUrl": thumbnailUrl,
+        "type": type,
+        "url": url,
+      };
 
   DriveFileModel copyWith({
     String? blurhash,
@@ -69,7 +90,7 @@ class DriveFileModel extends DriveModel {
     bool? isSensitive,
     String? name,
     String? id,
-    Map? properties,
+    Properties? properties,
     String? thumbnailUrl,
     UniqueKey? hero,
     String? comment,
@@ -89,6 +110,52 @@ class DriveFileModel extends DriveModel {
       comment: comment ?? this.comment,
     );
   }
+}
+
+class Properties {
+  final String? avgColor;
+  final double? height;
+  final double? orientation;
+  final double? width;
+
+  Properties({
+    this.avgColor,
+    this.height,
+    this.orientation,
+    this.width,
+  });
+
+  Properties copyWith({
+    String? avgColor,
+    double? height,
+    double? orientation,
+    double? width,
+  }) =>
+      Properties(
+        avgColor: avgColor ?? this.avgColor,
+        height: height ?? this.height,
+        orientation: orientation ?? this.orientation,
+        width: width ?? this.width,
+      );
+
+  factory Properties.fromJson(String str) =>
+      Properties.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory Properties.fromMap(Map<String, dynamic> json) => Properties(
+        avgColor: json["avgColor"],
+        height: json["height"]?.toDouble(),
+        orientation: json["orientation"]?.toDouble(),
+        width: json["width"]?.toDouble(),
+      );
+
+  Map<String, dynamic> toMap() => {
+        "avgColor": avgColor,
+        "height": height,
+        "orientation": orientation,
+        "width": width,
+      };
 }
 
 class DriverFolderModel extends DriveModel {

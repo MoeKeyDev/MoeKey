@@ -442,7 +442,7 @@ class UserHomeCard extends HookConsumerWidget {
                                         ),
                                       ),
                                     ),
-                                    if (currentUser.value?.id != user.value?.id)
+                                    if (currentUser?.id != user.value?.id)
                                       MouseRegion(
                                         cursor: SystemMouseCursors.click,
                                         child: GestureDetector(

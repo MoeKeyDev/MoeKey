@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/login_user.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
@@ -345,14 +346,14 @@ class UserAvatarButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var user = ref.watch(currentLoginUserProvider);
-    var userData = user.valueOrNull?.userInfo;
+    var userData = user?.userInfo;
     return LayoutBuilder(builder: (context, constraints) {
       var extend = constraints.maxWidth >= 250;
       return ContextMenuBuilder(
         menu: ContextMenuCard(
           menuListBuilder: () async {
-            var list = await ref.read(loginUserListProvider.future);
-            var user = await ref.read(currentLoginUserProvider.future);
+            var list = ref.read(loginUserListProvider);
+            var user = ref.read(currentLoginUserProvider);
             return [
               ContextMenuItem(
                 divider: true,

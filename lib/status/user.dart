@@ -22,7 +22,7 @@ class UserFollowing extends _$UserFollowing {
   // users/following
 
   Future<List<Following>> load() async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     return apis.user.following(userId: userId, limit: 50);
   }
 }
@@ -34,7 +34,7 @@ class UserInfo extends _$UserInfo {
   @override
   FutureOr<UserFullModel?> build(
       {String? username, String? host, String? userId}) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     var model =
         await apis.user.show(username: username, host: host, userId: userId);
     // 如果服务端没有返回用户名HOST，默认使用本示例的地址
@@ -81,7 +81,7 @@ class UserInfo extends _$UserInfo {
     UserFullModel userModel = state.value!;
     userModel.hasPendingFollowRequestFromYou = true;
     state = AsyncValue.data(userModel);
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     await apis.following.create(userId: userModel.id);
   }
 
@@ -92,7 +92,7 @@ class UserInfo extends _$UserInfo {
     UserFullModel userModel = state.value!;
     userModel.hasPendingFollowRequestFromYou = true;
     state = AsyncValue.data(userModel);
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     await apis.following.delete(userId: userModel.id);
   }
 
@@ -103,7 +103,7 @@ class UserInfo extends _$UserInfo {
     UserFullModel userModel = state.value!;
     userModel.hasPendingFollowRequestFromYou = false;
     state = AsyncValue.data(userModel);
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     await apis.following.requestsCancel(userId: userModel.id);
   }
 }
@@ -133,7 +133,7 @@ class UserNotesList extends _$UserNotesList {
   }
 
   Future<List<NoteModel>> notes({String? untilId}) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
 
     var list = await apis.user.notes(
       userId: userId,
@@ -190,7 +190,7 @@ class UserReactionsList extends _$UserReactionsList {
   }
 
   Future<List<NoteModel>> reactions({String? untilId}) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     var noteList = ref.read(noteListProvider.notifier);
     var list = await apis.user.reactions(userId: userId, untilId: untilId);
     noteList.registerNotes(list);

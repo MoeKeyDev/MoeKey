@@ -20,7 +20,7 @@ class Notifications extends _$Notifications {
     if (loading) return;
     loading = true;
     try {
-      var apis = await ref.read(misskeyApisProvider.future);
+      var apis = ref.read(misskeyApisProvider);
       var res = await apis.account.notificationsGrouped(untilId: untilId);
       return res;
     } catch (e, s) {
@@ -54,7 +54,7 @@ class MentionsNotifications extends _$MentionsNotifications {
     if (loading) return null;
     loading = true;
     try {
-      var apis = await ref.watch(misskeyApisProvider.future);
+      var apis = ref.watch(misskeyApisProvider);
       return apis.notes
           .mentions(untilId: untilId, limit: 20, specified: specified);
     } finally {

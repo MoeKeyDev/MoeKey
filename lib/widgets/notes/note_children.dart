@@ -40,7 +40,7 @@ class NoteChildren extends HookConsumerWidget {
     var circular = const Radius.circular(12);
     var circularZero = const Radius.circular(0);
 
-    var data = apis.value?.notes.children(noteId: noteId);
+    var data = apis.notes.children(noteId: noteId);
     return FutureBuilder(
       future: data,
       builder: (context, snapshot) {

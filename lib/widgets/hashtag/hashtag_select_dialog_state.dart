@@ -32,9 +32,9 @@ class HashtagSelectDialogState extends _$HashtagSelectDialogState {
     }
 
     var http = await ref.read(httpProvider.future);
-    var user = await ref.read(currentLoginUserProvider.future);
+    var user = ref.read(currentLoginUserProvider);
     var data = await http.post("/hashtags/search",
-        data: {"query": query, "limit": 30, "i": user!.token});
+        data: {"query": query, "limit": 30, "i": user!});
     state = AsyncData(data.data);
   }
 }

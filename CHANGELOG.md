@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.4+26
+
+### Feature
+
+- add Hive
+
 ## 0.3.3
 
 ### Chore

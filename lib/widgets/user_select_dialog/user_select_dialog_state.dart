@@ -21,7 +21,7 @@ class UserSelectDialogState extends _$UserSelectDialogState {
   }
 
   FutureOr<List<UserFullModel>> loadFollowing() async {
-    var user = await ref.read(currentLoginUserProvider.future);
+    var user = ref.read(currentLoginUserProvider);
     var userList = await ref.read(userFollowingProvider(user?.id ?? "").future);
     var list = <UserFullModel>[];
     for (var item in userList) {
@@ -51,7 +51,7 @@ class UserSelectDialogState extends _$UserSelectDialogState {
 
     if (this.host != "" || this.name != "") {
       var http = await ref.read(httpProvider.future);
-      var user = await ref.read(currentLoginUserProvider.future);
+      var user = ref.read(currentLoginUserProvider);
       var data =
           await http.post<List>("/users/search-by-username-and-host", data: {
         "username": this.name,

@@ -11,7 +11,7 @@ part 'dio.g.dart';
 class Http extends _$Http {
   @override
   Future<Dio> build() async {
-    var user = await ref.watch(currentLoginUserProvider.future);
+    var user = ref.watch(currentLoginUserProvider);
     var host = user?.serverUrl;
 
     var dio = Dio(BaseOptions(

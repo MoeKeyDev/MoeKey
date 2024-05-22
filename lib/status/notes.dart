@@ -16,7 +16,7 @@ part 'notes.g.dart';
 class Notes extends _$Notes {
   @override
   FutureOr<NotesState> build(String noteId) async {
-    var apis = await ref.watch(misskeyApisProvider.future);
+    var apis = ref.watch(misskeyApisProvider);
     var data = await apis.notes.show(noteId: noteId);
     var noteTranslate = ref.read(noteListProvider)[noteId]?.noteTranslate;
     data?.noteTranslate = noteTranslate;
@@ -34,7 +34,7 @@ class Notes extends _$Notes {
   ///notes/conversation
   loadConversation() async {
     var http = await ref.read(httpProvider.future);
-    var user = await ref.read(currentLoginUserProvider.future);
+    var user = ref.read(currentLoginUserProvider);
     if (state.valueOrNull!.conversation.firstOrNull?.id == null) return;
     var data = await http.post(
       "/notes/conversation",
@@ -65,7 +65,7 @@ class NotesListener extends _$NotesListener {
         listen?.cancel();
         listen = null;
       });
-      var user = await ref.watch(currentLoginUserProvider.future);
+      var user = ref.watch(currentLoginUserProvider);
       listen?.cancel();
       listen = null;
       listen = moekeyStreamController.stream.listen((event) async {
@@ -254,7 +254,7 @@ class NotesChildTimeline extends _$NotesChildTimeline {
 
   Future<List<NoteModel>> getData(
       {required String id, int? limit, String? untilId}) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
 
     var data = await apis.notes
         .children(noteId: noteId, untilId: untilId, limit: limit ?? 30);

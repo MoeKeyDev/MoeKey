@@ -108,7 +108,7 @@ class ClipsNotes extends HookConsumerWidget {
                                     divider: true,
                                     onTap: () {
                                       var apis = ref.read(misskeyApisProvider);
-                                      apis.value?.clips
+                                      apis.clips
                                           .removeNote(
                                               clipId: clipId, noteId: item.id)
                                           .then((value) {
@@ -222,9 +222,9 @@ class ClipsNotes extends HookConsumerWidget {
                     ]) ??
                     false;
                 if (res) {
-                  var apis = ref.read(misskeyApisProvider).value;
+                  var apis = ref.read(misskeyApisProvider);
 
-                  await apis?.clips.delete(clipId: clipId);
+                  await apis.clips.delete(clipId: clipId);
                   if (context.mounted) {
                     Navigator.pop(context);
                   }
@@ -267,7 +267,7 @@ class _ClipContentCard extends HookConsumerWidget {
                   message: "添加到收藏",
                   child: IconButton(
                     onPressed: () async {
-                      var apis = ref.read(misskeyApisProvider).value;
+                      var apis = ref.read(misskeyApisProvider);
                       try {
                         if (showDate.value!.isFavorited) {
                           var res = await MkConfirm.show(children: [
@@ -286,10 +286,10 @@ class _ClipContentCard extends HookConsumerWidget {
                               ]) ??
                               false;
                           if (res) {
-                            await apis?.clips.unFavorite(clipId: clipId);
+                            await apis.clips.unFavorite(clipId: clipId);
                           }
                         } else {
-                          await apis?.clips.favorite(clipId: clipId);
+                          await apis.clips.favorite(clipId: clipId);
                         }
                       } finally {
                         ref.invalidate(provider);

@@ -67,15 +67,13 @@ class ReactionsListComponent extends HookConsumerWidget {
                       if (item.key != myReaction) {
                         ref
                             .read(misskeyApisProvider)
-                            .value
-                            ?.notes
+                            .notes
                             .createReactions(noteId: id, reaction: item.key);
                       } else {
                         if (myReaction != null) {
                           ref
                               .read(misskeyApisProvider)
-                              .value
-                              ?.notes
+                              .notes
                               .deleteReactions(noteId: id);
                         }
                       }

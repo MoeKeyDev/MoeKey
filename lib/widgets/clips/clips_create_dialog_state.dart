@@ -48,7 +48,7 @@ class ClipCreateDialogState extends _$ClipCreateDialogState {
   }
 
   send() async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     try {
       if (state.name.isEmpty) {
         throw Exception("名称不能为空");

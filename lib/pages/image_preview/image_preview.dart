@@ -176,10 +176,12 @@ class ImagePreviewPage extends HookConsumerWidget {
                                 return Center(
                                   child: AspectRatio(
                                     aspectRatio: (galleryItems[index]
-                                                .properties?["width"] ??
+                                                .properties
+                                                ?.width ??
                                             16) /
                                         (galleryItems[index]
-                                                .properties?["height"] ??
+                                                .properties
+                                                ?.height ??
                                             9),
                                     child: BlurhashFfi(
                                         hash: galleryItems[index].blurhash!),

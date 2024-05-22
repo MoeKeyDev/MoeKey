@@ -3,15 +3,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:moekey/database/init_database.dart';
 import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/pages/login/login_page.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/loading_weight.dart';
+import 'package:path_provider/path_provider.dart';
 
+import 'apis/models/login_user.dart';
 import 'generated/l10n.dart';
 import 'status/websocket.dart';
 
@@ -35,20 +40,18 @@ class HttpProxy extends HttpOverrides {
   }
 }
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // 视频初始化
   MediaKit.ensureInitialized();
+
   // 代理配置
   HttpOverrides.global = HttpProxy();
-  // SystemChrome.setSystemUIOverlayStyle(
-  //   const SystemUiOverlayStyle(
-  //       statusBarColor: Colors.transparent,
-  //       statusBarBrightness: Brightness.dark,
-  //       statusBarIconBrightness: Brightness.dark,
-  //       systemNavigationBarColor: Colors.transparent,
-  //       systemNavigationBarIconBrightness: Brightness.dark),
-  // );
+
+  // 初始化数据库
+  await initDatabase();
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -87,23 +90,30 @@ class SplashPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var user = ref.watch(currentLoginUserProvider.future);
+    var user = ref.watch(currentLoginUserProvider);
     // 启动webSocket
     ref.watch(moekeyGlobalEventProvider);
     ref.watch(moekeyMainChannelProvider);
     var isLaunch = useState(false);
-    Future.wait([user]).then((value) async {
+    useEffect(() {
       if (isLaunch.value) return;
       isLaunch.value = true;
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-        builder: (context) {
-          if (value[0] != null) {
-            return HomePage();
-          }
-          return const LoginPage();
+      Future.delayed(
+        Duration.zero,
+        () {
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+            builder: (context) {
+              if (user != null) {
+                return HomePage();
+              }
+              return const LoginPage();
+            },
+          ), (route) => false);
         },
-      ), (route) => false);
-    });
+      );
+
+      return null;
+    }, []);
     return const Scaffold(
       body: LoadingWidget(),
     );

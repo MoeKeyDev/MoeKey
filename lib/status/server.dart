@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:moekey/database/init_database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,49 +25,57 @@ class SelectServerHost extends _$SelectServerHost {
 @Riverpod(keepAlive: true)
 class LoginUserList extends _$LoginUserList {
   @override
-  Future<Map<String, LoginUser>> build() async {
-    var prefs = await SharedPreferences.getInstance();
-    Map<String, LoginUser> loginUserList = {};
-    if (prefs.getString("loginUserList") != null) {
-      Map<String, dynamic> res =
-          jsonDecode(prefs.getString("loginUserList") ?? "");
-
-      res.forEach((key, value) {
-        loginUserList[key] = LoginUser(
-            serverUrl: value["serverUrl"],
-            token: value["token"],
-            userInfo: value["userInfo"],
-            name: value["name"],
-            id: value["id"]);
-      });
-    }
-    return loginUserList;
+  Map<String, LoginUser> build() {
+    var list = getPreferencesDatabase().get("LoginUserList", defaultValue: {});
+    // preference.keys.forEach(
+    //   (element) {},
+    // );
+    // preference.forEach((key, value) {
+    //   loginUserList[key] = LoginUser(
+    //       serverUrl: value["serverUrl"],
+    //       token: value["token"],
+    //       userInfo: value["userInfo"],
+    //       name: value["name"],
+    //       id: value["id"]);
+    // });
+    return Map<String, LoginUser>.from(list.map(
+      (key, value) =>
+          MapEntry<String, LoginUser>(key, LoginUser.fromMap(value)),
+    ));
   }
 
   Future addUser(LoginUser user) async {
-    var v = state.value ?? {};
+    var v = state;
     v[user.userInfo["id"]] = user;
-    state = AsyncData(v);
-    var prefs = await SharedPreferences.getInstance();
-    prefs.setString("loginUserList", jsonEncode(v));
+    var db = getPreferencesDatabase();
+    var list = db.get("LoginUserList", defaultValue: {});
+    list[user.userInfo["id"]] = user.toMap();
+    db.put("LoginUserList", list);
   }
 }
 
 @Riverpod(keepAlive: true)
 class CurrentLoginUser extends _$CurrentLoginUser {
   @override
-  FutureOr<LoginUser?> build() async {
-    var prefs = await SharedPreferences.getInstance();
-    var userid = prefs.getString("currentLoginUser") ?? "";
-    var userList = await ref.watch(loginUserListProvider.future);
+  LoginUser? build() {
+    var userList = ref.watch(loginUserListProvider);
+    var preference = getPreferencesDatabase();
+    var userid = preference.get("currentLoginUser", defaultValue: "");
+    if (!userList.containsKey(userid)) {
+      return null;
+    }
     return userList[userid];
   }
 
-  Future setLoginUser(String id) async {
-    var prefs = await SharedPreferences.getInstance();
-    prefs.setString("currentLoginUser", id);
-    var userList = await ref.watch(loginUserListProvider.future);
-    state = AsyncData(userList[id]);
+  setLoginUser(String id) {
+    var preference = getPreferencesDatabase();
+    preference.put("currentLoginUser", id);
+    var userList = ref.watch(loginUserListProvider);
+    if (!userList.containsKey(id)) {
+      return null;
+    }
+    state = userList[id];
+    ref.notifyListeners();
   }
 }
 

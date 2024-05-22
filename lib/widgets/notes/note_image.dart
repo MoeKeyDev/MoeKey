@@ -47,8 +47,8 @@ class NoteImage extends HookConsumerWidget {
       builder: (context, constraints) {
         var width = constraints.maxWidth;
         var height = maxHeight != null
-            ? getHeight(imageFile.properties?["width"] ?? 16,
-                imageFile.properties?["height"] ?? 9, width.toInt(), maxHeight!)
+            ? getHeight(imageFile.properties?.width ?? 16,
+                imageFile.properties?.height ?? 9, width.toInt(), maxHeight!)
             : constraints.maxHeight;
         return ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(8)),

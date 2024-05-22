@@ -50,7 +50,7 @@ class Timeline extends _$Timeline {
 
   Future<List<NoteModel>> timeline(
       {String? untilId, String? sinceId, String api = "timeline"}) async {
-    var apis = await ref.watch(misskeyApisProvider.future);
+    var apis = ref.watch(misskeyApisProvider);
     var list = await apis.notes.timeline(
       limit: 10,
       untilId: untilId,

@@ -27,7 +27,7 @@ class UserClipListState extends _$UserClipListState {
   }
 
   Future<List<ClipsModel>> clips(String? untilId) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     return apis.user.clips(userId: userId, untilId: untilId);
   }
 

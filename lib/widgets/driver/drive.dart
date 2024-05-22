@@ -43,7 +43,7 @@ class DriverUploader extends _$DriverUploader {
   Future<List<DriveFileModel>> createFiles(
       {required List<String> filesPath, bool compression = true}) async {
     try {
-      var apis = await ref.read(misskeyApisProvider.future);
+      var apis = ref.read(misskeyApisProvider);
       var path = ref.read(drivePathProvider);
       var loadingFile = [];
       for (var file in state) {
@@ -141,7 +141,7 @@ class DriverUploader extends _$DriverUploader {
   }
 
   Future createFolder(String name) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     var path = ref.read(drivePathProvider);
     String? parentId;
     if (path.lastOrNull?["id"] != null) {
@@ -155,7 +155,7 @@ class DriverUploader extends _$DriverUploader {
 
   Future uploadFromUrl(String url) async {
     var path = ref.read(drivePathProvider);
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     String? folderId;
     if (path.lastOrNull?["id"] != null) {
       folderId = path.lastOrNull?["id"];
@@ -170,7 +170,7 @@ class DriverUploader extends _$DriverUploader {
     bool? isSensitive,
     String? comment,
   }) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
 
     var res = await apis.drive.updateFile(
       fileId: fileId,
@@ -189,7 +189,7 @@ class DriverUploader extends _$DriverUploader {
     String? name,
     String? parentId,
   }) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     var res = await apis.drive.updateFolders(
       folderId: folderId,
       name: name,
@@ -203,7 +203,7 @@ class DriverUploader extends _$DriverUploader {
   Future deleteFile(
     String fileId,
   ) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     await apis.drive.deleteFile(fileId: fileId);
 
     var notifier = ref.read(driveListProvider.notifier);
@@ -213,7 +213,7 @@ class DriverUploader extends _$DriverUploader {
   Future deleteFolder(
     String folderId,
   ) async {
-    var apis = await ref.read(misskeyApisProvider.future);
+    var apis = ref.read(misskeyApisProvider);
     await apis.drive.deleteFolders(folderId: folderId);
     var notifier = ref.read(driveListProvider.notifier);
     notifier.deleteFolder(folderId);
@@ -273,7 +273,7 @@ class DriveList extends _$DriveList {
   Future<List<DriveFileModel>> loadFiles({String? untilId}) async {
     var path = ref.watch(drivePathProvider);
 
-    var apis = await ref.watch(misskeyApisProvider.future);
+    var apis = ref.watch(misskeyApisProvider);
     var res = await apis.drive.files(
       folderId: path.lastOrNull?["id"],
       untilId: untilId,
@@ -284,7 +284,7 @@ class DriveList extends _$DriveList {
 
   Future<List<DriverFolderModel>> loadFolders({String? untilId}) async {
     var path = ref.watch(drivePathProvider);
-    var apis = await ref.watch(misskeyApisProvider.future);
+    var apis = ref.watch(misskeyApisProvider);
     var res = await apis.drive.folders(
       folderId: path.lastOrNull?["id"],
       untilId: untilId,

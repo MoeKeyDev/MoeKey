@@ -214,7 +214,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
         noteListProvider.select((value) => value[this.data.id] ?? this.data));
     var links = extractLinksFromMarkdown(data.text ?? "");
     var meta = ref.watch(instanceMetaProvider).valueOrNull;
-    var serverUrl = ref.watch(currentLoginUserProvider).valueOrNull!.serverUrl;
+    var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
     return LayoutBuilder(
       builder: (context, constraints) {
         return ContextMenuBuilder(
@@ -288,7 +288,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                         note.noteTranslate =
                             NoteTranslate(text: "", sourceLang: "");
                         ref.read(noteListProvider.notifier).registerNote(note);
-                        var apis = await ref.read(misskeyApisProvider.future);
+                        var apis = ref.read(misskeyApisProvider);
                         var res = await apis.notes.translate(noteId: data.id);
                         res?.loading = false;
                         note = note.copyWith();
