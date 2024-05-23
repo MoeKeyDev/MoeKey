@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/misskey_api.dart';
+import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/status/timeline.dart';
 import 'package:moekey/utils/get_padding_note.dart';
@@ -43,20 +44,10 @@ class NotesPage extends HookConsumerWidget {
 
     var loadConversation = useState<Future?>(null);
     var loadConversationSnapshot = useFuture(loadConversation.value);
-
-    var data = ref.watch(noteListProvider.select((value) => value[noteId]));
+    var noteListener = noteListenerProvider(noteId);
+    var data = ref.watch(noteListener).valueOrNull;
     var conversation = dataProvider.valueOrNull?.conversation ?? [];
     NotesListener note = ref.watch(notesListenerProvider.notifier);
-    useEffect(() {
-      var code = hashCode.toString();
-      if (data != null) {
-        note.subNote(data, code);
-      }
-
-      return () => {
-            if (data != null) {note.unsubNote(data, code)}
-          };
-    }, [data]);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
@@ -210,8 +201,15 @@ class NotesPageNoteCard extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var isHiddenCw = useState(true);
     var themes = ref.watch(themeColorsProvider);
-    var data = ref.watch(
-        noteListProvider.select((value) => value[this.data.id] ?? this.data));
+    var noteListener = noteListenerProvider(this.data.id);
+    var data = ref.watch(noteListener).valueOrNull ?? this.data;
+
+    useEffect(() {
+      // 更新note缓存
+      ref.read(noteListener.notifier).updateModel(data);
+      return null;
+    }, [this.data.id]);
+
     var links = extractLinksFromMarkdown(data.text ?? "");
     var meta = ref.watch(instanceMetaProvider).valueOrNull;
     var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
@@ -283,17 +281,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
                       onTap: () async {
-                        var note = ref.read(noteListProvider)[data.id] ?? data;
-                        note = note.copyWith();
-                        note.noteTranslate =
-                            NoteTranslate(text: "", sourceLang: "");
-                        ref.read(noteListProvider.notifier).registerNote(note);
-                        var apis = ref.read(misskeyApisProvider);
-                        var res = await apis.notes.translate(noteId: data.id);
-                        res?.loading = false;
-                        note = note.copyWith();
-                        note.noteTranslate = res;
-                        ref.read(noteListProvider.notifier).registerNote(note);
+                        translateNote(data, ref);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6),

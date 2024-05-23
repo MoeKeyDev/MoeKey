@@ -3,6 +3,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:moekey/pages/clips/clips_page.dart';
 import 'package:moekey/pages/drive/drive_page.dart';
 import 'package:moekey/pages/notifications/notifications_page.dart';
+import 'package:moekey/pages/test/test.dart';
 import 'package:moekey/pages/timeline/timeline_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -101,6 +102,7 @@ class HomeState {
       "icon": TablerIcons.hash,
       "label": S.current.explore,
       "id": "explore",
+      "page": () => const TestWidget()
     },
     {
       "icon": TablerIcons.speakerphone,

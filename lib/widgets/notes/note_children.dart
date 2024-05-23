@@ -5,7 +5,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/misskey_api.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:moekey/status/timeline.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/notes/note_card.dart';
 
@@ -51,10 +50,6 @@ class NoteChildren extends HookConsumerWidget {
             if (load != null) {
               load!(list.length);
             }
-
-            var noteList = ref.read(noteListProvider.notifier);
-            noteList.registerNotes(list);
-
             timer.cancel();
           });
         }

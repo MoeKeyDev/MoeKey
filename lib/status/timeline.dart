@@ -1,51 +1,34 @@
 import 'dart:async';
 
+import 'package:moekey/status/server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
+import '../database/timeline.dart';
 import 'misskey_api.dart';
 
 part 'timeline.g.dart';
 
-@Riverpod(keepAlive: true)
-class NoteList extends _$NoteList {
-  @override
-  Map<String, NoteModel> build() {
-    return {};
-  }
-
-  registerNote(NoteModel data, {bool notUpdateReplyAndRenote = false}) {
-    state[data.id] = data;
-    if (notUpdateReplyAndRenote) {
-      if (data.reply != null && state[data.reply?.id] == null) {
-        state[data.reply!.id] = data.reply!;
-      }
-      if (data.renote != null && state[data.renote?.id] == null) {
-        state[data.renote!.id] = data.renote!;
-      }
-    } else {
-      if (data.reply != null) {
-        state[data.reply!.id] = data.reply!;
-      }
-      if (data.renote != null) {
-        state[data.renote!.id] = data.renote!;
-      }
-    }
-    ref.notifyListeners();
-  }
-
-  registerNotes(List<NoteModel> data, {bool notUpdateReplyAndRenote = false}) {
-    for (var value in data) {
-      registerNote(value);
-    }
-  }
+@riverpod
+Future<TimelineDatabase> timelineDatabase(TimelineDatabaseRef ref) async {
+  var user = ref.watch(currentLoginUserProvider);
+  var instance = user?.serverUrl;
+  return TimelineDatabase(
+      server: instance ?? "default", userId: user?.id ?? "default");
 }
 
 @riverpod
 class Timeline extends _$Timeline {
   @override
   FutureOr<List<NoteModel>> build({String api = "timeline"}) async {
-    return timeline(api: api);
+    var db = await ref.watch(timelineDatabaseProvider.future);
+    var cache = await db.getTimeline(api);
+    if (cache != null) {
+      return cache;
+    }
+    var list = await timeline(api: api);
+    await db.setTimeline(api, list);
+    return list;
   }
 
   Future<List<NoteModel>> timeline(
@@ -57,8 +40,6 @@ class Timeline extends _$Timeline {
       api: api,
       sinceId: sinceId,
     );
-    var noteList = ref.read(noteListProvider.notifier);
-    noteList.registerNotes(list);
     return list;
   }
 
@@ -70,8 +51,29 @@ class Timeline extends _$Timeline {
     try {
       state = AsyncData((state.valueOrNull ?? []) +
           await timeline(untilId: state.valueOrNull?.last.id, api: api));
+      var db = await ref.watch(timelineDatabaseProvider.future);
+      await db.setTimeline(api, state.value!);
     } finally {
       loading = false;
     }
+  }
+
+  cleanCache() async {
+    var db = await ref.read(timelineDatabaseProvider.future);
+    await db.cleanTimeline(api);
+  }
+}
+
+@riverpod
+class TimelineScrollOffset extends _$TimelineScrollOffset {
+  @override
+  FutureOr<double> build({String api = "timeline"}) async {
+    var db = await ref.watch(timelineDatabaseProvider.future);
+    return db.getTimelineScroll(api);
+  }
+
+  updateScroll(double pos) async {
+    var db = await ref.read(timelineDatabaseProvider.future);
+    db.setTimelineScroll(api, pos);
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:moekey/status/timeline.dart';
 import 'package:moekey/status/websocket.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -40,8 +39,6 @@ class UserInfo extends _$UserInfo {
     // 如果服务端没有返回用户名HOST，默认使用本示例的地址
     model?.host ??= Uri.parse(apis.instance).host;
 
-    var noteList = ref.read(noteListProvider.notifier);
-    noteList.registerNotes(model?.pinnedNotes ?? []);
     ref.onDispose(() {
       logger.d("========= NotesListener dispose ===================");
       listen?.cancel();
@@ -144,8 +141,6 @@ class UserNotesList extends _$UserNotesList {
       withRenotes: withRenotes,
       withReplies: withReplies,
     );
-    var noteList = ref.read(noteListProvider.notifier);
-    noteList.registerNotes(list);
     return list;
   }
 
@@ -191,9 +186,7 @@ class UserReactionsList extends _$UserReactionsList {
 
   Future<List<NoteModel>> reactions({String? untilId}) async {
     var apis = ref.read(misskeyApisProvider);
-    var noteList = ref.read(noteListProvider.notifier);
     var list = await apis.user.reactions(userId: userId, untilId: untilId);
-    noteList.registerNotes(list);
     return list;
   }
 

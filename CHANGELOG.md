@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.5+27
+
+### Feature
+
+- add timeline cache
+
+### Refactor
+
+- notes update listener
+
 ## 0.3.4+26
 
 ### Feature

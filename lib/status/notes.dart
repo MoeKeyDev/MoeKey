@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:moekey/status/timeline.dart';
-import 'package:moekey/status/websocket.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
-import '../main.dart';
 import 'dio.dart';
 import 'misskey_api.dart';
+import 'notes_listener.dart';
 import 'server.dart';
 
 part 'notes.g.dart';
@@ -18,12 +16,11 @@ class Notes extends _$Notes {
   FutureOr<NotesState> build(String noteId) async {
     var apis = ref.watch(misskeyApisProvider);
     var data = await apis.notes.show(noteId: noteId);
-    var noteTranslate = ref.read(noteListProvider)[noteId]?.noteTranslate;
+    var noteTranslate =
+        (await ref.read(noteListenerProvider(noteId).future))?.noteTranslate;
     data?.noteTranslate = noteTranslate;
     var note = NotesState();
-    ref
-        .read(noteListProvider.notifier)
-        .registerNote(data!, notUpdateReplyAndRenote: true);
+    ref.read(noteListenerProvider(noteId).notifier).updateModel(data!);
     note.data = data;
     if (data.reply != null) {
       note.conversation.add(data.reply!);
@@ -49,133 +46,6 @@ class Notes extends _$Notes {
     }
     state.value?.conversation = list + state.value!.conversation;
     return AsyncData(state.value);
-  }
-}
-
-@Riverpod(keepAlive: true)
-class NotesListener extends _$NotesListener {
-  Map<String, Map<String, dynamic>> noteList = {};
-  StreamSubscription<MoekeyEvent>? listen;
-
-  @override
-  Future build() async {
-    try {
-      ref.onDispose(() {
-        logger.d("========= NotesListener dispose ===================");
-        listen?.cancel();
-        listen = null;
-      });
-      var user = ref.watch(currentLoginUserProvider);
-      listen?.cancel();
-      listen = null;
-      listen = moekeyStreamController.stream.listen((event) async {
-        if (event.type == MoekeyEventType.data) {
-          if (event.data["type"] == "noteUpdated") {
-            var eventData = event.data;
-            logger.d(eventData);
-            var noteId = eventData["body"]["id"];
-            var type = eventData["body"]["type"];
-            var note = ref.read(noteListProvider)[noteId];
-            if (note != null) {
-              var data = note.copyWith();
-              // logger.d(data);
-              // logger.d(event.data);
-              // 反应
-              var reactions = data.reactions;
-              if (type == "reacted") {
-                var reaction = eventData["body"]["body"]["reaction"];
-                var userId = eventData["body"]["body"]["userId"];
-                var emoji = eventData["body"]["body"]["emoji"];
-                if (reactions[reaction] == null) {
-                  reactions[reaction] = 0;
-                }
-                reactions[reaction] = reactions[reaction]! + 1;
-                if (emoji != null) {
-                  data.reactionEmojis[emoji["name"]] = emoji["url"];
-                }
-                // 处理用户
-                if (userId == user?.id) {
-                  data.myReaction = reaction;
-                }
-              }
-              // 取消反应
-              if (type == "unreacted") {
-                var reaction = eventData["body"]["body"]["reaction"];
-                var userId = eventData["body"]["body"]["userId"];
-                if (reactions[reaction] != null) {
-                  reactions[reaction] = reactions[reaction]! - 1;
-                  if (reactions[reaction]! <= 0) {
-                    reactions.remove(reaction);
-                  }
-                }
-
-                // 处理用户
-                if (userId == user?.id) {
-                  data.myReaction = null;
-                }
-              }
-              // logger.d(data.hashCode);
-              ref
-                  .read(noteListProvider.notifier)
-                  .registerNote(data, notUpdateReplyAndRenote: true);
-            }
-          }
-        }
-        if (event.type == MoekeyEventType.load) {
-          logger.d("========= NotesListener load ===================");
-          logger.d(noteList);
-          for (var item in noteList.entries) {
-            if (item.value.isNotEmpty) {
-              _s(item.key);
-            }
-          }
-        }
-      });
-      for (var item in noteList.entries) {
-        if (item.value.isNotEmpty) {
-          _s(item.key);
-        }
-      }
-    } catch (e) {
-      logger.d(e);
-    }
-  }
-
-  _s(String id) {
-    ref.read(moekeyGlobalEventProvider.notifier).send({
-      "type": "s",
-      "body": {"id": id}
-    });
-  }
-
-  _un(String id) {
-    ref.read(moekeyGlobalEventProvider.notifier).send({
-      "type": "un",
-      "body": {"id": id}
-    });
-  }
-
-  subNote(NoteModel data, String id) {
-    if (noteList[data.id] == null) {
-      noteList[data.id] = {};
-    }
-    if (noteList[data.id]![id] == null) {
-      noteList[data.id]![id] = true;
-      _s(data.id);
-    }
-  }
-
-  unsubNote(NoteModel data, String id) {
-    if (noteList[data.id] == null) {
-      _un(data.id);
-      return;
-    }
-
-    noteList[data.id]?.remove(id);
-
-    if (noteList[data.id]!.isEmpty) {
-      _un(data.id);
-    }
   }
 }
 
@@ -214,13 +84,6 @@ class NotesChildTimeline extends _$NotesChildTimeline {
       int t = obj2[0].createdAt.compareTo(obj1[0].createdAt);
       return t;
     });
-    for (var item in list1) {
-      for (var item1 in item) {
-        ref
-            .read(noteListProvider.notifier)
-            .registerNote(item1, notUpdateReplyAndRenote: true);
-      }
-    }
     return list1;
   }
 

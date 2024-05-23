@@ -13,6 +13,7 @@ import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/notes.dart';
+import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/format_duration.dart';
@@ -196,18 +197,14 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
     var isHiddenCw = useState(true);
     var themes = ref.watch(themeColorsProvider);
-    // var notifier = ref.read(notesListenerProvider.notifier);
-    NoteModel data = ref.watch(noteListProvider.select((value) {
-      return value[this.data.id] ?? this.data;
-    }));
-    NotesListener note = ref.watch(notesListenerProvider.notifier);
+    var noteListener = noteListenerProvider(this.data.id);
+    NoteModel data = ref.watch(noteListener).valueOrNull ?? this.data;
     useEffect(() {
-      var code = hashCode.toString();
+      // 更新note缓存
+      ref.read(noteListener.notifier).updateModel(this.data);
+      return null;
+    }, [this.data]);
 
-      note.subNote(data, code);
-
-      return () => note.unsubNote(data, code);
-    }, [this.data.id]);
     var links = extractLinksFromMarkdown(data.text ?? "");
     var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
     var meta = ref.watch(instanceMetaProvider).valueOrNull;
@@ -1008,22 +1005,8 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
               divider: true,
               icon: TablerIcons.language_hiragana,
               label: "翻译",
-              onTap: () async {
-                var note = ref.read(noteListProvider)[data.id] ?? data;
-                note = note.copyWith();
-                note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
-                ref.read(noteListProvider.notifier).registerNote(note);
-                var apis = ref.read(misskeyApisProvider);
-                var res = apis.notes.translate(noteId: data.id);
-                res.then((value) {
-                  if (value != null) {
-                    value.loading = false;
-                    note = note.copyWith();
-                    note.noteTranslate = value;
-                    ref.read(noteListProvider.notifier).registerNote(note);
-                  }
-                });
-
+              onTap: () {
+                translateNote(data, ref);
                 return false;
               },
             ),
@@ -1072,6 +1055,23 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
       },
       initialChildSize: 0.6,
       maxChildSize: 0.7);
+}
+
+/// 翻译Note
+Future<void> translateNote(NoteModel data, WidgetRef ref) async {
+  var noteListener = noteListenerProvider(data.id);
+  var note = await ref.read(noteListener.future) ?? data;
+  note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
+  ref.read(noteListener.notifier).updateModel(note);
+  var apis = ref.read(misskeyApisProvider);
+  var res = apis.notes.translate(noteId: data.id);
+  res.then((value) {
+    if (value != null) {
+      value.loading = false;
+      note.noteTranslate = value;
+      ref.read(noteListener.notifier).updateModel(note);
+    }
+  });
 }
 
 class TimeLineActions extends HookConsumerWidget {
