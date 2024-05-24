@@ -16,7 +16,6 @@ Future<bool> saveImage({
   required String url,
   String album = "moekey",
 }) async {
-  print(url);
   var name = basename(url);
   var ext = extension(name);
   var fileBasename = basenameWithoutExtension(name);
@@ -27,8 +26,6 @@ Future<bool> saveImage({
   }
 
   var codec = await ui.instantiateImageCodec(data);
-
-
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     // webp 单帧图片转换成png

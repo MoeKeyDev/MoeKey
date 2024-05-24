@@ -65,7 +65,7 @@ class UserNotesPage extends HookConsumerWidget {
       key: 1,
     );
     var data = ref.watch(dataProvider);
-    print(data.error);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);

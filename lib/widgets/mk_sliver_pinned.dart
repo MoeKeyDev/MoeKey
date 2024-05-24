@@ -77,7 +77,6 @@ class RenderSliverFixedHeader extends RenderSliverSingleBoxAdapter {
       origin = _pinnedOffset - topOffset;
     }
     final paintExtent = min(constraints.remainingPaintExtent, origin);
-    print(paintExtent);
     // 2.上报当前节点的布局信息给 viewport
     geometry = SliverGeometry(
       // visible: paintExtent > 0.0

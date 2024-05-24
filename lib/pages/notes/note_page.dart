@@ -3,17 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/status/misskey_api.dart';
 import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:moekey/status/timeline.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/notes/note_children.dart';
 
 import '../../apis/models/note.dart';
-import '../../apis/models/translate.dart';
 import '../../apis/models/user_lite.dart';
 import '../../router/main_router_delegate.dart';
 import '../../status/apis.dart';
@@ -47,7 +44,6 @@ class NotesPage extends HookConsumerWidget {
     var noteListener = noteListenerProvider(noteId);
     var data = ref.watch(noteListener).valueOrNull;
     var conversation = dataProvider.valueOrNull?.conversation ?? [];
-    NotesListener note = ref.watch(notesListenerProvider.notifier);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
@@ -156,7 +152,7 @@ class NotesPage extends HookConsumerWidget {
                                 reply: true,
                                 disableReactions: true,
                               ),
-                            NotesPageNoteCard(data: data!)
+                            NotesPageNoteCard(data: data)
                           ],
                         ),
                       ),

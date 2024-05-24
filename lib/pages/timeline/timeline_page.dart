@@ -43,7 +43,6 @@ class TimelinePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var pageController = usePageController();
     var tabController = useTabController(initialLength: navItemList.length);
-    var themes = ref.watch(themeColorsProvider);
     var currentIndex = useState(0);
     return MkScaffold(
       header: MkAppbar(

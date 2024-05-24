@@ -2,11 +2,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
 import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
-import 'package:moekey/main.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/status/timeline.dart';
 import 'package:moekey/utils/get_padding_note.dart';
@@ -32,8 +30,6 @@ class TimeLineListPage extends HookConsumerWidget {
     var data = ref.watch(dataProvider);
 
     var themes = ref.watch(themeColorsProvider);
-    var scroll =
-        useFuture(ref.watch(timelineScrollOffsetProvider(api: api).future));
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
@@ -51,8 +47,7 @@ class TimeLineListPage extends HookConsumerWidget {
                 },
               ),
               child: LoadingAndEmpty(
-                loading: data.isLoading ||
-                    scroll.connectionState == ConnectionState.waiting,
+                loading: data.isLoading,
                 empty: data.valueOrNull?.isEmpty ?? true,
                 refresh: () async {
                   await ref.read(dataProvider.notifier).cleanCache();
@@ -60,21 +55,7 @@ class TimeLineListPage extends HookConsumerWidget {
                 },
                 child: HookConsumer(
                   builder: (context, ref, child) {
-                    var controller = useScrollController(
-                        initialScrollOffset: scroll.data ?? 0);
-
-                    useEffect(() {
-                      scrollListener() {
-                        var scroll = ref.read(
-                            timelineScrollOffsetProvider(api: api).notifier);
-                        scroll.updateScroll(controller.offset);
-                      }
-
-                      controller.addListener(scrollListener);
-                      return () => controller.removeListener(scrollListener);
-                    }, [api]);
                     return CustomScrollView(
-                      controller: controller,
                       cacheExtent:
                           (Platform.isAndroid || Platform.isIOS) ? null : 4000,
                       // controller: scrollController,

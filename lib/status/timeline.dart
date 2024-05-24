@@ -63,17 +63,3 @@ class Timeline extends _$Timeline {
     await db.cleanTimeline(api);
   }
 }
-
-@riverpod
-class TimelineScrollOffset extends _$TimelineScrollOffset {
-  @override
-  FutureOr<double> build({String api = "timeline"}) async {
-    var db = await ref.watch(timelineDatabaseProvider.future);
-    return db.getTimelineScroll(api);
-  }
-
-  updateScroll(double pos) async {
-    var db = await ref.read(timelineDatabaseProvider.future);
-    db.setTimelineScroll(api, pos);
-  }
-}

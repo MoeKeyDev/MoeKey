@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:media_kit/media_kit.dart';
@@ -14,9 +12,6 @@ import 'package:moekey/pages/login/login_page.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/loading_weight.dart';
-import 'package:path_provider/path_provider.dart';
-
-import 'apis/models/login_user.dart';
 import 'generated/l10n.dart';
 import 'status/websocket.dart';
 

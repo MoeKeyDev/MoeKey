@@ -1,4 +1,5 @@
 import 'package:moekey/apis/models/notification.dart';
+import 'package:moekey/main.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
@@ -24,8 +25,8 @@ class Notifications extends _$Notifications {
       var res = await apis.account.notificationsGrouped(untilId: untilId);
       return res;
     } catch (e, s) {
-      print(e);
-      print(s);
+      logger.e(e);
+      logger.e(s);
     } finally {
       loading = false;
     }

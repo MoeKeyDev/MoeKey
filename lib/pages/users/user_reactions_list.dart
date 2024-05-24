@@ -24,8 +24,6 @@ class UserReactionsPage extends HookConsumerWidget {
       userId: userId,
     );
     var data = ref.watch(dataProvider);
-    print(data.error);
-    print(data.stackTrace);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = 0;

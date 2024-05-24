@@ -246,7 +246,6 @@ class DriveList extends _$DriveList {
   }
 
   loadMore() async {
-    print("load");
     if (state.isLoading) return;
     state = const AsyncLoading();
     try {

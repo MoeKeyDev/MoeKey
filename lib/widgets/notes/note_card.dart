@@ -12,7 +12,6 @@ import 'package:moekey/main.dart';
 import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/apis.dart';
-import 'package:moekey/status/notes.dart';
 import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
@@ -36,7 +35,6 @@ import '../../pages/image_preview/image_preview.dart';
 import '../../pages/notes/note_page.dart';
 import '../../router/main_router_delegate.dart' as main_router;
 import '../../status/misskey_api.dart';
-import '../../status/timeline.dart';
 import '../../utils/parse_color.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../hover_builder.dart';
@@ -195,7 +193,6 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
-    var isHiddenCw = useState(true);
     var themes = ref.watch(themeColorsProvider);
     var noteListener = noteListenerProvider(this.data.id);
     NoteModel data = ref.watch(noteListener).valueOrNull ?? this.data;
@@ -261,166 +258,19 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                           left: isSmall
                               ? 8.5 * (fontsize - 8)
                               : 10 * (fontsize - 8)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                  child: UserNameRichText(data: data.user)),
-                              Text(timeAgoSinceDate(data.createdAt),
-                                  style: TextStyle(fontSize: fontsize * 0.9)),
-                              const SizedBox(
-                                width: 6,
-                              ),
-                              if (NoteVisibility.getIcon(data.visibility) !=
-                                  null)
-                                Icon(
-                                  NoteVisibility.getIcon(data.visibility)!,
-                                  size: fontsize,
-                                  color: themes.fgColor,
-                                )
-                            ],
-                          ),
-                          if (data.user.instance != null)
-                            const SizedBox(height: 4),
-                          if (data.user.instance != null)
-                            RepaintBoundary(
-                                child: UserInstanceBar(data: data.user)),
-                          // start
-                          MkOverflowShow(
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (data.cw != null) const SizedBox(height: 4),
-                                if (data.cw != null)
-                                  MFMText(
-                                    text: data.cw ?? "",
-                                    currentServerHost: data.user.host,
-                                    emojis: data.emojis,
-                                  ),
-                                if (data.cw != null) const SizedBox(height: 4),
-                                if (data.cw != null)
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: FilledButton(
-                                      onPressed: () {
-                                        isHiddenCw.value = !isHiddenCw.value;
-                                      },
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                              WidgetStateProperty.resolveWith(
-                                                  (states) {
-                                            if (states.contains(
-                                                WidgetState.hovered)) {
-                                              return themes.buttonHoverBgColor;
-                                            }
-                                            return themes.buttonBgColor;
-                                          }),
-                                          foregroundColor:
-                                              WidgetStateProperty.all(
-                                                  themes.fgColor),
-                                          elevation:
-                                              WidgetStateProperty.all(0)),
-                                      child: Text(
-                                          isHiddenCw.value ? "查看更多" : "收起"),
-                                    ),
-                                  ),
-                                if (!isHiddenCw.value || data.cw == null) ...[
-                                  const SizedBox(height: 4),
-                                  if ((data.text ?? "") != "")
-                                    MFMText(
-                                      text: data.text ?? "",
-                                      emojis: data.emojis,
-                                      currentServerHost: data.user.host,
-                                    ),
-                                  if (data.noteTranslate != null)
-                                    Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: themes.dividerColor,
-                                            width: 1),
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(6),
-                                        ),
-                                      ),
-                                      padding: const EdgeInsets.all(4),
-                                      margin: const EdgeInsets.only(
-                                          top: 6, bottom: 2),
-                                      child: [
-                                        if (data.noteTranslate!.loading)
-                                          const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Center(
-                                              child: LoadingCircularProgress(
-                                                size: 22,
-                                                strokeWidth: 4,
-                                              ),
-                                            ),
-                                          )
-                                        else
-                                          MFMText(
-                                            emojis: data.emojis,
-                                            currentServerHost: data.user.host,
-                                            before: [
-                                              TextSpan(
-                                                  text:
-                                                      "从${data.noteTranslate!.sourceLang}翻译:\n",
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold))
-                                            ],
-                                            text:
-                                                data.noteTranslate!.text ?? "",
-                                          ),
-                                      ][0],
-                                    ),
-                                  const SizedBox(height: 4),
-                                  // 投票
-                                  if (data.poll != null) PollCard(data: data),
-                                  TimeLineImage(
-                                      files: data.files,
-                                      mainAxisExtent:
-                                          constraints.maxWidth * 0.7),
-                                  // 链接预览
-                                  if (isShowUrlPreview)
-                                    for (var link in links) ...[
-                                      NoteLinkPreview(
-                                          link: link, fontsize: fontsize)
-                                    ],
-                                  if (innerWidget != null) innerWidget!,
-                                ],
-                              ],
-                            ),
-                            action: (isShow, p1) {
-                              return const Text("查看更多");
-                            },
-                            limit: limit,
-                            height: height,
-                          ),
-
-                          // end
-                          if (isShowReactions) ...[
-                            const SizedBox(height: 8),
-                            ReactionsListComponent(
-                                emojis: data.reactionEmojis,
-                                reactionsList: data.reactions,
-                                id: data.id,
-                                myReaction: data.myReaction,
-                                disableReactions: disableReactions),
-                          ],
-                          if (isShowAction)
-                            TimeLineActions(
-                              fontsize: fontsize,
-                              data: data,
-                              customMenuItem: customMenuItem,
-                            )
-                        ],
+                      child: _NoteCardContent(
+                        data: data,
+                        fontsize: fontsize,
+                        isShowUrlPreview: isShowUrlPreview,
+                        links: links,
+                        innerWidget: innerWidget,
+                        limit: limit,
+                        height: height,
+                        isShowReactions: isShowReactions,
+                        disableReactions: disableReactions,
+                        isShowAction: isShowAction,
+                        customMenuItem: customMenuItem,
+                        constraints: constraints,
                       ),
                     ).applyConstraint(
                         top: parent.top,
@@ -460,6 +310,241 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     //   key: ValueKey(data.id),
     //   child: ,
     // );
+  }
+}
+
+class _NoteCardContent extends HookConsumerWidget {
+  const _NoteCardContent(
+      {super.key,
+      required this.data,
+      required this.fontsize,
+      required this.isShowUrlPreview,
+      required this.links,
+      required this.innerWidget,
+      required this.limit,
+      required this.height,
+      required this.isShowReactions,
+      required this.disableReactions,
+      required this.isShowAction,
+      required this.customMenuItem,
+      required this.constraints});
+
+  final NoteModel data;
+  final double fontsize;
+  final bool isShowUrlPreview;
+  final List<String> links;
+  final Widget? innerWidget;
+  final double limit;
+  final double height;
+  final bool isShowReactions;
+  final bool disableReactions;
+  final bool isShowAction;
+  final BoxConstraints constraints;
+  final List<ContextMenuItem>? customMenuItem;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var isHiddenCw = useState(true);
+    var themes = ref.watch(themeColorsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        _NoteCardContentUerHeader(
+            data: data, fontsize: fontsize, themes: themes),
+        if (data.user.instance != null) ...[
+          const SizedBox(height: 4),
+          RepaintBoundary(child: UserInstanceBar(data: data.user)),
+        ],
+
+        // start
+        MkOverflowShow(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (data.cw != null)
+                _NoteCardContentCw(
+                    data: data, isHiddenCw: isHiddenCw, themes: themes),
+              if (!isHiddenCw.value || data.cw == null) ...[
+                const SizedBox(height: 4),
+                if ((data.text ?? "") != "")
+                  MFMText(
+                    text: data.text ?? "",
+                    emojis: data.emojis,
+                    currentServerHost: data.user.host,
+                  ),
+                if (data.noteTranslate != null) NoteCardTranslate(data: data),
+                const SizedBox(height: 4),
+                // 投票
+                if (data.poll != null) PollCard(data: data),
+                // 图片
+                TimeLineImage(
+                    files: data.files,
+                    mainAxisExtent: constraints.maxWidth * 0.7),
+                // 链接预览
+                if (isShowUrlPreview)
+                  for (var link in links) ...[
+                    NoteLinkPreview(link: link, fontsize: fontsize)
+                  ],
+                if (innerWidget != null) innerWidget!,
+              ],
+            ],
+          ),
+          action: (isShow, p1) {
+            return const Text("查看更多");
+          },
+          limit: limit,
+          height: height,
+        ),
+
+        // end
+        if (isShowReactions) ...[
+          const SizedBox(height: 8),
+          ReactionsListComponent(
+              emojis: data.reactionEmojis,
+              reactionsList: data.reactions,
+              id: data.id,
+              myReaction: data.myReaction,
+              disableReactions: disableReactions),
+        ],
+        if (isShowAction)
+          TimeLineActions(
+            fontsize: fontsize,
+            data: data,
+            customMenuItem: customMenuItem,
+          )
+      ],
+    );
+  }
+}
+
+class NoteCardTranslate extends HookConsumerWidget {
+  const NoteCardTranslate({
+    super.key,
+    required this.data,
+  });
+
+  final NoteModel data;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var themes = ref.watch(themeColorsProvider);
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border.all(color: themes.dividerColor, width: 1),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(6),
+        ),
+      ),
+      padding: const EdgeInsets.all(4),
+      margin: const EdgeInsets.only(top: 6, bottom: 2),
+      child: [
+        if (data.noteTranslate!.loading)
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Center(
+              child: LoadingCircularProgress(
+                size: 22,
+                strokeWidth: 4,
+              ),
+            ),
+          )
+        else
+          MFMText(
+            emojis: data.emojis,
+            currentServerHost: data.user.host,
+            before: [
+              TextSpan(
+                  text: "从${data.noteTranslate!.sourceLang}翻译:\n",
+                  style: const TextStyle(fontWeight: FontWeight.bold))
+            ],
+            text: data.noteTranslate!.text ?? "",
+          ),
+      ][0],
+    );
+  }
+}
+
+class _NoteCardContentCw extends HookConsumerWidget {
+  const _NoteCardContentCw({
+    super.key,
+    required this.data,
+    required this.isHiddenCw,
+    required this.themes,
+  });
+
+  final NoteModel data;
+  final ValueNotifier<bool> isHiddenCw;
+  final ThemeColorModel themes;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        const SizedBox(height: 4),
+        MFMText(
+          text: data.cw ?? "",
+          currentServerHost: data.user.host,
+          emojis: data.emojis,
+        ),
+        const SizedBox(height: 4),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: () {
+              isHiddenCw.value = !isHiddenCw.value;
+            },
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.hovered)) {
+                    return themes.buttonHoverBgColor;
+                  }
+                  return themes.buttonBgColor;
+                }),
+                foregroundColor: WidgetStateProperty.all(themes.fgColor),
+                elevation: WidgetStateProperty.all(0)),
+            child: Text(isHiddenCw.value ? "查看更多" : "收起"),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _NoteCardContentUerHeader extends StatelessWidget {
+  const _NoteCardContentUerHeader({
+    super.key,
+    required this.data,
+    required this.fontsize,
+    required this.themes,
+  });
+
+  final NoteModel data;
+  final double fontsize;
+  final ThemeColorModel themes;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Expanded(child: UserNameRichText(data: data.user)),
+        Text(timeAgoSinceDate(data.createdAt),
+            style: TextStyle(fontSize: fontsize * 0.9)),
+        const SizedBox(
+          width: 6,
+        ),
+        if (NoteVisibility.getIcon(data.visibility) != null)
+          Icon(
+            NoteVisibility.getIcon(data.visibility)!,
+            size: fontsize,
+            color: themes.fgColor,
+          )
+      ],
+    );
   }
 }
 

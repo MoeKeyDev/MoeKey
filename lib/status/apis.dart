@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/apis/models/note.dart';
+import 'package:moekey/main.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -63,8 +64,8 @@ Future<List<EmojiSimple>> apiEmojisList(ApiEmojisListRef ref) async {
 
     return emojis;
   } catch (e, t) {
-    print(e);
-    print(t);
+    logger.e(e);
+    logger.e(t);
   }
   return [];
 }

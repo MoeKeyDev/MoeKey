@@ -98,7 +98,6 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   }
 
   showBottomSheet() {
-    print(context.hashCode);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -106,7 +105,6 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
       useRootNavigator: true,
       isScrollControlled: true,
       builder: (context) {
-        print(this.context.hashCode);
         return ContextDraggableBottomSheet(menu: widget.menu);
       },
     );

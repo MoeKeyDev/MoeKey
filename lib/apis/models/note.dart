@@ -277,7 +277,7 @@ class NotePollModel {
 
   factory NotePollModel.fromMap(Map<String, dynamic> json) => NotePollModel(
         choices: List<NotePollModelChoices>.from(
-            json["choices"].map((x) => NotePollModel.fromMap(x))),
+            json["choices"]?.map((x) => NotePollModelChoices.fromMap(x))),
         expiresAt: json["expiresAt"] == null
             ? null
             : DateTime.parse(json["expiresAt"]),
