@@ -77,6 +77,35 @@ class NotesService extends MisskeyApiServices {
     return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
   }
 
+  Future<List<NoteModel>> pollsRecommendation(
+      {int limit = 10, String? untilId}) async {
+    var data = await client.post<List?>(
+      "/notes/polls/recommendation",
+      data: {
+        "limit": limit,
+        if (untilId != null) "untilId": untilId,
+      },
+    );
+    if (data == null) {
+      return [];
+    }
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+  }
+
+  Future<List<NoteModel>> featured({int limit = 10, String? untilId}) async {
+    var data = await client.post<List?>(
+      "/notes/featured",
+      data: {
+        "limit": limit,
+        if (untilId != null) "untilId": untilId,
+      },
+    );
+    if (data == null) {
+      return [];
+    }
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+  }
+
   Future<NoteModel?> reNote({required String renoteId}) async {
     var data = await client.post("/notes/create", data: {
       "localOnly": false,

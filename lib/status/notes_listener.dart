@@ -141,9 +141,19 @@ class NoteListener extends _$NoteListener {
     return model;
   }
 
-  updateModel(NoteModel model) async {
+  updateModel(NoteModel model, {bool onlySelf = false}) async {
     var db = await ref.read(notesDatabaseProvider.future);
     await db.put(noteId, model);
+    if (model.renote != null && !onlySelf) {
+      ref
+          .read(noteListenerProvider(model.renote!.id).notifier)
+          .updateModel(model.renote!, onlySelf: true);
+    }
+    if (model.reply != null && !onlySelf) {
+      ref
+          .read(noteListenerProvider(model.reply!.id).notifier)
+          .updateModel(model.reply!, onlySelf: true);
+    }
     state = AsyncData(model);
   }
 }

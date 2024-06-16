@@ -15,6 +15,8 @@ class ThemeColorModel {
   Color bgColor = const Color.fromARGB(255, 245, 245, 245);
   Color fgColor = const Color.fromARGB(255, 103, 103, 103);
   Color accentColor = const Color.fromARGB(255, 152, 201, 52);
+  Color accentDarkenColor = const Color.fromARGB(255, 96, 128, 0);
+  Color accentLightenColor = const Color.fromARGB(255, 172, 230, 0);
   Color accentedBgColor = const Color.fromARGB(38, 134, 179, 0);
   Color panelColor = const Color.fromARGB(255, 253, 253, 253);
   Color navBgColor = const Color.fromARGB(255, 253, 253, 253);
@@ -58,10 +60,12 @@ class ThemeColors extends _$ThemeColors {
       model.fgColor =
           getThemesColor(themes["fg"] ?? "", themes) ?? model.fgColor;
 
+      model.accentLightenColor =
+          getThemesColor(themes["accentLighten"] ?? "", themes) ??
+              model.accentLightenColor;
       model.accentedBgColor =
           getThemesColor(themes["accentedBg"] ?? "", themes) ??
               model.accentedBgColor;
-
       model.panelColor =
           getThemesColor(themes["panel"] ?? "", themes) ?? model.panelColor;
       model.navBgColor =

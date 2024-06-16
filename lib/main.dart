@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,9 +23,9 @@ class HttpProxy extends HttpOverrides {
 
   @override
   String findProxyFromEnvironment(Uri url, Map<String, String>? environment) {
-    // if (kDebugMode) {
-    //   proxyServer = "172.20.1.200:7890";
-    // }
+    if (kDebugMode) {
+      proxyServer = "127.0.0.1:7890";
+    }
     if (proxyServer == "") {
       return super.findProxyFromEnvironment(url, environment);
     }

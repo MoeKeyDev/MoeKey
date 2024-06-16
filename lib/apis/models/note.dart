@@ -198,6 +198,33 @@ class NoteModel {
   String toJson() => json.encode(toMap());
 
   factory NoteModel.fromJson(String str) => NoteModel.fromMap(json.decode(str));
+
+  static create() {
+    return NoteModel(
+      id: "1",
+      clippedCount: 0,
+      createdAt: DateTime.now(),
+      emojis: {},
+      files: [],
+      localOnly: false,
+      reactionEmojis: {},
+      reactions: {},
+      renoteCount: 0,
+      repliesCount: 0,
+      user: UserLiteModel(
+          avatarDecorations: [],
+          emojis: {},
+          id: "id",
+          name: "数据加载失败",
+          onlineStatus: OnlineStatus.ACTIVE,
+          username: "username",
+          avatarBlurhash: null,
+          avatarUrl: null,
+          host: ''),
+      userId: "userId",
+      visibility: NoteVisibility.home,
+    );
+  }
 }
 
 class NotePollModelChoices {

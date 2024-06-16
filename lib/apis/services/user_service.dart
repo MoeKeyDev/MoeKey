@@ -100,4 +100,12 @@ class UserService extends MisskeyApiServices {
       (e) => ClipsModel.fromMap(e),
     ));
   }
+
+  /// 获取全站置顶用户
+  Future<List<UserFullModel>> pinnedUsers() async {
+    var res = await client.post<List>("/pinned-users");
+    return List<UserFullModel>.from(res.map(
+      (e) => UserFullModel.fromMap(e),
+    ));
+  }
 }

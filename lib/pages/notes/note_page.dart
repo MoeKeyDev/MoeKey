@@ -200,11 +200,11 @@ class NotesPageNoteCard extends HookConsumerWidget {
     var noteListener = noteListenerProvider(this.data.id);
     var data = ref.watch(noteListener).valueOrNull ?? this.data;
 
-    useEffect(() {
-      // 更新note缓存
-      ref.read(noteListener.notifier).updateModel(data);
-      return null;
-    }, [this.data.id]);
+    // useEffect(() {
+    //   // 更新note缓存
+    //   ref.read(noteListener.notifier).updateModel(data);
+    //   return null;
+    // }, [this.data.id]);
 
     var links = extractLinksFromMarkdown(data.text ?? "");
     var meta = ref.watch(instanceMetaProvider).valueOrNull;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/misskey_api.dart';
+import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/notes/note_card.dart';
@@ -40,6 +41,7 @@ class NoteChildren extends HookConsumerWidget {
     var circularZero = const Radius.circular(0);
 
     var data = apis.notes.children(noteId: noteId);
+
     return FutureBuilder(
       future: data,
       builder: (context, snapshot) {
@@ -47,6 +49,11 @@ class NoteChildren extends HookConsumerWidget {
         if (list.isNotEmpty && !loaded.value) {
           Timer.periodic(Duration.zero, (timer) {
             loaded.value = true;
+            for (var note in list) {
+              ref
+                  .read(noteListenerProvider(note.id).notifier)
+                  .updateModel(note, onlySelf: true);
+            }
             if (load != null) {
               load!(list.length);
             }

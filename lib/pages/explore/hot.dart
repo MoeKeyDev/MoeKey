@@ -1,76 +1,36 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/note.dart';
+import 'package:moekey/status/misskey_api.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:moekey/utils/get_padding_note.dart';
-import 'package:moekey/widgets/mk_header.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../status/user.dart';
+import '../../utils/get_padding_note.dart';
 import '../../widgets/loading_weight.dart';
+import '../../widgets/mk_header.dart';
 import '../../widgets/mk_nav_button.dart';
 import '../../widgets/notes/note_card.dart';
 
-List<Map<String, bool>> _noteFilter = [
-  {
-    "withRenotes": false,
-    "withChannelNotes": false,
-    "withFiles": false,
-    "withReplies": false,
-    "withFeatured": true,
-  },
-  {
-    "withRenotes": false,
-    "withChannelNotes": false,
-    "withFiles": false,
-    "withReplies": false,
-    "withFeatured": false,
-  },
-  {
-    "withRenotes": true,
-    "withChannelNotes": true,
-    "withFiles": false,
-    "withReplies": true,
-    "withFeatured": false,
-  },
-  {
-    "withRenotes": false,
-    "withChannelNotes": false,
-    "withFiles": true,
-    "withReplies": false,
-    "withFeatured": false,
-  }
-];
+part 'hot.g.dart';
 
-class UserNotesPage extends HookConsumerWidget {
-  const UserNotesPage({
-    super.key,
-    required this.userId,
-  });
-
-  final String userId;
+class ExploreHotPage extends HookConsumerWidget {
+  const ExploreHotPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
     var themes = ref.watch(themeColorsProvider);
-    var select = useState(2);
-    const navs = ["热门", "帖子", "全部", "附件"];
-    var dataProvider = userNotesListProvider(
-      userId: userId,
-      withRenotes: _noteFilter[select.value]["withRenotes"]!,
-      withChannelNotes: _noteFilter[select.value]["withChannelNotes"]!,
-      withFiles: _noteFilter[select.value]["withFiles"]!,
-      withReplies: _noteFilter[select.value]["withReplies"]!,
-      withFeatured: _noteFilter[select.value]["withFeatured"]!,
-      key: 1,
-    );
+    var select = useState(0);
+    const navs = ["帖子", "投票"];
+    var dataProvider = exploreHotPageStatesProvider(select.value);
     var data = ref.watch(dataProvider);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
-
         return Stack(
           children: [
             RefreshIndicator.adaptive(
@@ -84,6 +44,8 @@ class UserNotesPage extends HookConsumerWidget {
                   },
                 ),
                 child: CustomScrollView(
+                  cacheExtent:
+                      (Platform.isAndroid || Platform.isIOS) ? null : 4000,
                   slivers: [
                     SliverPadding(
                       padding: MediaQuery.paddingOf(context)
@@ -187,5 +149,44 @@ class UserNotesPage extends HookConsumerWidget {
         );
       },
     );
+  }
+}
+
+class _NoteListsModel {
+  List<NoteModel> list = [];
+  bool hasMore = true;
+}
+
+@riverpod
+class ExploreHotPageStates extends _$ExploreHotPageStates {
+  @override
+  FutureOr<_NoteListsModel> build(int index) async {
+    var apis = ref.watch(misskeyApisProvider);
+
+    var model = _NoteListsModel();
+    if (index == 1) {
+      model.list = await apis.notes.pollsRecommendation();
+    } else {
+      model.list = await apis.notes.featured();
+    }
+
+    return model;
+  }
+
+  load() async {
+    var model = state.value ?? _NoteListsModel();
+    var apis = ref.watch(misskeyApisProvider);
+    List<NoteModel> list = [];
+    if (index == 1) {
+      list = await apis.notes
+          .pollsRecommendation(untilId: model.list.lastOrNull?.id);
+    } else {
+      list = await apis.notes.featured(untilId: model.list.lastOrNull?.id);
+    }
+    if (list.isEmpty) {
+      model.hasMore = false;
+    }
+    model.list += list;
+    state = AsyncData(model);
   }
 }

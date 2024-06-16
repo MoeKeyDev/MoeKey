@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
@@ -195,12 +196,14 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
     var themes = ref.watch(themeColorsProvider);
     var noteListener = noteListenerProvider(this.data.id);
-    NoteModel data = ref.watch(noteListener).valueOrNull ?? this.data;
-    useEffect(() {
-      // 更新note缓存
-      ref.read(noteListener.notifier).updateModel(this.data);
-      return null;
-    }, [this.data]);
+    NoteModel data = ref.watch(noteListener).valueOrNull ??
+        (kDebugMode ? NoteModel.create() : this.data);
+    // print(ref.watch(noteListener).error);
+    // useEffect(() {
+    //   // 更新note缓存
+    //   ref.read(noteListener.notifier).updateModel(this.data);
+    //   return null;
+    // }, [this.data]);
 
     var links = extractLinksFromMarkdown(data.text ?? "");
     var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
@@ -483,6 +486,8 @@ class _NoteCardContentCw extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 4),
         MFMText(
@@ -1147,7 +1152,6 @@ Future<void> translateNote(NoteModel data, WidgetRef ref) async {
   var noteListener = noteListenerProvider(data.id);
   var note = await ref.read(noteListener.future) ?? data;
   note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
-  ref.read(noteListener.notifier).updateModel(note);
   var apis = ref.read(misskeyApisProvider);
   var res = apis.notes.translate(noteId: data.id);
   res.then((value) {

@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../apis/models/note.dart';
 import '../database/timeline.dart';
 import 'misskey_api.dart';
+import 'notes_listener.dart';
 
 part 'timeline.g.dart';
 
@@ -40,6 +41,9 @@ class Timeline extends _$Timeline {
       api: api,
       sinceId: sinceId,
     );
+    for (var note in list) {
+      ref.read(noteListenerProvider(note.id).notifier).updateModel(note);
+    }
     return list;
   }
 

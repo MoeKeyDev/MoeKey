@@ -4,8 +4,11 @@ import 'init_database.dart';
 import '../apis/models/note.dart' as note;
 
 class LinkPreviewDatabase {
+  LazyBox<String>? _box;
+
   Future<LazyBox<String>> _getDatabase() async {
-    return openLazyDatabase<String>(name: "link_preview");
+    _box ??= await openLazyDatabase<String>(name: "link_preview");
+    return _box!;
   }
 
   put(String src, note.LinkPreview link) async {
