@@ -49,11 +49,6 @@ class NoteChildren extends HookConsumerWidget {
         if (list.isNotEmpty && !loaded.value) {
           Timer.periodic(Duration.zero, (timer) {
             loaded.value = true;
-            for (var note in list) {
-              ref
-                  .read(noteListenerProvider(note.id).notifier)
-                  .updateModel(note, onlySelf: true);
-            }
             if (load != null) {
               load!(list.length);
             }

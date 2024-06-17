@@ -5,10 +5,14 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../apis/models/note.dart';
 import 'dio.dart';
 import 'misskey_api.dart';
-import 'notes_listener.dart';
 import 'server.dart';
 
 part 'notes.g.dart';
+
+class NotesState {
+  late NoteModel data;
+  List<NoteModel> conversation = [];
+}
 
 @riverpod
 class Notes extends _$Notes {
@@ -16,12 +20,8 @@ class Notes extends _$Notes {
   FutureOr<NotesState> build(String noteId) async {
     var apis = ref.watch(misskeyApisProvider);
     var data = await apis.notes.show(noteId: noteId);
-    var noteTranslate =
-        (await ref.read(noteListenerProvider(noteId).future))?.noteTranslate;
-    data?.noteTranslate = noteTranslate;
     var note = NotesState();
-    ref.read(noteListenerProvider(noteId).notifier).updateModel(data!);
-    note.data = data;
+    note.data = data!;
     if (data.reply != null) {
       note.conversation.add(data.reply!);
     }
@@ -43,17 +43,11 @@ class Notes extends _$Notes {
     List<NoteModel> list = [];
     for (var item in data.data.reversed) {
       var note = NoteModel.fromMap(item);
-      ref.read(noteListenerProvider(note.id).notifier).updateModel(note);
       list.add(note);
     }
     state.value?.conversation = list + state.value!.conversation;
     return AsyncData(state.value);
   }
-}
-
-class NotesState {
-  late NoteModel data;
-  List<NoteModel> conversation = [];
 }
 
 // @riverpod

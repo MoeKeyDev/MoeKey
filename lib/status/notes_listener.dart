@@ -17,80 +17,28 @@ class NotesListener extends _$NotesListener {
   StreamSubscription<MoekeyEvent>? listen;
 
   @override
-  Future build() async {
-    try {
-      ref.onDispose(() {
-        logger.d("========= NotesListener dispose ===================");
-        listen?.cancel();
-        listen = null;
-      });
-      var user = ref.watch(currentLoginUserProvider);
-      listen?.cancel();
-      listen = null;
-      listen = moekeyStreamController.stream.listen((event) async {
-        if (event.type == MoekeyEventType.data) {
-          if (event.data["type"] == "noteUpdated") {
-            var eventData = event.data;
-            logger.d(eventData);
-            var noteId = eventData["body"]["id"];
-            var type = eventData["body"]["type"];
-            var note = await ref.read(noteListenerProvider(noteId).future);
-            logger.d(note);
-            if (note != null) {
-              var data = note;
-              // 反应
-              var reactions = data.reactions;
-              if (type == "reacted") {
-                var reaction = eventData["body"]["body"]["reaction"];
-                var userId = eventData["body"]["body"]["userId"];
-                var emoji = eventData["body"]["body"]["emoji"];
-                if (reactions[reaction] == null) {
-                  reactions[reaction] = 0;
-                }
-                reactions[reaction] = reactions[reaction]! + 1;
-                if (emoji != null) {
-                  data.reactionEmojis[emoji["name"]] = emoji["url"];
-                }
-                // 处理用户
-                if (userId == user?.id) {
-                  data.myReaction = reaction;
-                }
-              }
-              // 取消反应
-              if (type == "unreacted") {
-                var reaction = eventData["body"]["body"]["reaction"];
-                var userId = eventData["body"]["body"]["userId"];
-                if (reactions[reaction] != null) {
-                  reactions[reaction] = reactions[reaction]! - 1;
-                  if (reactions[reaction]! <= 0) {
-                    reactions.remove(reaction);
-                  }
-                }
-
-                // 处理用户
-                if (userId == user?.id) {
-                  data.myReaction = null;
-                }
-              }
-              logger.d(noteId);
-              ref.read(noteListenerProvider(noteId).notifier).updateModel(data);
-            }
-          }
-        }
-        if (event.type == MoekeyEventType.load) {
-          logger.d("========= NotesListener load ===================");
-          logger.d(noteList);
-          for (var item in noteList) {
-            _s(item);
-          }
-        }
-      });
-      for (var item in noteList) {
-        _s(item);
-      }
-    } catch (e) {
-      logger.e(e);
+  Raw<Stream<Map>> build() {
+    StreamController<Map> stream = StreamController.broadcast();
+    for (var item in noteList) {
+      _s(item);
     }
+    listen = moekeyStreamController.stream.listen((event) {
+      if (event.type == MoekeyEventType.data) {
+        if (event.data["type"] == "noteUpdated") {
+          print("Notes Listener");
+          print(event.data["body"]);
+          stream.add(event.data["body"]);
+        }
+      }
+      if (event.type == MoekeyEventType.load) {
+        logger.d("========= NotesListener load ===================");
+        logger.d(noteList);
+        for (var item in noteList) {
+          _s(item);
+        }
+      }
+    });
+    return stream.stream;
   }
 
   _s(String id) {
@@ -126,34 +74,85 @@ Future<NotesDatabase> notesDatabase(NotesDatabaseRef ref) async {
   return NotesDatabase(server: instance ?? "default");
 }
 
-/// 负责面向组件提供Note更新监听服务、注册/取消注册Note更新事件监听
+/// 负责提供Note更新监听服务、注册/取消注册Note更新事件监听
 @riverpod
-class NoteListener extends _$NoteListener {
+class NoteIdListener extends _$NoteIdListener {
+  StreamSubscription<Map>? listen;
+
   @override
-  FutureOr<NoteModel?> build(String noteId) async {
-    var db = await ref.watch(notesDatabaseProvider.future);
-    var model = await db.get(noteId);
-    var listener = ref.watch(notesListenerProvider.notifier);
+  Raw<Stream<Map>> build(String noteId) {
+    var listener = ref.read(notesListenerProvider.notifier);
+    StreamController<Map> streamController = StreamController.broadcast();
+    var event = ref.watch(notesListenerProvider);
+    listen?.cancel();
+    listen = event.listen((event) {
+      if (noteId == event["id"]) {
+        return streamController.add(event);
+      }
+    });
     listener.subNote(noteId);
     ref.onDispose(() {
       listener.unsubNote(noteId);
+      listen?.cancel();
     });
-    return model;
+
+    return streamController.stream;
+  }
+}
+
+@riverpod
+class NoteListener extends _$NoteListener {
+  StreamSubscription<Map>? listen;
+
+  @override
+  NoteModel build(NoteModel noteModel) {
+    var stream = ref.watch(noteIdListenerProvider(noteModel.id));
+    var user = ref.watch(currentLoginUserProvider);
+    listen?.cancel();
+    listen = stream.listen((event) {
+      var type = event["type"];
+      var reactions = this.noteModel.reactions;
+      if (type == "reacted") {
+        var reaction = event["body"]["reaction"];
+        var userId = event["body"]["userId"];
+        var emoji = event["body"]["emoji"];
+        if (reactions[reaction] == null) {
+          reactions[reaction] = 0;
+        }
+        reactions[reaction] = reactions[reaction]! + 1;
+        if (emoji != null) {
+          noteModel.reactionEmojis[emoji["name"]] = emoji["url"];
+        }
+        // 处理用户
+        if (userId == user?.id) {
+          noteModel.myReaction = reaction;
+        }
+      }
+      // 取消反应
+      if (type == "unreacted") {
+        var reaction = event["body"]["reaction"];
+        var userId = event["body"]["userId"];
+        if (reactions[reaction] != null) {
+          reactions[reaction] = reactions[reaction]! - 1;
+          if (reactions[reaction]! <= 0) {
+            reactions.remove(reaction);
+          }
+        }
+        // 处理用户
+        if (userId == user?.id) {
+          noteModel.myReaction = null;
+        }
+      }
+      ref.notifyListeners();
+    });
+    ref.onDispose(() {
+      listen?.cancel();
+    });
+    return noteModel;
   }
 
-  updateModel(NoteModel model, {bool onlySelf = false}) async {
-    var db = await ref.read(notesDatabaseProvider.future);
-    await db.put(noteId, model);
-    if (model.renote != null && !onlySelf) {
-      ref
-          .read(noteListenerProvider(model.renote!.id).notifier)
-          .updateModel(model.renote!, onlySelf: true);
-    }
-    if (model.reply != null && !onlySelf) {
-      ref
-          .read(noteListenerProvider(model.reply!.id).notifier)
-          .updateModel(model.reply!, onlySelf: true);
-    }
-    state = AsyncData(model);
+  updateNote(void Function(NoteModel noteModel) update) {
+    update(noteModel);
+    ref.notifyListeners();
   }
 }

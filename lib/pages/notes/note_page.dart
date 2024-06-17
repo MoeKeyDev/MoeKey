@@ -28,9 +28,10 @@ import '../../widgets/reactions.dart';
 import '../users/user_page.dart';
 
 class NotesPage extends HookConsumerWidget {
-  const NotesPage({super.key, required this.noteId});
+  const NotesPage({super.key, required this.noteId, this.previewNote});
 
   final String noteId;
+  final NoteModel? previewNote;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,9 +42,9 @@ class NotesPage extends HookConsumerWidget {
 
     var loadConversation = useState<Future?>(null);
     var loadConversationSnapshot = useFuture(loadConversation.value);
-    var noteListener = noteListenerProvider(noteId);
-    var data = ref.watch(noteListener).valueOrNull;
     var conversation = dataProvider.valueOrNull?.conversation ?? [];
+    var data = dataProvider.valueOrNull?.data ?? previewNote;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
@@ -197,8 +198,8 @@ class NotesPageNoteCard extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var isHiddenCw = useState(true);
     var themes = ref.watch(themeColorsProvider);
-    var noteListener = noteListenerProvider(this.data.id);
-    var data = ref.watch(noteListener).valueOrNull ?? this.data;
+    var noteListener = noteListenerProvider(this.data);
+    var data = ref.watch(noteListener);
 
     // useEffect(() {
     //   // 更新note缓存

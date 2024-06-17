@@ -195,9 +195,8 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
     var themes = ref.watch(themeColorsProvider);
-    var noteListener = noteListenerProvider(this.data.id);
-    NoteModel data = ref.watch(noteListener).valueOrNull ??
-        (kDebugMode ? NoteModel.create() : this.data);
+    var noteListener = noteListenerProvider(this.data);
+    var data = ref.watch(noteListener);
     // print(ref.watch(noteListener).error);
     // useEffect(() {
     //   // 更新note缓存
@@ -220,6 +219,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                 path: "notes/${data.id}",
                 page: () => NotesPage(
                   noteId: data.id,
+                  previewNote: data,
                 ),
                 launchMode: main_router.LaunchMode.standard,
               ));
@@ -1149,18 +1149,18 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
 
 /// 翻译Note
 Future<void> translateNote(NoteModel data, WidgetRef ref) async {
-  var noteListener = noteListenerProvider(data.id);
-  var note = await ref.read(noteListener.future) ?? data;
-  note.noteTranslate = NoteTranslate(text: "", sourceLang: "");
-  var apis = ref.read(misskeyApisProvider);
-  var res = apis.notes.translate(noteId: data.id);
-  res.then((value) {
-    if (value != null) {
-      value.loading = false;
-      note.noteTranslate = value;
-      ref.read(noteListener.notifier).updateModel(note);
-    }
+  var noteListener = noteListenerProvider(data);
+  ref.read(noteListener.notifier).updateNote((noteModel) {
+    noteModel.noteTranslate = NoteTranslate(text: "", sourceLang: "");
   });
+  var apis = ref.read(misskeyApisProvider);
+  var value = await apis.notes.translate(noteId: data.id);
+  if (value != null) {
+    value.loading = false;
+    ref.read(noteListener.notifier).updateNote((noteModel) {
+      noteModel.noteTranslate = value;
+    });
+  }
 }
 
 class TimeLineActions extends HookConsumerWidget {

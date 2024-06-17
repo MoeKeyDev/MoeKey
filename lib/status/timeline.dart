@@ -27,13 +27,12 @@ class Timeline extends _$Timeline {
     if (cache != null) {
       return cache;
     }
-    var list = await timeline(api: api);
+    var list = await timeline();
     await db.setTimeline(api, list);
     return list;
   }
 
-  Future<List<NoteModel>> timeline(
-      {String? untilId, String? sinceId, String api = "timeline"}) async {
+  Future<List<NoteModel>> timeline({String? untilId, String? sinceId}) async {
     var apis = ref.watch(misskeyApisProvider);
     var list = await apis.notes.timeline(
       limit: 10,
@@ -41,20 +40,17 @@ class Timeline extends _$Timeline {
       api: api,
       sinceId: sinceId,
     );
-    for (var note in list) {
-      ref.read(noteListenerProvider(note.id).notifier).updateModel(note);
-    }
     return list;
   }
 
   var loading = false;
 
-  load({String api = "timeline"}) async {
+  load() async {
     if (loading) return;
     loading = true;
     try {
       state = AsyncData((state.valueOrNull ?? []) +
-          await timeline(untilId: state.valueOrNull?.last.id, api: api));
+          await timeline(untilId: state.valueOrNull?.last.id));
       var db = await ref.watch(timelineDatabaseProvider.future);
       await db.setTimeline(api, state.value!);
     } finally {

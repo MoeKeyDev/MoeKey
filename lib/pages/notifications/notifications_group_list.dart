@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/note.dart';
 import 'package:moekey/pages/notes/note_page.dart';
 import 'package:moekey/status/notifications.dart';
 import 'package:moekey/status/themes.dart';
@@ -32,11 +33,14 @@ class NotificationsGroupList extends HookConsumerWidget {
     ));
   }
 
-  static openNote(BuildContext context, String noteId) {
+  static openNote(BuildContext context, NoteModel note) {
     MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-      path: "user/$noteId",
+      path: "user/${note.id}",
       page: () {
-        return NotesPage(noteId: noteId);
+        return NotesPage(
+          noteId: note.id,
+          previewNote: note,
+        );
       },
     ));
   }
@@ -119,7 +123,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data.note!.id);
+            openNote(context, data.note!);
           },
         ),
     NotificationType.reactionGrouped: (data, borderRadius, themes) =>
@@ -195,7 +199,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data.note!.id);
+            openNote(context, data.note!);
           },
         ),
     NotificationType.reply: (data, borderRadius, themes) => NoteCard(
@@ -230,7 +234,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data.note!.id);
+            openNote(context, data.note!);
           },
         ),
     NotificationType.renoteGrouped: (data, borderRadius, themes) =>
@@ -290,7 +294,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data.note!.id);
+            openNote(context, data.note!);
           },
         ),
     NotificationType.quote: (data, borderRadius, themes) => NoteCard(
@@ -334,7 +338,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             ),
           ),
           onTap: (context) {
-            openNote(context, data.note!.id);
+            openNote(context, data.note!);
           },
         ),
     // "reaction:grouped": (data, borderRadius, themes) {}

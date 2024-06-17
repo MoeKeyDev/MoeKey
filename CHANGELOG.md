@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.8+30
+
+### Refactored
+
+- timeline note reaction algorithm
+
+### Fixed
+
+- note image preview Hero animations occasionally not working
+
 ## 0.3.5+27
 
 ### Feature

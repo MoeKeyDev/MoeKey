@@ -39,10 +39,6 @@ class UserInfo extends _$UserInfo {
         await apis.user.show(username: username, host: host, userId: userId);
     // 如果服务端没有返回用户名HOST，默认使用本示例的地址
     model?.host ??= Uri.parse(apis.instance).host;
-    // 保存置顶的帖子
-    for (var note in model?.pinnedNotes ?? []) {
-      ref.read(noteListenerProvider(note.id).notifier).updateModel(note);
-    }
     ref.onDispose(() {
       logger.d("========= NotesListener dispose ===================");
       listen?.cancel();
@@ -145,9 +141,6 @@ class UserNotesList extends _$UserNotesList {
       withRenotes: withRenotes,
       withReplies: withReplies,
     );
-    for (var note in list) {
-      ref.read(noteListenerProvider(note.id).notifier).updateModel(note);
-    }
     return list;
   }
 
@@ -194,9 +187,6 @@ class UserReactionsList extends _$UserReactionsList {
   Future<List<NoteModel>> reactions({String? untilId}) async {
     var apis = ref.read(misskeyApisProvider);
     var list = await apis.user.reactions(userId: userId, untilId: untilId);
-    for (var note in list) {
-      ref.read(noteListenerProvider(note.id).notifier).updateModel(note);
-    }
     return list;
   }
 
