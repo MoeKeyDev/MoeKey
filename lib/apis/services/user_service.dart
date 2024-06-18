@@ -108,4 +108,22 @@ class UserService extends MisskeyApiServices {
       (e) => UserFullModel.fromMap(e),
     ));
   }
+
+  /// 获取全站用户
+  Future<List<UserFullModel>> users({
+    int limit = 10,
+    String? origin,
+    String? sort,
+    String? state,
+  }) async {
+    var res = await client.post<List>("/users", data: {
+      "limit": 10,
+      if (origin != null) "origin": origin,
+      if (sort != null) "sort": sort,
+      if (state != null) "state": state,
+    });
+    return List<UserFullModel>.from(res.map(
+      (e) => UserFullModel.fromMap(e),
+    ));
+  }
 }

@@ -6,7 +6,7 @@ class UserLiteModel {
   final List<AvatarDecoration> avatarDecorations;
   final String? avatarUrl;
   final List<BadgeRoleModel>? badgeRoles;
-  final Map<String, String> emojis;
+  final Map<String, dynamic> emojis;
 
   ///The local host is represented with `null`.
   final String? host;

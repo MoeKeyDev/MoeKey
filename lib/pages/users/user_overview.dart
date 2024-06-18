@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -12,13 +10,14 @@ import 'package:moekey/utils/time_to_desired_format.dart';
 import 'package:moekey/widgets/blur_widget.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
+import 'package:moekey/widgets/mk_refresh_indicator.dart';
+import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_card.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/mk_parallax.dart';
-import '../../widgets/notes/note_card.dart';
 
 class UserOverview extends HookConsumerWidget {
   const UserOverview({
@@ -30,116 +29,39 @@ class UserOverview extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var mediaPadding = MediaQuery.paddingOf(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
         var dataProvider = userNotesListProvider(userId: userId);
-        var data = ref.watch(dataProvider);
-        var themes = ref.watch(themeColorsProvider);
-        var user = ref.watch(userInfoProvider(userId: userId));
-        return RefreshIndicator.adaptive(
-          onRefresh: () => ref.refresh(dataProvider.future),
-          edgeOffset: mediaPadding.top,
-          child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(
-              dragDevices: {
-                PointerDeviceKind.touch,
-                PointerDeviceKind.mouse,
-              },
-            ),
-            child: CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: MediaQuery.paddingOf(context)
-                      .copyWith(left: padding, right: padding),
-                  sliver: SliverMainAxisGroup(
-                    slivers: [
-                      SliverLayoutBuilder(builder: (context, constraints) {
-                        var offset = constraints.remainingPaintExtent -
-                            constraints.viewportMainAxisExtent +
-                            constraints.scrollOffset +
-                            constraints.precedingScrollExtent;
-                        offset = (offset / 140).clamp(0, 1.0);
-                        return SliverToBoxAdapter(
-                          child: UserHomeCard(userId: userId, offset: offset),
-                        );
-                      }),
-                      const SliverPadding(padding: EdgeInsets.only(top: 10)),
-                      SliverList.separated(
-                        addAutomaticKeepAlives: true,
-                        itemBuilder: (BuildContext context, int index) {
-                          BorderRadius borderRadius;
-                          if (index == 0) {
-                            borderRadius = const BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12));
-                          } else {
-                            borderRadius = const BorderRadius.all(Radius.zero);
-                          }
-                          var pinCount =
-                              (user.valueOrNull?.pinnedNotes.length ?? 0);
-                          if (index < pinCount) {
-                            return NoteCard(
-                              key: ValueKey(
-                                  user.valueOrNull?.pinnedNotes[index].id),
-                              borderRadius: borderRadius,
-                              data: user.valueOrNull!.pinnedNotes[index],
-                              pined: true,
-                            );
-                          }
-                          return NoteCard(
-                              key: ValueKey(
-                                  data.valueOrNull!.list[index - pinCount].id),
-                              borderRadius: borderRadius,
-                              data: data.valueOrNull!.list[index - pinCount]);
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return SizedBox(
-                            width: double.infinity,
-                            height: 1,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: themes.dividerColor,
-                              ),
-                            ),
-                          );
-                        },
-                        itemCount: (data.valueOrNull?.list.length ?? 0) +
-                            (user.valueOrNull?.pinnedNotes.length ?? 0),
-                      ),
-                      SliverLayoutBuilder(
-                        builder: (context, constraints) {
-                          if (constraints.remainingPaintExtent > 0 &&
-                              (data.valueOrNull?.hasMore ?? false)) {
-                            ref.read(dataProvider.notifier).load();
-                          }
-                          if (!(data.valueOrNull?.hasMore ?? true)) {
-                            return const SliverToBoxAdapter(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text("暂无更多"),
-                                ),
-                              ),
-                            );
-                          }
-                          return const SliverToBoxAdapter(
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Center(
-                                child: LoadingCircularProgress(),
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
+        return MkRefreshIndicator(
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: MediaQuery.paddingOf(context)
+                    .copyWith(left: padding, right: padding),
+                sliver: SliverMainAxisGroup(
+                  slivers: [
+                    SliverLayoutBuilder(builder: (context, constraints) {
+                      var offset = constraints.remainingPaintExtent -
+                          constraints.viewportMainAxisExtent +
+                          constraints.scrollOffset +
+                          constraints.precedingScrollExtent;
+                      offset = (offset / 140).clamp(0, 1.0);
+                      return SliverToBoxAdapter(
+                        child: UserHomeCard(userId: userId, offset: offset),
+                      );
+                    }),
+                    SliverPaginationNoteList(
+                      padding: const EdgeInsets.only(top: 10),
+                      watch: (ref) => ref.watch(dataProvider),
+                      loadMore: (ref) => ref.read(dataProvider.notifier).load(),
+                    )
+                  ],
+                ),
+              )
+            ],
           ),
+          onRefresh: () => ref.refresh(dataProvider.future),
         );
       },
     );
@@ -190,13 +112,15 @@ class UserHomeCard extends HookConsumerWidget {
                           )
                         else
                           Positioned.fill(
-                            child: Parallax(
-                              offset: offset,
-                              child: MkImage(
-                                fit: BoxFit.cover,
-                                userData.bannerUrl ?? "",
-                                blurHash: userData.bannerBlurhash,
-                                width: double.infinity,
+                            child: RepaintBoundary(
+                              child: Parallax(
+                                offset: offset,
+                                child: MkImage(
+                                  fit: BoxFit.cover,
+                                  userData.bannerUrl ?? "",
+                                  blurHash: userData.bannerBlurhash,
+                                  width: double.infinity,
+                                ),
                               ),
                             ),
                           ),

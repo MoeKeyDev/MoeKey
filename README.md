@@ -1,11 +1,14 @@
 ![](./docs/banner.png)
+
 # MoeKey
-MoeKey is a misskey client for Flutter  
+
+MoeKey is a misskey client for Flutter
 
 > This project is currently under development and has many functional deficiencies
 
 ## Features
-- [x] misskey Servers Selection List 
+
+- [x] misskey Servers Selection List
 - [x] misskey Login
 - [x] TimeLine
 - [x] Drive
@@ -20,14 +23,13 @@ MoeKey is a misskey client for Flutter
 - [X] User Profile
 - [ ] User Widgets
 - [ ] Clips
-- [ ] Explore
+- [X] Explore
 - [ ] Announcements
 - [ ] Search
 - [ ] User Lists
 - [ ] Achievements
 - [ ] Channels
 - [ ] Firefish Apis
-
 
 ## Screenshot
 
@@ -36,6 +38,7 @@ MoeKey is a misskey client for Flutter
 ## Developers
 
 riverpod code gen
+
 ```shell
  dart run build_runner watch --use-polling-watcher
 ```

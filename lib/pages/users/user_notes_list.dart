@@ -1,16 +1,15 @@
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/mk_header.dart';
+import 'package:moekey/widgets/mk_refresh_indicator.dart';
+import 'package:moekey/widgets/notes/note_pagination_list.dart';
 
 import '../../status/user.dart';
-import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_nav_button.dart';
-import '../../widgets/notes/note_card.dart';
 
 List<Map<String, bool>> _noteFilter = [
   {
@@ -54,7 +53,6 @@ class UserNotesPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
-    var themes = ref.watch(themeColorsProvider);
     var select = useState(2);
     const navs = ["热门", "帖子", "全部", "附件"];
     var dataProvider = userNotesListProvider(
@@ -66,101 +64,31 @@ class UserNotesPage extends HookConsumerWidget {
       withFeatured: _noteFilter[select.value]["withFeatured"]!,
       key: 1,
     );
-    var data = ref.watch(dataProvider);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
 
         return Stack(
           children: [
-            RefreshIndicator.adaptive(
-              onRefresh: () => ref.refresh(dataProvider.future),
-              edgeOffset: mediaPadding.top,
-              child: ScrollConfiguration(
-                behavior: ScrollConfiguration.of(context).copyWith(
-                  dragDevices: {
-                    PointerDeviceKind.touch,
-                    PointerDeviceKind.mouse,
-                  },
-                ),
-                child: CustomScrollView(
-                  slivers: [
-                    SliverPadding(
-                      padding: MediaQuery.paddingOf(context)
-                          .copyWith(left: padding, right: padding),
-                      sliver: SliverMainAxisGroup(
-                        slivers: [
-                          const SliverPadding(
-                              padding: EdgeInsets.only(top: 40)),
-                          SliverList.separated(
-                            addAutomaticKeepAlives: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              BorderRadius borderRadius;
-                              if (index == 0) {
-                                borderRadius = const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(12));
-                              } else {
-                                borderRadius =
-                                    const BorderRadius.all(Radius.zero);
-                              }
-                              return NoteCard(
-                                  key: ValueKey(
-                                      data.valueOrNull!.list[index].id),
-                                  borderRadius: borderRadius,
-                                  data: data.valueOrNull!.list[index]);
-                              // return KeepAliveWrapper(
-                              //     child: TimelineCardComponent(
-                              //   data: data.valueOrNull![index],
-                              //   borderRadius: borderRadius,
-                              // ));
-                            },
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return SizedBox(
-                                width: double.infinity,
-                                height: 1,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: themes.dividerColor,
-                                  ),
-                                ),
-                              );
-                            },
-                            itemCount: (data.valueOrNull?.list.length ?? 0),
-                          ),
-                          SliverLayoutBuilder(
-                            builder: (context, constraints) {
-                              if (constraints.remainingPaintExtent > 0 &&
-                                  (data.valueOrNull?.hasMore ?? false)) {
-                                ref.read(dataProvider.notifier).load();
-                              }
-                              if (!(data.valueOrNull?.hasMore ?? true)) {
-                                return const SliverToBoxAdapter(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Center(
-                                      child: Text("暂无更多"),
-                                    ),
-                                  ),
-                                );
-                              }
-                              return const SliverToBoxAdapter(
-                                child: Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Center(
-                                    child: LoadingCircularProgress(),
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+            MkRefreshIndicator(
+              child: CustomScrollView(
+                cacheExtent:
+                    (Platform.isAndroid || Platform.isIOS) ? 1000 : 4000,
+                slivers: [
+                  SliverPaginationNoteList(
+                    padding: EdgeInsets.only(
+                        top: mediaPadding.top + 50,
+                        left: padding,
+                        right: padding),
+                    watch: (ref) {
+                      return ref.watch(dataProvider);
+                    },
+                    loadMore: (WidgetRef ref) =>
+                        ref.read(dataProvider.notifier).load(),
+                  )
+                ],
               ),
+              onRefresh: () => ref.refresh(dataProvider.future),
             ),
             Positioned(
               top: mediaPadding.top - 8,

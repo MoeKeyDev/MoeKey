@@ -1,3 +1,5 @@
+import 'package:moekey/apis/models/user_lite.dart';
+
 import 'note.dart';
 
 class UserFullModel {
@@ -16,11 +18,12 @@ class UserFullModel {
   String id;
   bool isAdmin;
   bool publicReactions;
-  String onlineStatus;
+  OnlineStatus onlineStatus;
   DateTime updatedAt;
   String username;
   String? name;
   List<dynamic> fields;
+  List<AvatarDecoration>? avatarDecorations;
 
   //private public followers
   String? ffVisibility;
@@ -64,6 +67,7 @@ class UserFullModel {
     required this.pinnedNotesIds,
     this.uri,
     this.url,
+    this.avatarDecorations,
     required this.notesCount,
     required this.publicReactions,
     required this.isFollowed,
@@ -72,6 +76,19 @@ class UserFullModel {
     required this.hasPendingFollowRequestToYou,
     required this.isLocked,
   });
+
+  UserLiteModel toLiteUserModel() {
+    return UserLiteModel(
+        avatarBlurhash: avatarBlurhash,
+        avatarDecorations: avatarDecorations ?? [],
+        avatarUrl: avatarUrl,
+        emojis: emojis,
+        host: host,
+        id: id,
+        name: name,
+        onlineStatus: onlineStatus,
+        username: username);
+  }
 
   factory UserFullModel.fromMap(dynamic map) {
     List<NoteModel> pinnedNotes = [];
@@ -93,7 +110,7 @@ class UserFullModel {
       host: map['host'],
       id: map['id'],
       isAdmin: map['isAdmin'] ?? false,
-      onlineStatus: map['onlineStatus'],
+      onlineStatus: onlineStatusValues.map[map["onlineStatus"]]!,
       updatedAt: DateTime.parse(map['updatedAt']),
       username: map['username'],
       name: map['name'],
@@ -132,7 +149,7 @@ class UserFullModel {
     String? host,
     String? id,
     bool? isAdmin,
-    String? onlineStatus,
+    OnlineStatus? onlineStatus,
     DateTime? updatedAt,
     String? username,
     String? name,

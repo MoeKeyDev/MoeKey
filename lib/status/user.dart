@@ -7,8 +7,8 @@ import '../apis/models/following.dart';
 import '../apis/models/note.dart';
 import '../apis/models/user_full.dart';
 import '../main.dart';
+import '../widgets/notes/note_pagination_list.dart';
 import 'misskey_api.dart';
-import 'notes_listener.dart';
 
 part 'user.g.dart';
 
@@ -33,9 +33,12 @@ class UserInfo extends _$UserInfo {
 
   @override
   FutureOr<UserFullModel?> build(
-      {String? username, String? host, String? userId}) async {
+      {String? username,
+      String? host,
+      String? userId,
+      UserFullModel? userModel}) async {
     var apis = ref.read(misskeyApisProvider);
-    var model =
+    var model = userModel ??
         await apis.user.show(username: username, host: host, userId: userId);
     // 如果服务端没有返回用户名HOST，默认使用本示例的地址
     model?.host ??= Uri.parse(apis.instance).host;
@@ -105,15 +108,10 @@ class UserInfo extends _$UserInfo {
   }
 }
 
-class UserNoteListsModel {
-  List<NoteModel> list = [];
-  bool hasMore = true;
-}
-
 @riverpod
 class UserNotesList extends _$UserNotesList {
   @override
-  FutureOr<UserNoteListsModel> build({
+  FutureOr<NoteListModel> build({
     required String userId,
     bool withRenotes = false,
     bool withReplies = false,
@@ -122,7 +120,7 @@ class UserNotesList extends _$UserNotesList {
     bool withFeatured = false,
     int key = 0,
   }) async {
-    var note = UserNoteListsModel();
+    var note = NoteListModel();
 
     note.list = await notes();
 
@@ -159,7 +157,7 @@ class UserNotesList extends _$UserNotesList {
 
       notesList = await notes(untilId: untilId);
 
-      var model = UserNoteListsModel();
+      var model = NoteListModel();
       model.list = (state.valueOrNull?.list ?? []) + notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;
@@ -174,10 +172,10 @@ class UserNotesList extends _$UserNotesList {
 @riverpod
 class UserReactionsList extends _$UserReactionsList {
   @override
-  FutureOr<UserNoteListsModel> build({
+  FutureOr<NoteListModel> build({
     required String userId,
   }) async {
-    var note = UserNoteListsModel();
+    var note = NoteListModel();
 
     note.list = await reactions();
 
@@ -203,7 +201,7 @@ class UserReactionsList extends _$UserReactionsList {
       }
       List<NoteModel> notesList = await reactions(untilId: untilId);
 
-      var model = UserNoteListsModel();
+      var model = NoteListModel();
       model.list = (state.valueOrNull?.list ?? []) + notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;

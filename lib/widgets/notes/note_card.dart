@@ -86,79 +86,74 @@ class NoteCard extends ConsumerWidget {
       thisData = data.renote!;
       isReNote = true;
     }
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        var textStyle = Theme.of(context).textTheme.bodyMedium;
-        return DefaultTextStyle(
-          style: textStyle!,
-          child: MkCard(
-            shadow: false,
-            borderRadius: borderRadius,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (pined)
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Icon(
-                          TablerIcons.pin,
-                          size: 17,
-                          color: Colors.orangeAccent,
-                        ),
-                        Text(
-                          " 已置顶的帖子",
-                          style: TextStyle(
-                              color: Colors.orangeAccent, fontSize: 13.5),
-                        ),
-                      ],
+    var textStyle = Theme.of(context).textTheme.bodyMedium;
+    return DefaultTextStyle(
+      style: textStyle!,
+      child: MkCard(
+        shadow: false,
+        borderRadius: borderRadius,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (pined)
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Icon(
+                      TablerIcons.pin,
+                      size: 17,
+                      color: Colors.orangeAccent,
                     ),
-                  ),
-                if (thisData.reply != null)
-                  Opacity(
-                    opacity: 0.8,
-                    child: TimeLineNoteCardComponent(
-                      data: thisData.reply!,
-                      reply: true,
-                      // isShowReactions: false,
-                      disableReactions: true,
+                    Text(
+                      " 已置顶的帖子",
+                      style:
+                          TextStyle(color: Colors.orangeAccent, fontSize: 13.5),
                     ),
-                  ),
-                if (isReNote) ReNoteUserInfo(data: data),
-                const SizedBox(
-                  height: 4,
+                  ],
                 ),
-                TimeLineNoteCardComponent(
-                  data: thisData,
-                  isShowUrlPreview: true,
-                  customMenuItem: customContextmenu,
-                  innerWidget: thisData.renote != null
-                      ? Container(
-                          margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1,
-                                  color: themes.fgColor.withOpacity(0.6)),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8))),
-                          padding: const EdgeInsets.all(12),
-                          child: TimeLineNoteCardComponent(
-                            data: thisData.renote!,
-                            isShowAction: false,
-                            isShowReactions: false,
-                            limit: 500,
-                            height: 300,
-                          ),
-                        )
-                      : null,
+              ),
+            if (thisData.reply != null)
+              Opacity(
+                opacity: 0.8,
+                child: TimeLineNoteCardComponent(
+                  data: thisData.reply!,
+                  reply: true,
+                  // isShowReactions: false,
+                  disableReactions: true,
                 ),
-              ],
+              ),
+            if (isReNote) ReNoteUserInfo(data: data),
+            const SizedBox(
+              height: 4,
             ),
-          ),
-        );
-      },
+            TimeLineNoteCardComponent(
+              data: thisData,
+              isShowUrlPreview: true,
+              customMenuItem: customContextmenu,
+              innerWidget: thisData.renote != null
+                  ? Container(
+                      margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 1, color: themes.fgColor.withOpacity(0.6)),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8))),
+                      padding: const EdgeInsets.all(12),
+                      child: TimeLineNoteCardComponent(
+                        data: thisData.renote!,
+                        isShowAction: false,
+                        isShowReactions: false,
+                        limit: 500,
+                        height: 300,
+                      ),
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -197,12 +192,6 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var noteListener = noteListenerProvider(this.data);
     var data = ref.watch(noteListener);
-    // print(ref.watch(noteListener).error);
-    // useEffect(() {
-    //   // 更新note缓存
-    //   ref.read(noteListener.notifier).updateModel(this.data);
-    //   return null;
-    // }, [this.data]);
 
     var links = extractLinksFromMarkdown(data.text ?? "");
     var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
@@ -301,18 +290,6 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
         );
       },
     );
-
-    // return VisibilityDetector(
-    //   onVisibilityChanged: (visibilityInfo) {
-    //     if (visibilityInfo.visibleFraction > 0) {
-    //       notifier.subNote(data);
-    //     } else {
-    //       notifier.unsubNote(data);
-    //     }
-    //   },
-    //   key: ValueKey(data.id),
-    //   child: ,
-    // );
   }
 }
 
@@ -567,106 +544,108 @@ class NoteLinkPreview extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var res = ref.watch(getUriInfoProvider(link));
-    if (res.valueOrNull != null) {
-      var data = res.valueOrNull;
-      return Container(
-        margin: const EdgeInsets.only(top: 8),
-        decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-            border: Border.all(
-              color: themes.dividerColor,
-              width: 1,
-            )),
-        child: IntrinsicHeight(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                launchUrlString(link);
-              },
-              child: Row(
-                children: [
-                  if (data?.thumbnail != null)
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(5),
-                        bottomLeft: Radius.circular(5),
-                      ),
-                      child: SizedBox(
-                        width: fontsize * 7,
-                        height: fontsize * 7,
-                        child: MkImage(
-                          data!.thumbnail!,
-                          height: fontsize * 8,
-                          width: fontsize * 8,
-                        ),
+
+    var data = res.valueOrNull;
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          border: Border.all(
+            color: themes.dividerColor,
+            width: 1,
+          )),
+      child: IntrinsicHeight(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              launchUrlString(link);
+            },
+            child: Row(
+              children: [
+                if (data?.thumbnail != null)
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(5),
+                      bottomLeft: Radius.circular(5),
+                    ),
+                    child: SizedBox(
+                      width: fontsize * 7,
+                      height: fontsize * 7,
+                      child: MkImage(
+                        data!.thumbnail!,
+                        height: fontsize * 8,
+                        width: fontsize * 8,
                       ),
                     ),
-                  Expanded(
-                      child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          data?.title ?? "",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: fontsize,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  )
+                else
+                  SizedBox(
+                    height: fontsize * 7,
+                  ),
+                Expanded(
+                    child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        data?.title ?? "...",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: fontsize,
+                          fontWeight: FontWeight.bold,
                         ),
-                        Text(
-                          data?.description ?? "",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: fontsize * 0.9,
-                          ),
+                      ),
+                      Text(
+                        data?.description ?? "...",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: fontsize * 0.9,
                         ),
-                        Row(
-                          children: [
-                            if (data?.icon != null) ...[
-                              SizedBox(
-                                width: 16,
+                      ),
+                      Row(
+                        children: [
+                          if (data?.icon != null) ...[
+                            SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: MkImage(
+                                data!.icon!,
                                 height: 16,
-                                child: MkImage(
-                                  data!.icon!,
-                                  height: 16,
-                                  width: 16,
-                                ),
+                                width: 16,
                               ),
-                              const SizedBox(
-                                width: 4,
-                              )
-                            ],
-                            Expanded(
-                              child: Text(
-                                data?.sitename ?? "",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: fontsize * 0.9,
-                                ),
-                              ),
+                            ),
+                            const SizedBox(
+                              width: 4,
                             )
                           ],
-                        )
-                      ],
-                    ),
-                  ))
-                ],
-              ),
+                          Expanded(
+                            child: Text(
+                              data?.sitename ?? "...",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: fontsize * 0.9,
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ))
+              ],
             ),
           ),
         ),
-      );
-    }
-    return const SizedBox();
+      ),
+    );
   }
 }
 

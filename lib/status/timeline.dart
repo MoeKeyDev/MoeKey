@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:moekey/status/server.dart';
+import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
@@ -21,15 +22,18 @@ Future<TimelineDatabase> timelineDatabase(TimelineDatabaseRef ref) async {
 @riverpod
 class Timeline extends _$Timeline {
   @override
-  FutureOr<List<NoteModel>> build({String api = "timeline"}) async {
+  FutureOr<NoteListModel> build({String api = "timeline"}) async {
     var db = await ref.watch(timelineDatabaseProvider.future);
     var cache = await db.getTimeline(api);
+    var model = NoteListModel();
     if (cache != null) {
-      return cache;
+      model.list = cache;
+    } else {
+      var list = await timeline();
+      model.list = list;
+      db.setTimeline(api, list);
     }
-    var list = await timeline();
-    await db.setTimeline(api, list);
-    return list;
+    return model;
   }
 
   Future<List<NoteModel>> timeline({String? untilId, String? sinceId}) async {
@@ -47,12 +51,23 @@ class Timeline extends _$Timeline {
 
   load() async {
     if (loading) return;
+    if (!state.value!.hasMore) return;
     loading = true;
     try {
-      state = AsyncData((state.valueOrNull ?? []) +
-          await timeline(untilId: state.valueOrNull?.last.id));
-      var db = await ref.watch(timelineDatabaseProvider.future);
-      await db.setTimeline(api, state.value!);
+      String? untilId;
+      if (state.valueOrNull!.list.isNotEmpty) {
+        untilId = state.valueOrNull?.list.last.id;
+      }
+      List<NoteModel> notesList;
+
+      notesList = await timeline(untilId: untilId);
+
+      var model = NoteListModel();
+      model.list = (state.valueOrNull?.list ?? []) + notesList;
+      if (notesList.isEmpty) {
+        model.hasMore = false;
+      }
+      state = AsyncData(model);
     } finally {
       loading = false;
     }

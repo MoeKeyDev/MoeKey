@@ -1,6 +1,7 @@
 import 'package:moekey/apis/models/notification.dart';
 import 'package:moekey/main.dart';
 import 'package:moekey/status/notes_listener.dart';
+import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
@@ -45,32 +46,41 @@ class Notifications extends _$Notifications {
 @riverpod
 class MentionsNotifications extends _$MentionsNotifications {
   @override
-  FutureOr<List<NoteModel>> build({bool specified = false}) async {
-    return (await mentions()) ?? [];
+  FutureOr<NoteListModel> build({bool specified = false}) async {
+    var model = NoteListModel();
+    model.list = (await mentions()) ?? [];
+    return model;
   }
 
   var loading = false;
 
   ///i/notifications-grouped
-  Future<List<NoteModel>?> mentions({String? untilId}) async {
-    if (loading) return null;
-    loading = true;
-    try {
-      var apis = ref.watch(misskeyApisProvider);
-      var notes = await apis.notes
-          .mentions(untilId: untilId, limit: 20, specified: specified);
-      return notes;
-    } finally {
-      loading = false;
-    }
-    // state = AsyncData(res.data);
+  Future<List<NoteModel>> mentions({String? untilId}) async {
+    var apis = ref.watch(misskeyApisProvider);
+    var notes = await apis.notes
+        .mentions(untilId: untilId, limit: 20, specified: specified);
+    return notes;
   }
 
   loadMore() async {
-    var list = state.valueOrNull ?? [];
-    var res = await mentions(untilId: state.valueOrNull?.last.id);
-    if (res != null) {
-      state = AsyncData(list + res);
+    if (loading) return;
+    if (!state.value!.hasMore) return;
+    loading = true;
+    try {
+      String? untilId;
+      if (state.valueOrNull!.list.isNotEmpty) {
+        untilId = state.valueOrNull?.list.last.id;
+      }
+      List<NoteModel> notesList = await mentions(untilId: untilId);
+
+      var model = NoteListModel();
+      model.list = (state.valueOrNull?.list ?? []) + notesList;
+      if (notesList.isEmpty) {
+        model.hasMore = false;
+      }
+      state = AsyncData(model);
+    } finally {
+      loading = false;
     }
   }
 }

@@ -49,11 +49,11 @@ class ExplorePage extends HookConsumerWidget {
       builder: (context, constraints) {
         return MkScaffold(
           body: TabBarView(
-            children: [
+            controller: tabController,
+            children: const [
               KeepAliveWrapper(child: ExploreHotPage()),
               KeepAliveWrapper(child: ExploreUsersPage()),
             ],
-            controller: tabController,
           ),
           header: MkAppbar(
             leading: Padding(
@@ -71,7 +71,7 @@ class ExplorePage extends HookConsumerWidget {
             ),
             isSmallLeadingCenter: constraints.maxWidth < 500,
             bottom: MkTabBar(controller: tabController, tabs: tabs),
-            trailing: SizedBox(
+            trailing: const SizedBox(
               width: 100,
             ),
           ),

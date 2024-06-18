@@ -10,6 +10,7 @@ import 'package:moekey/status/notifications.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
+import 'package:moekey/widgets/mk_refresh_indicator.dart';
 import 'package:moekey/widgets/notifications/notifications_user_card.dart';
 
 import '../../apis/models/notification.dart';
@@ -360,73 +361,64 @@ class NotificationsGroupList extends HookConsumerWidget {
       });
       return null;
     }, const []);
-    return RefreshIndicator.adaptive(
-        onRefresh: () => ref.refresh(notificationsProvider.future),
-        edgeOffset: mediaPadding.top - 8,
-        child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(
-            dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-            },
-          ),
-          child: LoadingAndEmpty(
-            loading: res.isLoading,
-            empty: res.valueOrNull?.isEmpty ?? true,
-            refresh: () {
-              ref.invalidate(notificationsProvider);
-            },
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                var padding = getPaddingForNote(constraints);
-                return ListView.separated(
-                  itemCount: res.valueOrNull?.length ?? 0,
-                  controller: scrollController,
-                  itemBuilder: (context, index) {
-                    // return Text("$index");
-                    BorderRadius borderRadius;
-                    if (index == 0) {
-                      borderRadius = const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12));
-                    } else {
-                      borderRadius = const BorderRadius.all(Radius.zero);
-                    }
-                    var type = res.valueOrNull![index].type;
-                    if (widgetList[type] != null) {
-                      return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: padding),
-                          child: widgetList[type]!(
-                              res.valueOrNull![index], borderRadius, themes));
-                    }
-                    return Padding(
+    return MkRefreshIndicator(
+      child: LoadingAndEmpty(
+        loading: res.isLoading,
+        empty: res.valueOrNull?.isEmpty ?? true,
+        refresh: () {
+          ref.invalidate(notificationsProvider);
+        },
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            var padding = getPaddingForNote(constraints);
+            return ListView.separated(
+              itemCount: res.valueOrNull?.length ?? 0,
+              controller: scrollController,
+              itemBuilder: (context, index) {
+                // return Text("$index");
+                BorderRadius borderRadius;
+                if (index == 0) {
+                  borderRadius = const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12));
+                } else {
+                  borderRadius = const BorderRadius.all(Radius.zero);
+                }
+                var type = res.valueOrNull![index].type;
+                if (widgetList[type] != null) {
+                  return Padding(
                       padding: EdgeInsets.symmetric(horizontal: padding),
-                      child: MkCard(
-                          shadow: false,
-                          borderRadius: borderRadius,
-                          child:
-                              Text("暂时不支持的通知:${res.valueOrNull?[index].type}")),
-                    );
-                    // return SizedBox();
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: padding),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 1,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: themes.dividerColor,
-                          ),
-                        ),
+                      child: widgetList[type]!(
+                          res.valueOrNull![index], borderRadius, themes));
+                }
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding),
+                  child: MkCard(
+                      shadow: false,
+                      borderRadius: borderRadius,
+                      child: Text("暂时不支持的通知:${res.valueOrNull?[index].type}")),
+                );
+                // return SizedBox();
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 1,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: themes.dividerColor,
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 );
               },
-            ),
-          ),
-        ));
+            );
+          },
+        ),
+      ),
+      onRefresh: () => ref.refresh(notificationsProvider.future),
+    );
   }
 }

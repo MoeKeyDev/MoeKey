@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.9+31
+
+## Feature
+
+- Add Explore Page
+
+### Refactored
+
+- Refactored timeline
+
 ## 0.3.8+30
 
 ### Refactored
