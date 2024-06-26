@@ -14,25 +14,57 @@ final List<Map<String, dynamic>> navItemList = [
     "icon": TablerIcons.home,
     "label": "首页",
     "id": "timeline",
-    "page": () => const TimeLineListPage(api: "timeline")
+    "page": (ScrollController controller,
+            GlobalKey<RefreshIndicatorState> refreshKey) =>
+        TimeLineListPage(
+          api: "timeline",
+          controller: controller,
+          refreshKey: refreshKey,
+        ),
+    "controller": ScrollController(),
+    "refresh": GlobalKey<RefreshIndicatorState>()
   },
   {
     "icon": TablerIcons.planet,
     "label": "本地",
     "id": "local",
-    "page": () => const TimeLineListPage(api: "local-timeline")
+    "page": (ScrollController controller,
+            GlobalKey<RefreshIndicatorState> refreshKey) =>
+        TimeLineListPage(
+          api: "local-timeline",
+          controller: controller,
+          refreshKey: refreshKey,
+        ),
+    "controller": ScrollController(),
+    "refresh": GlobalKey<RefreshIndicatorState>()
   },
   {
     "icon": TablerIcons.universe,
     "label": "社交",
     "id": "hybrid",
-    "page": () => const TimeLineListPage(api: "hybrid-timeline")
+    "page": (ScrollController controller,
+            GlobalKey<RefreshIndicatorState> refreshKey) =>
+        TimeLineListPage(
+          api: "hybrid-timeline",
+          controller: controller,
+          refreshKey: refreshKey,
+        ),
+    "controller": ScrollController(),
+    "refresh": GlobalKey<RefreshIndicatorState>()
   },
   {
     "icon": TablerIcons.whirl,
     "label": "全局",
     "id": "global",
-    "page": () => const TimeLineListPage(api: "global-timeline")
+    "page": (ScrollController controller,
+            GlobalKey<RefreshIndicatorState> refreshKey) =>
+        TimeLineListPage(
+          api: "global-timeline",
+          controller: controller,
+          refreshKey: refreshKey,
+        ),
+    "controller": ScrollController(),
+    "refresh": GlobalKey<RefreshIndicatorState>()
   },
 ];
 
@@ -61,7 +93,22 @@ class TimelinePage extends HookConsumerWidget {
             tabs: list,
             tabAlignment: TabAlignment.center,
             onTap: (value) {
+              var lastIndex = currentIndex.value;
               currentIndex.value = value;
+              ScrollController controller = navItemList[value]["controller"];
+              GlobalKey<RefreshIndicatorState> refreshKey =
+                  navItemList[value]["refresh"];
+              if (controller.hasClients && lastIndex == value) {
+                if (controller.offset > 0) {
+                  controller.animateTo(0,
+                      duration: Duration(
+                          milliseconds:
+                              (controller.offset).toInt().clamp(100, 1000)),
+                      curve: Curves.easeInOut);
+                } else {
+                  refreshKey.currentState?.show();
+                }
+              }
               pageController.animateToPage(value,
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.bounceIn);
@@ -71,7 +118,12 @@ class TimelinePage extends HookConsumerWidget {
       ),
       body: PageView.builder(
         itemBuilder: (context, index) {
-          return KeepAliveWrapper(child: navItemList[index]["page"]());
+          return KeepAliveWrapper(
+            child: navItemList[index]["page"](
+              navItemList[index]["controller"],
+              navItemList[index]["refresh"],
+            ),
+          );
         },
         controller: pageController,
         itemCount: navItemList.length,

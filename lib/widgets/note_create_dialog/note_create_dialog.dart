@@ -889,10 +889,11 @@ class NoteCreateDialog extends HookConsumerWidget {
                       return const UserSelectDialog();
                     },
                   );
+                  print(list);
                   if (list != null && list != []) {
                     contentController.text = "${contentController.text} ${[
                       for (var item in list ?? [])
-                        "@${item["username"]}${item["host"] != null ? "@${item["host"]}" : ""}"
+                        "@${item?.username}${item?.host != null ? "@${item?.host}" : ""}"
                     ].join(" ")} ";
                     ref
                         .read(noteCreateDialogStateProvider(noteId, noteType)

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:moekey/status/dio.dart';
+import 'package:moekey/status/misskey_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../status/server.dart';
@@ -31,10 +32,8 @@ class HashtagSelectDialogState extends _$HashtagSelectDialogState {
       return;
     }
 
-    var http = await ref.read(httpProvider.future);
-    var user = ref.read(currentLoginUserProvider);
-    var data = await http.post("/hashtags/search",
-        data: {"query": query, "limit": 30, "i": user!});
-    state = AsyncData(data.data);
+    var http = ref.read(misskeyApisProvider);
+    var data = await http.hashtags.search(query: query);
+    state = AsyncData(data);
   }
 }

@@ -10,11 +10,11 @@ import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import '../../widgets/loading_weight.dart';
 
 class TimeLineListPage extends HookConsumerWidget {
-  const TimeLineListPage({
-    super.key,
-    required this.api,
-  });
+  const TimeLineListPage(
+      {super.key, required this.api, this.controller, this.refreshKey});
 
+  final ScrollController? controller;
+  final GlobalKey<RefreshIndicatorState>? refreshKey;
   final String api;
 
   @override
@@ -25,6 +25,7 @@ class TimeLineListPage extends HookConsumerWidget {
     return LayoutBuilder(builder: (context, constraints) {
       var padding = getPaddingForNote(constraints);
       return MkRefreshIndicator(
+        refreshKey: refreshKey,
         child: LoadingAndEmpty(
           loading: data.isLoading,
           empty: data.valueOrNull?.list.isEmpty ?? true,
@@ -35,6 +36,7 @@ class TimeLineListPage extends HookConsumerWidget {
           child: HookConsumer(
             builder: (context, ref, child) {
               return CustomScrollView(
+                controller: controller,
                 cacheExtent:
                     (Platform.isAndroid || Platform.isIOS) ? 1000 : 4000,
                 // controller: scrollController,

@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -204,7 +203,13 @@ class MkTabBar extends ConsumerWidget implements PreferredSizeWidget {
       isScrollable: true,
       tabAlignment: tabAlignment,
       labelPadding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-      onTap: onTap,
+      onTap: (value) {
+        print(value);
+        // print(PrimaryScrollController.of(globalNav).offset);
+        if (onTap != null) {
+          onTap!(value);
+        }
+      },
       indicatorColor: themes.accentColor,
       dividerColor: Colors.transparent,
       automaticIndicatorColorAdjustment: false,

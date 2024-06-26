@@ -115,7 +115,7 @@ class ModalWrapper extends StatelessWidget {
   }
 }
 
-showModel<T>({
+Future<T?> showModel<T>({
   required BuildContext context,
   required Widget Function(BuildContext) builder,
 }) {

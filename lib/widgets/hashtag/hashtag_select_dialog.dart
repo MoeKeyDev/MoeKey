@@ -14,8 +14,6 @@ class HashtagSelectDialog extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var queryPadding = MediaQuery.of(context).padding;
-    var querySize = MediaQuery.of(context).size;
     var themes = ref.watch(themeColorsProvider);
     var userList = ref.watch(hashtagSelectDialogStateProvider);
     var selectList = useState({});
@@ -104,7 +102,17 @@ class HashtagSelectDialog extends HookConsumerWidget {
   Widget buildUserQuery() {
     return HookConsumer(
       builder: (context, ref, child) {
-        var themes = ref.watch(themeColorsProvider);
+        useEffect(() {
+          Future.delayed(
+            Duration.zero,
+            () {
+              ref
+                  .read(hashtagSelectDialogStateProvider.notifier)
+                  .search(query: "");
+            },
+          );
+          return null;
+        }, const []);
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
