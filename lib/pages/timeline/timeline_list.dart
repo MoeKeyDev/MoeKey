@@ -9,6 +9,7 @@ import 'package:moekey/widgets/notes/note_pagination_list.dart';
 
 import '../../widgets/loading_weight.dart';
 
+@Deprecated("已废弃")
 class TimeLineListPage extends HookConsumerWidget {
   const TimeLineListPage(
       {super.key, required this.api, this.controller, this.refreshKey});

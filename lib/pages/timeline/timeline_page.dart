@@ -5,133 +5,83 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/timeline/timeline_list.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mk_header.dart';
+import 'package:moekey/widgets/mk_tabbar_list.dart';
 
+import '../../status/timeline.dart';
+import '../../utils/get_padding_note.dart';
 import '../../widgets/keep_alive_wrapper.dart';
 import '../../widgets/mk_scaffold.dart';
+import '../../widgets/notes/note_pagination_list.dart';
 
 final List<Map<String, dynamic>> navItemList = [
   {
     "icon": TablerIcons.home,
     "label": "首页",
-    "id": "timeline",
-    "page": (ScrollController controller,
-            GlobalKey<RefreshIndicatorState> refreshKey) =>
-        TimeLineListPage(
-          api: "timeline",
-          controller: controller,
-          refreshKey: refreshKey,
-        ),
-    "controller": ScrollController(),
-    "refresh": GlobalKey<RefreshIndicatorState>()
+    "api": "timeline",
   },
   {
     "icon": TablerIcons.planet,
     "label": "本地",
-    "id": "local",
-    "page": (ScrollController controller,
-            GlobalKey<RefreshIndicatorState> refreshKey) =>
-        TimeLineListPage(
-          api: "local-timeline",
-          controller: controller,
-          refreshKey: refreshKey,
-        ),
-    "controller": ScrollController(),
-    "refresh": GlobalKey<RefreshIndicatorState>()
+    "api": "local-timeline",
   },
   {
     "icon": TablerIcons.universe,
     "label": "社交",
-    "id": "hybrid",
-    "page": (ScrollController controller,
-            GlobalKey<RefreshIndicatorState> refreshKey) =>
-        TimeLineListPage(
-          api: "hybrid-timeline",
-          controller: controller,
-          refreshKey: refreshKey,
-        ),
-    "controller": ScrollController(),
-    "refresh": GlobalKey<RefreshIndicatorState>()
+    "api": "hybrid-timeline",
   },
   {
     "icon": TablerIcons.whirl,
     "label": "全局",
-    "id": "global",
-    "page": (ScrollController controller,
-            GlobalKey<RefreshIndicatorState> refreshKey) =>
-        TimeLineListPage(
-          api: "global-timeline",
-          controller: controller,
-          refreshKey: refreshKey,
-        ),
-    "controller": ScrollController(),
-    "refresh": GlobalKey<RefreshIndicatorState>()
+    "api": "global-timeline",
   },
 ];
 
 class TimelinePage extends HookConsumerWidget {
-  const TimelinePage({super.key});
+  const TimelinePage({super.key, this.mkTabBarListKey});
+
+  final GlobalKey<MkTabBarListState>? mkTabBarListKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var pageController = usePageController();
-    var tabController = useTabController(initialLength: navItemList.length);
     var currentIndex = useState(0);
-    return MkScaffold(
-      header: MkAppbar(
-        content: Builder(builder: (context) {
-          var list = <Widget>[];
-          for (var (index, element) in navItemList.indexed) {
-            list.add(TabItem(
-              icon: element["icon"],
-              label: element["label"],
-              id: index,
-              current: currentIndex.value,
-            ));
-          }
-          return MkTabBar(
-            controller: tabController,
-            tabs: list,
-            tabAlignment: TabAlignment.center,
-            onTap: (value) {
-              var lastIndex = currentIndex.value;
-              currentIndex.value = value;
-              ScrollController controller = navItemList[value]["controller"];
-              GlobalKey<RefreshIndicatorState> refreshKey =
-                  navItemList[value]["refresh"];
-              if (controller.hasClients && lastIndex == value) {
-                if (controller.offset > 0) {
-                  controller.animateTo(0,
-                      duration: Duration(
-                          milliseconds:
-                              (controller.offset).toInt().clamp(100, 1000)),
-                      curve: Curves.easeInOut);
-                } else {
-                  refreshKey.currentState?.show();
-                }
-              }
-              pageController.animateToPage(value,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.bounceIn);
-            },
-          );
-        }),
-      ),
-      body: PageView.builder(
-        itemBuilder: (context, index) {
-          return KeepAliveWrapper(
-            child: navItemList[index]["page"](
-              navItemList[index]["controller"],
-              navItemList[index]["refresh"],
-            ),
-          );
-        },
-        controller: pageController,
-        itemCount: navItemList.length,
-        onPageChanged: (index) {
-          currentIndex.value = index;
-          tabController.animateTo(index);
-        },
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var padding = getPaddingForNote(constraints);
+        return MkTabBarList(
+          key: mkTabBarListKey,
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          items: [
+            for (var (index, element) in navItemList.indexed)
+              MkTabBarItem(
+                label: TabItem(
+                  icon: element["icon"],
+                  label: element["label"],
+                  id: index,
+                  current: currentIndex.value,
+                ),
+                slivers: [
+                  SliverPaginationNoteList(
+                    watch: (ref) =>
+                        ref.watch(timelineProvider(api: element["api"])),
+                    loadMore: (ref) => ref
+                        .read(timelineProvider(api: element["api"]).notifier)
+                        .load(),
+                  )
+                ],
+                onRefresh: () async {
+                  await ref
+                      .read(timelineProvider(api: element["api"]).notifier)
+                      .cleanCache();
+                  return await ref
+                      .refresh(timelineProvider(api: element["api"]).future);
+                },
+              )
+          ],
+          onIndexUpdate: (index) {
+            currentIndex.value = index;
+          },
+        );
+      },
     );
   }
 }

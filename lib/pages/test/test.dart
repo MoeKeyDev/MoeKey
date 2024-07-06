@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/widgets/mk_header.dart';
+import 'package:moekey/widgets/mk_scaffold.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'test.g.dart';
@@ -20,14 +22,14 @@ class TestWidget extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var t = ref.watch(testProvider);
-    return Column(
-      children: [
-        TextButton(
-            onPressed: () {
-              ref.read(testProvider.notifier).test();
-            },
-            child: Text("测试"))
-      ],
+    return MkScaffold(
+      body: FlutterLogo(),
+      header: MkAppbar(
+        content: Text("content"),
+        trailing: Text("trailing"),
+        leading: Text("leading"),
+        isSmallLeadingCenter: true,
+      ),
     );
   }
 }

@@ -109,6 +109,7 @@ class HomeState {
       "icon": TablerIcons.speakerphone,
       "label": S.current.announcements,
       "id": "announcements",
+      "page": () => const TestWidget()
     },
     {
       "icon": TablerIcons.search,

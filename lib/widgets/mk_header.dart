@@ -204,7 +204,6 @@ class MkTabBar extends ConsumerWidget implements PreferredSizeWidget {
       tabAlignment: tabAlignment,
       labelPadding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
       onTap: (value) {
-        print(value);
         // print(PrimaryScrollController.of(globalNav).offset);
         if (onTap != null) {
           onTap!(value);
