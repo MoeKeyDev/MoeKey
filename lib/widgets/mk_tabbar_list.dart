@@ -13,15 +13,16 @@ import 'mk_scaffold.dart';
 
 class MkTabBarItem {
   Widget label;
-  List<Widget> slivers;
-  final Future<void> Function() onRefresh;
+  Widget child;
 
-  MkTabBarItem(
-      {required this.label, required this.slivers, required this.onRefresh});
+  MkTabBarItem({
+    required this.label,
+    required this.child,
+  });
 }
 
-class MkTabBarList extends StatefulWidget {
-  const MkTabBarList(
+class MkTabBarRefreshScroll extends StatefulWidget {
+  const MkTabBarRefreshScroll(
       {super.key,
       required this.items,
       this.leading,
@@ -44,20 +45,20 @@ class MkTabBarList extends StatefulWidget {
   final void Function(int)? onIndexUpdate;
 
   @override
-  State<MkTabBarList> createState() => MkTabBarListState();
+  State<MkTabBarRefreshScroll> createState() => MkTabBarRefreshScrollState();
 }
 
-class MkTabBarListState extends State<MkTabBarList>
+class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
-  late List<GlobalKey<RefreshIndicatorState>> refreshKeys;
+  late List<MkRefreshController> refreshControllers;
   late List<ScrollController> scrollControllers;
   int lastIndex = 0;
 
   @override
   void initState() {
-    lastIndex = widget.initIndex;
     super.initState();
+    lastIndex = widget.initIndex;
     tabController = TabController(
         length: widget.items.length,
         vsync: this,
@@ -71,13 +72,13 @@ class MkTabBarListState extends State<MkTabBarList>
         lastIndex = tabController.index;
       }
     });
-    refreshKeys =
-        List.from(widget.items.map((_) => GlobalKey<RefreshIndicatorState>()));
+    refreshControllers = List<MkRefreshController>.from(
+        widget.items.map((_) => MkRefreshController()));
     scrollControllers = List.from(widget.items.map((_) => ScrollController()));
   }
 
   @override
-  void didUpdateWidget(MkTabBarList oldWidget) {
+  void didUpdateWidget(MkTabBarRefreshScroll oldWidget) {
     super.didUpdateWidget(oldWidget);
   }
 
@@ -91,28 +92,11 @@ class MkTabBarListState extends State<MkTabBarList>
             children: [
               for (var (index, item) in widget.items.indexed)
                 KeepAliveWrapper(
-                  child: MkRefreshIndicator(
-                    refreshKey: refreshKeys[index],
-                    onRefresh: item.onRefresh,
-                    child: Builder(
-                      builder: (context) {
-                        var mediaPadding = MediaQuery.paddingOf(context);
-                        return CustomScrollView(
-                          controller: scrollControllers[index],
-                          cacheExtent: (Platform.isAndroid || Platform.isIOS)
-                              ? 1000
-                              : 4000,
-                          // controller: scrollController,
-                          slivers: [
-                            SliverPadding(
-                              padding: mediaPadding.add(widget.padding),
-                              sliver: SliverMainAxisGroup(
-                                slivers: item.slivers,
-                              ),
-                            )
-                          ],
-                        );
-                      },
+                  child: DefaultMkRefreshController(
+                    controller: refreshControllers[index],
+                    child: PrimaryScrollController(
+                      controller: scrollControllers[index],
+                      child: item.child,
                     ),
                   ),
                 ),
@@ -130,20 +114,8 @@ class MkTabBarListState extends State<MkTabBarList>
                 controller: tabController,
                 tabAlignment: TabAlignment.center,
                 onTap: (value) {
-                  var controller = scrollControllers[value];
-                  var refreshKey = refreshKeys[value];
-                  if (!controller.hasClients) return;
-
                   if (lastIndex == value) {
-                    if (controller.offset > 0) {
-                      controller.animateTo(0,
-                          duration: Duration(
-                              milliseconds:
-                                  (controller.offset).toInt().clamp(100, 1000)),
-                          curve: Curves.easeInOut);
-                    } else {
-                      refreshKey.currentState?.show();
-                    }
+                    refresh();
                   }
                   lastIndex = value;
                 },
@@ -155,5 +127,24 @@ class MkTabBarListState extends State<MkTabBarList>
         );
       },
     );
+  }
+
+  void refresh() {
+    var value = tabController.index;
+    var controller = scrollControllers[value];
+    var refreshController = refreshControllers[value];
+    if (!controller.hasClients) return;
+
+    if (controller.offset > 0) {
+      controller.animateTo(
+        0,
+        duration: Duration(
+          milliseconds: (controller.offset).toInt().clamp(100, 300),
+        ),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      refreshController.refresh();
+    }
   }
 }

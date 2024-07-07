@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/server.dart';
@@ -29,41 +30,26 @@ class UserOverview extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double padding = getPaddingForNote(constraints);
-        var dataProvider = userNotesListProvider(userId: userId);
-        return MkRefreshIndicator(
-          child: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: MediaQuery.paddingOf(context)
-                    .copyWith(left: padding, right: padding),
-                sliver: SliverMainAxisGroup(
-                  slivers: [
-                    SliverLayoutBuilder(builder: (context, constraints) {
-                      var offset = constraints.remainingPaintExtent -
-                          constraints.viewportMainAxisExtent +
-                          constraints.scrollOffset +
-                          constraints.precedingScrollExtent;
-                      offset = (offset / 140).clamp(0, 1.0);
-                      return SliverToBoxAdapter(
-                        child: UserHomeCard(userId: userId, offset: offset),
-                      );
-                    }),
-                    SliverPaginationNoteList(
-                      padding: const EdgeInsets.only(top: 10),
-                      watch: (ref) => ref.watch(dataProvider),
-                      loadMore: (ref) => ref.read(dataProvider.notifier).load(),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-          onRefresh: () => ref.refresh(dataProvider.future),
-        );
-      },
+    var dataProvider = userNotesListProvider(userId: userId);
+
+    var data = ref.watch(dataProvider);
+    return MkPaginationNoteList(
+      onLoad: () => ref.read(dataProvider.notifier).load(),
+      onRefresh: () => ref.refresh(dataProvider.future),
+      slivers: [
+        SliverLayoutBuilder(builder: (context, constraints) {
+          var offset = constraints.remainingPaintExtent -
+              constraints.viewportMainAxisExtent +
+              constraints.scrollOffset +
+              constraints.precedingScrollExtent;
+          offset = (offset / 140).clamp(0, 1.0);
+          return SliverToBoxAdapter(
+            child: UserHomeCard(userId: userId, offset: offset),
+          );
+        }),
+      ],
+      hasMore: data.valueOrNull?.hasMore ?? true,
+      items: data.valueOrNull?.list ?? [],
     );
   }
 }
@@ -114,13 +100,8 @@ class UserHomeCard extends HookConsumerWidget {
                           Positioned.fill(
                             child: RepaintBoundary(
                               child: Parallax(
-                                offset: offset,
-                                child: MkImage(
-                                  fit: BoxFit.cover,
-                                  userData.bannerUrl ?? "",
-                                  blurHash: userData.bannerBlurhash,
-                                  width: double.infinity,
-                                ),
+                                url: userData.bannerUrl ?? "",
+                                blurHash: userData.bannerBlurhash ?? "",
                               ),
                             ),
                           ),

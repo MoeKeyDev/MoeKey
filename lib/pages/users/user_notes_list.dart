@@ -64,31 +64,18 @@ class UserNotesPage extends HookConsumerWidget {
       withFeatured: _noteFilter[select.value]["withFeatured"]!,
       key: 1,
     );
+    var data = ref.watch(dataProvider);
     return LayoutBuilder(
       builder: (context, constraints) {
-        double padding = getPaddingForNote(constraints);
-
+        var padding = getPaddingForNote(constraints);
         return Stack(
           children: [
-            MkRefreshIndicator(
-              child: CustomScrollView(
-                cacheExtent:
-                    (Platform.isAndroid || Platform.isIOS) ? 1000 : 4000,
-                slivers: [
-                  SliverPaginationNoteList(
-                    padding: EdgeInsets.only(
-                        top: mediaPadding.top + 50,
-                        left: padding,
-                        right: padding),
-                    watch: (ref) {
-                      return ref.watch(dataProvider);
-                    },
-                    loadMore: (WidgetRef ref) =>
-                        ref.read(dataProvider.notifier).load(),
-                  )
-                ],
-              ),
+            MkPaginationNoteList(
+              padding: const EdgeInsets.only(top: 50),
+              onLoad: () => ref.read(dataProvider.notifier).load(),
               onRefresh: () => ref.refresh(dataProvider.future),
+              hasMore: data.valueOrNull?.hasMore,
+              items: data.valueOrNull?.list,
             ),
             Positioned(
               top: mediaPadding.top - 8,

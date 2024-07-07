@@ -7,6 +7,13 @@ import 'package:moekey/apis/models/user_lite.dart';
 
 import 'drive.dart';
 
+class MkLoadMoreListModel<T> {
+  List<T> list = [];
+  bool hasMore = true;
+}
+
+class NoteListModel extends MkLoadMoreListModel<NoteModel> {}
+
 class NoteModel {
   String id;
   int clippedCount;

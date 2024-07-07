@@ -7,9 +7,19 @@ import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gal/gal.dart';
+import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+const Map<String, String> defaultExtensionMap = {
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'image/heif': 'heif',
+  'image/heic': 'heic',
+  'image/bmp': 'bmp',
+};
 
 Future<bool> saveImage({
   required Dio http,
@@ -24,7 +34,8 @@ Future<bool> saveImage({
   if (data == null) {
     return false;
   }
-
+  var type = lookupMimeType(url, headerBytes: data);
+  ext = defaultExtensionMap[type] ?? ext;
   var codec = await ui.instantiateImageCodec(data);
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {

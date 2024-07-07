@@ -39,7 +39,7 @@ final List<Map<String, dynamic>> navItemList = [
 class TimelinePage extends HookConsumerWidget {
   const TimelinePage({super.key, this.mkTabBarListKey});
 
-  final GlobalKey<MkTabBarListState>? mkTabBarListKey;
+  final GlobalKey<MkTabBarRefreshScrollState>? mkTabBarListKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,7 +47,7 @@ class TimelinePage extends HookConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         var padding = getPaddingForNote(constraints);
-        return MkTabBarList(
+        return MkTabBarRefreshScroll(
           key: mkTabBarListKey,
           padding: EdgeInsets.symmetric(horizontal: padding),
           items: [
@@ -59,22 +59,9 @@ class TimelinePage extends HookConsumerWidget {
                   id: index,
                   current: currentIndex.value,
                 ),
-                slivers: [
-                  SliverPaginationNoteList(
-                    watch: (ref) =>
-                        ref.watch(timelineProvider(api: element["api"])),
-                    loadMore: (ref) => ref
-                        .read(timelineProvider(api: element["api"]).notifier)
-                        .load(),
-                  )
-                ],
-                onRefresh: () async {
-                  await ref
-                      .read(timelineProvider(api: element["api"]).notifier)
-                      .cleanCache();
-                  return await ref
-                      .refresh(timelineProvider(api: element["api"]).future);
-                },
+                child: TimeLineListPage(
+                  api: element['api'],
+                ),
               )
           ],
           onIndexUpdate: (index) {

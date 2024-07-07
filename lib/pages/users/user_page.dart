@@ -13,6 +13,7 @@ import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
+import 'package:moekey/widgets/mk_tabbar_list.dart';
 
 import '../../status/themes.dart';
 
@@ -121,6 +122,142 @@ class UserPage extends HookConsumerWidget {
     ];
     var tabController = useTabController(initialLength: tabs.length);
     var textStyle = DefaultTextStyle.of(context).style;
+
+    return MkTabBarRefreshScroll(
+      items: [
+        MkTabBarItem(
+          label: const Tab(
+            child: Row(
+              children: [
+                Icon(
+                  TablerIcons.home,
+                  size: 14,
+                ),
+                Text("概览", style: TextStyle(fontSize: 12)),
+              ],
+            ),
+          ),
+          child: UserOverview(userId: userId),
+        ),
+        MkTabBarItem(
+          label: const Tab(
+            child: Row(
+              children: [
+                Icon(
+                  TablerIcons.pencil,
+                  size: 14,
+                ),
+                Text("帖子", style: TextStyle(fontSize: 12)),
+              ],
+            ),
+          ),
+          child: UserNotesPage(userId: userId),
+        ),
+        if (userData.publicReactions)
+          MkTabBarItem(
+            label: const Tab(
+              child: Row(
+                children: [
+                  Icon(
+                    TablerIcons.mood_happy,
+                    size: 14,
+                  ),
+                  Text("回应", style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+            child: UserReactionsPage(userId: userId),
+          ),
+        MkTabBarItem(
+          label: const Tab(
+            child: Row(
+              children: [
+                Icon(
+                  TablerIcons.paperclip,
+                  size: 14,
+                ),
+                Text("便签", style: TextStyle(fontSize: 12)),
+              ],
+            ),
+          ),
+          child: UserClipList(userId: userId),
+        ),
+      ],
+      showBack: true,
+      leading: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (user.valueOrNull != null) ...[
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: MkImage(
+                userData.avatarUrl ?? "",
+                width: 32,
+                height: 32,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            ConstrainedBox(
+              constraints: BoxConstraints.loose(const Size.fromWidth(200)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DefaultTextStyle(
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .copyWith(fontWeight: FontWeight.bold),
+                    child: MFMText(
+                      text: userData.name ?? userData.username,
+                      emojis: userData.emojis,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      bigEmojiCode: false,
+                      feature: const [MFMFeature.emojiCode],
+                    ),
+                  ),
+                  DefaultTextStyle(
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .copyWith(fontSize: 12),
+                    child: Opacity(
+                      opacity: 0.7,
+                      child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                  text: "@${userData.username}",
+                                  style: textStyle.copyWith(fontSize: 12)),
+                              TextSpan(
+                                text: userData.host != null
+                                    ? "@${userData.host}"
+                                    : "",
+                                style: textStyle.copyWith(
+                                    color: themes.fgColor.withAlpha(128),
+                                    fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(
+              width: 16,
+            )
+          ]
+        ],
+      ),
+    );
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return MkScaffold(

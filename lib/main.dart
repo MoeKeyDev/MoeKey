@@ -36,7 +36,7 @@ class HttpProxy extends HttpOverrides {
   }
 }
 
-Future<void> main() async {
+Future initApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 视频初始化
@@ -47,7 +47,9 @@ Future<void> main() async {
 
   // 初始化数据库
   await initDatabase();
+}
 
+Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -86,30 +88,28 @@ class SplashPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var user = ref.watch(currentLoginUserProvider);
-    // 启动webSocket
-    ref.watch(moekeyGlobalEventProvider);
-    ref.watch(moekeyMainChannelProvider);
     var isLaunch = useState(false);
     useEffect(() {
-      if (isLaunch.value) return;
-      isLaunch.value = true;
-      Future.delayed(
-        Duration.zero,
-        () {
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-            builder: (context) {
+      initApp().then((value) {
+        if (isLaunch.value) return;
+        isLaunch.value = true;
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+          builder: (context) {
+            return  Consumer(builder: (context, ref, child) {
+              var user = ref.watch(currentLoginUserProvider);
+              // 启动webSocket
+              ref.watch(moekeyGlobalEventProvider);
+              ref.watch(moekeyMainChannelProvider);
               if (user != null) {
                 return HomePage();
               }
               return const LoginPage();
-            },
-          ), (route) => false);
-        },
-      );
-
+            },);
+          },
+        ), (route) => false);
+      },);
       return null;
-    }, []);
+    },const  []);
     return const Scaffold(
       body: LoadingWidget(),
     );

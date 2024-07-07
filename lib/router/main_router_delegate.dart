@@ -26,6 +26,7 @@ class MainRouterDelegate extends RouterDelegate<RouterItem>
   @override
   RouterItem? get currentConfiguration =>
       _stack.isNotEmpty ? _stack.last : null;
+
   @override
   Widget build(BuildContext context) {
     return HeroControllerScope(
@@ -49,25 +50,6 @@ class MainRouterDelegate extends RouterDelegate<RouterItem>
             return route.didPop(result);
           },
         ));
-    // return Navigator(
-    //   key: navigatorKey,
-    //   pages: [
-    //     for (var item in _stack)
-    //       if (item.animated)
-    //         MaterialPage(child: item.page())
-    //       else
-    //         MyPage(
-    //           key: ValueKey(item.path),
-    //           child: item.page(),
-    //         )
-    //   ],
-    //   onPopPage: (route, result) {
-    //     _stack.removeLast();
-    //
-    //     notifyListeners();
-    //     return route.didPop(result);
-    //   },
-    // );
   }
 
   @override
@@ -101,6 +83,7 @@ class RouterItem {
   Widget Function() page;
   LaunchMode launchMode;
   bool animated;
+
   RouterItem({
     required this.path,
     required this.page,
@@ -134,6 +117,7 @@ class MyPage<T> extends Page<T> {
 
   /// The content to be shown in the [Route] created by this page.
   final Widget child;
+
   @override
   Route<T> createRoute(BuildContext context) {
     return PageRouteBuilder(

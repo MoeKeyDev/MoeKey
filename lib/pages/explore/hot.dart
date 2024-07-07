@@ -24,26 +24,19 @@ class ExploreHotPage extends HookConsumerWidget {
     var select = useState(0);
     const navs = ["帖子", "投票"];
     var dataProvider = exploreHotPageStatesProvider(select.value);
+    var data = ref.watch(dataProvider);
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
         return Stack(
           children: [
-            MkRefreshIndicator(
-                child: CustomScrollView(
-                  cacheExtent:
-                      (Platform.isAndroid || Platform.isIOS) ? null : 4000,
-                  slivers: [
-                    SliverPaginationNoteList(
-                      padding: mediaPadding
-                          .add(EdgeInsets.symmetric(horizontal: padding))
-                          .add(const EdgeInsets.only(top: 50)),
-                      watch: (ref) => ref.watch(dataProvider),
-                      loadMore: (ref) => ref.read(dataProvider.notifier).load(),
-                    )
-                  ],
-                ),
-                onRefresh: () => ref.refresh(dataProvider.future)),
+            MkPaginationNoteList(
+              padding: const EdgeInsets.only(top: 50),
+              onLoad: () => ref.read(dataProvider.notifier).load(),
+              onRefresh: () => ref.refresh(dataProvider.future),
+              hasMore: data.valueOrNull?.hasMore,
+              items: data.valueOrNull?.list,
+            ),
             Positioned(
               top: mediaPadding.top - 8,
               left: 0,

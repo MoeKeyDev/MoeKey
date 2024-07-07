@@ -3,94 +3,77 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/themes.dart';
+import 'package:moekey/utils/get_padding_note.dart';
 
 import '../../apis/models/note.dart';
-import '../../utils/get_padding_note.dart';
-import '../loading_weight.dart';
+import '../mk_refresh_load.dart';
 import 'note_card.dart';
 
-class NoteListModel {
-  List<NoteModel> list = [];
-  bool hasMore = true;
-}
+class MkPaginationNoteList extends HookConsumerWidget {
+  const MkPaginationNoteList({
+    super.key,
+    required this.onLoad,
+    required this.onRefresh,
+    this.slivers,
+    this.padding = EdgeInsets.zero,
+    this.hasMore,
+    this.items,
+  });
 
-class SliverPaginationNoteList extends HookConsumerWidget {
-  const SliverPaginationNoteList(
-      {super.key, required this.watch, required this.loadMore, this.padding});
+  final Future Function() onLoad;
+  final Future Function() onRefresh;
+  final EdgeInsetsGeometry padding;
+  final List<Widget>? slivers;
+  final bool? hasMore;
 
-  final AsyncValue<NoteListModel> Function(WidgetRef ref) watch;
-
-  final Future Function(WidgetRef ref) loadMore;
-  final EdgeInsetsGeometry? padding;
+  final List<NoteModel>? items;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-    var data = watch(ref);
-    return SliverMainAxisGroup(
-      slivers: [
-        SliverPadding(
-          padding: padding ?? EdgeInsets.zero,
-          sliver: SliverMainAxisGroup(
-            slivers: [
-              SliverList.separated(
-                itemBuilder: (BuildContext context, int index) {
-                  BorderRadius borderRadius;
-                  if (index == 0) {
-                    borderRadius = const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12));
-                  } else {
-                    borderRadius = const BorderRadius.all(Radius.zero);
-                  }
-                  return NoteCard(
-                      key: ValueKey(data.valueOrNull!.list[index].id),
-                      borderRadius: borderRadius,
-                      data: data.valueOrNull!.list[index]);
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 1,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: themes.dividerColor,
-                      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var padding =
+            EdgeInsets.symmetric(horizontal: getPaddingForNote(constraints))
+                .add(this.padding);
+        return MkRefreshLoadList<NoteModel>(
+          onLoad: onLoad,
+          onRefresh: onRefresh,
+          padding: padding,
+          slivers: [
+            ...?slivers,
+            SliverList.separated(
+              itemBuilder: (BuildContext context, int index) {
+                BorderRadius borderRadius;
+                if (index == 0) {
+                  borderRadius = const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12));
+                } else {
+                  borderRadius = const BorderRadius.all(Radius.zero);
+                }
+                return NoteCard(
+                    key: ValueKey(items![index].id),
+                    borderRadius: borderRadius,
+                    data: items![index]);
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return SizedBox(
+                  width: double.infinity,
+                  height: 1,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: themes.dividerColor,
                     ),
-                  );
-                },
-                itemCount: (data.valueOrNull?.list.length ?? 0),
-              ),
-              SliverLayoutBuilder(
-                builder: (context, constraints) {
-                  if (constraints.remainingPaintExtent > 0 &&
-                      (data.valueOrNull?.hasMore ?? false)) {
-                    loadMore(ref);
-                  }
-                  if (!(data.valueOrNull?.hasMore ?? true)) {
-                    return const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(
-                          child: Text("暂无更多"),
-                        ),
-                      ),
-                    );
-                  }
-                  return const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Center(
-                        child: LoadingCircularProgress(),
-                      ),
-                    ),
-                  );
-                },
-              )
-            ],
-          ),
-        ),
-      ],
+                  ),
+                );
+              },
+              itemCount: items?.length ?? 0,
+            )
+          ],
+          hasMore: hasMore,
+        );
+      },
     );
   }
 }

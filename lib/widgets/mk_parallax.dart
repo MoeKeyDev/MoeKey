@@ -1,38 +1,58 @@
 import 'package:flutter/material.dart';
 
-/// 视差组件
-class Parallax extends StatelessWidget {
-  const Parallax({super.key, required this.child, required this.offset});
+import 'mk_image.dart';
 
-  /// 子组件
-  final Widget child;
+/// Parallax
+class Parallax extends StatefulWidget {
+  const Parallax({super.key, required this.url, required this.blurHash});
 
-  /// 偏移量 [-1.0  - 1.0]
-  final double offset;
+  /// image URl
+  final String url;
+
+  /// image blurHash
+  final String blurHash;
+
+  @override
+  State<Parallax> createState() => _ParallaxState();
+}
+
+class _ParallaxState extends State<Parallax> {
+  final GlobalKey _backgroundImageKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: ClipRect(
-        // clipBehavior: Clip.none,
-        child: CustomSingleChildLayout(
-          delegate: _ParallaxDelegate(offset: offset),
-          child: child,
-        ),
+    return Flow(
+      delegate: ParallaxFlowDelegate(
+        scrollable: Scrollable.of(context),
+        listItemContext: context,
+        backgroundImageKey: _backgroundImageKey,
       ),
+      children: [
+        MkImage(
+          widget.url,
+          key: _backgroundImageKey,
+          fit: BoxFit.cover,
+          blurHash: widget.blurHash,
+          width: double.infinity,
+        )
+      ],
     );
   }
 }
 
-class _ParallaxDelegate extends SingleChildLayoutDelegate {
-  final double offset;
+class ParallaxFlowDelegate extends FlowDelegate {
+  ParallaxFlowDelegate({
+    required this.scrollable,
+    required this.listItemContext,
+    required this.backgroundImageKey,
+  }) : super(repaint: scrollable.position);
+
+  final ScrollableState scrollable;
+  final BuildContext listItemContext;
+  final GlobalKey backgroundImageKey;
 
   @override
-  bool shouldRelayout(covariant _ParallaxDelegate oldDelegate) {
-    return oldDelegate.offset != offset;
-  }
-
-  @override
-  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) {
     return BoxConstraints(
         maxHeight: double.infinity,
         minHeight: constraints.maxHeight,
@@ -41,16 +61,45 @@ class _ParallaxDelegate extends SingleChildLayoutDelegate {
   }
 
   @override
-  Offset getPositionForChild(Size size, Size childSize) {
-    if (childSize.height <= size.height) return Offset.zero;
-    var centerOffset = (childSize.height - size.height) / 2;
-    var offset1 = (childSize.height - size.height) * offset;
-    // 防止组件移动过快
-    if (offset1 >= size.height * offset) {
-      offset1 = size.height * offset;
-    }
-    return Offset(0, offset1 * 0.5 - centerOffset);
+  void paintChildren(FlowPaintingContext context) {
+    // Calculate the position of this list item within the viewport.
+    final scrollableBox = scrollable.context.findRenderObject() as RenderBox;
+    final listItemBox = listItemContext.findRenderObject() as RenderBox;
+    final listItemOffset = listItemBox.localToGlobal(
+        listItemBox.size.centerLeft(Offset.zero),
+        ancestor: scrollableBox);
+
+    // Determine the percent position of this list item within the
+    // scrollable area.
+    final viewportDimension = scrollable.position.viewportDimension;
+    final scrollFraction =
+        (listItemOffset.dy / viewportDimension).clamp(0.0, 0.5) + 0.5;
+
+    // Calculate the vertical alignment of the background
+    // based on the scroll percent.
+    final verticalAlignment = Alignment(0.0, scrollFraction * 2 - 1);
+
+    // Convert the background alignment into a pixel offset for
+    // painting purposes.
+    final backgroundSize =
+        (backgroundImageKey.currentContext!.findRenderObject() as RenderBox)
+            .size;
+    final listItemSize = context.size;
+    final childRect =
+        verticalAlignment.inscribe(backgroundSize, Offset.zero & listItemSize);
+
+    // Paint the background.
+    context.paintChild(
+      0,
+      transform:
+          Transform.translate(offset: Offset(0.0, childRect.top)).transform,
+    );
   }
 
-  _ParallaxDelegate({required this.offset});
+  @override
+  bool shouldRepaint(ParallaxFlowDelegate oldDelegate) {
+    return scrollable != oldDelegate.scrollable ||
+        listItemContext != oldDelegate.listItemContext ||
+        backgroundImageKey != oldDelegate.backgroundImageKey;
+  }
 }

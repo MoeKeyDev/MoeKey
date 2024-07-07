@@ -10,13 +10,13 @@ import 'package:moekey/status/notifications.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
-import 'package:moekey/widgets/mk_refresh_indicator.dart';
+import 'package:moekey/widgets/mk_refresh_load.dart';
 import 'package:moekey/widgets/notifications/notifications_user_card.dart';
 
 import '../../apis/models/notification.dart';
+import '../../apis/models/user_lite.dart';
 import '../../router/main_router_delegate.dart';
 import '../../utils/get_padding_note.dart';
-import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/notes/note_card.dart';
 import '../../widgets/reactions.dart';
@@ -246,7 +246,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (var item in data.users ?? [])
+              for (UserLiteModel item in data.users ?? [])
                 Builder(builder: (context) {
                   return GestureDetector(
                     child: SizedBox(
@@ -256,7 +256,7 @@ class NotificationsGroupList extends HookConsumerWidget {
                         clipBehavior: Clip.none,
                         children: [
                           MkImage(
-                            item?["avatarUrl"] ?? "",
+                            item.avatarUrl ?? "",
                             shape: BoxShape.circle,
                             width: double.infinity,
                             height: double.infinity,
@@ -265,9 +265,7 @@ class NotificationsGroupList extends HookConsumerWidget {
                       ),
                     ),
                     onTap: () {
-                      if (item?["id"] != null) {
-                        openUser(context, item?["id"]);
-                      }
+                      openUser(context, item.id);
                     },
                   );
                 }),
@@ -347,33 +345,20 @@ class NotificationsGroupList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var res = ref.watch(notificationsProvider);
     var themes = ref.watch(themeColorsProvider);
-    var mediaPadding = MediaQuery.of(context).padding;
-    // logger.d(res);
-    var scrollController = useScrollController();
-    useEffect(() {
-      scrollController.addListener(() {
-        if (scrollController.offset + 1000 >=
-            scrollController.position.maxScrollExtent) {
-          ref.read(notificationsProvider.notifier).loadMore();
-        }
-      });
-      return null;
-    }, const []);
-    return MkRefreshIndicator(
-      child: LoadingAndEmpty(
-        loading: res.isLoading,
-        empty: res.valueOrNull?.isEmpty ?? true,
-        refresh: () {
-          ref.invalidate(notificationsProvider);
-        },
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            var padding = getPaddingForNote(constraints);
-            return ListView.separated(
-              itemCount: res.valueOrNull?.length ?? 0,
-              controller: scrollController,
+    var data = ref.watch(notificationsProvider);
+    var list = data.valueOrNull?.list ?? [];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var padding =
+            EdgeInsets.symmetric(horizontal: getPaddingForNote(constraints));
+        return MkRefreshLoadList(
+          onLoad: () => ref.read(notificationsProvider.notifier).loadMore(),
+          onRefresh: () => ref.refresh(notificationsProvider.future),
+          hasMore: data.valueOrNull?.hasMore,
+          slivers: [
+            SliverList.separated(
+              itemCount: list.length,
               itemBuilder: (context, index) {
                 // return Text("$index");
                 BorderRadius borderRadius;
@@ -384,25 +369,25 @@ class NotificationsGroupList extends HookConsumerWidget {
                 } else {
                   borderRadius = const BorderRadius.all(Radius.zero);
                 }
-                var type = res.valueOrNull![index].type;
+                var type = list[index].type;
                 if (widgetList[type] != null) {
                   return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: padding),
-                      child: widgetList[type]!(
-                          res.valueOrNull![index], borderRadius, themes));
+                      padding: padding,
+                      child:
+                          widgetList[type]!(list[index], borderRadius, themes));
                 }
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding),
+                  padding: padding,
                   child: MkCard(
                       shadow: false,
                       borderRadius: borderRadius,
-                      child: Text("暂时不支持的通知:${res.valueOrNull?[index].type}")),
+                      child: Text("暂时不支持的通知:${list[index].type}")),
                 );
                 // return SizedBox();
               },
               separatorBuilder: (BuildContext context, int index) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding),
+                  padding: padding,
                   child: SizedBox(
                     width: double.infinity,
                     height: 1,
@@ -414,11 +399,10 @@ class NotificationsGroupList extends HookConsumerWidget {
                   ),
                 );
               },
-            );
-          },
-        ),
-      ),
-      onRefresh: () => ref.refresh(notificationsProvider.future),
+            )
+          ],
+        );
+      },
     );
   }
 }
