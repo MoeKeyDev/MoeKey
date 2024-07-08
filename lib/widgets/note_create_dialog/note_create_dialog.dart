@@ -169,7 +169,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                                     .notifier)
                             .send();
                         if (res != null) {
-                          contentController.text = "";
+                          contentController.text = initText ?? "";
                           if (context.mounted) {
                             Navigator.of(context).pop(res);
                           }

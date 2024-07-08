@@ -280,6 +280,7 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
       ref.invalidate(driverSelectDialogStateProvider);
       ref.invalidate(noteCreateDialogStateProvider);
       ref.notifyListeners();
+      sendLoading = false;
       return res.data;
     } on DioException catch (e) {
       logger.d(e.response);
@@ -288,8 +289,10 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
           isError: true);
     } catch (e) {
       MkInfoDialog.show(info: "$e", isError: true);
+    } finally {
+      sendLoading = false;
     }
-    sendLoading = false;
+
     return null;
   }
 }

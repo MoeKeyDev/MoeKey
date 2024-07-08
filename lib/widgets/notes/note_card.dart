@@ -78,6 +78,7 @@ class NoteCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print("NoteCard build");
     var themes = ref.watch(themeColorsProvider);
     NoteModel thisData;
     bool isReNote = false;
@@ -96,33 +97,13 @@ class NoteCard extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (pined)
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      TablerIcons.pin,
-                      size: 17,
-                      color: Colors.orangeAccent,
-                    ),
-                    Text(
-                      " 已置顶的帖子",
-                      style:
-                          TextStyle(color: Colors.orangeAccent, fontSize: 13.5),
-                    ),
-                  ],
-                ),
-              ),
+            if (pined) const _NotePined(),
             if (thisData.reply != null)
-              Opacity(
-                opacity: 0.8,
-                child: TimeLineNoteCardComponent(
-                  data: thisData.reply!,
-                  reply: true,
-                  // isShowReactions: false,
-                  disableReactions: true,
-                ),
+              TimeLineNoteCardComponent(
+                data: thisData.reply!,
+                reply: true,
+                // isShowReactions: false,
+                disableReactions: true,
               ),
             if (isReNote) ReNoteUserInfo(data: data),
             const SizedBox(
@@ -158,6 +139,32 @@ class NoteCard extends ConsumerWidget {
   }
 }
 
+class _NotePined extends StatelessWidget {
+  const _NotePined({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Icon(
+            TablerIcons.pin,
+            size: 17,
+            color: Colors.orangeAccent,
+          ),
+          Text(
+            " 已置顶的帖子",
+            style: TextStyle(color: Colors.orangeAccent, fontSize: 13.5),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class TimeLineNoteCardComponent extends HookConsumerWidget {
   TimeLineNoteCardComponent({
     super.key,
@@ -188,6 +195,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print("TimeLineNoteCardComponent");
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
     var themes = ref.watch(themeColorsProvider);
     var noteListener = noteListenerProvider(this.data);
@@ -224,22 +232,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                 color: Colors.transparent,
                 child: ConstraintLayout(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        main_router.MainRouterDelegate.of(context)
-                            .setNewRoutePath(main_router.RouterItem(
-                          path: "user/${data.user.id}",
-                          page: () {
-                            return UserPage(userId: data.user.id);
-                          },
-                        ));
-                      },
-                      child: MkImage(
-                        data.user.avatarUrl ?? "",
-                        shape: BoxShape.circle,
-                        blurHash: data.user.avatarBlurhash,
-                      ),
-                    ).applyConstraint(
+                    _TimeLineNoteCardAvatar(data: data).applyConstraint(
                       top: parent.top,
                       left: parent.left,
                       size: isSmall ? 7 * (fontsize - 8) : 8 * (fontsize - 8),
@@ -293,6 +286,35 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
   }
 }
 
+class _TimeLineNoteCardAvatar extends StatelessWidget {
+  const _TimeLineNoteCardAvatar({
+    super.key,
+    required this.data,
+  });
+
+  final NoteModel data;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        main_router.MainRouterDelegate.of(context)
+            .setNewRoutePath(main_router.RouterItem(
+          path: "user/${data.user.id}",
+          page: () {
+            return UserPage(userId: data.user.id);
+          },
+        ));
+      },
+      child: MkImage(
+        data.user.avatarUrl ?? "",
+        shape: BoxShape.circle,
+        blurHash: data.user.avatarBlurhash,
+      ),
+    );
+  }
+}
+
 class _NoteCardContent extends HookConsumerWidget {
   const _NoteCardContent(
       {super.key,
@@ -338,46 +360,17 @@ class _NoteCardContent extends HookConsumerWidget {
         ],
 
         // start
-        MkOverflowShow(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (data.cw != null)
-                _NoteCardContentCw(
-                    data: data, isHiddenCw: isHiddenCw, themes: themes),
-              if (!isHiddenCw.value || data.cw == null) ...[
-                const SizedBox(height: 4),
-                if ((data.text ?? "") != "")
-                  MFMText(
-                    text: data.text ?? "",
-                    emojis: data.emojis,
-                    currentServerHost: data.user.host,
-                  ),
-                if (data.noteTranslate != null) NoteCardTranslate(data: data),
-                const SizedBox(height: 4),
-                // 投票
-                if (data.poll != null) PollCard(data: data),
-                // 图片
-                TimeLineImage(
-                    files: data.files,
-                    mainAxisExtent: constraints.maxWidth * 0.7),
-                // 链接预览
-                if (isShowUrlPreview)
-                  for (var link in links) ...[
-                    NoteLinkPreview(link: link, fontsize: fontsize)
-                  ],
-                if (innerWidget != null) innerWidget!,
-              ],
-            ],
-          ),
-          action: (isShow, p1) {
-            return const Text("查看更多");
-          },
-          limit: limit,
-          height: height,
-        ),
+        _TimeLineNoteCardContent(
+            data: data,
+            isHiddenCw: isHiddenCw,
+            themes: themes,
+            constraints: constraints,
+            isShowUrlPreview: isShowUrlPreview,
+            links: links,
+            fontsize: fontsize,
+            innerWidget: innerWidget,
+            limit: limit,
+            height: height),
 
         // end
         if (isShowReactions) ...[
@@ -396,6 +389,76 @@ class _NoteCardContent extends HookConsumerWidget {
             customMenuItem: customMenuItem,
           )
       ],
+    );
+  }
+}
+
+class _TimeLineNoteCardContent extends StatelessWidget {
+  const _TimeLineNoteCardContent({
+    super.key,
+    required this.data,
+    required this.isHiddenCw,
+    required this.themes,
+    required this.constraints,
+    required this.isShowUrlPreview,
+    required this.links,
+    required this.fontsize,
+    required this.innerWidget,
+    required this.limit,
+    required this.height,
+  });
+
+  final NoteModel data;
+  final ValueNotifier<bool> isHiddenCw;
+  final ThemeColorModel themes;
+  final BoxConstraints constraints;
+  final bool isShowUrlPreview;
+  final List<String> links;
+  final double fontsize;
+  final Widget? innerWidget;
+  final double limit;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return MkOverflowShow(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (data.cw != null)
+            _NoteCardContentCw(
+                data: data, isHiddenCw: isHiddenCw, themes: themes),
+          if (!isHiddenCw.value || data.cw == null) ...[
+            const SizedBox(height: 4),
+            if ((data.text ?? "") != "")
+              MFMText(
+                text: data.text ?? "",
+                emojis: data.emojis,
+                currentServerHost: data.user.host,
+              ),
+            if (data.noteTranslate != null) NoteCardTranslate(data: data),
+            const SizedBox(height: 4),
+            // 投票
+            if (data.poll != null) PollCard(data: data),
+            // 图片
+            TimeLineImage(
+                files: data.files, mainAxisExtent: constraints.maxWidth * 0.7),
+            // 链接预览
+            if (isShowUrlPreview)
+              for (var link in links) ...[
+                NoteLinkPreview(link: link, fontsize: fontsize)
+              ],
+            if (innerWidget != null) innerWidget!,
+          ],
+        ],
+      ),
+      action: (isShow, p1) {
+        return const Text("查看更多");
+      },
+      limit: limit,
+      height: height,
     );
   }
 }
@@ -870,9 +933,8 @@ class TimeLineImage extends StatelessWidget {
   final List<DriveFileModel> files;
   final double mainAxisExtent;
 
-  TimeLineImage(
-      {super.key, required List<DriveFileModel> files, this.mainAxisExtent = 0})
-      : files = files.map((e) => e.copyWith(hero: UniqueKey())).toList();
+  const TimeLineImage(
+      {super.key, this.mainAxisExtent = 0, required this.files});
 
   open(index, BuildContext context) {
     globalNav.currentState?.push(
@@ -1155,72 +1217,70 @@ class TimeLineActions extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
+    var currentUser = ref.watch(currentLoginUserProvider);
+    var serverUrl = currentUser!.serverUrl;
     var meta = ref.watch(instanceMetaProvider).valueOrNull;
-    return HookConsumer(
-      builder: (context, ref, child) {
-        var currentUser = ref.watch(currentLoginUserProvider);
-        return Row(
-          children: [
-            TimelineActionButton(
-              fontsize: fontsize,
-              icon: TablerIcons.arrow_back_up,
-              count: data.repliesCount,
-              onTap: () {
-                NoteCreateDialog.open(
-                  noteId: data.id,
-                  type: NoteType.reply,
-                  note: data,
-                  initText: "${data.createReplyAtText(currentUser!.id)} ",
-                  context: context,
-                );
+    return Row(
+      children: [
+        TimelineActionButton(
+          fontsize: fontsize,
+          icon: TablerIcons.arrow_back_up,
+          count: data.repliesCount,
+          onTap: () {
+            NoteCreateDialog.open(
+              noteId: data.id,
+              type: NoteType.reply,
+              note: data,
+              initText: "${data.createReplyAtText(currentUser.id)} ",
+              context: context,
+            );
+          },
+        ),
+        const SizedBox(
+          width: 28,
+        ),
+        ContextMenuBuilder(
+          menu: _buildNoteRepeatContextMenu(ref, context),
+          mode: const [ContextMenuMode.onTap],
+          alignmentChild: true,
+          child: TimelineActionButton(
+            fontsize: fontsize,
+            icon: TablerIcons.repeat,
+            count: data.renoteCount,
+          ),
+        ),
+        const SizedBox(
+          width: 28,
+        ),
+        TimelineActionButton(
+          fontsize: fontsize,
+          icon: TablerIcons.plus,
+          onTap: () {
+            EmojiList.showBottomSheet(
+              context,
+              onInsert: (emoji, context) {
+                Navigator.of(context).pop();
+                ref
+                    .read(misskeyApisProvider)
+                    .notes
+                    .createReactions(noteId: data.id, reaction: emoji['name']);
               },
-            ),
-            const SizedBox(
-              width: 28,
-            ),
-            ContextMenuBuilder(
-              menu: _buildNoteRepeatContextMenu(ref, context),
-              mode: const [ContextMenuMode.onTap],
-              alignmentChild: true,
-              child: TimelineActionButton(
-                fontsize: fontsize,
-                icon: TablerIcons.repeat,
-                count: data.renoteCount,
-              ),
-            ),
-            const SizedBox(
-              width: 28,
-            ),
-            TimelineActionButton(
-              fontsize: fontsize,
-              icon: TablerIcons.plus,
-              onTap: () {
-                EmojiList.showBottomSheet(
-                  context,
-                  onInsert: (emoji, context) {
-                    Navigator.of(context).pop();
-                    ref.read(misskeyApisProvider).notes.createReactions(
-                        noteId: data.id, reaction: emoji['name']);
-                  },
-                );
-              },
-            ),
-            const SizedBox(
-              width: 28,
-            ),
-            ContextMenuBuilder(
-              mode: const [ContextMenuMode.onTap],
-              menu: buildNoteContextMenu(serverUrl, meta, data, ref, context,
-                  customMenuItem: customMenuItem),
-              child: TimelineActionButton(
-                fontsize: fontsize,
-                icon: TablerIcons.dots,
-              ),
-            ),
-          ],
-        );
-      },
+            );
+          },
+        ),
+        const SizedBox(
+          width: 28,
+        ),
+        ContextMenuBuilder(
+          mode: const [ContextMenuMode.onTap],
+          menu: buildNoteContextMenu(serverUrl, meta, data, ref, context,
+              customMenuItem: customMenuItem),
+          child: TimelineActionButton(
+            fontsize: fontsize,
+            icon: TablerIcons.dots,
+          ),
+        ),
+      ],
     );
   }
 
@@ -1281,31 +1341,33 @@ class TimelineActionButton extends HookConsumerWidget {
     return HoverBuilder(
       builder: (context, isHover) {
         var color = themes.fgColor.withAlpha(isHover ? 255 : 128);
-        return InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Icon(
-                  icon,
-                  size: fontsize * 1.3,
-                  color: color,
-                ),
-                if (count != 0)
-                  const SizedBox(
-                    width: 4,
+        return RepaintBoundary(
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(
+                    icon,
+                    size: fontsize * 1.3,
+                    color: color,
                   ),
-                if (count != 0)
-                  Text(
-                    "$count",
-                    style: TextStyle(
-                      color: color,
-                      fontSize: fontsize,
+                  if (count != 0)
+                    const SizedBox(
+                      width: 4,
                     ),
-                    textAlign: TextAlign.left,
-                  )
-              ],
+                  if (count != 0)
+                    Text(
+                      "$count",
+                      style: TextStyle(
+                        color: color,
+                        fontSize: fontsize,
+                      ),
+                      textAlign: TextAlign.left,
+                    )
+                ],
+              ),
             ),
           ),
         );

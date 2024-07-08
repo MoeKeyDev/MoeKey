@@ -31,6 +31,7 @@ class MkPaginationNoteList extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
+    print("MkPaginationNoteList");
     return LayoutBuilder(
       builder: (context, constraints) {
         var padding =
@@ -52,10 +53,12 @@ class MkPaginationNoteList extends HookConsumerWidget {
                 } else {
                   borderRadius = const BorderRadius.all(Radius.zero);
                 }
-                return NoteCard(
-                    key: ValueKey(items![index].id),
-                    borderRadius: borderRadius,
-                    data: items![index]);
+                return RepaintBoundary(
+                  child: NoteCard(
+                      key: ValueKey(items![index].id),
+                      borderRadius: borderRadius,
+                      data: items![index]),
+                );
               },
               separatorBuilder: (BuildContext context, int index) {
                 return SizedBox(

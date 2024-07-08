@@ -263,7 +263,9 @@ class ImagePreviewPage extends HookConsumerWidget {
                                 var res = await saveImage(
                                     http: http.valueOrNull!,
                                     url: galleryItems[currentIndex.value].url,
-                                    album: meta.valueOrNull?.name ?? "MoeKey");
+                                    album: meta.valueOrNull?.name ?? "MoeKey",
+                                    name:
+                                        galleryItems[currentIndex.value].name);
                                 if (context.mounted) {
                                   var snackBar = SnackBar(
                                     content: Text(res ? "保存成功" : "保存失败"),

@@ -32,7 +32,8 @@ class MkTabBarRefreshScroll extends StatefulWidget {
       this.showBack = false,
       this.onIndexUpdate,
       this.initIndex = 0,
-      this.padding = EdgeInsets.zero});
+      this.padding = EdgeInsets.zero,
+      this.tabAlignment = TabAlignment.center});
 
   final List<MkTabBarItem> items;
   final Widget? leading;
@@ -43,6 +44,8 @@ class MkTabBarRefreshScroll extends StatefulWidget {
   final int initIndex;
   final EdgeInsetsGeometry padding;
   final void Function(int)? onIndexUpdate;
+
+  final TabAlignment tabAlignment;
 
   @override
   State<MkTabBarRefreshScroll> createState() => MkTabBarRefreshScrollState();
@@ -112,7 +115,7 @@ class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
                 : false,
             bottom: MkTabBar(
                 controller: tabController,
-                tabAlignment: TabAlignment.center,
+                tabAlignment: widget.tabAlignment,
                 onTap: (value) {
                   if (lastIndex == value) {
                     refresh();

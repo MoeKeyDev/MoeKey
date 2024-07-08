@@ -69,21 +69,26 @@ class MFMText extends HookConsumerWidget {
       currentServerHost: currentServerHost,
       systemEmojis: emoji.valueOrNull ?? {},
     );
+
+    var textSpan = useMemoized(
+      () {
+        return [
+          for (var item in mfmParse.value)
+            if (parse[item.type] != null)
+              parse[item.type](
+                item,
+                textStyle,
+              )
+            else
+              TextSpan(text: item.toString()),
+        ];
+      },
+    );
+
     Widget rich = RepaintBoundary(
       child: Text.rich(
         TextSpan(
-          children: [
-            ...?before,
-            for (var item in mfmParse.value)
-              if (parse[item.type] != null)
-                parse[item.type](
-                  item,
-                  textStyle,
-                )
-              else
-                TextSpan(text: item.toString()),
-            ...?after
-          ],
+          children: [...?before, ...textSpan, ...?after],
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         maxLines: maxLines,

@@ -24,47 +24,50 @@ class MkRefreshLoadList<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mediaPadding = MediaQuery.paddingOf(context);
+    print("MkRefreshLoadList build");
     return MkRefreshIndicator(
       onRefresh: () => onRefresh(),
-      child: CustomScrollView(
-        primary: true,
-        cacheExtent: (Platform.isAndroid || Platform.isIOS) ? 1000 : 4000,
-        slivers: [
-          SliverPadding(
-            padding: mediaPadding.add(padding),
-            sliver: SliverMainAxisGroup(
-              slivers: [
-                ...slivers,
-                SliverLayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.remainingPaintExtent > 0 &&
-                        (hasMore ?? true)) {
-                      onLoad();
-                    }
-                    if (!(hasMore ?? true)) {
+      child: RepaintBoundary(
+        child: CustomScrollView(
+          primary: true,
+          cacheExtent: (Platform.isAndroid || Platform.isIOS) ? null : 4000,
+          slivers: [
+            SliverPadding(
+              padding: mediaPadding.add(padding),
+              sliver: SliverMainAxisGroup(
+                slivers: [
+                  ...slivers,
+                  SliverLayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.remainingPaintExtent > 0 &&
+                          (hasMore ?? true)) {
+                        onLoad();
+                      }
+                      if (!(hasMore ?? true)) {
+                        return const SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                              child: Text("暂无更多"),
+                            ),
+                          ),
+                        );
+                      }
                       return const SliverToBoxAdapter(
                         child: Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Center(
-                            child: Text("暂无更多"),
+                            child: LoadingCircularProgress(),
                           ),
                         ),
                       );
-                    }
-                    return const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(
-                          child: LoadingCircularProgress(),
-                        ),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-          )
-        ],
+                    },
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

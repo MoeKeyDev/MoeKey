@@ -58,7 +58,7 @@ class DriveFileModel extends DriveModel {
       isSensitive: map['isSensitive'] ?? false,
       thumbnailUrl: map['thumbnailUrl'],
       comment: map['comment'],
-      hero: null,
+      hero: UniqueKey(),
     );
   }
 

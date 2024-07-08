@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:ui';
 
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const Map<String, String> defaultExtensionMap = {
   'image/png': 'png',
+  'image/jpeg': 'jpg',
   'image/webp': 'webp',
   'image/gif': 'gif',
   'image/heif': 'heif',
@@ -24,10 +27,13 @@ const Map<String, String> defaultExtensionMap = {
 Future<bool> saveImage({
   required Dio http,
   required String url,
+  String? name,
   String album = "moekey",
 }) async {
-  var name = basename(url);
-  var ext = extension(name);
+  name =
+      name != null ? basename(name) : md5.convert(utf8.encode(url)).toString();
+
+  var ext = extension(name).substring(1);
   var fileBasename = basenameWithoutExtension(name);
 
   var data = await getNetworkImageData(url, useCache: true);
@@ -35,7 +41,11 @@ Future<bool> saveImage({
     return false;
   }
   var type = lookupMimeType(url, headerBytes: data);
+
   ext = defaultExtensionMap[type] ?? ext;
+
+  name = "$fileBasename.$ext";
+
   var codec = await ui.instantiateImageCodec(data);
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {

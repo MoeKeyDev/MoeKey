@@ -54,59 +54,14 @@ class ReactionsListComponent extends HookConsumerWidget {
       if (code != null && siteEmoji.valueOrNull?[code] == null) {
         isOutSite = true;
       }
-      var container = HoverBuilder(
-          key: ValueKey(item.key),
-          builder: (context, isHover) {
-            isHover = isHover && !disableReactions;
-            return GestureDetector(
-              onTap: disableReactions
-                  ? null
-                  : () {
-                      if (isOutSite) return;
-
-                      if (item.key != myReaction) {
-                        ref
-                            .read(misskeyApisProvider)
-                            .notes
-                            .createReactions(noteId: id, reaction: item.key);
-                      } else {
-                        if (myReaction != null) {
-                          ref
-                              .read(misskeyApisProvider)
-                              .notes
-                              .deleteReactions(noteId: id);
-                        }
-                      }
-                    },
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                    color: isOutSite
-                        ? themes.fgColor.withOpacity(0.05)
-                        : themes.fgColor.withOpacity(isHover ? 0.25 : 0.1),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4),
-                    ),
-                    border: Border.all(
-                        color: item.key == myReaction && !disableReactions
-                            ? themes.accentedBgColor.withOpacity(0.7)
-                            : Colors.transparent,
-                        width: 1)),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ReactionsIcon(emojiCode: item.key, emojis: emojis),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(item.value.toString())
-                  ],
-                ),
-              ),
-            );
-          });
+      var container = ReactionButton(
+          item: item,
+          disableReactions: disableReactions,
+          isOutSite: isOutSite,
+          myReaction: myReaction,
+          id: id,
+          themes: themes,
+          emojis: emojis);
       list.add(container);
     }
     return Wrap(
@@ -114,6 +69,84 @@ class ReactionsListComponent extends HookConsumerWidget {
       runSpacing: 6,
       children: list,
     );
+  }
+}
+
+class ReactionButton extends ConsumerWidget {
+  const ReactionButton({
+    super.key,
+    required this.item,
+    required this.disableReactions,
+    required this.isOutSite,
+    required this.myReaction,
+    required this.id,
+    required this.themes,
+    required this.emojis,
+  });
+
+  final MapEntry<String, int> item;
+  final bool disableReactions;
+  final bool isOutSite;
+  final String? myReaction;
+  final String id;
+  final ThemeColorModel themes;
+  final Map? emojis;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return HoverBuilder(
+        key: ValueKey(item.key),
+        builder: (context, isHover) {
+          isHover = isHover && !disableReactions;
+          return GestureDetector(
+            onTap: disableReactions
+                ? null
+                : () {
+                    if (isOutSite) return;
+
+                    if (item.key != myReaction) {
+                      ref
+                          .read(misskeyApisProvider)
+                          .notes
+                          .createReactions(noteId: id, reaction: item.key);
+                    } else {
+                      if (myReaction != null) {
+                        ref
+                            .read(misskeyApisProvider)
+                            .notes
+                            .deleteReactions(noteId: id);
+                      }
+                    }
+                  },
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                  color: isOutSite
+                      ? themes.fgColor.withOpacity(0.05)
+                      : themes.fgColor.withOpacity(isHover ? 0.25 : 0.1),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(4),
+                  ),
+                  border: Border.all(
+                      color: item.key == myReaction && !disableReactions
+                          ? themes.accentedBgColor.withOpacity(0.7)
+                          : Colors.transparent,
+                      width: 1)),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ReactionsIcon(emojiCode: item.key, emojis: emojis),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Text(item.value.toString())
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
 

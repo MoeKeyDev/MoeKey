@@ -184,6 +184,7 @@ class UserPage extends HookConsumerWidget {
         ),
       ],
       showBack: true,
+      tabAlignment: TabAlignment.start,
       leading: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
