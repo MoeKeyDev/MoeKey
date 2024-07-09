@@ -22,7 +22,7 @@ MoeKey is a misskey client for Flutter
 - [ ] I18n
 - [X] User Profile
 - [ ] User Widgets
-- [ ] Clips
+- [X] Clips
 - [X] Explore
 - [ ] Announcements
 - [ ] Search

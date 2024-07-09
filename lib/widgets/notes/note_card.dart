@@ -78,7 +78,6 @@ class NoteCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("NoteCard build");
     var themes = ref.watch(themeColorsProvider);
     NoteModel thisData;
     bool isReNote = false;
@@ -195,7 +194,6 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("TimeLineNoteCardComponent");
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
     var themes = ref.watch(themeColorsProvider);
     var noteListener = noteListenerProvider(this.data);

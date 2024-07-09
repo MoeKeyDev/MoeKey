@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/user_full.dart';
@@ -17,15 +16,16 @@ import '../../widgets/mk_user_card.dart';
 
 part 'users.g.dart';
 
+final navs = ["本地", "远程"];
+
 class ExploreUsersPage extends HookConsumerWidget {
   const ExploreUsersPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
-    var themes = ref.watch(themeColorsProvider);
     var select = useState(0);
-    const navs = ["本地", "远程"];
+
     return Stack(
       children: [
         if (select.value == 0) const ExploreUsersLocal(),
@@ -110,33 +110,15 @@ class ExploreUsersLocal extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var padding = MediaQuery.paddingOf(context);
-    var pinned = ref.watch(pinnedUsersProvider).valueOrNull;
-    var hot = ref
-        .watch(exploreUsersProvider(
-          origins: "local",
-          sorts: "+follower",
-          states: "alive",
-        ))
-        .valueOrNull;
-    var updated = ref
-        .watch(exploreUsersProvider(
-          origins: "local",
-          sorts: "+updatedAt",
-        ))
-        .valueOrNull;
-    var login = ref
-        .watch(exploreUsersProvider(
-          origins: "local",
-          sorts: "+createdAt",
-          states: "alive",
-        ))
-        .valueOrNull;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         var maxWidth = 1200;
         double paddingH =
             ((constraints.maxWidth - maxWidth) / 2).clamp(24, double.infinity);
+        double maxCrossAxisExtent = constraints.maxWidth < 580 ? 600 : 350;
         return CustomScrollView(
+          primary: true,
           cacheExtent: 2000,
           slivers: [
             SliverPadding(
@@ -144,118 +126,30 @@ class ExploreUsersLocal extends HookConsumerWidget {
                   top: padding.top + 40, left: paddingH, right: paddingH),
               sliver: SliverMainAxisGroup(
                 slivers: [
-                  const SliverToBoxAdapter(
-                    child: _UsersTitle(
-                      icon: TablerIcons.bookmark,
-                      title: "置顶用户",
-                    ),
+                  _UserPinGrid(maxCrossAxisExtent: maxCrossAxisExtent),
+                  _UserExplore(
+                    maxCrossAxisExtent: maxCrossAxisExtent,
+                    title: '热门用户',
+                    icon: TablerIcons.chart_line,
+                    origins: "local",
+                    sorts: "+follower",
+                    states: "alive",
                   ),
-                  if (pinned == null)
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeCap: StrokeCap.round,
-                          backgroundColor:
-                              Theme.of(context).primaryColor.withAlpha(32),
-                          color: Theme.of(context).primaryColor.withAlpha(200),
-                          strokeWidth: 6,
-                        ),
-                      ),
-                    ),
-                  SliverAlignedGrid.extent(
-                      itemBuilder: (context, index) {
-                        return MkUserCard(user: pinned![index]);
-                      },
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      addRepaintBoundaries: true,
-                      itemCount: pinned?.length ?? 0,
-                      maxCrossAxisExtent:
-                          constraints.maxWidth < 580 ? 600 : 350),
-                  const SliverToBoxAdapter(
-                    child: _UsersTitle(
-                      icon: TablerIcons.chart_line,
-                      title: "热门用户",
-                    ),
+                  _UserExplore(
+                    maxCrossAxisExtent: maxCrossAxisExtent,
+                    title: '最近投稿的用户',
+                    icon: TablerIcons.message,
+                    origins: "local",
+                    sorts: "+updatedAt",
                   ),
-                  if (hot == null)
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeCap: StrokeCap.round,
-                          backgroundColor:
-                              Theme.of(context).primaryColor.withAlpha(32),
-                          color: Theme.of(context).primaryColor.withAlpha(200),
-                          strokeWidth: 6,
-                        ),
-                      ),
-                    ),
-                  SliverAlignedGrid.extent(
-                      itemBuilder: (context, index) {
-                        return MkUserCard(user: hot![index]);
-                      },
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      addRepaintBoundaries: true,
-                      itemCount: hot?.length ?? 0,
-                      maxCrossAxisExtent:
-                          constraints.maxWidth < 580 ? 600 : 350),
-                  const SliverToBoxAdapter(
-                    child: _UsersTitle(
-                      icon: TablerIcons.message,
-                      title: "最近投稿的用户",
-                    ),
+                  _UserExplore(
+                    maxCrossAxisExtent: maxCrossAxisExtent,
+                    title: '最近登录的用户',
+                    icon: TablerIcons.plus,
+                    origins: "local",
+                    sorts: "+createdAt",
+                    states: "alive",
                   ),
-                  if (updated == null)
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeCap: StrokeCap.round,
-                          backgroundColor:
-                              Theme.of(context).primaryColor.withAlpha(32),
-                          color: Theme.of(context).primaryColor.withAlpha(200),
-                          strokeWidth: 6,
-                        ),
-                      ),
-                    ),
-                  SliverAlignedGrid.extent(
-                      itemBuilder: (context, index) {
-                        return MkUserCard(user: updated![index]);
-                      },
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      addRepaintBoundaries: true,
-                      itemCount: updated?.length ?? 0,
-                      maxCrossAxisExtent:
-                          constraints.maxWidth < 580 ? 600 : 350),
-                  const SliverToBoxAdapter(
-                    child: _UsersTitle(
-                      icon: TablerIcons.plus,
-                      title: "最近登录的用户",
-                    ),
-                  ),
-                  if (login == null)
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeCap: StrokeCap.round,
-                          backgroundColor:
-                              Theme.of(context).primaryColor.withAlpha(32),
-                          color: Theme.of(context).primaryColor.withAlpha(200),
-                          strokeWidth: 6,
-                        ),
-                      ),
-                    ),
-                  SliverAlignedGrid.extent(
-                      itemBuilder: (context, index) {
-                        return MkUserCard(user: login![index]);
-                      },
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      addRepaintBoundaries: true,
-                      itemCount: login?.length ?? 0,
-                      maxCrossAxisExtent:
-                          constraints.maxWidth < 580 ? 600 : 350),
                 ],
               ),
             )
@@ -263,6 +157,111 @@ class ExploreUsersLocal extends HookConsumerWidget {
         );
       },
     );
+  }
+}
+
+class _UserExplore extends HookConsumerWidget {
+  const _UserExplore({
+    super.key,
+    required this.maxCrossAxisExtent,
+    this.origins,
+    this.sorts,
+    this.states,
+    required this.title,
+    required this.icon,
+  });
+
+  final double maxCrossAxisExtent;
+  final String? origins;
+  final String? sorts;
+  final String? states;
+  final String title;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var hot = ref
+        .watch(exploreUsersProvider(
+          origins: origins,
+          sorts: sorts,
+          states: states,
+        ))
+        .valueOrNull;
+    return SliverMainAxisGroup(slivers: [
+      SliverToBoxAdapter(
+        child: _UsersTitle(
+          icon: icon,
+          title: title,
+        ),
+      ),
+      if (hot == null)
+        SliverToBoxAdapter(
+          child: Center(
+            child: CircularProgressIndicator(
+              strokeCap: StrokeCap.round,
+              backgroundColor: Theme.of(context).primaryColor.withAlpha(32),
+              color: Theme.of(context).primaryColor.withAlpha(200),
+              strokeWidth: 6,
+            ),
+          ),
+        ),
+      SliverGrid.builder(
+        itemBuilder: (context, index) {
+          return MkUserCard(user: hot![index]);
+        },
+
+        itemCount: hot?.length ?? 0,
+        // maxCrossAxisExtent: maxCrossAxisExtent,
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: maxCrossAxisExtent,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            mainAxisExtent: 300),
+      ),
+    ]);
+  }
+}
+
+class _UserPinGrid extends HookConsumerWidget {
+  final double maxCrossAxisExtent;
+
+  const _UserPinGrid({super.key, required this.maxCrossAxisExtent});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var pinned = ref.watch(pinnedUsersProvider).valueOrNull;
+    return SliverMainAxisGroup(slivers: [
+      const SliverToBoxAdapter(
+        child: _UsersTitle(
+          icon: TablerIcons.bookmark,
+          title: "置顶用户",
+        ),
+      ),
+      if (pinned == null)
+        SliverToBoxAdapter(
+          child: Center(
+            child: CircularProgressIndicator(
+              strokeCap: StrokeCap.round,
+              backgroundColor: Theme.of(context).primaryColor.withAlpha(32),
+              color: Theme.of(context).primaryColor.withAlpha(200),
+              strokeWidth: 6,
+            ),
+          ),
+        ),
+      SliverGrid.builder(
+        itemBuilder: (context, index) {
+          return MkUserCard(user: pinned![index]);
+        },
+
+        itemCount: pinned?.length ?? 0,
+        // maxCrossAxisExtent: maxCrossAxisExtent,
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: maxCrossAxisExtent,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            mainAxisExtent: 300),
+      )
+    ]);
   }
 }
 
@@ -289,32 +288,14 @@ class ExploreUsersNetwork extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var padding = MediaQuery.paddingOf(context);
-    var hot = ref
-        .watch(exploreUsersProvider(
-          origins: "remote",
-          sorts: "+follower",
-          states: "alive",
-        ))
-        .valueOrNull;
-    var updated = ref
-        .watch(exploreUsersProvider(
-          origins: "remote",
-          sorts: "+updatedAt",
-        ))
-        .valueOrNull;
-    var login = ref
-        .watch(exploreUsersProvider(
-          origins: "remote",
-          sorts: "+createdAt",
-          states: "alive",
-        ))
-        .valueOrNull;
     return LayoutBuilder(
       builder: (context, constraints) {
         var maxWidth = 1200;
         double paddingH =
             ((constraints.maxWidth - maxWidth) / 2).clamp(24, double.infinity);
+        double maxCrossAxisExtent = constraints.maxWidth < 580 ? 600 : 350;
         return CustomScrollView(
+          primary: true,
           cacheExtent: 2000,
           slivers: [
             SliverPadding(
@@ -322,90 +303,29 @@ class ExploreUsersNetwork extends HookConsumerWidget {
                   top: padding.top + 40, left: paddingH, right: paddingH),
               sliver: SliverMainAxisGroup(
                 slivers: [
-                  const SliverToBoxAdapter(
-                    child: _UsersTitle(
-                      icon: TablerIcons.chart_line,
-                      title: "热门用户",
-                    ),
+                  _UserExplore(
+                    maxCrossAxisExtent: maxCrossAxisExtent,
+                    title: '热门用户',
+                    icon: TablerIcons.chart_line,
+                    origins: "remote",
+                    sorts: "+follower",
+                    states: "alive",
                   ),
-                  if (hot == null)
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeCap: StrokeCap.round,
-                          backgroundColor:
-                              Theme.of(context).primaryColor.withAlpha(32),
-                          color: Theme.of(context).primaryColor.withAlpha(200),
-                          strokeWidth: 6,
-                        ),
-                      ),
-                    ),
-                  SliverAlignedGrid.extent(
-                      itemBuilder: (context, index) {
-                        return MkUserCard(user: hot![index]);
-                      },
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      addRepaintBoundaries: true,
-                      itemCount: hot?.length ?? 0,
-                      maxCrossAxisExtent:
-                          constraints.maxWidth < 580 ? 600 : 350),
-                  const SliverToBoxAdapter(
-                    child: _UsersTitle(
-                      icon: TablerIcons.message,
-                      title: "最近投稿的用户",
-                    ),
+                  _UserExplore(
+                    maxCrossAxisExtent: maxCrossAxisExtent,
+                    title: '最近投稿的用户',
+                    icon: TablerIcons.message,
+                    origins: "remote",
+                    sorts: "+updatedAt",
                   ),
-                  if (updated == null)
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeCap: StrokeCap.round,
-                          backgroundColor:
-                              Theme.of(context).primaryColor.withAlpha(32),
-                          color: Theme.of(context).primaryColor.withAlpha(200),
-                          strokeWidth: 6,
-                        ),
-                      ),
-                    ),
-                  SliverAlignedGrid.extent(
-                      itemBuilder: (context, index) {
-                        return MkUserCard(user: updated![index]);
-                      },
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      addRepaintBoundaries: true,
-                      itemCount: updated?.length ?? 0,
-                      maxCrossAxisExtent:
-                          constraints.maxWidth < 580 ? 600 : 350),
-                  const SliverToBoxAdapter(
-                    child: _UsersTitle(
-                      icon: TablerIcons.plus,
-                      title: "最近发现的用户",
-                    ),
+                  _UserExplore(
+                    maxCrossAxisExtent: maxCrossAxisExtent,
+                    title: '最近登录的用户',
+                    icon: TablerIcons.plus,
+                    origins: "remote",
+                    sorts: "+createdAt",
+                    states: "alive",
                   ),
-                  if (login == null)
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeCap: StrokeCap.round,
-                          backgroundColor:
-                              Theme.of(context).primaryColor.withAlpha(32),
-                          color: Theme.of(context).primaryColor.withAlpha(200),
-                          strokeWidth: 6,
-                        ),
-                      ),
-                    ),
-                  SliverAlignedGrid.extent(
-                      itemBuilder: (context, index) {
-                        return MkUserCard(user: login![index]);
-                      },
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      addRepaintBoundaries: true,
-                      itemCount: login?.length ?? 0,
-                      maxCrossAxisExtent:
-                          constraints.maxWidth < 580 ? 600 : 350),
                 ],
               ),
             )

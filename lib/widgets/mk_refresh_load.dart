@@ -24,7 +24,6 @@ class MkRefreshLoadList<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mediaPadding = MediaQuery.paddingOf(context);
-    print("MkRefreshLoadList build");
     return MkRefreshIndicator(
       onRefresh: () => onRefresh(),
       child: RepaintBoundary(
@@ -45,11 +44,8 @@ class MkRefreshLoadList<T> extends StatelessWidget {
                       }
                       if (!(hasMore ?? true)) {
                         return const SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text("暂无更多"),
-                            ),
+                          child: SizedBox(
+                            height: 10,
                           ),
                         );
                       }

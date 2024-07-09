@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.12
+
+### Feature
+
+- add user follow list page
+
 ## 0.3.10
 
 ### refactor

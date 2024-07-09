@@ -207,8 +207,10 @@ class DriveImageThumbnail extends HookConsumerWidget {
                         aspectRatio: 1,
                         child: [
                           if (data.runtimeType == DriveFileModel)
-                            DriverFileIcon(
-                                themes: themes, data: data as DriveFileModel)
+                            RepaintBoundary(
+                              child: DriverFileIcon(
+                                  themes: themes, data: data as DriveFileModel),
+                            )
                           else
                             DecoratedBox(
                               decoration: BoxDecoration(

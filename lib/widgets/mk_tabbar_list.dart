@@ -1,12 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-import '../status/themes.dart';
 import 'keep_alive_wrapper.dart';
-import 'loading_weight.dart';
 import 'mk_header.dart';
 import 'mk_refresh_indicator.dart';
 import 'mk_scaffold.dart';
@@ -28,7 +21,6 @@ class MkTabBarRefreshScroll extends StatefulWidget {
       this.leading,
       this.trailing,
       this.content,
-      this.bottom,
       this.showBack = false,
       this.onIndexUpdate,
       this.initIndex = 0,
@@ -39,7 +31,6 @@ class MkTabBarRefreshScroll extends StatefulWidget {
   final Widget? leading;
   final Widget? trailing;
   final Widget? content;
-  final PreferredSizeWidget? bottom;
   final bool showBack;
   final int initIndex;
   final EdgeInsetsGeometry padding;

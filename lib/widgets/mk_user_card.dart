@@ -26,184 +26,197 @@ class MkUserCard extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var textStyle = DefaultTextStyle.of(context).style;
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-          MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-            path: "user/${user.id}",
-            page: () {
-              return UserPage(userId: user.id);
-            },
-          ));
-        },
-        child: MkCard(
-          padding: EdgeInsets.zero,
-          shadow: false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: 84,
-                color: const Color.fromARGB(26, 0, 0, 0),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    if (user.bannerUrl != null)
-                      Positioned.fill(
-                        child: MkImage(
-                          width: double.infinity,
-                          height: 84,
-                          user.bannerUrl!,
-                          blurHash: user.avatarBlurhash,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    if (user.isFollowed)
-                      Positioned(
-                        top: 12,
-                        left: 12,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                              color: Color.fromARGB(180, 0, 0, 0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(4))),
-                          child: const Text(
-                            "正在关注你",
-                            style: TextStyle(color: Colors.white, fontSize: 10),
+    return RepaintBoundary(
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () {
+            MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+              path: "user/${user.id}",
+              page: () {
+                return UserPage(userId: user.id);
+              },
+            ));
+          },
+          child: SizedBox(
+            height: 300,
+            child: MkCard(
+              padding: EdgeInsets.zero,
+              shadow: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 84,
+                    color: const Color.fromARGB(26, 0, 0, 0),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        if (user.bannerUrl != null)
+                          Positioned.fill(
+                            child: MkImage(
+                              width: double.infinity,
+                              height: 84,
+                              user.bannerUrl!,
+                              blurHash: user.avatarBlurhash,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ),
-                    Positioned(
-                      right: 8,
-                      top: 8,
-                      child:
-                          UserFullCardFollowBtn(userData: user, themes: themes),
-                    ),
-                    Positioned(
-                      top: 62,
-                      left: 16,
-                      child: Container(
-                        width: 58,
-                        height: 58,
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                            color: themes.panelColor,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(50))),
-                        child: MkImage(
-                          shape: BoxShape.circle,
-                          user.avatarUrl ?? "",
-                          blurHash: user.avatarBlurhash,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 88, top: 10, right: 10, bottom: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DefaultTextStyle(
-                      style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                      child: MFMText(
-                        text: user.name ?? user.username,
-                        after: [
-                          const TextSpan(text: "\n"),
-                          TextSpan(
-                              text: "@${user.username ?? ""}",
-                              style: textStyle.copyWith(
-                                fontSize: 11,
-                              )),
-                          TextSpan(
-                            text: user.host != null ? "@${user.host}" : "",
-                            style: textStyle.copyWith(
-                                color: themes.fgColor.withAlpha(128),
-                                fontSize: 11),
+                        if (user.isFollowed)
+                          Positioned(
+                            top: 12,
+                            left: 12,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                  color: Color.fromARGB(180, 0, 0, 0),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(4))),
+                              child: const Text(
+                                "正在关注你",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 10),
+                              ),
+                            ),
                           ),
-                        ],
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        emojis: user.emojis,
-                        bigEmojiCode: false,
-                        feature: const [MFMFeature.emojiCode],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                height: 1,
-                color: themes.dividerColor,
-              ),
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: DefaultTextStyle(
-                  style: textStyle.copyWith(fontSize: 11),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: 50),
-                    child: MFMText(
-                      text: user.description ?? "此用户尚无自我介绍",
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      emojis: user.emojis,
-                      bigEmojiCode: false,
-                      feature: const [MFMFeature.emojiCode],
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: UserFullCardFollowBtn(
+                              userData: user, themes: themes),
+                        ),
+                        Positioned(
+                          top: 62,
+                          left: 16,
+                          child: Container(
+                            width: 58,
+                            height: 58,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                color: themes.panelColor,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(50))),
+                            child: MkImage(
+                              shape: BoxShape.circle,
+                              user.avatarUrl ?? "",
+                              blurHash: user.avatarBlurhash,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                height: 1,
-                color: themes.dividerColor,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 88, top: 10, right: 10, bottom: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("帖子", style: TextStyle(fontSize: 11)),
-                        Text("${user.notesCount}",
-                            style: TextStyle(
-                                fontSize: 13,
-                                color: themes.accentColor,
-                                fontWeight: FontWeight.bold)),
+                        DefaultTextStyle(
+                          style:
+                              textStyle.copyWith(fontWeight: FontWeight.bold),
+                          child: MFMText(
+                            text: user.name ?? user.username,
+                            after: [
+                              const TextSpan(text: "\n"),
+                              TextSpan(
+                                  text: "@${user.username ?? ""}",
+                                  style: textStyle.copyWith(
+                                    fontSize: 11,
+                                  )),
+                              TextSpan(
+                                text: user.host != null ? "@${user.host}" : "",
+                                style: textStyle.copyWith(
+                                    color: themes.fgColor.withAlpha(128),
+                                    fontSize: 11),
+                              ),
+                            ],
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            emojis: user.emojis,
+                            bigEmojiCode: false,
+                            feature: const [MFMFeature.emojiCode],
+                          ),
+                        )
                       ],
                     ),
-                    Column(
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 1,
+                    color: themes.dividerColor,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Center(
+                        child: DefaultTextStyle(
+                          style: textStyle.copyWith(fontSize: 11),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: MFMText(
+                              text: user.description ?? "此用户尚无自我介绍",
+                              maxLines: 3,
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.ellipsis,
+                              emojis: user.emojis,
+                              bigEmojiCode: false,
+                              feature: const [MFMFeature.emojiCode],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 1,
+                    color: themes.dividerColor,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        const Text("关注中", style: TextStyle(fontSize: 11)),
-                        Text("${user.followingCount}",
-                            style: TextStyle(
-                                fontSize: 13,
-                                color: themes.accentColor,
-                                fontWeight: FontWeight.bold)),
+                        Column(
+                          children: [
+                            const Text("帖子", style: TextStyle(fontSize: 11)),
+                            Text("${user.notesCount}",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: themes.accentColor,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            const Text("关注中", style: TextStyle(fontSize: 11)),
+                            Text("${user.followingCount}",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: themes.accentColor,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            const Text("关注者", style: TextStyle(fontSize: 11)),
+                            Text("${user.followersCount}",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: themes.accentColor,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        )
                       ],
                     ),
-                    Column(
-                      children: [
-                        const Text("关注者", style: TextStyle(fontSize: 11)),
-                        Text("${user.followersCount}",
-                            style: TextStyle(
-                                fontSize: 13,
-                                color: themes.accentColor,
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

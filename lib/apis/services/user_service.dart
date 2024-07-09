@@ -7,13 +7,14 @@ import 'package:moekey/apis/services/services.dart';
 class UserService extends MisskeyApiServices {
   UserService({required super.client});
 
-  Future<List<Following>> following({
+  Future<List<Following>> follow({
     required String userId,
     String? untilId,
     int limit = 20,
     String? sinceId,
+    String type = "following",
   }) async {
-    var res = await client.post<List?>("/users/following", data: {
+    var res = await client.post<List?>("/users/$type", data: {
       "userId": userId,
       "limit": limit,
       if (untilId != null) "untilId": untilId,

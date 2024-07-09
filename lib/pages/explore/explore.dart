@@ -5,10 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/explore/hot.dart';
 import 'package:moekey/pages/explore/users.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:moekey/widgets/mk_header.dart';
-import 'package:moekey/widgets/mk_scaffold.dart';
-
-import '../../widgets/keep_alive_wrapper.dart';
+import 'package:moekey/widgets/mk_tabbar_list.dart';
 
 class ExplorePage extends HookConsumerWidget {
   const ExplorePage({super.key});
@@ -44,39 +41,50 @@ class ExplorePage extends HookConsumerWidget {
     tabController.addListener(() {
       currentIndex.value = tabController.index;
     });
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return MkScaffold(
-          body: TabBarView(
-            controller: tabController,
-            children: const [
-              KeepAliveWrapper(child: ExploreHotPage()),
-              KeepAliveWrapper(child: ExploreUsersPage()),
-            ],
-          ),
-          header: MkAppbar(
-            leading: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(TablerIcons.hash, color: themes.fgColor, size: 18),
-                  const SizedBox(width: 4),
-                  const Text(
-                    "发现",
-                  )
-                ],
-              ),
-            ),
-            isSmallLeadingCenter: constraints.maxWidth < 500,
-            bottom: MkTabBar(controller: tabController, tabs: tabs),
-            trailing: const SizedBox(
-              width: 100,
+    return MkTabBarRefreshScroll(
+      items: [
+        MkTabBarItem(
+          label: const Tab(
+            child: Row(
+              children: [
+                Icon(
+                  TablerIcons.bolt,
+                  size: 14,
+                ),
+                Text("热门", style: TextStyle(fontSize: 12)),
+              ],
             ),
           ),
-        );
-      },
+          child: const ExploreHotPage(),
+        ),
+        MkTabBarItem(
+          label: const Tab(
+            child: Row(
+              children: [
+                Icon(TablerIcons.users, size: 14),
+                Text("用户", style: TextStyle(fontSize: 12)),
+              ],
+            ),
+          ),
+          child: const ExploreUsersPage(),
+        )
+      ],
+      leading: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(TablerIcons.hash, color: themes.fgColor, size: 18),
+            const SizedBox(width: 4),
+            const Text(
+              "发现",
+            )
+          ],
+        ),
+      ),
+      trailing: const SizedBox(
+        width: 100,
+      ),
     );
   }
 }

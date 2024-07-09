@@ -31,7 +31,6 @@ class MkPaginationNoteList extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-    print("MkPaginationNoteList");
     return LayoutBuilder(
       builder: (context, constraints) {
         var padding =

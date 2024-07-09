@@ -23,7 +23,7 @@ class UserFollowing extends _$UserFollowing {
 
   Future<List<Following>> load() async {
     var apis = ref.read(misskeyApisProvider);
-    return apis.user.following(userId: userId, limit: 50);
+    return apis.user.follow(userId: userId, limit: 50);
   }
 }
 

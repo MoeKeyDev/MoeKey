@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/note.dart';
 import 'package:moekey/status/misskey_api.dart';
-import 'package:moekey/widgets/mk_refresh_indicator.dart';
 import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
