@@ -84,7 +84,7 @@ class UserFollowList extends HookConsumerWidget {
                   return MkUserCard(user: follow.valueOrNull!.list[index]);
                 },
 
-                itemCount: follow.valueOrNull!.list.length ?? 0,
+                itemCount: follow.valueOrNull?.list.length ?? 0,
                 // maxCrossAxisExtent: maxCrossAxisExtent,
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: maxCrossAxisExtent,

@@ -149,55 +149,63 @@ class _UserFollowsCount extends StatelessWidget {
               const Text("帖子", style: TextStyle(fontSize: 12)),
             ],
           ),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                path: "user/following/${userData.id}",
-                page: () {
-                  return UserFollowPage(
-                    userId: userData.id,
-                    type: "following",
-                  );
-                },
-              ));
-            },
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: Column(
-                children: [
-                  Text("${userData.followingCount}",
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold)),
-                  const Text("关注中", style: TextStyle(fontSize: 12)),
-                ],
+          if (userData.followingVisibility == null ||
+              userData.followingVisibility == "public" ||
+              (userData.followingVisibility == "followers" &&
+                  userData.isFollowing))
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                  path: "user/following/${userData.id}",
+                  page: () {
+                    return UserFollowPage(
+                      userId: userData.id,
+                      type: "following",
+                    );
+                  },
+                ));
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Column(
+                  children: [
+                    Text("${userData.followingCount}",
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    const Text("关注中", style: TextStyle(fontSize: 12)),
+                  ],
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                path: "user/followers/${userData.id}",
-                page: () {
-                  return UserFollowPage(
-                    userId: userData.id,
-                    type: "followers",
-                  );
-                },
-              ));
-            },
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: Column(
-                children: [
-                  Text("${userData.followersCount}",
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold)),
-                  const Text("关注者", style: TextStyle(fontSize: 12)),
-                ],
+          if (userData.followersVisibility == null ||
+              userData.followersVisibility == "public" ||
+              (userData.followersVisibility == "followers" &&
+                  userData.isFollowing))
+            GestureDetector(
+              onTap: () {
+                MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                  path: "user/followers/${userData.id}",
+                  page: () {
+                    return UserFollowPage(
+                      userId: userData.id,
+                      type: "followers",
+                    );
+                  },
+                ));
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Column(
+                  children: [
+                    Text("${userData.followersCount}",
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    const Text("关注者", style: TextStyle(fontSize: 12)),
+                  ],
+                ),
               ),
-            ),
-          )
+            )
         ],
       ),
     );

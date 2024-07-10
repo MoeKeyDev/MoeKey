@@ -19,7 +19,7 @@ class UserFullModel {
   bool isAdmin;
   bool publicReactions;
   OnlineStatus onlineStatus;
-  DateTime updatedAt;
+  DateTime? updatedAt;
   String username;
   String? name;
   List<dynamic> fields;
@@ -56,7 +56,7 @@ class UserFullModel {
     required this.id,
     required this.isAdmin,
     required this.onlineStatus,
-    required this.updatedAt,
+    this.updatedAt,
     required this.username,
     this.name,
     required this.fields,
@@ -111,7 +111,8 @@ class UserFullModel {
       id: map['id'],
       isAdmin: map['isAdmin'] ?? false,
       onlineStatus: onlineStatusValues.map[map["onlineStatus"]]!,
-      updatedAt: DateTime.parse(map['updatedAt']),
+      updatedAt:
+          map['updatedAt'] != null ? DateTime.parse(map['updatedAt']) : null,
       username: map['username'],
       name: map['name'],
       fields: map['fields'] ?? [],

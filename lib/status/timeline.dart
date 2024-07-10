@@ -33,6 +33,7 @@ class Timeline extends _$Timeline {
       model.list = list;
       db.setTimeline(api, list);
     }
+
     return model;
   }
 

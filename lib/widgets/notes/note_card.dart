@@ -607,6 +607,11 @@ class NoteLinkPreview extends HookConsumerWidget {
     var res = ref.watch(getUriInfoProvider(link));
 
     var data = res.valueOrNull;
+
+    if (data == null) {
+      return const SizedBox();
+    }
+
     return Container(
       margin: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
@@ -615,94 +620,93 @@ class NoteLinkPreview extends HookConsumerWidget {
             color: themes.dividerColor,
             width: 1,
           )),
-      child: IntrinsicHeight(
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              launchUrlString(link);
-            },
-            child: Row(
-              children: [
-                if (data?.thumbnail != null)
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(5),
-                      bottomLeft: Radius.circular(5),
-                    ),
-                    child: SizedBox(
-                      width: fontsize * 7,
-                      height: fontsize * 7,
-                      child: MkImage(
-                        data!.thumbnail!,
-                        height: fontsize * 8,
-                        width: fontsize * 8,
-                      ),
-                    ),
-                  )
-                else
-                  SizedBox(
-                    height: fontsize * 7,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            launchUrlString(link);
+          },
+          child: Row(
+            children: [
+              if (data?.thumbnail != null)
+                ClipRRect(
+                  clipBehavior: Clip.hardEdge,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    bottomLeft: Radius.circular(5),
                   ),
-                Expanded(
-                    child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        data?.title ?? "...",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: fontsize,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  child: SizedBox(
+                    width: fontsize * 7,
+                    height: fontsize * 7,
+                    child: MkImage(
+                      data!.thumbnail!,
+                      height: fontsize * 7,
+                      width: fontsize * 7,
+                    ),
+                  ),
+                )
+              else
+                SizedBox(
+                  height: fontsize * 7,
+                ),
+              Expanded(
+                  child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      data?.title ?? "...",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: fontsize,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Text(
-                        data?.description ?? "...",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: fontsize * 0.9,
-                        ),
+                    ),
+                    Text(
+                      data?.description ?? "...",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: fontsize * 0.9,
                       ),
-                      Row(
-                        children: [
-                          if (data?.icon != null) ...[
-                            SizedBox(
-                              width: 16,
+                    ),
+                    Row(
+                      children: [
+                        if (data?.icon != null) ...[
+                          SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: MkImage(
+                              data!.icon!,
                               height: 16,
-                              child: MkImage(
-                                data!.icon!,
-                                height: 16,
-                                width: 16,
-                              ),
+                              width: 16,
                             ),
-                            const SizedBox(
-                              width: 4,
-                            )
-                          ],
-                          Expanded(
-                            child: Text(
-                              data?.sitename ?? "...",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: fontsize * 0.9,
-                              ),
-                            ),
+                          ),
+                          const SizedBox(
+                            width: 4,
                           )
                         ],
-                      )
-                    ],
-                  ),
-                ))
-              ],
-            ),
+                        Expanded(
+                          child: Text(
+                            data?.sitename ?? "...",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: fontsize * 0.9,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ))
+            ],
           ),
         ),
       ),
