@@ -22,7 +22,7 @@ class AuthService extends MisskeyApiServices {
   /// {"appSecret": appSecret, "token": token}
   Future<Map<String, dynamic>?> sessionUserKey(
       {required String appSecret, required String token}) async {
-    return await client.post(
+    return await client.post<Map<String, dynamic>>(
       "/auth/session/userkey",
       data: {"appSecret": appSecret, "token": token},
       auth: false,

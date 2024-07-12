@@ -54,7 +54,8 @@ class DriveFileModel extends DriveModel {
       size: map['size'],
       name: map['name'],
       id: map['id'],
-      properties: Properties.fromMap(map['properties']),
+      properties:
+          Properties.fromMap(Map<String, dynamic>.from(map['properties'])),
       isSensitive: map['isSensitive'] ?? false,
       thumbnailUrl: map['thumbnailUrl'],
       comment: map['comment'],

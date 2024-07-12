@@ -23,8 +23,6 @@ enum ContextMenuMode {
   onLongPress,
 }
 
-final ContextMenuController _contextMenuController = ContextMenuController();
-
 /// 上下文菜单组件，支持在页面上弹出菜单
 class ContextMenuBuilder extends ConsumerStatefulWidget {
   const ContextMenuBuilder({
@@ -61,9 +59,12 @@ class ContextMenuBuilder extends ConsumerStatefulWidget {
 
 class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     with SingleTickerProviderStateMixin {
+  final ContextMenuController _contextMenuController = ContextMenuController();
+
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 150));
     // 缩放动画
@@ -72,6 +73,12 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     // 淡入淡出
     tween2 = Tween(begin: 0.2, end: 1.0).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   late AnimationController _animationController;
@@ -87,14 +94,16 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   }
 
   _show(Offset offset) {
-    _animationController.reset();
-    _animationController.forward();
-    _contextMenuController.show(
-      context: context,
-      contextMenuBuilder: (context) {
-        return getContextMenuLayoutWidget(offset);
-      },
-    );
+    if (mounted) {
+      _animationController.reset();
+      _animationController.forward();
+      _contextMenuController.show(
+        context: context,
+        contextMenuBuilder: (context) {
+          return getContextMenuLayoutWidget(offset);
+        },
+      );
+    }
   }
 
   showBottomSheet() {
@@ -176,8 +185,11 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   }
 
   hidden() async {
-    await _animationController.reverse();
-    _contextMenuController.remove();
+    if (mounted) {
+      await _animationController.reverse();
+
+      _contextMenuController.remove();
+    }
   }
 
   @override

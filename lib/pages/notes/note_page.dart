@@ -403,6 +403,7 @@ class UserInfo extends HookConsumerWidget {
         GestureDetector(
           child: MkImage(
             data.avatarUrl ?? "",
+            blurHash: data.avatarBlurhash,
             width: 56,
             height: 56,
             shape: BoxShape.circle,

@@ -104,7 +104,7 @@ class UserFullModel {
       createdAt: DateTime.parse(map['createdAt']),
       description: map['description'],
       email: map['email'],
-      emojis: map['emojis'],
+      emojis: Map<String, dynamic>.from(map['emojis']),
       followersCount: map['followersCount'],
       followingCount: map['followingCount'],
       host: map['host'],
@@ -209,5 +209,43 @@ class UserFullModel {
     );
   }
 
-  toMap() {}
+  Map<String, dynamic> toMap() {
+    return {
+      'avatarBlurhash': avatarBlurhash,
+      'avatarUrl': avatarUrl,
+      'bannerBlurhash': bannerBlurhash,
+      'bannerUrl': bannerUrl,
+      'birthday': birthday,
+      'createdAt': createdAt.toIso8601String(),
+      'description': description,
+      'email': email,
+      'emojis': emojis,
+      'followersCount': followersCount,
+      'followingCount': followingCount,
+      'host': host,
+      'id': id,
+      'isAdmin': isAdmin,
+      'publicReactions': publicReactions,
+      'onlineStatus': onlineStatusValues.reverse[onlineStatus],
+      'updatedAt': updatedAt?.toIso8601String(),
+      'username': username,
+      'name': name,
+      'fields': fields,
+      'avatarDecorations':
+          avatarDecorations?.map((decoration) => decoration.toMap()).toList(),
+      'ffVisibility': ffVisibility,
+      'followersVisibility': followersVisibility,
+      'followingVisibility': followingVisibility,
+      'pinnedNotes': pinnedNotes.map((note) => note.toMap()).toList(),
+      'pinnedNotesIds': pinnedNotesIds,
+      'uri': uri,
+      'url': url,
+      'notesCount': notesCount,
+      'isFollowed': isFollowed,
+      'isFollowing': isFollowing,
+      'hasPendingFollowRequestFromYou': hasPendingFollowRequestFromYou,
+      'hasPendingFollowRequestToYou': hasPendingFollowRequestToYou,
+      'isLocked': isLocked,
+    };
+  }
 }

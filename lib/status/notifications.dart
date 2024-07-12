@@ -21,7 +21,7 @@ class Notifications extends _$Notifications {
   Future<List<NotificationModel>> notificationsGrouped(
       {String? untilId}) async {
     try {
-      var apis = ref.read(misskeyApisProvider);
+      var apis = ref.watch(misskeyApisProvider);
       var res = await apis.account.notificationsGrouped(untilId: untilId);
       return res;
     } catch (e, s) {

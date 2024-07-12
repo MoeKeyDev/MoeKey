@@ -50,7 +50,6 @@ Future<void> main() async {
 }
 
 final globalNav = GlobalKey<NavigatorState>();
-final globalMaterialAppKey = GlobalKey();
 
 class MyApp extends HookConsumerWidget {
   const MyApp({super.key});
@@ -62,7 +61,6 @@ class MyApp extends HookConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorKey: globalNav,
-      key: globalMaterialAppKey,
       theme: theme,
       home: const SplashPage(),
       // builder: (context, child) {
@@ -94,10 +92,10 @@ class SplashPage extends HookConsumerWidget {
             builder: (context) {
               return Consumer(
                 builder: (context, ref, child) {
-                  var user = ref.watch(currentLoginUserProvider);
+                  var user = ref.read(currentLoginUserProvider);
                   // 启动webSocket
-                  ref.watch(moekeyGlobalEventProvider);
-                  ref.watch(moekeyMainChannelProvider);
+                  ref.read(moekeyGlobalEventProvider);
+                  ref.read(moekeyMainChannelProvider);
                   if (user != null) {
                     return HomePage();
                   }

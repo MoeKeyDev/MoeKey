@@ -1,7 +1,9 @@
+import 'package:moekey/apis/models/user_full.dart';
+
 class LoginUser {
   final String serverUrl;
   final String token;
-  final Map userInfo;
+  final UserFullModel userInfo;
   final String name;
   final String id;
 
@@ -22,16 +24,32 @@ class LoginUser {
     return {
       "serverUrl": serverUrl,
       "token": token,
-      "userInfo": userInfo,
+      "userInfo": userInfo.toMap(),
       "name": name,
       "id": id,
     };
   }
 
-  factory LoginUser.fromMap(Map<dynamic, dynamic> json) => LoginUser(
+  LoginUser copyWith({
+    String? serverUrl,
+    String? token,
+    UserFullModel? userInfo,
+    String? name,
+    String? id,
+  }) {
+    return LoginUser(
+      name: name ?? this.name,
+      serverUrl: serverUrl ?? this.serverUrl,
+      token: token ?? this.token,
+      userInfo: userInfo ?? this.userInfo,
+      id: id ?? this.id,
+    );
+  }
+
+  factory LoginUser.fromMap(Map json) => LoginUser(
       serverUrl: json["serverUrl"],
       token: json["token"],
-      userInfo: json["userInfo"],
+      userInfo: UserFullModel.fromMap(json["userInfo"]),
       name: json["name"],
       id: json["id"]);
 }

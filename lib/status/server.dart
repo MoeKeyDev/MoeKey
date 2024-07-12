@@ -27,30 +27,21 @@ class LoginUserList extends _$LoginUserList {
   @override
   Map<String, LoginUser> build() {
     var list = getPreferencesDatabase().get("LoginUserList", defaultValue: {});
-    // preference.keys.forEach(
-    //   (element) {},
-    // );
-    // preference.forEach((key, value) {
-    //   loginUserList[key] = LoginUser(
-    //       serverUrl: value["serverUrl"],
-    //       token: value["token"],
-    //       userInfo: value["userInfo"],
-    //       name: value["name"],
-    //       id: value["id"]);
-    // });
-    return Map<String, LoginUser>.from(list.map(
-      (key, value) =>
-          MapEntry<String, LoginUser>(key, LoginUser.fromMap(value)),
-    ));
+    return Map<String, LoginUser>.from(
+      list.map((key, value) {
+        return MapEntry<String, LoginUser>(key, LoginUser.fromMap(value));
+      }),
+    );
   }
 
   Future addUser(LoginUser user) async {
     var v = state;
-    v[user.userInfo["id"]] = user;
+    v[user.userInfo.id] = user;
     var db = getPreferencesDatabase();
     var list = db.get("LoginUserList", defaultValue: {});
-    list[user.userInfo["id"]] = user.toMap();
+    list[user.userInfo.id] = user.toMap();
     db.put("LoginUserList", list);
+    ref.notifyListeners();
   }
 }
 
@@ -58,13 +49,19 @@ class LoginUserList extends _$LoginUserList {
 class CurrentLoginUser extends _$CurrentLoginUser {
   @override
   LoginUser? build() {
-    var userList = ref.watch(loginUserListProvider);
-    var preference = getPreferencesDatabase();
-    var userid = preference.get("currentLoginUser", defaultValue: "");
-    if (!userList.containsKey(userid)) {
-      return null;
+    try {
+      var userList = ref.watch(loginUserListProvider);
+      var preference = getPreferencesDatabase();
+      var userid = preference.get("currentLoginUser", defaultValue: "");
+      if (!userList.containsKey(userid)) {
+        return null;
+      }
+      return userList[userid];
+    } on TypeError catch (e) {
+      print(e);
+      print(e.stackTrace);
     }
-    return userList[userid];
+    return null;
   }
 
   setLoginUser(String id) {

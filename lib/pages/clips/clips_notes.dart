@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -20,7 +18,6 @@ import '../../apis/models/clips.dart';
 import '../../apis/models/note.dart';
 import '../../status/themes.dart';
 import '../../utils/get_padding_note.dart';
-import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_info_dialog.dart';
 import '../../widgets/notes/note_card.dart';
 import '../notes/note_page.dart';

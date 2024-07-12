@@ -114,7 +114,7 @@ class NoteModel {
       reply: map['reply'] != null ? NoteModel.fromMap(map['reply']) : null,
       text: map['text'],
       uri: map['uri'],
-      user: UserLiteModel.fromMap(map['user']),
+      user: UserLiteModel.fromMap(Map<String, dynamic>.from(map['user'])),
       userId: map['userId'],
       visibility: NoteVisibility.fromString(
         map['visibility'],

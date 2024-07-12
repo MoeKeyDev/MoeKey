@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.13
+
+### fix:
+
+- Error when switching users
+- User follow list can't load
+- Fix duplicate loading of timeline
+- Fix image save failed
+
+### refactor
+
+move logger.dart file update loading state in list riverpod
+
 ## 0.3.12
 
 ### Feature

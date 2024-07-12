@@ -1,4 +1,5 @@
 import 'package:moekey/apis/index.dart';
+import 'package:moekey/apis/models/user_full.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -70,7 +71,7 @@ class ApiUserLogin extends _$ApiUserLogin {
             name: key["user"]["name"] ?? key["user"]["username"],
             serverUrl: host,
             token: getToken(key["accessToken"], secret),
-            userInfo: key["user"]);
+            userInfo: UserFullModel.fromMap(key["user"]));
       }
     }
     return null;

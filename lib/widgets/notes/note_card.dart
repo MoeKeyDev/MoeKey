@@ -841,15 +841,16 @@ class UserNameRichText extends HookConsumerWidget {
               text: "  ",
             ),
             for (var badge in data.badgeRoles ?? [])
-              WidgetSpan(
-                  child: Tooltip(
-                    message: badge.name,
-                    child: MkImage(
-                      badge.iconUrl,
-                      height: 16,
+              if (badge.iconUrl != null)
+                WidgetSpan(
+                    child: Tooltip(
+                      message: badge.name,
+                      child: MkImage(
+                        badge.iconUrl,
+                        height: 16,
+                      ),
                     ),
-                  ),
-                  alignment: PlaceholderAlignment.middle)
+                    alignment: PlaceholderAlignment.middle)
           ],
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

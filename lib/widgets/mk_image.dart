@@ -51,7 +51,7 @@ class MkImage extends StatelessWidget {
               );
             case LoadState.loading:
             case LoadState.failed:
-              if (blurHash != null) {
+              if (blurHash != null && blurHash!.isNotEmpty) {
                 return LayoutBuilder(
                   builder: (context, constraints) {
                     // 当某些情况拿不到最大高度的时候，用最小高度代替
@@ -60,7 +60,7 @@ class MkImage extends StatelessWidget {
                       height1 = constraints.minHeight;
                     }
                     return SizedBox(
-                      height: height1,
+                      height: height ?? height1,
                       width: width,
                       child: BlurhashFfi(hash: blurHash!),
                     );

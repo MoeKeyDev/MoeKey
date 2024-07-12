@@ -13,11 +13,26 @@ import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/login/servers_select.dart';
 
+import '../../status/misskey_api.dart';
 import '../../widgets/blur_widget.dart';
 import '../../widgets/hover_builder.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/note_create_dialog/note_create_dialog.dart';
 import '../user_widgets/widgets_list/view.dart';
+
+void updateUserInfo(WidgetRef ref) {
+  Future.delayed(
+    Duration.zero,
+    () async {
+      var api = ref.read(misskeyApisProvider);
+      var user = ref.read(currentLoginUserProvider);
+      var data = await api.user.show(userId: user?.id);
+
+      user = user?.copyWith(name: data?.name ?? data?.username, userInfo: data);
+      ref.read(loginUserListProvider.notifier).addUser(user!);
+    },
+  );
+}
 
 class HomePage extends HookConsumerWidget {
   HomePage({super.key});
@@ -45,6 +60,7 @@ class HomePage extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var router = ref.watch(routerDelegateProvider);
     var currentId = useState(router.currentConfiguration?.path);
+    var user = ref.read(currentLoginUserProvider);
     func() {
       currentId.value = router.currentConfiguration?.path;
     }
@@ -58,7 +74,10 @@ class HomePage extends HookConsumerWidget {
       "announcements",
       "search"
     ].contains(currentId.value);
-
+    useEffect(() {
+      updateUserInfo(ref);
+      return null;
+    }, [user?.id]);
     useEffect(() {
       func();
       router.addListener(func);
@@ -365,7 +384,7 @@ class UserAvatarButton extends ConsumerWidget {
                         SizedBox(
                           width: 28,
                           height: 28,
-                          child: MkImage(user?.userInfo["avatarUrl"],
+                          child: MkImage(user?.userInfo.avatarUrl ?? "",
                               shape: BoxShape.circle),
                         ),
                         SizedBox(width: large ? 8 : 4),
@@ -374,10 +393,19 @@ class UserAvatarButton extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (user?.userInfo["name"] != null)
-                              Text(user?.userInfo["name"] ?? "")
-                            else
-                              Text("@${user?.userInfo["username"] ?? ""}"),
+                            if (user?.userInfo.name != null) ...[
+                              Text(user?.userInfo.name ?? ""),
+                              Text(
+                                "@${user?.userInfo.username ?? ""}@${Uri.parse(user?.serverUrl ?? "").host}",
+                                style: const TextStyle(fontSize: 12),
+                              )
+                            ] else ...[
+                              Text("@${user?.userInfo.username ?? ""}"),
+                              Text(
+                                Uri.parse(user?.serverUrl ?? "").host,
+                                style: const TextStyle(fontSize: 12),
+                              )
+                            ]
                           ],
                         ))
                       ],
@@ -417,7 +445,7 @@ class UserAvatarButton extends ConsumerWidget {
                             SizedBox(
                               width: 28,
                               height: 28,
-                              child: MkImage(item.userInfo["avatarUrl"],
+                              child: MkImage(item.userInfo.avatarUrl ?? "",
                                   shape: BoxShape.circle),
                             ),
                             const SizedBox(width: 4),
@@ -426,10 +454,19 @@ class UserAvatarButton extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (item.userInfo["name"] != null)
-                                  Text(item.userInfo["name"] ?? "")
-                                else
-                                  Text("@${item.userInfo["username"] ?? ""}"),
+                                if (item.userInfo.name != null) ...[
+                                  Text(item.userInfo.name ?? ""),
+                                  Text(
+                                    "@${item.userInfo.username}@${Uri.parse(item.serverUrl).host}",
+                                    style: const TextStyle(fontSize: 12),
+                                  )
+                                ] else ...[
+                                  Text("@${item.userInfo.username}"),
+                                  Text(
+                                    Uri.parse(item.serverUrl).host,
+                                    style: const TextStyle(fontSize: 12),
+                                  )
+                                ]
                               ],
                             ))
                           ],
@@ -437,9 +474,11 @@ class UserAvatarButton extends ConsumerWidget {
                       );
                     },
                     onTap: () {
-                      ref
-                          .read(currentLoginUserProvider.notifier)
-                          .setLoginUser(item.id);
+                      Future.delayed(const Duration(milliseconds: 200), () {
+                        ref
+                            .read(currentLoginUserProvider.notifier)
+                            .setLoginUser(item.id);
+                      });
                       return false;
                     },
                   ),
@@ -488,18 +527,18 @@ class UserAvatarButton extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
             child: Tooltip(
-              message: extend ? "" : "账户：@${userData?["username"] ?? ""}",
+              message: extend ? "" : "账户：@${userData?.username ?? ""}",
               child: Row(
                 mainAxisAlignment:
                     extend ? MainAxisAlignment.start : MainAxisAlignment.center,
                 children: [
-                  userData?["avatarUrl"] != null
+                  userData?.avatarUrl != null
                       ? SizedBox(
                           width: extend ? 32 : 38,
                           height: extend ? 32 : 38,
                           child: MkImage(
-                            userData?["avatarUrl"],
-                            blurHash: userData?["avatarBlurhash"],
+                            userData?.avatarUrl ?? "",
+                            blurHash: userData?.avatarBlurhash,
                             width: extend ? 32 : 38,
                             height: extend ? 32 : 38,
                             fit: BoxFit.cover,
@@ -516,9 +555,8 @@ class UserAvatarButton extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (userData?["name"] != null)
-                          Text(userData?["name"] ?? ""),
-                        Text("@${userData?["username"] ?? ""}"),
+                        if (userData?.name != null) Text(userData?.name ?? ""),
+                        Text("@${userData?.username ?? ""}"),
                       ],
                     )
                 ],

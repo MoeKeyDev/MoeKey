@@ -18,6 +18,11 @@ class UserLiteModel {
   final OnlineStatus onlineStatus;
   final String username;
 
+  @override
+  String toString() {
+    return 'UserLiteModel{avatarBlurhash: $avatarBlurhash, avatarDecorations: $avatarDecorations, avatarUrl: $avatarUrl, badgeRoles: $badgeRoles, emojis: $emojis, host: $host, id: $id, instance: $instance, isBot: $isBot, isCat: $isCat, name: $name, onlineStatus: $onlineStatus, username: $username}';
+  }
+
   UserLiteModel({
     required this.avatarBlurhash,
     required this.avatarDecorations,
@@ -76,8 +81,9 @@ class UserLiteModel {
 
   factory UserLiteModel.fromMap(Map<String, dynamic> json) => UserLiteModel(
         avatarBlurhash: json["avatarBlurhash"],
-        avatarDecorations: List<AvatarDecoration>.from(
-            json["avatarDecorations"].map((x) => AvatarDecoration.fromMap(x))),
+        avatarDecorations: List<AvatarDecoration>.from(json["avatarDecorations"]
+            .map(
+                (x) => AvatarDecoration.fromMap(Map<String, dynamic>.from(x)))),
         avatarUrl: json["avatarUrl"],
         badgeRoles: json["badgeRoles"] == null
             ? []
@@ -182,6 +188,11 @@ class BadgeRoleModel {
   final double displayOrder;
   final String? iconUrl;
   final String name;
+
+  @override
+  String toString() {
+    return 'BadgeRoleModel{behavior: $behavior, displayOrder: $displayOrder, iconUrl: $iconUrl, name: $name}';
+  }
 
   BadgeRoleModel({
     this.behavior,
