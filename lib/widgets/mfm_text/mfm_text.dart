@@ -10,7 +10,7 @@ import 'package:twemoji_v2/twemoji_v2.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../apis/models/emojis.dart';
-import '../../main.dart';
+import '../../logger.dart';
 import '../../pages/users/user_page.dart';
 import '../../router/main_router_delegate.dart';
 import '../../status/themes.dart';

@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:moekey/status/server.dart';
-import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
 import '../database/timeline.dart';
+import '../logger.dart';
 import 'misskey_api.dart';
-import 'notes_listener.dart';
 
 part 'timeline.g.dart';
 
@@ -48,30 +47,24 @@ class Timeline extends _$Timeline {
     return list;
   }
 
-  var loading = false;
-
   load() async {
-    if (loading) return;
-    if (!(state.value?.hasMore ?? true)) return;
-    loading = true;
+    if (state.isLoading) return;
+
+    var model = state.valueOrNull ?? NoteListModel();
+    state = const AsyncValue.loading();
     try {
-      String? untilId;
-      if (state.valueOrNull?.list.isNotEmpty ?? false) {
-        untilId = state.valueOrNull?.list.last.id;
-      }
-      List<NoteModel> notesList;
+      String? untilId = model.list.lastOrNull?.id;
 
-      notesList = await timeline(untilId: untilId);
+      List<NoteModel> notesList = await timeline(untilId: untilId);
 
-      var model = NoteListModel();
-      model.list = (state.valueOrNull?.list ?? []) + notesList;
+      model.list += notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;
       }
-      state = AsyncData(model);
-    } finally {
-      loading = false;
+    } catch (e) {
+      logger.e(e);
     }
+    state = AsyncData(model);
   }
 
   cleanCache() async {

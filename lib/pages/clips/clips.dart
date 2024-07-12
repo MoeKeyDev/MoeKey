@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/clips.dart';
 import '../../apis/models/note.dart';
+import '../../logger.dart';
 
 part 'clips.g.dart';
 
@@ -33,12 +34,7 @@ class ClipsNotesList extends _$ClipsNotesList {
   @override
   FutureOr<ClipsNoteListState> build(String clipId) async {
     var state = ClipsNoteListState();
-    try {
-      loading = true;
-      state.list = await clipsNotesList(clipId: clipId);
-    } finally {
-      loading = false;
-    }
+    state.list = await clipsNotesList(clipId: clipId);
     return state;
   }
 
@@ -51,25 +47,23 @@ class ClipsNotesList extends _$ClipsNotesList {
     } finally {}
   }
 
-  var loading = false;
-
   load() async {
-    if (loading) return;
-    loading = true;
+    if (state.isLoading) return;
+    state = const AsyncValue.loading();
+    var model = state.valueOrNull ?? ClipsNoteListState();
     try {
-      var untilId = state.valueOrNull?.list.lastOrNull?.id;
+      var untilId = model.list.lastOrNull?.id;
       var list = await clipsNotesList(clipId: clipId, untilId: untilId);
 
       if (list.isEmpty) {
-        state = AsyncData(state.valueOrNull!..haveMore = false);
+        model.haveMore = false;
       } else {
-        state = AsyncData(state.valueOrNull!
-          ..list.addAll(list)
-          ..haveMore = true);
+        model.list += list;
       }
-    } finally {
-      loading = false;
+    } catch (e) {
+      logger.e(e);
     }
+    state = AsyncData(model);
   }
 }
 

@@ -1,11 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:logger/logger.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:moekey/database/init_database.dart';
 import 'package:moekey/pages/home/home_page.dart';
@@ -15,8 +13,6 @@ import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'generated/l10n.dart';
 import 'status/websocket.dart';
-
-var logger = Logger();
 
 class HttpProxy extends HttpOverrides {
   String proxyServer = "";
@@ -90,26 +86,30 @@ class SplashPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var isLaunch = useState(false);
     useEffect(() {
-      initApp().then((value) {
-        if (isLaunch.value) return;
-        isLaunch.value = true;
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-          builder: (context) {
-            return  Consumer(builder: (context, ref, child) {
-              var user = ref.watch(currentLoginUserProvider);
-              // 启动webSocket
-              ref.watch(moekeyGlobalEventProvider);
-              ref.watch(moekeyMainChannelProvider);
-              if (user != null) {
-                return HomePage();
-              }
-              return const LoginPage();
-            },);
-          },
-        ), (route) => false);
-      },);
+      initApp().then(
+        (value) {
+          if (isLaunch.value) return;
+          isLaunch.value = true;
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+            builder: (context) {
+              return Consumer(
+                builder: (context, ref, child) {
+                  var user = ref.watch(currentLoginUserProvider);
+                  // 启动webSocket
+                  ref.watch(moekeyGlobalEventProvider);
+                  ref.watch(moekeyMainChannelProvider);
+                  if (user != null) {
+                    return HomePage();
+                  }
+                  return const LoginPage();
+                },
+              );
+            },
+          ), (route) => false);
+        },
+      );
       return null;
-    },const  []);
+    }, const []);
     return const Scaffold(
       body: LoadingWidget(),
     );

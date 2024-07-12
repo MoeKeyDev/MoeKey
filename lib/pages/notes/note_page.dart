@@ -57,6 +57,7 @@ class NotesPage extends HookConsumerWidget {
                     GestureDetector(
                       child: MkImage(
                         data?.user.avatarUrl ?? "",
+                        blurHash: data?.user.avatarBlurhash,
                         shape: BoxShape.circle,
                         width: 32,
                         height: 32,

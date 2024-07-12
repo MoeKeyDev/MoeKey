@@ -13,6 +13,7 @@ import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_modal.dart';
+import 'package:moekey/widgets/mk_refresh_load.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
 import '../../apis/models/clips.dart';
@@ -54,107 +55,66 @@ class ClipsNotes extends HookConsumerWidget {
       ClipsNoteListState? data) {
     return Builder(
       builder: (context) {
-        var mediaPadding = MediaQuery.paddingOf(context);
-        return RefreshIndicator.adaptive(
-          // 通知刷新指示器
+        return MkRefreshLoadList(
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          onLoad: () => ref.read(dataProvider.notifier).load(),
           onRefresh: () => ref.refresh(dataProvider.future),
-          edgeOffset: mediaPadding.top,
-          child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(
-              dragDevices: {
-                PointerDeviceKind.touch,
-                PointerDeviceKind.mouse,
+          hasMore: data?.haveMore,
+          slivers: [
+            if (showDate != null)
+              SliverToBoxAdapter(
+                child: _ClipContentCard(
+                  clipId: clipId,
+                ),
+              ),
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: 10,
+              ),
+            ),
+            SliverImplicitlyAnimatedList<NoteModel>(
+              items: data?.list ?? [],
+              itemBuilder: (BuildContext context, Animation<double> animation,
+                  item, int i) {
+                BorderRadius borderRadius =
+                    const BorderRadius.all(Radius.circular(12));
+                return SizeFadeTransition(
+                  animation: animation,
+                  axis: Axis.vertical,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: NoteCard(
+                      key: ValueKey(item.id),
+                      borderRadius: borderRadius,
+                      data: item,
+                      customContextmenu: [
+                        ContextMenuItem(
+                          danger: true,
+                          label: "移除便签",
+                          icon: TablerIcons.trash,
+                          divider: true,
+                          onTap: () {
+                            var apis = ref.read(misskeyApisProvider);
+                            apis.clips
+                                .removeNote(clipId: clipId, noteId: item.id)
+                                .then(
+                              (value) {
+                                ref.invalidate(dataProvider);
+                              },
+                            );
+                            return false;
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              },
+              areItemsTheSame: (oldItem, newItem) {
+                return oldItem.id == newItem.id;
               },
             ),
-            child: CustomScrollView(
-              // controller: scrollController,
-              slivers: [
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(
-                      padding, mediaPadding.top, padding, mediaPadding.bottom),
-                  sliver: SliverMainAxisGroup(
-                    slivers: [
-                      if (showDate != null)
-                        SliverToBoxAdapter(
-                          child: _ClipContentCard(
-                            clipId: clipId,
-                          ),
-                        ),
-                      const SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 10,
-                        ),
-                      ),
-                      SliverImplicitlyAnimatedList<NoteModel>(
-                        items: data?.list ?? [],
-                        itemBuilder: (BuildContext context,
-                            Animation<double> animation, item, int i) {
-                          BorderRadius borderRadius =
-                              const BorderRadius.all(Radius.circular(12));
-                          return SizeFadeTransition(
-                            animation: animation,
-                            axis: Axis.vertical,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: NoteCard(
-                                key: ValueKey(item.id),
-                                borderRadius: borderRadius,
-                                data: item,
-                                customContextmenu: [
-                                  ContextMenuItem(
-                                    danger: true,
-                                    label: "移除便签",
-                                    icon: TablerIcons.trash,
-                                    divider: true,
-                                    onTap: () {
-                                      var apis = ref.read(misskeyApisProvider);
-                                      apis.clips
-                                          .removeNote(
-                                              clipId: clipId, noteId: item.id)
-                                          .then((value) {
-                                        ref.invalidate(dataProvider);
-                                      });
-
-                                      return false;
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        areItemsTheSame: (oldItem, newItem) {
-                          return oldItem.id == newItem.id;
-                        },
-                      ),
-                      SliverLayoutBuilder(
-                        builder: (context, constraints) {
-                          if (data?.haveMore ?? true) {
-                            if (constraints.remainingPaintExtent > 0) {
-                              ref.read(dataProvider.notifier).load();
-                            }
-                            return const SliverToBoxAdapter(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: LoadingCircularProgress(),
-                                ),
-                              ),
-                            );
-                          }
-                          return const SliverToBoxAdapter(
-                            child: SizedBox(
-                              height: 16,
-                            ),
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
+          ],
         );
       },
     );

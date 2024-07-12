@@ -3,7 +3,7 @@ import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/status/misskey_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../main.dart';
+import '../../logger.dart';
 import '../mk_info_dialog.dart';
 
 part 'clips_create_dialog_state.g.dart';

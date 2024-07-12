@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/themes.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 
 import '../status/misskey_api.dart';
@@ -163,6 +164,7 @@ class ReactionsIcon extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var emoji = ref.watch(apiEmojisProvider);
+    getApplicationDocumentsDirectory();
     var code = parseString(emojiCode);
     if (code != null) {
       String url = "";
@@ -173,7 +175,10 @@ class ReactionsIcon extends HookConsumerWidget {
         url = emojis?[code];
       }
       if (url != "") {
-        return MkImage(url, height: 28);
+        return SizedBox(
+          height: 28,
+          child: MkImage(url, height: 28),
+        );
       } else {
         return Text(code);
       }

@@ -6,7 +6,7 @@ import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/note.dart';
-import '../../main.dart';
+import '../../logger.dart';
 import '../../status/dio.dart';
 import '../../status/server.dart';
 import '../mk_info_dialog.dart';

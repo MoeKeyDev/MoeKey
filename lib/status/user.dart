@@ -6,8 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../apis/models/following.dart';
 import '../apis/models/note.dart';
 import '../apis/models/user_full.dart';
-import '../main.dart';
-import '../widgets/notes/note_pagination_list.dart';
+import '../logger.dart';
 import 'misskey_api.dart';
 
 part 'user.g.dart';
@@ -142,12 +141,10 @@ class UserNotesList extends _$UserNotesList {
     return list;
   }
 
-  var loading = false;
-
   load() async {
-    if (!(state.value?.hasMore ?? true)) return;
-    if (loading) return;
-    loading = true;
+    if (state.isLoading) return;
+    state = const AsyncValue.loading();
+    var model = state.valueOrNull ?? NoteListModel();
     try {
       String? untilId;
       if (state.valueOrNull?.list.isNotEmpty ?? false) {
@@ -157,14 +154,12 @@ class UserNotesList extends _$UserNotesList {
 
       notesList = await notes(untilId: untilId);
 
-      var model = NoteListModel();
-      model.list = (state.valueOrNull?.list ?? []) + notesList;
+      model.list += notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;
       }
-      state = AsyncData(model);
     } finally {
-      loading = false;
+      state = AsyncData(model);
     }
   }
 }
@@ -188,12 +183,10 @@ class UserReactionsList extends _$UserReactionsList {
     return list;
   }
 
-  var loading = false;
-
   load() async {
-    if (!(state.value?.hasMore ?? true)) return;
-    if (loading) return;
-    loading = true;
+    if (state.isLoading) return;
+    state = const AsyncValue.loading();
+    var model = state.valueOrNull ?? NoteListModel();
     try {
       String? untilId;
       if (state.valueOrNull?.list.isNotEmpty ?? false) {
@@ -201,14 +194,12 @@ class UserReactionsList extends _$UserReactionsList {
       }
       List<NoteModel> notesList = await reactions(untilId: untilId);
 
-      var model = NoteListModel();
-      model.list = (state.valueOrNull?.list ?? []) + notesList;
+      model.list += notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;
       }
-      state = AsyncData(model);
     } finally {
-      loading = false;
+      state = AsyncData(model);
     }
   }
 }

@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
 import '../database/notes.dart';
-import '../main.dart';
+import '../logger.dart';
 
 part 'notes_listener.g.dart';
 

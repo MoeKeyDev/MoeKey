@@ -18,7 +18,7 @@ import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart'
 import 'package:moekey/widgets/user_select_dialog/user_select_dialog.dart';
 
 import '../../apis/models/note.dart';
-import '../../main.dart';
+import '../../logger.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../driver/drive_thumbnail.dart';
 import '../driver/driver_select_dialog/driver_select_dialog.dart';

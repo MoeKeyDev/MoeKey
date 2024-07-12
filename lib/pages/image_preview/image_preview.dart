@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/hook/useExtendedPageController.dart';
-import 'package:moekey/main.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/dio.dart';
 import 'package:moekey/utils/save_image.dart';
 import 'package:moekey/widgets/mk_image.dart';
 
 import '../../apis/models/drive.dart';
+import '../../logger.dart';
 
 List<double> _doubleTapScales = <double>[1.0, 2.0];
 

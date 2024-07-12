@@ -9,7 +9,7 @@ import 'package:moekey/apis/models/drive.dart';
 import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
-import '../../main.dart';
+import '../../logger.dart';
 import '../../status/themes.dart';
 import '../context_menu.dart';
 import '../hover_builder.dart';

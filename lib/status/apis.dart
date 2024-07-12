@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/apis/models/note.dart';
-import 'package:moekey/main.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -12,6 +11,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../apis/models/emojis.dart';
 import '../database/instance.dart';
 import '../database/link_preview.dart';
+import '../logger.dart';
 import 'misskey_api.dart';
 
 part 'apis.g.dart';

@@ -40,7 +40,10 @@ class MkRefreshLoadList<T> extends StatelessWidget {
                     builder: (context, constraints) {
                       if (constraints.remainingPaintExtent > 0 &&
                           (hasMore ?? true)) {
-                        onLoad();
+                        Future.delayed(
+                          Duration.zero,
+                          () => onLoad(),
+                        );
                       }
                       if (!(hasMore ?? true)) {
                         return const SliverToBoxAdapter(
