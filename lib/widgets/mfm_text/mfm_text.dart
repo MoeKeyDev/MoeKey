@@ -294,37 +294,36 @@ _getParse({
                     ),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-                      child: IntrinsicWidth(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            MkImage(
-                              "$loginServerUrl/avatar/@$user${host != null ? "@$host" : ""}",
-                              height: textStyle.fontSize! * 1.5,
-                              shape: BoxShape.circle,
-                            ),
-                            Expanded(
-                                child: Text.rich(
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              TextSpan(
-                                children: [
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          MkImage(
+                            "$loginServerUrl/avatar/@$user${host != null ? "@$host" : ""}",
+                            height: textStyle.fontSize! * 1.5,
+                            shape: BoxShape.circle,
+                          ),
+                          Text.rich(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                    text: "@$user",
+                                    style: textStyle.copyWith(
+                                        color: themes.mentionColor)),
+                                if (host != null && host != currentHost)
                                   TextSpan(
-                                      text: "@$user",
+                                      text: "@$host",
                                       style: textStyle.copyWith(
-                                          color: themes.mentionColor)),
-                                  if (host != null && host != currentHost)
-                                    TextSpan(
-                                        text: "@$host",
-                                        style: textStyle.copyWith(
-                                          color: themes.mentionColor
-                                              .withOpacity(0.5),
-                                        )),
-                                ],
-                              ),
-                            ))
-                          ],
-                        ),
+                                        color: themes.mentionColor
+                                            .withOpacity(0.5),
+                                      )),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),

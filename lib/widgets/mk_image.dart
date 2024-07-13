@@ -51,26 +51,25 @@ class MkImage extends StatelessWidget {
               );
             case LoadState.loading:
             case LoadState.failed:
-              if (blurHash != null && blurHash!.isNotEmpty) {
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    // 当某些情况拿不到最大高度的时候，用最小高度代替
-                    var height1 = height ?? constraints.minHeight;
-                    if (constraints.maxHeight == double.infinity) {
-                      height1 = constraints.minHeight;
-                    }
-                    return SizedBox(
-                      height: height ?? height1,
-                      width: width,
-                      child: BlurhashFfi(hash: blurHash!),
-                    );
-                  },
-                );
-              }
-              return Container(
-                width: width,
-                height: height,
-                color: const Color.fromARGB(10, 0, 0, 0),
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  var constraintsHeight = constraints.maxHeight;
+                  var constraintsWidth = constraints.maxWidth;
+                  if (constraints.maxHeight == double.infinity) {
+                    constraintsHeight = constraints.minHeight;
+                  }
+                  if (constraints.maxWidth == double.infinity) {
+                    constraintsWidth = constraints.minWidth;
+                  }
+                  return Container(
+                    width: width ?? height ?? constraintsWidth,
+                    height: height ?? constraintsHeight,
+                    color: const Color.fromARGB(10, 0, 0, 0),
+                    child: (blurHash != null && blurHash!.isNotEmpty)
+                        ? BlurhashFfi(hash: blurHash!)
+                        : null,
+                  );
+                },
               );
           }
         },

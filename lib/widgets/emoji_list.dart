@@ -7,6 +7,7 @@ import 'package:moekey/widgets/loading_weight.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 
+import '../apis/models/emojis.dart';
 import 'mk_image.dart';
 
 class EmojiList extends HookConsumerWidget {
@@ -32,6 +33,8 @@ class EmojiList extends HookConsumerWidget {
     var tabController = useTabController(initialLength: list.length);
     return LayoutBuilder(
       builder: (context, constraints) {
+        int colCount = ((constraints.maxWidth - 16) / 52).truncate();
+        var margin = 4.0;
         return Stack(
           children: [
             TabBar(
@@ -45,7 +48,9 @@ class EmojiList extends HookConsumerWidget {
                           SizedBox(
                             width: 30,
                             height: 30,
-                            child: MkImage(data.valueOrNull![item]![0].url),
+                            child: MkImage(
+                              data.valueOrNull![item]![0].url,
+                            ),
                           )
                         else
                           Twemoji(
@@ -85,7 +90,7 @@ class EmojiList extends HookConsumerWidget {
                     itemBuilder: (context, index) {
                       var item = list[index];
                       var i = data.valueOrNull![item];
-
+                      var rowCount = ((i?.length ?? 0) / colCount).ceil();
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,55 +102,26 @@ class EmojiList extends HookConsumerWidget {
                           const SizedBox(
                             height: 8,
                           ),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            runAlignment: WrapAlignment.center,
-                            children: [
-                              for (var item in i!)
-                                if (item.code == false)
-                                  Tooltip(
-                                    message: item.name,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        var item1 = Map.from(item.toMap());
-                                        item1["name"] = ":${item1["name"]}:";
-                                        onInsert(item1);
-                                      },
-                                      child: SizedBox(
-                                        width: 44,
-                                        height: 44,
-                                        child: MkImage(
-                                          item.url,
-                                          width: 44,
-                                          height: 44,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                else
-                                  Tooltip(
-                                    message: item.name,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        var item1 = Map.from(item.toMap());
-                                        item1["name"] = item1["url"];
-                                        onInsert(item1);
-                                      },
-                                      child: SizedBox(
-                                        width: 32,
-                                        height: 32,
-                                        child: Twemoji(
-                                          width: 32,
-                                          height: 32,
-                                          emoji: item.url,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                            ],
-                          )
+                          for (int i1 = 0; i1 < rowCount; i1++) ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                for (int i2 = 0; i2 < colCount; i2++)
+                                  if ((colCount * i1 + i2) < (i?.length ?? 0))
+                                    RepaintBoundary(
+                                      child: _EmojiTile(
+                                          item: i![colCount * i1 + i2],
+                                          onInsert: onInsert),
+                                    )
+                                  else
+                                    const SizedBox(
+                                      width: 44,
+                                      height: 44,
+                                    )
+                              ],
+                            ),
+                            const SizedBox(height: 8)
+                          ],
                         ],
                       );
                     },
@@ -210,5 +186,50 @@ class EmojiList extends HookConsumerWidget {
         );
       },
     );
+  }
+}
+
+class _EmojiTile extends StatelessWidget {
+  const _EmojiTile({super.key, required this.item, required this.onInsert});
+
+  final EmojiSimple item;
+  final void Function(Map data) onInsert;
+
+  @override
+  Widget build(BuildContext context) {
+    if (item.code == false) {
+      return Tooltip(
+        message: item.name,
+        child: GestureDetector(
+          onTap: () {
+            var item1 = Map.from(item.toMap());
+            item1["name"] = ":${item1["name"]}:";
+            onInsert(item1);
+          },
+          child: MkImage(
+            item.url,
+            fit: BoxFit.contain,
+            width: 44,
+            height: 44,
+          ),
+        ),
+      );
+    } else {
+      return Tooltip(
+        message: item.name,
+        child: GestureDetector(
+          onTap: () {
+            var item1 = Map.from(item.toMap());
+            item1["name"] = item1["url"];
+            onInsert(item1);
+          },
+          child: Twemoji(
+            width: 44,
+            height: 44,
+            emoji: item.url,
+          ),
+        ),
+      );
+    }
   }
 }
