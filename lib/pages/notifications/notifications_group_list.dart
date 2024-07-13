@@ -401,6 +401,7 @@ class NotificationsGroupList extends HookConsumerWidget {
               },
             )
           ],
+          empty: list.isEmpty,
         );
       },
     );

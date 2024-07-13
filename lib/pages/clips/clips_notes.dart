@@ -112,6 +112,7 @@ class ClipsNotes extends HookConsumerWidget {
               },
             ),
           ],
+          empty: data?.list.isEmpty,
         );
       },
     );

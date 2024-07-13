@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0
+
+### Feature
+
+- Add announcement list page
+- Empty page add info image
+
+### Refactor
+
+- refactor: emoji select list fix: image width
+
 ## 0.3.13
 
 ### fix:

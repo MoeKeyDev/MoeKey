@@ -138,27 +138,30 @@ class AnnouncementsList extends HookConsumerWidget {
       builder: (context, constraints) {
         var padding = getPaddingForNote(constraints);
         return MkRefreshLoadList(
-            onLoad: () => ref.read(provider.notifier).loadMore(),
-            onRefresh: () => ref.refresh(provider.future),
-            hasMore: data.valueOrNull?.hasMore,
-            padding: EdgeInsets.symmetric(horizontal: padding),
-            slivers: [
-              SliverList.separated(
-                itemBuilder: (context, index) => AnnouncementsCard(
-                  announcement: data.valueOrNull!.list[index],
-                  onRead: isActive
-                      ? () => ref.read(provider.notifier).read(
-                          announcementId: data.valueOrNull!.list[index].id)
-                      : null,
-                ),
-                itemCount: data.valueOrNull?.list.length ?? 0,
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(
-                    height: 10,
-                  );
-                },
-              )
-            ]);
+          onLoad: () => ref.read(provider.notifier).loadMore(),
+          onRefresh: () => ref.refresh(provider.future),
+          hasMore: data.valueOrNull?.hasMore,
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          slivers: [
+            SliverList.separated(
+              itemBuilder: (context, index) => AnnouncementsCard(
+                announcement: data.valueOrNull!.list[index],
+                onRead: isActive
+                    ? () => ref
+                        .read(provider.notifier)
+                        .read(announcementId: data.valueOrNull!.list[index].id)
+                    : null,
+              ),
+              itemCount: data.valueOrNull?.list.length ?? 0,
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(
+                  height: 10,
+                );
+              },
+            )
+          ],
+          empty: data.valueOrNull?.list.isEmpty,
+        );
       },
     );
   }

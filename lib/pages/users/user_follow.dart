@@ -74,25 +74,27 @@ class UserFollowList extends HookConsumerWidget {
             ((constraints.maxWidth - maxWidth) / 2).clamp(24, double.infinity);
         double maxCrossAxisExtent = constraints.maxWidth < 580 ? 600 : 350;
         return MkRefreshLoadList(
-            onLoad: () => ref.read(provider.notifier).load(),
-            onRefresh: () => ref.refresh(provider.future),
-            hasMore: follow.valueOrNull?.hasMore,
-            padding: EdgeInsets.symmetric(horizontal: paddingH),
-            slivers: [
-              SliverGrid.builder(
-                itemBuilder: (context, index) {
-                  return MkUserCard(user: follow.valueOrNull!.list[index]);
-                },
+          onLoad: () => ref.read(provider.notifier).load(),
+          onRefresh: () => ref.refresh(provider.future),
+          hasMore: follow.valueOrNull?.hasMore,
+          padding: EdgeInsets.symmetric(horizontal: paddingH),
+          slivers: [
+            SliverGrid.builder(
+              itemBuilder: (context, index) {
+                return MkUserCard(user: follow.valueOrNull!.list[index]);
+              },
 
-                itemCount: follow.valueOrNull?.list.length ?? 0,
-                // maxCrossAxisExtent: maxCrossAxisExtent,
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: maxCrossAxisExtent,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    mainAxisExtent: 300),
-              )
-            ]);
+              itemCount: follow.valueOrNull?.list.length ?? 0,
+              // maxCrossAxisExtent: maxCrossAxisExtent,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: maxCrossAxisExtent,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  mainAxisExtent: 300),
+            )
+          ],
+          empty: follow.valueOrNull?.list.isEmpty,
+        );
       },
     );
   }

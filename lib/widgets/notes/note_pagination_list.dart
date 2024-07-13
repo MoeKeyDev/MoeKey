@@ -16,7 +16,7 @@ class MkPaginationNoteList extends HookConsumerWidget {
     required this.onRefresh,
     this.slivers,
     this.padding = EdgeInsets.zero,
-    this.hasMore,
+    required this.hasMore,
     this.items,
   });
 
@@ -74,6 +74,7 @@ class MkPaginationNoteList extends HookConsumerWidget {
             )
           ],
           hasMore: hasMore,
+          empty: items?.isEmpty,
         );
       },
     );
