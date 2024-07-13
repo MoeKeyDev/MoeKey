@@ -1,3 +1,4 @@
+import 'package:moekey/apis/models/announcement.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/apis/services/services.dart';
 
@@ -21,5 +22,28 @@ class MetaService extends MisskeyApiServices {
     }
     return List<EmojiSimple>.from(
         data["emojis"].map((x) => EmojiSimple.fromMap(x)));
+  }
+
+  Future<List<Announcement>> announcements(
+      {int limit = 10,
+      String? sinceId,
+      String? untilId,
+      bool isActive = true}) async {
+    var data = await client.post<List?>("/announcements", data: {
+      "limit": limit,
+      if (sinceId != null) 'sinceId': sinceId,
+      if (untilId != null) 'untilId': untilId,
+      "isActive": isActive,
+    });
+    if (data == null) {
+      return [];
+    }
+    return List<Announcement>.from(data.map((x) => Announcement.fromMap(x)));
+  }
+
+  readAnnouncement({required String announcementId}) async {
+    return client.post("/i/read-announcement", data: {
+      "announcementId": announcementId,
+    });
   }
 }

@@ -15,7 +15,7 @@ class Clips extends _$Clips {
   }
 
   Future<List<ClipsModel>> clipsList() async {
-    var apis = ref.read(misskeyApisProvider);
+    var apis = ref.watch(misskeyApisProvider);
 
     var list = await apis.clips.list();
     // 将list反序排列
@@ -72,7 +72,7 @@ class ClipsShow extends _$ClipsShow {
   @override
   FutureOr<ClipsModel?> build(String clipId) async {
     try {
-      var apis = ref.read(misskeyApisProvider);
+      var apis = ref.watch(misskeyApisProvider);
 
       return await apis.clips.show(clipId: clipId);
     } finally {}
@@ -87,7 +87,7 @@ class ClipsMyFavorites extends _$ClipsMyFavorites {
   }
 
   Future<List<ClipsModel>> clipsMyFavorites() async {
-    var apis = ref.read(misskeyApisProvider);
+    var apis = ref.watch(misskeyApisProvider);
     return apis.clips.myFavorites();
   }
 }

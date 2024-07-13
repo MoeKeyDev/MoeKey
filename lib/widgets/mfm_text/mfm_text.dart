@@ -70,20 +70,16 @@ class MFMText extends HookConsumerWidget {
       systemEmojis: emoji.valueOrNull ?? {},
     );
 
-    var textSpan = useMemoized(
-      () {
-        return [
-          for (var item in mfmParse.value)
-            if (parse[item.type] != null)
-              parse[item.type](
-                item,
-                textStyle,
-              )
-            else
-              TextSpan(text: item.toString()),
-        ];
-      },
-    );
+    var textSpan = [
+      for (var item in mfmParse.value)
+        if (parse[item.type] != null)
+          parse[item.type](
+            item,
+            textStyle,
+          )
+        else
+          TextSpan(text: item.toString()),
+    ];
 
     Widget rich = RepaintBoundary(
       child: Text.rich(

@@ -24,6 +24,7 @@ class MkTabBarRefreshScroll extends StatefulWidget {
       this.showBack = false,
       this.onIndexUpdate,
       this.initIndex = 0,
+      this.offset = 0,
       this.padding = EdgeInsets.zero,
       this.tabAlignment = TabAlignment.center});
 
@@ -33,6 +34,7 @@ class MkTabBarRefreshScroll extends StatefulWidget {
   final Widget? content;
   final bool showBack;
   final int initIndex;
+  final double offset;
   final EdgeInsetsGeometry padding;
   final void Function(int)? onIndexUpdate;
 
@@ -114,7 +116,10 @@ class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
                   lastIndex = value;
                 },
                 tabs: widget.items.map((e) => e.label).toList()),
-            trailing: widget.trailing,
+            trailing: widget.trailing ??
+                SizedBox(
+                  width: widget.offset,
+                ),
             content: widget.content,
             showBack: widget.showBack,
           ),

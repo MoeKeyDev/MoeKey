@@ -59,6 +59,7 @@ Future<List<EmojiSimple>> apiEmojisList(ApiEmojisListRef ref) async {
       Future.delayed(Duration.zero, () async {
         var emojis = await apis.meta.emojis();
         await instance.setEmojis(emojis);
+        ref.notifyListeners();
       });
     }
 

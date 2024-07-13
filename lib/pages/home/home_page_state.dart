@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:moekey/pages/announcements/announcements.dart';
 import 'package:moekey/pages/clips/clips_page.dart';
 import 'package:moekey/pages/drive/drive_page.dart';
 import 'package:moekey/pages/explore/explore.dart';
@@ -136,7 +137,7 @@ class HomeState {
       "icon": TablerIcons.speakerphone,
       "label": S.current.announcements,
       "id": "announcements",
-      "page": ({Key? key}) => const TestWidget()
+      "page": ({Key? key}) => const AnnouncementsPage()
     },
     {
       "icon": TablerIcons.search,

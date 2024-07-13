@@ -35,6 +35,7 @@ class ThemeColorModel {
   Color switchOnBgColor = const Color.fromARGB(255, 134, 179, 0);
   Color switchOnFgColor = const Color.fromARGB(255, 255, 255, 255);
   Color warnColor = const Color.fromARGB(255, 236, 182, 55);
+  Color successColor = const Color.fromARGB(255, 152, 201, 52);
   Color errorColor = const Color.fromARGB(255, 236, 55, 109);
   Color windowHeaderColor = const Color.fromARGB(216, 255, 255, 255);
   Color modalBgColor = const Color.fromARGB(76, 0, 0, 0);
