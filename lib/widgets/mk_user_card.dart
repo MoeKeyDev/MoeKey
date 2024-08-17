@@ -88,11 +88,11 @@ class MkUserCard extends HookConsumerWidget {
                               userData: user, themes: themes),
                         ),
                         Positioned(
-                          top: 62,
-                          left: 16,
+                          top: 66,
+                          left: 12,
                           child: Container(
-                            width: 58,
-                            height: 58,
+                            width: 66,
+                            height: 66,
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
                                 color: themes.panelColor,

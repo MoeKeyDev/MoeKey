@@ -5,6 +5,7 @@ import 'package:moekey/pages/clips/clips_page.dart';
 import 'package:moekey/pages/drive/drive_page.dart';
 import 'package:moekey/pages/explore/explore.dart';
 import 'package:moekey/pages/notifications/notifications_page.dart';
+import 'package:moekey/pages/search/search_page.dart';
 import 'package:moekey/pages/test/test.dart';
 import 'package:moekey/pages/timeline/timeline_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
@@ -143,6 +144,7 @@ class HomeState {
       "icon": TablerIcons.search,
       "label": S.current.search,
       "id": "search",
+      "page": ({Key? key}) => const SearchPage()
     },
     {"line": true},
     {
