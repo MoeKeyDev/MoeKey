@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/apis.dart';
-import 'package:moekey/widgets/mk_image.dart';
+import 'package:moekey/widgets/sliver_load_more.dart';
 
 import 'loading_weight.dart';
 import 'mk_refresh_indicator.dart';
@@ -49,32 +49,7 @@ class MkRefreshLoadList<T> extends StatelessWidget {
                         onTap: onRefresh,
                       ),
                     ),
-                  SliverLayoutBuilder(
-                    builder: (context, constraints) {
-                      if (constraints.remainingPaintExtent > 0 &&
-                          (hasMore ?? true)) {
-                        Future.delayed(
-                          Duration.zero,
-                          () => onLoad(),
-                        );
-                      }
-                      if (!(hasMore ?? true)) {
-                        return const SliverToBoxAdapter(
-                          child: SizedBox(
-                            height: 10,
-                          ),
-                        );
-                      }
-                      return const SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(
-                            child: LoadingCircularProgress(),
-                          ),
-                        ),
-                      );
-                    },
-                  )
+                  SliverLoadMore(hasMore: hasMore, onLoad: onLoad)
                 ],
               ),
             )
