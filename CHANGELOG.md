@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+### Feature
+
+- Add search page
+
 ## 0.4.0
 
 ### Feature

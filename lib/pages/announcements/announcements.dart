@@ -80,6 +80,7 @@ class _Announcements extends _$Announcements {
       {bool isActive = true}) async {
     var model = MkLoadMoreListModel<Announcement>();
     model.list = await api();
+    model.hasMore = model.list.isNotEmpty;
     // page = 0;
     return model;
   }

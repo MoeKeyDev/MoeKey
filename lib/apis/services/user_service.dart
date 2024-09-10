@@ -127,4 +127,22 @@ class UserService extends MisskeyApiServices {
       (e) => UserFullModel.fromMap(e),
     ));
   }
+
+  /// 搜索用户
+  Future<List<UserFullModel>> search({
+    required String query,
+    int limit = 10,
+    String origin = "combined",
+    String? untilId,
+  }) async {
+    var res = await client.post<List>("/users/search", data: {
+      "query": query,
+      "limit": limit,
+      "origin": origin,
+      if (untilId != null) "untilId": untilId,
+    });
+    return List<UserFullModel>.from(res.map(
+      (e) => UserFullModel.fromMap(e),
+    ));
+  }
 }

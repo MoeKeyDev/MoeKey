@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/search/notes_search.dart';
+import 'package:moekey/pages/search/user_search.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
@@ -38,7 +39,7 @@ class SearchPage extends HookConsumerWidget {
                 ],
               ),
             ),
-            child: NotesSearchPage()),
+            child: UserSearchPage()),
       ],
       leading: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
