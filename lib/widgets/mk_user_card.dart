@@ -120,27 +120,27 @@ class MkUserCard extends HookConsumerWidget {
                               textStyle.copyWith(fontWeight: FontWeight.bold),
                           child: MFMText(
                             text: user.name ?? user.username,
-                            after: [
-                              const TextSpan(text: "\n"),
-                              TextSpan(
-                                  text: "@${user.username ?? ""}",
-                                  style: textStyle.copyWith(
-                                    fontSize: 11,
-                                  )),
-                              TextSpan(
-                                text: user.host != null ? "@${user.host}" : "",
-                                style: textStyle.copyWith(
-                                    color: themes.fgColor.withAlpha(128),
-                                    fontSize: 11),
-                              ),
-                            ],
-                            maxLines: 2,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             emojis: user.emojis,
                             bigEmojiCode: false,
                             feature: const [MFMFeature.emojiCode],
                           ),
-                        )
+                        ),
+                        RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                              text: "@${user.username ?? ""}",
+                              style: textStyle.copyWith(
+                                fontSize: 11,
+                              )),
+                          TextSpan(
+                            text: user.host != null ? "@${user.host}" : "",
+                            style: textStyle.copyWith(
+                                color: themes.fgColor.withAlpha(128),
+                                fontSize: 11),
+                          ),
+                        ]))
                       ],
                     ),
                   ),
@@ -152,19 +152,21 @@ class MkUserCard extends HookConsumerWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Center(
-                        child: DefaultTextStyle(
-                          style: textStyle.copyWith(fontSize: 11),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: MFMText(
-                              text: user.description ?? "此用户尚无自我介绍",
-                              maxLines: 3,
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.ellipsis,
-                              emojis: user.emojis,
-                              bigEmojiCode: false,
-                              feature: const [MFMFeature.emojiCode],
+                      child: ClipRect(
+                        child: Center(
+                          child: DefaultTextStyle(
+                            style: textStyle.copyWith(fontSize: 11),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: MFMText(
+                                text: user.description ?? "此用户尚无自我介绍",
+                                maxLines: 3,
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.ellipsis,
+                                emojis: user.emojis,
+                                bigEmojiCode: false,
+                                feature: const [MFMFeature.emojiCode],
+                              ),
                             ),
                           ),
                         ),

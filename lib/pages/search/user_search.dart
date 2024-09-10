@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/user_full.dart';
@@ -23,8 +22,9 @@ class UserSearchPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var status = ref.watch(userSearchStatusProvider);
     return LayoutBuilder(builder: (context, constraints) {
-      var padding =
-          EdgeInsets.symmetric(horizontal: getPaddingForNote(constraints));
+      var padding = EdgeInsets.symmetric(
+          horizontal: getPaddingForNote(constraints).clamp(8, double.infinity));
+
       double maxCrossAxisExtent = constraints.maxWidth < 580 ? 600 : 350;
       return MkRefreshLoadList(
         onLoad: () => ref.read(userSearchStatusProvider.notifier).load(),
@@ -33,6 +33,7 @@ class UserSearchPage extends HookConsumerWidget {
           const SliverToBoxAdapter(
             child: UserSearchPanel(),
           ),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
           // 用户卡片Grid
           SliverGrid.builder(
             itemBuilder: (context, index) {

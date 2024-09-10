@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:chinese_font_library/chinese_font_library.dart';
 import 'package:flutter/material.dart';
@@ -150,8 +151,8 @@ class Themes extends _$Themes {
       canvasColor: colors.bgColor,
       cardColor: colors.panelColor,
       useMaterial3: true,
-      // fontFamily: Platform.isWindows ? "微软雅黑" : null,
-      fontFamilyFallback: [...SystemChineseFont.fontFamilyFallback],
+      fontFamily: Platform.isWindows ? "微软雅黑" : null,
+      // fontFamilyFallback: [...SystemChineseFont.fontFamilyFallback],
       textTheme: TextTheme(
         bodyMedium: TextStyle(
           color: colors.fgColor,
