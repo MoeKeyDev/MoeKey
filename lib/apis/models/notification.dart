@@ -132,7 +132,8 @@ enum NotificationType {
   renoteGrouped,
   reply,
   roleAssigned,
-  test
+  test,
+  login,
 }
 
 final notificationTypeValues = EnumValues({
@@ -151,7 +152,8 @@ final notificationTypeValues = EnumValues({
   "renote:grouped": NotificationType.renoteGrouped,
   "reply": NotificationType.reply,
   "roleAssigned": NotificationType.roleAssigned,
-  "test": NotificationType.test
+  "test": NotificationType.test,
+  "login": NotificationType.login
 });
 
 ///NoteReaction
