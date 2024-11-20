@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/drive.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/themes.dart';
@@ -27,22 +28,39 @@ import '../mk_switch.dart';
 import '../notes/note_card.dart';
 
 class NoteCreateDialog extends HookConsumerWidget {
-  NoteCreateDialog(
-      {super.key,
-      this.noteId,
-      this.noteType = NoteType.note,
-      this.note,
-      this.initText});
+  NoteCreateDialog({
+    super.key,
+    this.noteId,
+    this.noteType = NoteType.note,
+    this.note,
+    this.initText,
+    this.files,
+  });
 
   final GlobalKey myKey = GlobalKey();
   final String? noteId;
   final NoteType noteType;
   final NoteModel? note;
   final String? initText;
-
+  final List<DriveFileModel>? files;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
+
+    useEffect(() {
+      Future(() {
+        var notifier = ref.read(ref
+            .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
+            .getDriverSelectDialogStateProvider()
+            .notifier);
+            notifier.clear();
+        for (var element in files ?? <DriveFileModel>[]) {
+          notifier.add(element.id, element);
+        }
+      });
+      return null;
+    }, const []);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         var isFullscreen = constraints.maxWidth < 580;
@@ -755,7 +773,6 @@ class NoteCreateDialog extends HookConsumerWidget {
             .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
             .getDriverSelectDialogStateProvider());
         var driverList = driverMap;
-        logger.d(driverList);
         return Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -1450,6 +1467,7 @@ class NoteCreateDialog extends HookConsumerWidget {
     NoteType type = NoteType.note,
     NoteModel? note,
     String? initText,
+    List<DriveFileModel>? files,
   }) {
     showModel(
       context: context,
@@ -1459,6 +1477,7 @@ class NoteCreateDialog extends HookConsumerWidget {
           noteType: type,
           note: note,
           initText: initText,
+          files: files,
         );
       },
     );

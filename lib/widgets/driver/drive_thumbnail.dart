@@ -1,13 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
+import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:moekey/widgets/hover_builder.dart';
+import 'package:moekey/widgets/note_create_dialog/note_create_dialog.dart';
 import 'package:path/path.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../apis/models/drive.dart';
 import '../mk_dialog.dart';
@@ -51,6 +55,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     Timer(
                       const Duration(milliseconds: 150),
                       () {
+                        if (!context.mounted) return;
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -71,6 +76,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                       Timer(
                         const Duration(milliseconds: 150),
                         () {
+                          if (!context.mounted) return;
                           showDialog(
                             context: context,
                             builder: (context) {
@@ -90,6 +96,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     Timer(
                       const Duration(milliseconds: 150),
                       () {
+                        if (!context.mounted) return;
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -131,6 +138,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     Timer(
                       const Duration(milliseconds: 150),
                       () {
+                        if (!context.mounted) return;
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -143,13 +151,37 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     return false;
                   },
                 ),
-                ContextMenuItem(label: "从文件创建帖子", icon: TablerIcons.pencil),
-                ContextMenuItem(label: "复制链接", icon: TablerIcons.link),
                 ContextMenuItem(
-                  label: "下载",
-                  icon: TablerIcons.download,
-                  divider: true,
+                  label: "从文件创建帖子",
+                  icon: TablerIcons.pencil,
+                  onTap: () async {
+                    Timer(const Duration(milliseconds: 150), () {
+                      NoteCreateDialog.open(context: context, files: [
+                        data as DriveFileModel,
+                      ]);
+                    });
+
+                    return false;
+                  },
                 ),
+                ContextMenuItem(
+                  label: "复制链接",
+                  icon: TablerIcons.link,
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(
+                      text: (data as DriveFileModel).url,
+                    ));
+                    return false;
+                  },
+                ),
+                ContextMenuItem(
+                    label: "下载",
+                    icon: TablerIcons.download,
+                    divider: true,
+                    onTap: () {
+                      launchUrl(Uri.parse((data as DriveFileModel).url,));
+                      return false;
+                    }),
                 ContextMenuItem(
                   label: "删除",
                   icon: TablerIcons.trash,
@@ -158,6 +190,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     Timer(
                       const Duration(milliseconds: 150),
                       () {
+                        if (!context.mounted) return;
                         showDialog(
                           context: context,
                           builder: (context) {

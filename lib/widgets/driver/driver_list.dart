@@ -172,6 +172,7 @@ class DriverList extends HookConsumerWidget {
             width: 210,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Align(
                   alignment: Alignment.center,
