@@ -57,8 +57,11 @@ class MyApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var theme = ref.watch(themesProvider);
-
-    return MaterialApp(
+    var mediaQueryData = MediaQuery.of(context);
+    mediaQueryData = mediaQueryData.copyWith(
+      textScaler: TextScaler.linear(1)
+    );
+    return MediaQuery(data: mediaQueryData, child: MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorKey: globalNav,
       theme: theme,
@@ -73,7 +76,7 @@ class MyApp extends HookConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
-    );
+    ));
   }
 }
 

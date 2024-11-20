@@ -89,7 +89,7 @@ class NoteModel {
 
   factory NoteModel.fromMap(dynamic map) {
     List<DriveFileModel> files = [];
-    for (var item in map['files']) {
+    for (var item in map?['files']) {
       files.add(DriveFileModel.fromMap(item));
     }
     return NoteModel(

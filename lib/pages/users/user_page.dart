@@ -69,71 +69,72 @@ class UserPage extends HookConsumerWidget {
     }
     var userData = user.valueOrNull;
     var userId = userData!.id;
-
-    return MkTabBarRefreshScroll(
-      items: [
-        MkTabBarItem(
-          label: const Tab(
-            child: Row(
-              children: [
-                Icon(
-                  TablerIcons.home,
-                  size: 14,
-                ),
-                Text("概览", style: TextStyle(fontSize: 12)),
-              ],
-            ),
-          ),
-          child: UserOverview(userId: userId),
-        ),
-        MkTabBarItem(
-          label: const Tab(
-            child: Row(
-              children: [
-                Icon(
-                  TablerIcons.pencil,
-                  size: 14,
-                ),
-                Text("帖子", style: TextStyle(fontSize: 12)),
-              ],
-            ),
-          ),
-          child: UserNotesPage(userId: userId),
-        ),
-        if (userData.publicReactions)
+    return LayoutBuilder(builder: (context, constraints) {
+      return MkTabBarRefreshScroll(
+        items: [
           MkTabBarItem(
             label: const Tab(
               child: Row(
                 children: [
                   Icon(
-                    TablerIcons.mood_happy,
+                    TablerIcons.home,
                     size: 14,
                   ),
-                  Text("回应", style: TextStyle(fontSize: 12)),
+                  Text("概览", style: TextStyle(fontSize: 12)),
                 ],
               ),
             ),
-            child: UserReactionsPage(userId: userId),
+            child: UserOverview(userId: userId),
           ),
-        MkTabBarItem(
-          label: const Tab(
-            child: Row(
-              children: [
-                Icon(
-                  TablerIcons.paperclip,
-                  size: 14,
-                ),
-                Text("便签", style: TextStyle(fontSize: 12)),
-              ],
+          MkTabBarItem(
+            label: const Tab(
+              child: Row(
+                children: [
+                  Icon(
+                    TablerIcons.pencil,
+                    size: 14,
+                  ),
+                  Text("帖子", style: TextStyle(fontSize: 12)),
+                ],
+              ),
             ),
+            child: UserNotesPage(userId: userId),
           ),
-          child: UserClipList(userId: userId),
-        ),
-      ],
-      showBack: true,
-      tabAlignment: TabAlignment.start,
-      leading: AppBarUserTitle(user: userData),
-    );
+          if (userData.publicReactions)
+            MkTabBarItem(
+              label: const Tab(
+                child: Row(
+                  children: [
+                    Icon(
+                      TablerIcons.mood_happy,
+                      size: 14,
+                    ),
+                    Text("回应", style: TextStyle(fontSize: 12)),
+                  ],
+                ),
+              ),
+              child: UserReactionsPage(userId: userId),
+            ),
+          MkTabBarItem(
+            label: const Tab(
+              child: Row(
+                children: [
+                  Icon(
+                    TablerIcons.paperclip,
+                    size: 14,
+                  ),
+                  Text("便签", style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+            child: UserClipList(userId: userId),
+          ),
+        ],
+        showBack: true,
+        tabAlignment: constraints.maxWidth > 500 ? TabAlignment.start : TabAlignment.center,
+        leading: AppBarUserTitle(user: userData),
+      );
+    });
   }
 }
 

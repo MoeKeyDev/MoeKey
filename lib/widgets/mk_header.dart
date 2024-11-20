@@ -91,6 +91,7 @@ class MkAppbar extends ConsumerWidget implements PreferredSizeWidget {
     if (isSmallLeadingCenter) {
       return MkToolBar(
         height: preferredSize.height,
+        
         child: Column(
           children: [
             SizedBox(
@@ -137,6 +138,7 @@ class MkAppbar extends ConsumerWidget implements PreferredSizeWidget {
             if (bottom != null && isSmallLeadingCenter) bottom!
           ],
         ),
+        
       );
     }
     return MkToolBar(
