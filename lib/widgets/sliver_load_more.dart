@@ -47,8 +47,9 @@ class _SliverLoadMoreState extends State<SliverLoadMore> {
       case _LoadMoreStatus.loading:
         break;
       case _LoadMoreStatus.done:
-        // 执行完毕之后，检查offset是是否为0
-        if (offset <= 0) {
+        // 执行完毕之后，检查offset是是否为1
+        // 这里判断为1是因为在滑动的时候，会有一点点的误差，导致offset某些情况不会为0，而是比0大一点点
+        if (offset <= 1) {
           currentState = _LoadMoreStatus.inactive;
         }
     }

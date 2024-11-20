@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.3
+
+### Feature
+
+- Add Driver page menus
+
+### Fixed
+
+- Fix list load more sometimes can't be triggered
+
 ## 0.5.0
 
 ### Feature
