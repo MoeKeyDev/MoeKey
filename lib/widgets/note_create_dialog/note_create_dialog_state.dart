@@ -243,7 +243,7 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
 
   bool sendLoading = false;
 
-  Future<dynamic> send() async {
+  Future<dynamic> send(BuildContext context) async {
     if (sendLoading) return;
     sendLoading = true;
     try {
@@ -284,11 +284,18 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
       return res.data;
     } on DioException catch (e) {
       logger.d(e.response);
+      if (!context.mounted) return;
       MkInfoDialog.show(
           info: "发布失败\n\n ${e.response?.data.toString() ?? e.toString()}",
-          isError: true);
+          isError: true,
+          context: context);
     } catch (e) {
-      MkInfoDialog.show(info: "$e", isError: true);
+      if (!context.mounted) return;
+      MkInfoDialog.show(
+        info: "$e",
+        isError: true,
+        context: context,
+      );
     } finally {
       sendLoading = false;
     }

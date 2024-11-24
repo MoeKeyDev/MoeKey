@@ -28,7 +28,7 @@ import '../mk_switch.dart';
 import '../notes/note_card.dart';
 
 class NoteCreateDialog extends HookConsumerWidget {
-  NoteCreateDialog({
+  const NoteCreateDialog({
     super.key,
     this.noteId,
     this.noteType = NoteType.note,
@@ -37,12 +37,13 @@ class NoteCreateDialog extends HookConsumerWidget {
     this.files,
   });
 
-  final GlobalKey myKey = GlobalKey();
+  static final GlobalKey myKey = GlobalKey();
   final String? noteId;
   final NoteType noteType;
   final NoteModel? note;
   final String? initText;
   final List<DriveFileModel>? files;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
@@ -53,14 +54,13 @@ class NoteCreateDialog extends HookConsumerWidget {
             .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
             .getDriverSelectDialogStateProvider()
             .notifier);
-            notifier.clear();
+        notifier.clear();
         for (var element in files ?? <DriveFileModel>[]) {
           notifier.add(element.id, element);
         }
       });
       return null;
     }, const []);
-
     return LayoutBuilder(
       builder: (context, constraints) {
         var isFullscreen = constraints.maxWidth < 580;
@@ -185,7 +185,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                             .read(
                                 noteCreateDialogStateProvider(noteId, noteType)
                                     .notifier)
-                            .send();
+                            .send(context);
                         if (res != null) {
                           contentController.text = initText ?? "";
                           if (context.mounted) {

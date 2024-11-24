@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/time_ago_since_date.dart';
 import 'package:moekey/widgets/mk_image.dart';
@@ -63,13 +65,14 @@ class NotificationsUserCard extends HookConsumerWidget {
                               height: double.infinity,
                             ),
                             onTap: () {
-                              MainRouterDelegate.of(context)
-                                  .setNewRoutePath(RouterItem(
-                                path: "user/${data.user?.id}",
-                                page: () {
-                                  return UserPage(userId: data.user?.id);
-                                },
-                              ));
+                              // MainRouterDelegate.of(context)
+                              //     .setNewRoutePath(RouterItem(
+                              //   path: "user/${data.user?.id}",
+                              //   page: () {
+                              //     return UserPage(userId: data.user?.id);
+                              //   },
+                              // ));
+                              context.push('/user/${data.user?.id}');
                             },
                           ),
                     Positioned(

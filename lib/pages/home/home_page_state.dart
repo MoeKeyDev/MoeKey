@@ -9,10 +9,13 @@ import 'package:moekey/pages/search/search_page.dart';
 import 'package:moekey/pages/test/test.dart';
 import 'package:moekey/pages/timeline/timeline_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
+import 'package:moekey/status/mk_tabbar_refresh_scroll_state.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
+import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../generated/l10n.dart';
+import '../../router/router.dart';
 import '../../widgets/keep_alive_wrapper.dart';
 
 part 'home_page_state.g.dart';
@@ -28,61 +31,20 @@ class HomePageState extends _$HomePageState {
     for (var element in state.navItemList) {
       if (element["id"] != null) {
         if (id == element["id"]) {
-          var currPath =
-              ref.read(routerDelegateProvider).currentConfiguration?.path;
-          if (id == currPath) {
-            if (element.containsKey("key") && element.containsKey("onTop")) {
-              element["onTop"](key: element["key"]);
+          var currPath = ref.read(routerProvider).state?.name;
+          if (element['id'] == currPath) {
+            if (element.containsKey("onTop")) {
+              element["onTop"](
+                  key: ref.read(mkTabBarRefreshScrollStatusProvider(id)));
             }
           } else {
-            ref.read(routerDelegateProvider).setNewRoutePath(RouterItem(
-                  path: element["id"],
-                  page: () => getPage(id),
-                  launchMode: LaunchMode.single,
-                  animated: false,
-                ));
+            var router = ref.watch(routerProvider);
+            router.goNamed(element["id"]!);
           }
         }
       }
     }
   }
-
-  changePageByRouterItem(RouterItem item) {
-    ref.read(routerDelegateProvider).setNewRoutePath(item);
-  }
-
-  Widget getPage(String id) {
-    for (var element in state.navItemList) {
-      if (element["id"] != null) {
-        if (id == element["id"] && element["page"] != null) {
-          return element["page"](key: element["key"]);
-        }
-      }
-    }
-    return Builder(builder: (context) {
-      return GestureDetector(
-        onTap: () {
-          MainRouterDelegate.of(context).popRoute();
-        },
-        child: const Text("404"),
-      );
-    });
-  }
-}
-
-@Riverpod(keepAlive: true)
-MainRouterDelegate routerDelegate(RouterDelegateRef ref) {
-  var state = ref.read(homePageStateProvider);
-  return MainRouterDelegate(
-    initRouter: RouterItem(
-      page: () => KeepAliveWrapper(
-          child:
-              state.navItemList[0]["page"](key: state.navItemList[0]["key"])),
-      path: 'timeline',
-      launchMode: LaunchMode.single,
-      animated: false,
-    ),
-  );
 }
 
 class HomeState {
@@ -91,10 +53,6 @@ class HomeState {
       "icon": TablerIcons.home,
       "label": S.current.timeline,
       "id": "timeline",
-      "page": ({Key? key}) => TimelinePage(
-            mkTabBarListKey: key as GlobalKey<MkTabBarRefreshScrollState>,
-          ),
-      "key": GlobalKey<MkTabBarRefreshScrollState>(),
       "onTop": ({Key? key}) => {
             (key as GlobalKey<MkTabBarRefreshScrollState>)
                 .currentState
@@ -105,9 +63,6 @@ class HomeState {
       "icon": TablerIcons.bell,
       "label": S.current.notifications,
       "id": "notifications",
-      "page": ({Key? key}) => NotificationsPage(
-            mkTabBarListKey: key as GlobalKey<MkTabBarRefreshScrollState>,
-          ),
       "key": GlobalKey<MkTabBarRefreshScrollState>(),
       "onTop": ({Key? key}) => {
             (key as GlobalKey<MkTabBarRefreshScrollState>)
@@ -119,32 +74,27 @@ class HomeState {
       "icon": TablerIcons.paperclip,
       "label": S.current.clips,
       "id": "clips",
-      "page": ({Key? key}) => const ClipsPage()
     },
     {
       "icon": TablerIcons.cloud,
       "label": S.current.drive,
-      "id": "drive",
-      "page": ({Key? key}) => const DrivePage()
+      "id": "drives",
     },
     {"line": true},
     {
       "icon": TablerIcons.hash,
       "label": S.current.explore,
       "id": "explore",
-      "page": ({Key? key}) => const ExplorePage()
     },
     {
       "icon": TablerIcons.speakerphone,
       "label": S.current.announcements,
       "id": "announcements",
-      "page": ({Key? key}) => const AnnouncementsPage()
     },
     {
       "icon": TablerIcons.search,
       "label": S.current.search,
       "id": "search",
-      "page": ({Key? key}) => const SearchPage()
     },
     {"line": true},
     {

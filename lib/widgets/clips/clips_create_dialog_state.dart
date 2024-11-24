@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/status/misskey_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -47,7 +48,7 @@ class ClipCreateDialogState extends _$ClipCreateDialogState {
     ref.notifyListeners();
   }
 
-  send() async {
+  send(BuildContext context) async {
     var apis = ref.read(misskeyApisProvider);
     try {
       if (state.name.isEmpty) {
@@ -76,11 +77,19 @@ class ClipCreateDialogState extends _$ClipCreateDialogState {
       return res;
     } on DioException catch (e) {
       logger.d(e.response);
+      if (!context.mounted) return;
       MkInfoDialog.show(
-          info: "创建失败\n\n ${e.response?.data.toString() ?? e.toString()}",
-          isError: true);
+        info: "创建失败\n\n ${e.response?.data.toString() ?? e.toString()}",
+        isError: true,
+        context: context,
+      );
     } catch (e) {
-      MkInfoDialog.show(info: "$e", isError: true);
+      if (!context.mounted) return;
+      MkInfoDialog.show(
+        info: "$e",
+        isError: true,
+        context: context,
+      );
     }
   }
 }

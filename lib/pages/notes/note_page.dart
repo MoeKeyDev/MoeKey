@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/get_padding_note.dart';
@@ -63,13 +65,16 @@ class NotesPage extends HookConsumerWidget {
                         height: 32,
                       ),
                       onTap: () {
-                        MainRouterDelegate.of(context)
-                            .setNewRoutePath(RouterItem(
-                          path: "user/${data?.userId}",
-                          page: () {
-                            return UserPage(userId: data?.userId ?? "0");
-                          },
-                        ));
+                        context.push(
+                          "/user/${data?.userId}",
+                        );
+                        // MainRouterDelegate.of(context)
+                        //     .setNewRoutePath(RouterItem(
+                        //   path: "user/${data?.userId}",
+                        //   page: () {
+                        //     return UserPage(userId: data?.userId ?? "0");
+                        //   },
+                        // ));
                       },
                     ),
                     const SizedBox(
@@ -409,12 +414,15 @@ class UserInfo extends HookConsumerWidget {
             shape: BoxShape.circle,
           ),
           onTap: () {
-            MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-              path: "user/${data.id}",
-              page: () {
-                return UserPage(userId: data.id);
-              },
-            ));
+            // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+            //   path: "user/${data.id}",
+            //   page: () {
+            //     return UserPage(userId: data.id);
+            //   },
+            // ));
+            context.push(
+              "/user/${data.id}",
+            );
           },
         ),
         const SizedBox(
@@ -455,12 +463,15 @@ class UserInfo extends HookConsumerWidget {
               ],
             ),
             onTap: () {
-              MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                path: "user/${data.id}",
-                page: () {
-                  return UserPage(userId: data.id);
-                },
-              ));
+              // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+              //   path: "user/${data.id}",
+              //   page: () {
+              //     return UserPage(userId: data.id);
+              //   },
+              // ));
+              context.push(
+                "/user/${data.id}",
+              );
             },
           ),
         ),

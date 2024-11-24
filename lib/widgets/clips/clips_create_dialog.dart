@@ -144,7 +144,7 @@ class ClipCreateDialog extends HookConsumerWidget {
                 ? null
                 : () async {
                     loading.value = true;
-                    var data = await ref.read(provider.notifier).send();
+                    var data = await ref.read(provider.notifier).send(context);
                     loading.value = false;
                     if (data != null) {
                       if (context.mounted) {

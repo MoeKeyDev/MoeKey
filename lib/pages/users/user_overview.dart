@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/login_user.dart';
 import 'package:moekey/apis/models/user_full.dart';
+import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/pages/users/user_follow.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
@@ -156,15 +158,16 @@ class _UserFollowsCount extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                  path: "user/following/${userData.id}",
-                  page: () {
-                    return UserFollowPage(
-                      userId: userData.id,
-                      type: "following",
-                    );
-                  },
-                ));
+                // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                //   path: "user/following/${userData.id}",
+                //   page: () {
+                //     return UserFollowPage(
+                //       userId: userData.id,
+                //       type: "following",
+                //     );
+                //   },
+                // ));
+                context.push('/user/${userData.id}/following');
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -184,15 +187,16 @@ class _UserFollowsCount extends StatelessWidget {
                   userData.isFollowing))
             GestureDetector(
               onTap: () {
-                MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                  path: "user/followers/${userData.id}",
-                  page: () {
-                    return UserFollowPage(
-                      userId: userData.id,
-                      type: "followers",
-                    );
-                  },
-                ));
+                // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                //   path: "user/followers/${userData.id}",
+                //   page: () {
+                //     return UserFollowPage(
+                //       userId: userData.id,
+                //       type: "followers",
+                //     );
+                //   },
+                // ));
+                context.push('/user/${userData.id}/followers');
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,

@@ -65,10 +65,11 @@ class MkInfoDialog extends HookConsumerWidget {
 
   static show({
     required String info,
+    required BuildContext context,
     bool isError = false,
   }) {
     showModel(
-      context: globalNav.currentContext!,
+      context: context,
       builder: (context) {
         return MkInfoDialog(info: info);
       },
@@ -136,9 +137,10 @@ class MkConfirm extends ConsumerWidget {
     );
   }
 
-  static Future<bool?> show({required List<Widget> children}) {
+  static Future<bool?> show(
+      {required List<Widget> children, required BuildContext context}) {
     return showModel<bool?>(
-      context: globalNav.currentContext!,
+      context: context,
       builder: (context) {
         return MkConfirm(
           children: children,

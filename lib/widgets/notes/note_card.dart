@@ -7,10 +7,12 @@ import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/main.dart';
 import 'package:moekey/pages/clips/clips.dart';
+import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/notes_listener.dart';
@@ -34,7 +36,6 @@ import '../../apis/models/translate.dart';
 import '../../apis/models/user_lite.dart';
 import '../../pages/image_preview/image_preview.dart';
 import '../../pages/notes/note_page.dart';
-import '../../router/main_router_delegate.dart' as main_router;
 import '../../status/misskey_api.dart';
 import '../../utils/parse_color.dart';
 import '../../utils/time_ago_since_date.dart';
@@ -209,15 +210,16 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
             onTap: () {
-              main_router.MainRouterDelegate.of(context)
-                  .setNewRoutePath(main_router.RouterItem(
-                path: "notes/${data.id}",
-                page: () => NotesPage(
-                  noteId: data.id,
-                  previewNote: data,
-                ),
-                launchMode: main_router.LaunchMode.standard,
-              ));
+              context.push('/notes/${data.id}');
+              // main_router.MainRouterDelegate.of(context)
+              //     .setNewRoutePath(main_router.RouterItem(
+              //   path: "notes/${data.id}",
+              //   page: () => NotesPage(
+              //     noteId: data.id,
+              //     previewNote: data,
+              //   ),
+              //   launchMode: main_router.LaunchMode.standard,
+              // ));
             },
             child: ContextMenuBuilder(
               mode: const [
@@ -296,13 +298,14 @@ class _TimeLineNoteCardAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        main_router.MainRouterDelegate.of(context)
-            .setNewRoutePath(main_router.RouterItem(
-          path: "user/${data.user.id}",
-          page: () {
-            return UserPage(userId: data.user.id);
-          },
-        ));
+        // main_router.MainRouterDelegate.of(context)
+        //     .setNewRoutePath(main_router.RouterItem(
+        //   path: "user/${data.user.id}",
+        //   page: () {
+        //     return UserPage(userId: data.user.id);
+        //   },
+        // ));
+        context.push('/user/${data.user.id}');
       },
       child: MkImage(
         data.user.avatarUrl ?? "",
@@ -736,13 +739,14 @@ class ReNoteUserInfo extends HookConsumerWidget {
           ),
           GestureDetector(
             onTap: () {
-              main_router.MainRouterDelegate.of(context)
-                  .setNewRoutePath(main_router.RouterItem(
-                path: "user/${data.user.id}",
-                page: () {
-                  return UserPage(userId: data.user.id);
-                },
-              ));
+              // main_router.MainRouterDelegate.of(context)
+              //     .setNewRoutePath(main_router.RouterItem(
+              //   path: "user/${data.user.id}",
+              //   page: () {
+              //     return UserPage(userId: data.user.id);
+              //   },
+              // ));
+              context.push('/user/${data.user.id}');
             },
             child: SizedBox(
               width: 28,
@@ -818,13 +822,14 @@ class UserNameRichText extends HookConsumerWidget {
     return GestureDetector(
       onTap: navigator
           ? () {
-              main_router.MainRouterDelegate.of(context)
-                  .setNewRoutePath(main_router.RouterItem(
-                path: "user/${data.id}",
-                page: () {
-                  return UserPage(userId: data.id);
-                },
-              ));
+              // main_router.MainRouterDelegate.of(context)
+              //     .setNewRoutePath(main_router.RouterItem(
+              //   path: "user/${data.id}",
+              //   page: () {
+              //     return UserPage(userId: data.id);
+              //   },
+              // ));
+              context.push('/user/${data.id}');
             }
           : null,
       child: DefaultTextStyle(
@@ -940,18 +945,22 @@ class TimeLineImage extends StatelessWidget {
       {super.key, this.mainAxisExtent = 0, required this.files});
 
   open(index, BuildContext context) {
-    globalNav.currentState?.push(
-      FFTransparentPageRoute(
-        pageBuilder: (BuildContext context, Animation<double> animation,
-            Animation<double> secondaryAnimation) {
-          return ImagePreviewPage(
-            initialIndex: index,
-            galleryItems: files,
-            backgroundDecoration: null,
-          );
-        },
-      ),
-    );
+    // Navigator.of(context).push(
+    //     // FFTransparentPageRoute(
+    //     //   pageBuilder: (BuildContext context, Animation<double> animation,
+    //     //       Animation<double> secondaryAnimation) {
+    //     //     return ImagePreviewPage(
+    //     //       initialIndex: index,
+    //     //       galleryItems: files,
+    //     //       backgroundDecoration: null,
+    //     //     );
+    //     //   },
+    //     // ),
+    //     );
+    context.push('/image-preview', extra: {
+      'initialIndex': index,
+      'galleryItems': files,
+    });
   }
 
   @override

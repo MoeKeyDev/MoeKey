@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:html/parser.dart';
+import 'package:moekey/router/router.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/login/servers_select_state.dart';
 import 'package:moekey/widgets/mk_card.dart';
@@ -19,13 +21,8 @@ class ServersSelectCard extends HookConsumerWidget {
 
   login(BuildContext context, WidgetRef ref, String url) {
     ref.read(selectServerHostProvider.notifier).setServer(url);
-    globalNav.currentState?.push(DialogRoute(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return const LoginDialog();
-      },
-    ));
+    // context.go("/login/dialog");
+    showDialog(context: context, builder: (context) => LoginDialog());
   }
 
   @override

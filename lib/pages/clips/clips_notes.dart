@@ -177,7 +177,7 @@ class ClipsNotes extends HookConsumerWidget {
                         "要删掉「${showDate?.name ?? ""}」吗？",
                         style: const TextStyle(fontSize: 15),
                       ),
-                    ]) ??
+                    ], context: context) ??
                     false;
                 if (res) {
                   var apis = ref.read(misskeyApisProvider);
@@ -241,7 +241,7 @@ class _ClipContentCard extends HookConsumerWidget {
                                   "确定要取消收藏吗？",
                                   style: TextStyle(fontSize: 15),
                                 ),
-                              ]) ??
+                              ], context: context) ??
                               false;
                           if (res) {
                             await apis.clips.unFavorite(clipId: clipId);

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/pages/splash_page/splash_page.dart';
 
 import '../../main.dart';
 import '../../pages/home/home_page.dart';
@@ -30,12 +32,7 @@ class LoginDialog extends HookConsumerWidget {
                   Timer(
                     const Duration(seconds: 1),
                     () {
-                      globalNav.currentState?.pushAndRemoveUntil(
-                          MaterialPageRoute(
-                        builder: (context) {
-                          return HomePage();
-                        },
-                      ), (route) => false);
+                      context.replace("/");
                     },
                   );
                   return const Text("登陆成功");
@@ -44,7 +41,7 @@ class LoginDialog extends HookConsumerWidget {
               TextButton(
                 child: const Text('确定'),
                 onPressed: () {
-                  globalNav.currentState?.pop();
+                  context.pop();
                 },
               )
             ],
@@ -54,7 +51,7 @@ class LoginDialog extends HookConsumerWidget {
               TextButton(
                 child: const Text('确定'),
                 onPressed: () {
-                  globalNav.currentState?.pop();
+                  context.pop();
                 },
               )
             ],
@@ -83,7 +80,7 @@ class LoginDialog extends HookConsumerWidget {
               TextButton(
                 child: const Text('取消'),
                 onPressed: () {
-                  globalNav.currentState?.pop();
+                  context.pop();
                 },
               )
             ]

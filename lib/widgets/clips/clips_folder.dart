@@ -2,8 +2,10 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/clips/clips_notes.dart';
+import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
@@ -57,12 +59,13 @@ class ClipsCardComponent extends HookConsumerWidget {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () {
-            MainRouterDelegate.of(context).setNewRoutePath(
-              RouterItem(
-                path: "/clips/${data.id}",
-                page: () => ClipsNotes(data.id),
-              ),
-            );
+            // MainRouterDelegate.of(context).setNewRoutePath(
+            //   RouterItem(
+            //     path: "/clips/${data.id}",
+            //     page: () => ClipsNotes(data.id),
+            //   ),
+            // );
+            context.push("/clips/${data.id}");
           },
           child: Container(
             color: Colors.transparent,
@@ -70,14 +73,15 @@ class ClipsCardComponent extends HookConsumerWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    MainRouterDelegate.of(context).setNewRoutePath(
-                      RouterItem(
-                        path: "/user/${data.userId}",
-                        page: () => UserPage(
-                          userId: data.userId,
-                        ),
-                      ),
-                    );
+                    // MainRouterDelegate.of(context).setNewRoutePath(
+                    //   RouterItem(
+                    //     path: "/user/${data.userId}",
+                    //     page: () => UserPage(
+                    //       userId: data.userId,
+                    //     ),
+                    //   ),
+                    // );
+                    context.push("/user/${data.userId}");
                   },
                   child: MkImage(
                     data.user.avatarUrl ?? "",

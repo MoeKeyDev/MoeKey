@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/pages/notifications/notifications_group_list.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
@@ -91,7 +93,7 @@ class NotificationsPage extends HookConsumerWidget {
           children: [
             IconButton(
               onPressed: () {
-                MainRouterDelegate.of(context).popRoute();
+                context.pop();
               },
               tooltip: "筛选",
               icon: const Icon(TablerIcons.filter, size: 18),
@@ -99,7 +101,7 @@ class NotificationsPage extends HookConsumerWidget {
             ),
             IconButton(
               onPressed: () {
-                MainRouterDelegate.of(context).popRoute();
+                context.pop();
               },
               tooltip: "全部标记为已读",
               icon: const Icon(TablerIcons.check, size: 18),

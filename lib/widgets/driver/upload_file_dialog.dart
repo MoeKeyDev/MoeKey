@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/widgets/driver/driver_upload_bar.dart';
 import 'package:path/path.dart';
@@ -28,7 +29,8 @@ class DriverUploadFileDialog extends HookConsumerWidget {
     var data = ref.watch(driverUploaderProvider);
     useEffect(() {
       var notifier = ref.read(driverUploaderProvider.notifier);
-      notifier.createFiles(filesPath: files, compression: !isOriginal);
+      notifier.createFiles(
+          filesPath: files, compression: !isOriginal, context: context);
       return null;
     }, files);
     bool done = true;
@@ -74,7 +76,7 @@ class DriverUploadFileDialog extends HookConsumerWidget {
         FilledButton(
           child: Text(done ? "完成" : '取消'),
           onPressed: () {
-            globalNav.currentState?.pop();
+            context.pop();
           },
         )
       ],
@@ -102,9 +104,8 @@ class DriverUploadFileDialog extends HookConsumerWidget {
         Overlay.of(context).insert(overlayEntry!);
       }
 
-      var list = await ref
-          .read(driverUploaderProvider.notifier)
-          .createFiles(filesPath: files, compression: !isOriginal);
+      var list = await ref.read(driverUploaderProvider.notifier).createFiles(
+          filesPath: files, compression: !isOriginal, context: context);
       overlayEntry?.remove();
       overlayEntry = null;
       return list;

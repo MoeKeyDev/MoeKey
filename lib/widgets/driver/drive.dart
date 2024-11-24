@@ -1,4 +1,5 @@
 import "package:dio/dio.dart";
+import "package:flutter/cupertino.dart";
 import "package:moekey/status/server.dart";
 import "package:moekey/utils/image_compression.dart";
 import "package:moekey/widgets/mk_info_dialog.dart";
@@ -40,8 +41,11 @@ class DriverUploader extends _$DriverUploader {
     return [];
   }
 
-  Future<List<DriveFileModel>> createFiles(
-      {required List<String> filesPath, bool compression = true}) async {
+  Future<List<DriveFileModel>> createFiles({
+    required List<String> filesPath,
+    bool compression = true,
+    required BuildContext context,
+  }) async {
     try {
       var apis = ref.read(misskeyApisProvider);
       var path = ref.read(drivePathProvider);
@@ -118,7 +122,9 @@ class DriverUploader extends _$DriverUploader {
           state[index]["error"] = e;
 
           ref.notifyListeners();
-          _showErrorDialog(e);
+          if (context.mounted) {
+            _showErrorDialog(e, context);
+          }
         }
       }
 
@@ -134,10 +140,11 @@ class DriverUploader extends _$DriverUploader {
     return [];
   }
 
-  void _showErrorDialog(DioException e) {
+  void _showErrorDialog(DioException e, BuildContext context) {
     MkInfoDialog.show(
         info: "上传失败\n ${e.response?.data.toString() ?? e.toString()}",
-        isError: true);
+        isError: true,
+        context: context);
   }
 
   Future createFolder(String name) async {

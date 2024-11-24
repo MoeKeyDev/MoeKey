@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/logger.dart';
 import 'package:moekey/main.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
+import 'package:moekey/router/router.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
@@ -36,9 +39,13 @@ void updateUserInfo(WidgetRef ref) {
 }
 
 class HomePage extends HookConsumerWidget {
-  HomePage({super.key});
+  const HomePage({
+    super.key,
+    required this.child,
+  });
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  static final GlobalKey<ScaffoldState> _scaffoldKey =
+      GlobalKey<ScaffoldState>();
 
   void _openDrawer() {
     _scaffoldKey.currentState!.openDrawer();
@@ -56,36 +63,26 @@ class HomePage extends HookConsumerWidget {
     _scaffoldKey.currentState!.closeEndDrawer();
   }
 
+  final Widget child;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-    var router = ref.watch(routerDelegateProvider);
-    var currentId = useState(router.currentConfiguration?.path);
+    var currentId = GoRouter.of(context).state?.name;
     var user = ref.read(currentLoginUserProvider);
-    func() {
-      currentId.value = router.currentConfiguration?.path;
-    }
-
     var isShowBottomNav = [
       "timeline",
       "notifications",
       "clips",
-      "drive",
+      "drives",
       "explore",
       "announcements",
       "search"
-    ].contains(currentId.value);
+    ].contains(currentId);
     useEffect(() {
       updateUserInfo(ref);
       return null;
     }, [user?.id]);
-    useEffect(() {
-      func();
-      router.addListener(func);
-      return () {
-        router.removeListener(func);
-      };
-    }, const []);
     var media = MediaQuery.of(context);
     return LayoutBuilder(builder: (context, constraints) {
       var btnStyle =
@@ -124,10 +121,11 @@ class HomePage extends HookConsumerWidget {
                                 (constraints.maxWidth > 500 || !isShowBottomNav
                                     ? 16
                                     : 100))),
-                    child: Router(
-                      routerDelegate: router,
-                      backButtonDispatcher: RootBackButtonDispatcher(),
-                    ),
+                    // child: Router(
+                    //   routerDelegate: router,
+                    //   backButtonDispatcher: RootBackButtonDispatcher(),
+                    // ),
+                    child: child,
                   ),
                 ),
                 if (constraints.maxWidth >= 1090) const WidgetsListPage()
@@ -216,20 +214,8 @@ class NavBar extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var state = ref.watch(homePageStateProvider);
-    var currentId = useState(state.navItemList[0]["id"]);
-    var router = ref.watch(routerDelegateProvider);
-    func() {
-      currentId.value = router.currentConfiguration?.path;
-    }
-
-    useEffect(() {
-      func();
-      router.addListener(func);
-      return () {
-        router.removeListener(func);
-      };
-    }, const []);
-
+    var currentId = GoRouter.of(context).state?.name;
+    logger.d(currentId);
     return AnimatedContainer(
       width: width,
       color: themes.navBgColor,
@@ -248,10 +234,9 @@ class NavBar extends HookConsumerWidget {
                     list.add(NavbarItem(
                       icon: element["icon"],
                       label: element["label"],
-                      id: element["id"],
-                      currentId: currentId.value,
+                      id: element["id"] ?? '',
+                      currentId: currentId ?? '',
                       onSelect: () {
-                        currentId.value = element["id"];
                         if (onSelect != null) {
                           onSelect!();
                         }
@@ -421,14 +406,14 @@ class UserAvatarButton extends ConsumerWidget {
                   Future.delayed(
                     Durations.medium1,
                     () {
-                      logic.changePageByRouterItem(RouterItem(
-                        path: "member/${user?.id}",
-                        page: () {
-                          return UserPage(
-                            userId: user?.id,
-                          );
-                        },
-                      ));
+                      // logic.changePageByRouterItem(RouterItem(
+                      //   path: "member/${user?.id}",
+                      //   page: () {
+                      //     return UserPage(
+                      //       userId: user?.id,
+                      //     );
+                      //   },
+                      // ));
                     },
                   );
                   return false;

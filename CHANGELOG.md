@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0
+
+### Feature
+
+- Add `go_router` for routing
+
+### Fixed
+
+- Fix issue where the soft keyboard would not open when creating a post
+
 ## 0.5.3
 
 ### Feature

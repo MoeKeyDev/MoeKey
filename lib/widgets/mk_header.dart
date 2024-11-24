@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/pages/home/home_page.dart';
 
 import '../generated/l10n.dart';
 import '../router/main_router_delegate.dart';
@@ -91,7 +93,6 @@ class MkAppbar extends ConsumerWidget implements PreferredSizeWidget {
     if (isSmallLeadingCenter) {
       return MkToolBar(
         height: preferredSize.height,
-        
         child: Column(
           children: [
             SizedBox(
@@ -107,7 +108,7 @@ class MkAppbar extends ConsumerWidget implements PreferredSizeWidget {
                           children: [
                             IconButton(
                               onPressed: () {
-                                MainRouterDelegate.of(context).popRoute();
+                                context.pop();
                               },
                               tooltip: S.of(context).back,
                               icon: const Icon(TablerIcons.arrow_left),
@@ -138,7 +139,6 @@ class MkAppbar extends ConsumerWidget implements PreferredSizeWidget {
             if (bottom != null && isSmallLeadingCenter) bottom!
           ],
         ),
-        
       );
     }
     return MkToolBar(
@@ -156,7 +156,7 @@ class MkAppbar extends ConsumerWidget implements PreferredSizeWidget {
                     if (showBack) ...[
                       IconButton(
                         onPressed: () {
-                          MainRouterDelegate.of(context).popRoute();
+                          context.pop();
                         },
                         tooltip: S.of(context).back,
                         icon: const Icon(TablerIcons.arrow_left),

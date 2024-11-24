@@ -2,8 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mfm_parser/mfm_parser.dart';
+import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/widgets/mfm_text/animate/jelly.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
@@ -275,12 +277,13 @@ _getParse({
                 var host = item.props?["host"] ?? currentServerHost;
                 return GestureDetector(
                   onTap: () {
-                    MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                      path: "user/@$user${host != null ? "@$host" : ""}",
-                      page: () {
-                        return UserPage(username: user, host: host);
-                      },
-                    ));
+                    // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                    //   path: "user/@$user${host != null ? "@$host" : ""}",
+                    //   page: () {
+                    //     return UserPage(username: user, host: host);
+                    //   },
+                    // ));
+                    context.push('/user/$host/$user');
                   },
                   child: DecoratedBox(
                     decoration: BoxDecoration(
