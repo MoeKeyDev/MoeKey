@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+### Fixed
+
+- Fix Note loading issue
+
 ## 0.6.0
 
 ### Feature

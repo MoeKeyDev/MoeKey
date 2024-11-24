@@ -46,7 +46,7 @@ class NotesPage extends HookConsumerWidget {
     var loadConversationSnapshot = useFuture(loadConversation.value);
     var conversation = dataProvider.valueOrNull?.conversation ?? [];
     var data = dataProvider.valueOrNull?.data ?? previewNote;
-
+    data?.noteTranslate ??= previewNote?.noteTranslate;
     return LayoutBuilder(
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);

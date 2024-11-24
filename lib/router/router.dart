@@ -11,6 +11,7 @@ import 'package:moekey/status/mk_tabbar_refresh_scroll_state.dart';
 import 'package:moekey/status/user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../apis/models/note.dart';
 import '../pages/announcements/announcements.dart';
 import '../pages/clips/clips_notes.dart';
 import '../pages/clips/clips_page.dart';
@@ -128,6 +129,7 @@ GoRouter router(Ref ref) {
           path: "/notes/:id",
           builder: (_, status) => NotesPage(
             noteId: status.pathParameters['id']!,
+            previewNote: status.extra as NoteModel?,
           ),
         ),
         GoRoute(
