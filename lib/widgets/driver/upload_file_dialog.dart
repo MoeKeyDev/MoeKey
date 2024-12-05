@@ -9,6 +9,7 @@ import 'package:moekey/widgets/driver/driver_upload_bar.dart';
 import 'package:path/path.dart';
 
 import '../../apis/models/drive.dart';
+import '../../generated/l10n.dart';
 import '../../logger.dart';
 import '../../main.dart';
 import '../mk_dialog.dart';
@@ -74,7 +75,7 @@ class DriverUploadFileDialog extends HookConsumerWidget {
           height: 16,
         ),
         FilledButton(
-          child: Text(done ? "完成" : '取消'),
+          child: Text(done ? S.current.done : S.current.cancel),
           onPressed: () {
             context.pop();
           },

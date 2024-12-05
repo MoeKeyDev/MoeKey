@@ -9,7 +9,6 @@ import 'package:moekey/logger.dart';
 import 'package:moekey/main.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/pages/users/user_page.dart';
-import 'package:moekey/router/main_router_delegate.dart';
 import 'package:moekey/router/router.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/server.dart';
@@ -17,6 +16,7 @@ import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/login/servers_select.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/misskey_api.dart';
 import '../../widgets/blur_widget.dart';
 import '../../widgets/hover_builder.dart';
@@ -470,7 +470,7 @@ class UserAvatarButton extends ConsumerWidget {
                   ),
               ContextMenuItem(
                 icon: TablerIcons.plus,
-                label: "添加账号",
+                label: S.current.addAccount,
                 onTap: () {
                   Timer(const Duration(milliseconds: 150), () {
                     showDialog(
@@ -503,7 +503,10 @@ class UserAvatarButton extends ConsumerWidget {
                   return false;
                 },
               ),
-              ContextMenuItem(icon: TablerIcons.users, label: "管理账号"),
+              ContextMenuItem(
+                icon: TablerIcons.users,
+                label: S.current.manageAccount,
+              ),
             ];
           },
         ),
@@ -513,7 +516,9 @@ class UserAvatarButton extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
             child: Tooltip(
-              message: extend ? "" : "账户：@${userData?.username ?? ""}",
+              message: extend
+                  ? ""
+                  : "${S.current.account}：@${userData?.username ?? ""}",
               child: Row(
                 mainAxisAlignment:
                     extend ? MainAxisAlignment.start : MainAxisAlignment.center,
@@ -691,15 +696,15 @@ class CreateBottom extends ConsumerWidget {
                 return themes.fgOnAccentColor;
               }),
             ),
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: Row(
                 children: [
-                  Icon(TablerIcons.pencil, size: 16),
-                  SizedBox(
+                  const Icon(TablerIcons.pencil, size: 16),
+                  const SizedBox(
                     width: 16,
                   ),
-                  Text("帖子"),
+                  Text(S.current.notes)
                 ],
               ),
             ),
@@ -712,7 +717,7 @@ class CreateBottom extends ConsumerWidget {
         },
         icon: const Icon(TablerIcons.pencil),
         padding: const EdgeInsets.all(18),
-        tooltip: "帖子",
+        tooltip: S.current.notes,
         isSelected: false,
         style: ButtonStyle(
             backgroundColor: WidgetStateProperty.resolveWith((states) {

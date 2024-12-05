@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/apis/models/note.dart';
+import 'package:moekey/generated/l10n.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -89,16 +90,16 @@ Future<Map<String, List<EmojiSimple>>> apiEmojisByCategory(
     ["🍮", "custard"],
   ];
   for (var item in user) {
-    var cate = "用户";
+    var cate = S.current.user;
     if (emojiMap[cate] == null) {
       emojiMap[cate] = [];
     }
     emojiMap[cate]!.add(EmojiSimple(
-        aliases: [], category: "用户", name: item[1], url: item[0], code: true));
+        aliases: [], category: cate, name: item[1], url: item[0], code: true));
   }
 
   for (var item in data) {
-    var cate = item.category ?? "未分类";
+    var cate = item.category ?? S.current.uncategorized;
     if (emojiMap[cate] == null) {
       emojiMap[cate] = [];
     }
@@ -125,7 +126,11 @@ Future<Map<String, List<EmojiSimple>>> apiEmojisByCategory(
       emojiMap[cate] = [];
     }
     emojiMap[cate]!.add(EmojiSimple(
-        aliases: [], category: "用户", name: item[1], url: item[0], code: true));
+        aliases: [],
+        category: S.current.user,
+        name: item[1],
+        url: item[0],
+        code: true));
   }
   return emojiMap;
 }

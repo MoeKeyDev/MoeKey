@@ -3,11 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/pages/notifications/notifications_group_list.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
-import '../../router/main_router_delegate.dart';
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 import 'notifications_mentions_list.dart';
 
@@ -24,42 +23,44 @@ class NotificationsPage extends HookConsumerWidget {
       key: mkTabBarListKey,
       items: [
         MkTabBarItem(
-          label: const Tab(
+          label: Tab(
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   TablerIcons.point,
                   size: 14,
                 ),
-                Text("全部", style: TextStyle(fontSize: 12)),
+                Text(S.current.notifyAll, style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
           child: NotificationsGroupList(),
         ),
         MkTabBarItem(
-          label: const Tab(
+          label: Tab(
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   TablerIcons.at,
                   size: 14,
                 ),
-                Text("提到我的", style: TextStyle(fontSize: 12)),
+                Text(S.current.notifyMention,
+                    style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
           child: const MentionsList(),
         ),
         MkTabBarItem(
-          label: const Tab(
+          label: Tab(
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   TablerIcons.mail,
                   size: 14,
                 ),
-                Text("私信", style: TextStyle(fontSize: 12)),
+                Text(S.current.notifyMessage,
+                    style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -79,7 +80,7 @@ class NotificationsPage extends HookConsumerWidget {
             const SizedBox(
               width: 8,
             ),
-            const Text("通知"),
+            Text(S.current.notification),
           ],
         ),
       ),
@@ -95,7 +96,7 @@ class NotificationsPage extends HookConsumerWidget {
               onPressed: () {
                 context.pop();
               },
-              tooltip: "筛选",
+              tooltip: S.current.notifyFilter,
               icon: const Icon(TablerIcons.filter, size: 18),
               color: themes.fgColor,
             ),
@@ -103,7 +104,7 @@ class NotificationsPage extends HookConsumerWidget {
               onPressed: () {
                 context.pop();
               },
-              tooltip: "全部标记为已读",
+              tooltip: S.current.notifyMarkAllRead,
               icon: const Icon(TablerIcons.check, size: 18),
               color: themes.fgColor,
             ),

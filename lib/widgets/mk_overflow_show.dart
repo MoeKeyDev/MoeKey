@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../generated/l10n.dart';
+
 class MkOverflowShow extends StatefulWidget {
   const MkOverflowShow({
     super.key,
@@ -60,7 +62,7 @@ class _MkOverflowShowState extends State<MkOverflowShow> {
                         foregroundColor: WidgetStatePropertyAll<Color>(
                             DefaultTextStyle.of(context).style.color!),
                       ),
-                      child: const Text("查看更多"),
+                      child: Text(S.current.viewMore),
                     )
                   ],
                 ),

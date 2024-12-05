@@ -9,6 +9,7 @@ import 'package:moekey/apis/models/user_full.dart';
 import 'package:moekey/status/misskey_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 import '../../widgets/mk_header.dart';
 import '../../widgets/mk_nav_button.dart';
@@ -16,7 +17,7 @@ import '../../widgets/mk_user_card.dart';
 
 part 'users.g.dart';
 
-final navs = ["本地", "远程"];
+var navs = [S.current.local, S.current.remote];
 
 class ExploreUsersPage extends HookConsumerWidget {
   const ExploreUsersPage({super.key});
@@ -129,7 +130,7 @@ class ExploreUsersLocal extends HookConsumerWidget {
                   _UserPinGrid(maxCrossAxisExtent: maxCrossAxisExtent),
                   _UserExplore(
                     maxCrossAxisExtent: maxCrossAxisExtent,
-                    title: '热门用户',
+                    title: S.current.exploreUserHot,
                     icon: TablerIcons.chart_line,
                     origins: "local",
                     sorts: "+follower",
@@ -137,14 +138,14 @@ class ExploreUsersLocal extends HookConsumerWidget {
                   ),
                   _UserExplore(
                     maxCrossAxisExtent: maxCrossAxisExtent,
-                    title: '最近投稿的用户',
+                    title: S.current.exploreUserUpdated,
                     icon: TablerIcons.message,
                     origins: "local",
                     sorts: "+updatedAt",
                   ),
                   _UserExplore(
                     maxCrossAxisExtent: maxCrossAxisExtent,
-                    title: '最近登录的用户',
+                    title: S.current.exploreUserLast,
                     icon: TablerIcons.plus,
                     origins: "local",
                     sorts: "+createdAt",
@@ -231,10 +232,10 @@ class _UserPinGrid extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var pinned = ref.watch(pinnedUsersProvider).valueOrNull;
     return SliverMainAxisGroup(slivers: [
-      const SliverToBoxAdapter(
+      SliverToBoxAdapter(
         child: _UsersTitle(
           icon: TablerIcons.bookmark,
-          title: "置顶用户",
+          title: S.current.exploreUserPined,
         ),
       ),
       if (pinned == null)
@@ -305,7 +306,7 @@ class ExploreUsersNetwork extends HookConsumerWidget {
                 slivers: [
                   _UserExplore(
                     maxCrossAxisExtent: maxCrossAxisExtent,
-                    title: '热门用户',
+                    title: S.current.exploreUserHot,
                     icon: TablerIcons.chart_line,
                     origins: "remote",
                     sorts: "+follower",
@@ -313,14 +314,14 @@ class ExploreUsersNetwork extends HookConsumerWidget {
                   ),
                   _UserExplore(
                     maxCrossAxisExtent: maxCrossAxisExtent,
-                    title: '最近投稿的用户',
+                    title: S.current.exploreUserUpdated,
                     icon: TablerIcons.message,
                     origins: "remote",
                     sorts: "+updatedAt",
                   ),
                   _UserExplore(
                     maxCrossAxisExtent: maxCrossAxisExtent,
-                    title: '最近登录的用户',
+                    title: S.current.exploreUserLast,
                     icon: TablerIcons.plus,
                     origins: "remote",
                     sorts: "+createdAt",

@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/themes.dart';
 
 import '../../apis/models/drive.dart';
+import '../../generated/l10n.dart';
 import '../mk_image.dart';
 import '../video_player.dart';
 
@@ -122,13 +123,13 @@ class NoteImage extends HookConsumerWidget {
                                 size: 13,
                               ),
                               Text(imageFile.isSensitive
-                                  ? "敏感内容"
+                                  ? S.current.sensitiveContent
                                   : isImage
-                                      ? "图片"
-                                      : "视频")
+                                      ? S.current.image
+                                      : S.current.video),
                             ],
                           ),
-                          const Text("点击以显示")
+                          Text(S.current.sensitiveClickShow)
                         ],
                       ),
                     ),

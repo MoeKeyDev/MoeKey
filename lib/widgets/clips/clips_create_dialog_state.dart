@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:moekey/generated/l10n.dart';
 import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/status/misskey_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -52,7 +53,7 @@ class ClipCreateDialogState extends _$ClipCreateDialogState {
     var apis = ref.read(misskeyApisProvider);
     try {
       if (state.name.isEmpty) {
-        throw Exception("名称不能为空");
+        throw Exception(S.current.nameCannotBeEmpty);
       }
       // 更新
       if (clipId != null) {
@@ -79,7 +80,8 @@ class ClipCreateDialogState extends _$ClipCreateDialogState {
       logger.d(e.response);
       if (!context.mounted) return;
       MkInfoDialog.show(
-        info: "创建失败\n\n ${e.response?.data.toString() ?? e.toString()}",
+        info: S.current
+            .creationFailedDialog(e.response?.data.toString() ?? e.toString()),
         isError: true,
         context: context,
       );

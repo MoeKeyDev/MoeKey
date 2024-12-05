@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/pages/splash_page/splash_page.dart';
 
-import '../../main.dart';
-import '../../pages/home/home_page.dart';
+import '../../generated/l10n.dart';
 import '../../status/server.dart';
 import '../../status/user_login.dart';
 import '../mk_dialog.dart';
@@ -35,11 +33,11 @@ class LoginDialog extends HookConsumerWidget {
                       context.replace("/");
                     },
                   );
-                  return const Text("登陆成功");
+                  return Text(S.current.loginSuccess);
                 },
               ),
               TextButton(
-                child: const Text('确定'),
+                child: Text(S.current.ok),
                 onPressed: () {
                   context.pop();
                 },
@@ -49,7 +47,7 @@ class LoginDialog extends HookConsumerWidget {
               Text(error.toString()),
               Text(stackTrace.toString()),
               TextButton(
-                child: const Text('确定'),
+                child: Text(S.current.ok),
                 onPressed: () {
                   context.pop();
                 },
@@ -71,14 +69,14 @@ class LoginDialog extends HookConsumerWidget {
                 height: 16,
               ),
               Text(
-                "正在登陆: $host",
+                S.current.loginLoading(host),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(
                 height: 16,
               ),
               TextButton(
-                child: const Text('取消'),
+                child: Text(S.current.cancel),
                 onPressed: () {
                   context.pop();
                 },

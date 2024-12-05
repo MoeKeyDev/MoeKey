@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../generated/l10n.dart';
 import '../main.dart';
 import '../status/themes.dart';
 import 'mk_dialog.dart';
@@ -56,7 +57,7 @@ class MkInfoDialog extends HookConsumerWidget {
                 foregroundColor:
                     WidgetStateProperty.all(themes.fgOnAccentColor),
                 elevation: WidgetStateProperty.all(0)),
-            child: const Text("我知道了"),
+            child: Text(S.current.ok),
           )
         ],
       ),
@@ -101,17 +102,16 @@ class MkConfirm extends ConsumerWidget {
               ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 120),
                 child: FilledButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all(themes.accentColor),
-                      foregroundColor:
-                          WidgetStateProperty.all(themes.fgOnAccentColor),
-                      elevation: WidgetStateProperty.all(0)),
-                  child: const Text("OK"),
-                ),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all(themes.accentColor),
+                        foregroundColor:
+                            WidgetStateProperty.all(themes.fgOnAccentColor),
+                        elevation: WidgetStateProperty.all(0)),
+                    child: Text(S.current.ok)),
               ),
               const SizedBox(
                 width: 12,
@@ -127,7 +127,7 @@ class MkConfirm extends ConsumerWidget {
                           WidgetStateProperty.all(themes.buttonBgColor),
                       foregroundColor: WidgetStateProperty.all(themes.fgColor),
                       elevation: WidgetStateProperty.all(0)),
-                  child: const Text("取消"),
+                  child: Text(S.current.cancel),
                 ),
               )
             ],

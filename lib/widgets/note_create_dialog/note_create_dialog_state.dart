@@ -6,6 +6,7 @@ import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/note.dart';
+import '../../generated/l10n.dart';
 import '../../logger.dart';
 import '../../status/dio.dart';
 import '../../status/server.dart';
@@ -254,20 +255,20 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
 
       // 参数验证
       if (state.text != null && state.text!.isEmpty) {
-        throw Exception("内容不能为空");
+        throw Exception(S.current.exceptionContentNull);
       }
       if (state.isCw && state.cw.isEmpty) {
-        throw Exception("隐藏内容不能为空");
+        throw Exception(S.current.exceptionCwNull);
       }
 
       if (state.isNotePoll) {
         // 投票
         if (state.poll!.choices.length < 2) {
-          throw Exception("投票数量不能少于2个");
+          throw Exception(S.current.voteOptionAtLeastTwo);
         }
         for (var (index, item) in state.poll!.choices.indexed) {
           if (item.$2.isEmpty) {
-            throw Exception("第${index + 1}个投票选项为空");
+            throw Exception(S.current.voteOptionNullIndex(index + 1));
           }
         }
       }
@@ -286,7 +287,8 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
       logger.d(e.response);
       if (!context.mounted) return;
       MkInfoDialog.show(
-          info: "发布失败\n\n ${e.response?.data.toString() ?? e.toString()}",
+          info: S.current
+              .exceptionSendNote(e.response?.data.toString() ?? e.toString()),
           isError: true,
           context: context);
     } catch (e) {

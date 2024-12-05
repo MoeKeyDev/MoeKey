@@ -1,3 +1,5 @@
+import '../generated/l10n.dart';
+
 String formatDuration(int milliseconds) {
   int seconds = (milliseconds / 1000).truncate();
   int minutes = (seconds / 60).truncate();
@@ -10,12 +12,14 @@ String formatDuration(int milliseconds) {
   String twoDigitHours = twoDigits(hours.remainder(24));
 
   if (days > 0) {
-    return "$days天$twoDigitHours小时$twoDigitMinutes分钟$twoDigitSeconds秒";
+    return S.current
+        .durationDay(days, twoDigitHours, twoDigitMinutes, twoDigitSeconds);
   } else if (hours > 0) {
-    return "$twoDigitHours小时$twoDigitMinutes分钟$twoDigitSeconds秒";
+    return S.current
+        .durationHour(twoDigitHours, twoDigitMinutes, twoDigitSeconds);
   } else if (minutes > 0) {
-    return "$twoDigitMinutes分钟$twoDigitSeconds秒";
+    return S.current.durationMinute(twoDigitMinutes, twoDigitSeconds);
   } else {
-    return "$twoDigitSeconds秒";
+    return S.current.durationSecond(twoDigitSeconds);
   }
 }

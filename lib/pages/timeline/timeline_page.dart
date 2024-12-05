@@ -4,34 +4,30 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/timeline/timeline_list.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
-import '../../status/timeline.dart';
+import '../../generated/l10n.dart';
 import '../../utils/get_padding_note.dart';
-import '../../widgets/keep_alive_wrapper.dart';
-import '../../widgets/mk_scaffold.dart';
-import '../../widgets/notes/note_pagination_list.dart';
 
 final List<Map<String, dynamic>> navItemList = [
   {
     "icon": TablerIcons.home,
-    "label": "首页",
+    "label": S.current.timelineHome,
     "api": "timeline",
   },
   {
     "icon": TablerIcons.planet,
-    "label": "本地",
+    "label": S.current.timelineLocal,
     "api": "local-timeline",
   },
   {
     "icon": TablerIcons.universe,
-    "label": "社交",
+    "label": S.current.timelineHybrid,
     "api": "hybrid-timeline",
   },
   {
     "icon": TablerIcons.whirl,
-    "label": "全局",
+    "label": S.current.timelineGlobal,
     "api": "global-timeline",
   },
 ];

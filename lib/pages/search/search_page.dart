@@ -6,6 +6,8 @@ import 'package:moekey/pages/search/user_search.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
+import '../../generated/l10n.dart';
+
 class SearchPage extends HookConsumerWidget {
   const SearchPage({super.key});
 
@@ -22,7 +24,7 @@ class SearchPage extends HookConsumerWidget {
                     TablerIcons.pencil,
                     size: 14,
                   ),
-                  Text("帖子", style: TextStyle(fontSize: 12)),
+                  Text(S.current.notes, style: TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -35,7 +37,7 @@ class SearchPage extends HookConsumerWidget {
                     TablerIcons.users,
                     size: 14,
                   ),
-                  Text("用户", style: TextStyle(fontSize: 12)),
+                  Text(S.current.user, style: TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -54,7 +56,7 @@ class SearchPage extends HookConsumerWidget {
             const SizedBox(
               width: 8,
             ),
-            const Text("搜索"),
+            Text(S.current.search)
           ],
         ),
       ),

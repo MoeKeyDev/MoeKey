@@ -7,29 +7,31 @@ import 'package:moekey/pages/explore/users.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
+import '../../generated/l10n.dart';
+
 class ExplorePage extends HookConsumerWidget {
   const ExplorePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-    var tabs = const [
+    var tabs = [
       Tab(
         child: Row(
           children: [
-            Icon(
+            const Icon(
               TablerIcons.bolt,
               size: 14,
             ),
-            Text("热门", style: TextStyle(fontSize: 12)),
+            Text(S.current.exploreHot, style: const TextStyle(fontSize: 12)),
           ],
         ),
       ),
       Tab(
         child: Row(
           children: [
-            Icon(TablerIcons.users, size: 14),
-            Text("用户", style: TextStyle(fontSize: 12)),
+            const Icon(TablerIcons.users, size: 14),
+            Text(S.current.exploreUsers, style: const TextStyle(fontSize: 12)),
           ],
         ),
       )
@@ -44,25 +46,27 @@ class ExplorePage extends HookConsumerWidget {
     return MkTabBarRefreshScroll(
       items: [
         MkTabBarItem(
-          label: const Tab(
+          label: Tab(
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   TablerIcons.bolt,
                   size: 14,
                 ),
-                Text("热门", style: TextStyle(fontSize: 12)),
+                Text(S.current.exploreHot,
+                    style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
           child: const ExploreHotPage(),
         ),
         MkTabBarItem(
-          label: const Tab(
+          label: Tab(
             child: Row(
               children: [
-                Icon(TablerIcons.users, size: 14),
-                Text("用户", style: TextStyle(fontSize: 12)),
+                const Icon(TablerIcons.users, size: 14),
+                Text(S.current.exploreUsers,
+                    style: const TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -76,8 +80,8 @@ class ExplorePage extends HookConsumerWidget {
           children: [
             Icon(TablerIcons.hash, color: themes.fgColor, size: 18),
             const SizedBox(width: 4),
-            const Text(
-              "发现",
+            Text(
+              S.current.explore,
             )
           ],
         ),

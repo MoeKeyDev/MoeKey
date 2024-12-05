@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/widgets/mk_input.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 import '../mk_dialog.dart';
 import 'drive.dart';
@@ -22,10 +23,10 @@ class DriverCreateFromUrlDialog extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Align(
+            Align(
               alignment: Alignment.center,
               child: Text(
-                "从网址上传",
+                S.current.uploadFromUrl,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
               ),
             ),
@@ -33,7 +34,7 @@ class DriverCreateFromUrlDialog extends HookConsumerWidget {
               height: 12,
             ),
             MkInput(
-              hintText: "请输入URL",
+              hintText: S.current.enterUrl,
               onChanged: (value) {
                 url.value = value;
               },
@@ -75,7 +76,7 @@ class DriverCreateFromUrlDialog extends HookConsumerWidget {
                           foregroundColor:
                               WidgetStateProperty.all(themes.fgColor),
                           elevation: WidgetStateProperty.all(0)),
-                      child: const Text("取消")),
+                      child: Text(S.current.cancel)),
                 )
               ],
             )

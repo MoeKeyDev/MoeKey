@@ -10,6 +10,7 @@ import 'package:moekey/widgets/mk_refresh_load.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/user.dart';
 import '../../widgets/mk_user_card.dart';
 
@@ -32,7 +33,7 @@ class UserFollowPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var userProvider =
-        userInfoProvider(username: username, host: host, userId: this.userId);
+        userInfoProvider(username: username, host: host, userId: userId);
     var user = ref.watch(userProvider);
 
     return MkScaffold(
@@ -46,7 +47,7 @@ class UserFollowPage extends HookConsumerWidget {
         showBack: true,
         leading: AppBarUserTitle(
           user: user.valueOrNull,
-          text: type == "following" ? "关注中" : "关注者",
+          text: type == "following" ? S.current.following : S.current.followers,
         ),
       ),
     );

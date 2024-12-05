@@ -9,6 +9,7 @@ import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_modal.dart';
 import 'package:moekey/widgets/user_select_dialog/user_select_dialog_state.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 import '../mk_input.dart';
 
@@ -87,7 +88,7 @@ class UserSelectDialog extends HookConsumerWidget {
             const SizedBox(
               width: 4,
             ),
-            const Text("选择用户"),
+            Text(S.current.selectUser),
             Text("(${selectList.length})"),
             const Spacer(),
             if (data.isLoading)
@@ -124,7 +125,7 @@ class UserSelectDialog extends HookConsumerWidget {
             children: [
               Expanded(
                 child: MkInput(
-                  label: '用户名',
+                  label: S.current.username,
                   prefixIcon: Icon(
                     TablerIcons.at,
                     color: themes.fgColor,
@@ -141,7 +142,7 @@ class UserSelectDialog extends HookConsumerWidget {
               ),
               Expanded(
                 child: MkInput(
-                  label: '主机名',
+                  label: S.current.hostnames,
                   prefixIcon: Icon(TablerIcons.at, color: themes.fgColor),
                   onChanged: (value) {
                     ref

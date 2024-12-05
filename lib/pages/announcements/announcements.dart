@@ -12,6 +12,7 @@ import 'package:moekey/widgets/mk_tabbar_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/announcement.dart';
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 import '../../utils/time_to_desired_format.dart';
 
@@ -26,14 +27,15 @@ class AnnouncementsPage extends HookConsumerWidget {
     return MkTabBarRefreshScroll(
       items: [
         MkTabBarItem(
-            label: const Tab(
+            label: Tab(
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     TablerIcons.bolt,
                     size: 14,
                   ),
-                  Text("现在的公告", style: TextStyle(fontSize: 12)),
+                  Text(S.current.announcementActive,
+                      style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -41,14 +43,15 @@ class AnnouncementsPage extends HookConsumerWidget {
               isActive: true,
             )),
         MkTabBarItem(
-            label: const Tab(
+            label: Tab(
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     TablerIcons.point,
                     size: 14,
                   ),
-                  Text("过去的公告", style: TextStyle(fontSize: 12)),
+                  Text(S.current.announcementExpired,
+                      style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -63,7 +66,7 @@ class AnnouncementsPage extends HookConsumerWidget {
           children: [
             Icon(TablerIcons.speakerphone, color: themes.fgColor, size: 18),
             const SizedBox(width: 8),
-            const Text("公告")
+            Text(S.current.announcements),
           ],
         ),
       ),
@@ -226,9 +229,19 @@ class AnnouncementsCard extends HookConsumerWidget {
           const SizedBox(height: 16),
           Opacity(
             opacity: 0.7,
-            child: Text(
-              "创建时间:${timeToDesiredFormat(announcement.createdAt)}\r\n${announcement.updatedAt != null ? "更新时间:${timeToDesiredFormat(announcement.updatedAt!)}" : ""}",
-              style: const TextStyle(fontSize: 13),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${S.current.createdDate}:${timeToDesiredFormat(announcement.createdAt)}",
+                  style: const TextStyle(fontSize: 13),
+                ),
+                if (announcement.updatedAt != null)
+                  Text(
+                    "${S.current.updatedDate}:${timeToDesiredFormat(announcement.updatedAt!)}",
+                    style: const TextStyle(fontSize: 13),
+                  ),
+              ],
             ),
           ),
           if (!announcement.isRead &&
@@ -244,12 +257,12 @@ class AnnouncementsCard extends HookConsumerWidget {
                   foregroundColor:
                       WidgetStateProperty.all(themes.fgOnAccentColor),
                   elevation: WidgetStateProperty.all(0)),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(TablerIcons.check, size: 18),
-                  SizedBox(width: 4),
-                  Text("好"),
+                  const Icon(TablerIcons.check, size: 18),
+                  const SizedBox(width: 4),
+                  Text(S.current.ok),
                 ],
               ),
             )

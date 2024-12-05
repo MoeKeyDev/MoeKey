@@ -9,6 +9,7 @@ import 'package:moekey/apis/models/drive.dart';
 import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
+import '../../generated/l10n.dart';
 import '../../logger.dart';
 import '../../status/themes.dart';
 import '../context_menu.dart';
@@ -63,7 +64,7 @@ class DriverList extends HookConsumerWidget {
                             // 这里没有对齐，手动对齐
                             padding:
                                 EdgeInsets.fromLTRB(4, large ? 7 : 2, 0, 0),
-                            child: const Text("保留原图"),
+                            child: Text(S.current.keepOriginal),
                           ),
                           const Spacer(),
                           SizedBox(
@@ -88,7 +89,7 @@ class DriverList extends HookConsumerWidget {
             divider: true,
           ),
           ContextMenuItem(
-              label: "刷新",
+              label: S.current.refresh,
               icon: TablerIcons.refresh,
               divider: true,
               onTap: () {
@@ -96,8 +97,8 @@ class DriverList extends HookConsumerWidget {
                 return false;
               }),
           ContextMenuItem(
-            title: "添加文件",
-            label: "本地上传",
+            title: S.current.addFile,
+            label: S.current.localUpload,
             icon: TablerIcons.upload,
             onTap: () {
               logger.d("本地上传");
@@ -107,7 +108,7 @@ class DriverList extends HookConsumerWidget {
             },
           ),
           ContextMenuItem(
-            label: "从URL",
+            label: S.current.uploadFromUrl,
             icon: TablerIcons.link,
             divider: true,
             onTap: () {
@@ -126,9 +127,9 @@ class DriverList extends HookConsumerWidget {
             },
           ),
           ContextMenuItem(
-            label: "新建文件夹",
+            label: S.current.createFolder,
             icon: TablerIcons.folder_plus,
-            title: "网盘",
+            title: S.current.drive,
             onTap: () {
               Timer(
                 const Duration(milliseconds: 150),
@@ -174,10 +175,10 @@ class DriverList extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Align(
+                Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "新建文件夹",
+                    S.current.createFolder,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ),
@@ -194,7 +195,7 @@ class DriverList extends HookConsumerWidget {
                               BorderSide(width: 1, color: themes.fgColor)),
                       contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
                       isDense: true,
-                      hintText: "文件夹名称",
+                      hintText: S.current.folderName,
                       enabledBorder: OutlineInputBorder(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(6)),
@@ -232,7 +233,7 @@ class DriverList extends HookConsumerWidget {
                             foregroundColor:
                                 WidgetStateProperty.all(themes.fgOnAccentColor),
                             elevation: WidgetStateProperty.all(0)),
-                        child: const Text("OK"),
+                        child: Text(S.current.ok),
                       ),
                     ),
                     SizedBox(
@@ -247,7 +248,7 @@ class DriverList extends HookConsumerWidget {
                               foregroundColor:
                                   WidgetStateProperty.all(themes.fgColor),
                               elevation: WidgetStateProperty.all(0)),
-                          child: const Text("取消")),
+                          child: Text(S.current.cancel)),
                     )
                   ],
                 )
@@ -436,10 +437,12 @@ class DriverList extends HookConsumerWidget {
           const Spacer(),
           if (selectModel)
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("确定(${selectList.length}/$maxSelect)")),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                  S.current.confirmSelection(selectList.length, maxSelect)),
+            ),
           if (data.isLoading)
             const LoadingCircularProgress(
               size: 18,

@@ -6,11 +6,14 @@ import 'package:moekey/status/misskey_api.dart';
 import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../generated/l10n.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/mk_header.dart';
 import '../../widgets/mk_nav_button.dart';
 
 part 'hot.g.dart';
+
+var navs = [S.current.notes, S.current.vote];
 
 class ExploreHotPage extends HookConsumerWidget {
   const ExploreHotPage({super.key});
@@ -19,7 +22,7 @@ class ExploreHotPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
     var select = useState(0);
-    const navs = ["帖子", "投票"];
+
     var dataProvider = exploreHotPageStatesProvider(select.value);
     var data = ref.watch(dataProvider);
     return LayoutBuilder(

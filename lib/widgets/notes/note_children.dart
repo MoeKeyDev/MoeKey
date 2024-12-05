@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/misskey_api.dart';
-import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/notes/note_card.dart';
+
+import '../../generated/l10n.dart';
 
 class NoteChildren extends HookConsumerWidget {
   const NoteChildren(
@@ -33,8 +34,8 @@ class NoteChildren extends HookConsumerWidget {
 
     //  最大深度限制
     if (deep >= 10) {
-      return const SliverToBoxAdapter(
-        child: Text("查看"),
+      return SliverToBoxAdapter(
+        child: Text(S.current.view),
       );
     }
     var circular = const Radius.circular(12);
@@ -109,32 +110,6 @@ class NoteChildren extends HookConsumerWidget {
                 },
               ),
             ],
-            // if (snapshot.connectionState == ConnectionState.waiting)
-            //   SliverToBoxAdapter(
-            //     child: SizedBox(
-            //       height: 60,
-            //       child: MkCard(
-            //         shadow: false,
-            //         borderRadius: BorderRadius.only(
-            //           bottomLeft: last ? circular : circularZero,
-            //           bottomRight: last ? circular : circularZero,
-            //         ),
-            //         child: Center(
-            //           child: SizedBox(
-            //             width: 25,
-            //             height: 25,
-            //             child: CircularProgressIndicator(
-            //               strokeCap: StrokeCap.round,
-            //               backgroundColor:
-            //                   Theme.of(context).primaryColor.withAlpha(32),
-            //               color: Theme.of(context).primaryColor.withAlpha(200),
-            //               strokeWidth: 6,
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
           ],
         );
       },

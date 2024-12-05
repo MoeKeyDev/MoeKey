@@ -6,34 +6,14 @@ class MfmJellyCode extends StatefulWidget {
     required this.child,
     this.speed,
   });
+
   final Widget child;
   final Duration? speed;
+
   @override
   State<MfmJellyCode> createState() => _SpinCodeState();
 }
 
-//0% {
-//     transform: scaleX(1);
-// }
-// 30% {
-//     transform: scale3d(1.25,.75,1);
-// }
-// 40% {
-//     transform: scale3d(.75,1.25,1);
-// }
-// 50% {
-//     transform: scale3d(1.15,.85,1);
-// }
-// 65% {
-//     transform: scale3d(.95,1.05,1);
-// }
-//
-// 75% {
-//     transform: scale3d(1.05,.95,1);
-// }
-// 100% {
-//     transform: scaleX(1);
-// }
 class _SpinCodeState extends State<MfmJellyCode>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
@@ -68,6 +48,7 @@ class _SpinCodeState extends State<MfmJellyCode>
     TweenSequenceItem(
         tween: Tween(begin: 0.95, end: 1.0), weight: 25), // 75% -> 100%> 35%
   ]);
+
   @override
   void initState() {
     super.initState();

@@ -19,6 +19,7 @@ import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart'
 import 'package:moekey/widgets/user_select_dialog/user_select_dialog.dart';
 
 import '../../apis/models/note.dart';
+import '../../generated/l10n.dart';
 import '../../logger.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../driver/drive_thumbnail.dart';
@@ -164,9 +165,9 @@ class NoteCreateDialog extends HookConsumerWidget {
                   ),
                   Text(
                     [
-                      if (noteType == NoteType.reply) "回复帖子",
-                      if (noteType == NoteType.reNote) "引用帖子",
-                      "发布新帖子",
+                      if (noteType == NoteType.reply) S.current.replyNoteText,
+                      if (noteType == NoteType.reNote) S.current.reNoteText,
+                      S.current.createNote
                     ][0],
                     style: const TextStyle(fontSize: 15),
                   ),
@@ -178,7 +179,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   buildReactionAcceptanceBottom(themes),
                   const SizedBox(width: 8),
                   Tooltip(
-                    message: "发布",
+                    message: S.current.publish,
                     child: FilledButton(
                       onPressed: () async {
                         var res = await ref
@@ -208,13 +209,13 @@ class NoteCreateDialog extends HookConsumerWidget {
                           const EdgeInsets.fromLTRB(12, 0, 12, 0),
                         ),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Text("发布"),
-                          SizedBox(
+                          Text(S.current.publish),
+                          const SizedBox(
                             width: 2,
                           ),
-                          Icon(
+                          const Icon(
                             TablerIcons.send,
                             size: 16,
                           ),
@@ -349,7 +350,7 @@ class NoteCreateDialog extends HookConsumerWidget {
             runSpacing: 4,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              const Text("收件人"),
+              Text(S.current.recipient),
               for (var key in data.keys)
                 Container(
                   padding: const EdgeInsets.all(2),
@@ -400,7 +401,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 width: 28,
                 height: 28,
                 child: Tooltip(
-                  message: "添加",
+                  message: S.current.add,
                   child: IconButton(
                     onPressed: () async {
                       var list = await showModel(
@@ -458,7 +459,7 @@ class NoteCreateDialog extends HookConsumerWidget {
           children: [
             if (form.poll!.choices.length < 2) ...[
               Text(
-                "投票数量不能少于两个",
+                S.current.voteOptionAtLeastTwo,
                 style: TextStyle(color: themes.errorColor),
               ),
               const SizedBox(height: 8)
@@ -470,7 +471,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   Expanded(
                     child: MkInput(
                       key: key,
-                      hintText: "选项 ${index + 1}",
+                      hintText: S.current.voteOptionHint(index + 1),
                       initialValue: item,
                       onChanged: (value) {
                         ref
@@ -538,7 +539,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                     ),
                   ),
                   child: Text(
-                    "添加",
+                    S.current.add,
                     style: TextStyle(color: themes.fgColor),
                   ),
                 ),
@@ -546,7 +547,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   width: 8,
                 ),
                 const Spacer(),
-                const Text("允许多个投票"),
+                Text(S.current.voteEnableMultiChoice),
                 const SizedBox(
                   width: 8,
                 ),
@@ -573,9 +574,9 @@ class NoteCreateDialog extends HookConsumerWidget {
             ),
             Row(
               children: [
-                const Text("截至日期"),
+                Text(S.current.voteDueDate),
                 const Spacer(),
-                const Text("永久"),
+                Text(S.current.voteNoDueDate),
                 const SizedBox(
                   width: 8,
                 ),
@@ -611,7 +612,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("天"),
+                          Text(S.current.day),
                           const SizedBox(
                             height: 4,
                           ),
@@ -621,7 +622,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                                   child: TextFormField(
                                 decoration: inputDecoration(
                                   themes,
-                                  "天",
+                                  S.current.day,
                                 ),
                                 style: const TextStyle(fontSize: 14),
                                 cursorWidth: 1,
@@ -657,7 +658,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("小时"),
+                          Text(S.current.hour),
                           const SizedBox(
                             height: 4,
                           ),
@@ -667,7 +668,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                                   child: TextFormField(
                                 decoration: inputDecoration(
                                   themes,
-                                  "小时",
+                                  S.current.hour,
                                 ),
                                 // style: const TextStyle(fontSize: 14),
                                 cursorWidth: 1,
@@ -703,7 +704,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("分钟"),
+                          Text(S.current.minute),
                           const SizedBox(
                             height: 4,
                           ),
@@ -713,7 +714,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                                 child: TextFormField(
                                   decoration: inputDecoration(
                                     themes,
-                                    "分钟",
+                                    S.current.minute,
                                   ),
                                   style: const TextStyle(fontSize: 14),
                                   cursorWidth: 1,
@@ -852,7 +853,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                       open();
                     },
                     context: context,
-                    tooltip: "插入附件",
+                    tooltip: S.current.insertDriverFile,
                     icon: TablerIcons.photo_plus);
               },
               id: ref
@@ -878,7 +879,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   }
                 },
                 context: context,
-                tooltip: "投票",
+                tooltip: S.current.vote,
                 icon: TablerIcons.chart_arrows,
                 color: form.isNotePoll ? themes.accentColor : null),
             const SizedBox(
@@ -892,7 +893,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                       .setIsCw(!form.isCw);
                 },
                 context: context,
-                tooltip: "隐藏内容",
+                tooltip: S.current.cw,
                 icon: TablerIcons.eye_off,
                 color: form.isCw ? themes.accentColor : null),
             const SizedBox(
@@ -919,7 +920,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   }
                 },
                 context: context,
-                tooltip: "提及",
+                tooltip: S.current.mention,
                 icon: TablerIcons.at),
             const SizedBox(
               width: 4,
@@ -943,7 +944,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   }
                 },
                 context: context,
-                tooltip: "话题标签",
+                tooltip: S.current.hashtag,
                 icon: TablerIcons.hash),
             const SizedBox(
               width: 4,
@@ -976,7 +977,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   }
                 },
                 context: context,
-                tooltip: "表情符号",
+                tooltip: S.current.emoji,
                 icon: TablerIcons.mood_happy,
                 color: form.isShowEmoji ? themes.accentColor : null),
             const Spacer(),
@@ -988,7 +989,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                       .setPreview(!form.preview);
                 },
                 context: context,
-                tooltip: "预览文本",
+                tooltip: S.current.previewNote,
                 icon: TablerIcons.eye,
                 color: form.preview ? themes.accentColor : null),
           ],
@@ -1042,9 +1043,9 @@ class NoteCreateDialog extends HookConsumerWidget {
                 TextFormField(
                   key: const ValueKey("cw"),
                   keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: "隐藏内容",
+                      hintText: S.current.cw,
                       isDense: true),
                   maxLines: 1,
                   initialValue: state.cw,
@@ -1065,9 +1066,9 @@ class NoteCreateDialog extends HookConsumerWidget {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: [
-                    if (noteType == NoteType.reply) "回复这个帖子...",
-                    if (noteType == NoteType.reNote) "引用这个帖子...",
-                    "发生了什么...",
+                    if (noteType == NoteType.reply) S.current.replyNoteHint,
+                    if (noteType == NoteType.reNote) S.current.reNoteHint,
+                    S.current.createNoteHint
                   ][0],
                   isDense: true,
                 ),
@@ -1083,24 +1084,6 @@ class NoteCreateDialog extends HookConsumerWidget {
                       .setText(value);
                 },
               )
-              // Expanded(
-              //     child: TextFormField(
-              //   key: const ValueKey("text"),
-              //   keyboardType: TextInputType.multiline,
-              //   decoration: const InputDecoration(
-              //       border: InputBorder.none,
-              //       hintText: "发生了什么...",
-              //       isDense: true),
-              //   minLines: isFullscreen ? 100 : 4,
-              //   maxLines: isFullscreen ? 200 : 10,
-              //   maxLength: data["maxNoteTextLength"] ?? 0,
-              //   initialValue: state.text,
-              //   onChanged: (value) {
-              //     ref
-              //         .read(noteCreateDialogStateProvider(noteId,noteType).notifier)
-              //         .setText(value);
-              //   },
-              // ))
             ],
           ),
         );
@@ -1112,7 +1095,7 @@ class NoteCreateDialog extends HookConsumerWidget {
     return HookConsumer(builder: (context, ref, child) {
       var stats = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
       return Tooltip(
-        message: "接受表情回应",
+        message: S.current.reactionAccepting,
         child: SizedBox(
           width: 32,
           child: ContextMenuBuilder(
@@ -1122,7 +1105,7 @@ class NoteCreateDialog extends HookConsumerWidget {
               menuListBuilder: () {
                 return [
                   ContextMenuItem(
-                      label: "全部",
+                      label: S.current.reactionAcceptingAll,
                       isActive: stats.reactionAcceptance == null,
                       onTap: () {
                         ref
@@ -1133,7 +1116,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         return false;
                       }),
                   ContextMenuItem(
-                      label: "远程仅点赞",
+                      label: S.current.reactionAcceptingLikeOnlyRemote,
                       isActive: stats.reactionAcceptance ==
                           NoteReactionAcceptance.likeOnlyForRemote,
                       onTap: () {
@@ -1146,7 +1129,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         return false;
                       }),
                   ContextMenuItem(
-                      label: "仅限非敏感内容",
+                      label: S.current.reactionAcceptingNoneSensitive,
                       isActive: stats.reactionAcceptance ==
                           NoteReactionAcceptance.nonSensitiveOnly,
                       onTap: () {
@@ -1159,7 +1142,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         return false;
                       }),
                   ContextMenuItem(
-                      label: "仅限非敏感内容（远程仅点赞）",
+                      label: S.current.reactionAcceptingNoneSensitiveOrLocal,
                       isActive: stats.reactionAcceptance ==
                           NoteReactionAcceptance
                               .nonSensitiveOnlyForLocalLikeOnlyForRemote,
@@ -1173,7 +1156,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         return false;
                       }),
                   ContextMenuItem(
-                      label: "仅点赞",
+                      label: S.current.reactionAcceptingLikeOnly,
                       isActive: stats.reactionAcceptance ==
                           NoteReactionAcceptance.likeOnly,
                       onTap: () {
@@ -1232,7 +1215,7 @@ class NoteCreateDialog extends HookConsumerWidget {
       builder: (context, ref, child) {
         var state = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
         return Tooltip(
-          message: "不参与联合",
+          message: S.current.noteLocalOnly,
           child: SizedBox(
             width: 32,
             child: TextButton(
@@ -1281,7 +1264,7 @@ class NoteCreateDialog extends HookConsumerWidget {
         NoteVisibility.specified => TablerIcons.mail,
       };
       return Tooltip(
-        message: "可见性",
+        message: S.current.noteVisibility,
         child: SizedBox(
           width: 32,
           child: ContextMenuBuilder(
@@ -1298,13 +1281,13 @@ class NoteCreateDialog extends HookConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (!large)
-                            const Padding(
+                            Padding(
                               padding:
                                   EdgeInsets.only(left: 14, top: 8, bottom: 4),
                               child: Opacity(
                                 opacity: 0.7,
                                 child: Text(
-                                  "可见性",
+                                  S.current.noteVisibility,
                                   style: TextStyle(fontSize: 11),
                                 ),
                               ),
@@ -1312,8 +1295,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                           buildVisibilityBottom(
                               state,
                               themes,
-                              "公开",
-                              "您的帖子将出现在全局时间线上",
+                              S.current.noteVisibilityPublic,
+                              S.current.noteVisibilityPublicText,
                               TablerIcons.world,
                               NoteVisibility.public,
                               state.visibility,
@@ -1322,8 +1305,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                           buildVisibilityBottom(
                               state,
                               themes,
-                              "首页",
-                              "仅发送至首页的时间线",
+                              S.current.noteVisibilityHome,
+                              S.current.noteVisibilityHomeText,
                               TablerIcons.home,
                               NoteVisibility.home,
                               state.visibility,
@@ -1332,8 +1315,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                           buildVisibilityBottom(
                               state,
                               themes,
-                              "仅关注者",
-                              "仅发送至关注者",
+                              S.current.noteVisibilityFollowers,
+                              S.current.noteVisibilityFollowersText,
                               TablerIcons.lock,
                               NoteVisibility.followers,
                               state.visibility,
@@ -1342,8 +1325,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                           buildVisibilityBottom(
                               state,
                               themes,
-                              "指定用户",
-                              "仅发送给指定用户",
+                              S.current.noteVisibilitySpecified,
+                              S.current.noteVisibilitySpecifiedText,
                               TablerIcons.mail,
                               NoteVisibility.specified,
                               state.visibility,

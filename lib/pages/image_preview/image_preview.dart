@@ -11,6 +11,7 @@ import 'package:moekey/utils/save_image.dart';
 import 'package:moekey/widgets/mk_image.dart';
 
 import '../../apis/models/drive.dart';
+import '../../generated/l10n.dart';
 import '../../logger.dart';
 
 List<double> _doubleTapScales = <double>[1.0, 2.0];
@@ -268,7 +269,9 @@ class ImagePreviewPage extends HookConsumerWidget {
                                         galleryItems[currentIndex.value].name);
                                 if (context.mounted) {
                                   var snackBar = SnackBar(
-                                    content: Text(res ? "保存成功" : "保存失败"),
+                                    content: Text(res
+                                        ? S.current.saveSuccess
+                                        : S.current.saveFailed),
                                   );
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(snackBar);

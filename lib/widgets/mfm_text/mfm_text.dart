@@ -13,8 +13,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../apis/models/emojis.dart';
 import '../../logger.dart';
-import '../../pages/users/user_page.dart';
-import '../../router/main_router_delegate.dart';
 import '../../status/themes.dart';
 import '../hover_builder.dart';
 import '../mk_image.dart';
@@ -277,6 +275,7 @@ _getParse({
                 var host = item.props?["host"] ?? currentServerHost;
                 return GestureDetector(
                   onTap: () {
+                    logger.d('/user/$host/$user');
                     // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
                     //   path: "user/@$user${host != null ? "@$host" : ""}",
                     //   page: () {

@@ -5,10 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/pages/home/home_page.dart';
 
 import '../generated/l10n.dart';
-import '../router/main_router_delegate.dart';
 import '../status/themes.dart';
 import 'blur_widget.dart';
 

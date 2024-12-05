@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/themes.dart';
 
+import '../../../generated/l10n.dart';
+
 class WidgetsListPage extends ConsumerWidget {
   const WidgetsListPage({super.key});
 
@@ -17,9 +19,9 @@ class WidgetsListPage extends ConsumerWidget {
             left: BorderSide(color: theme.dividerColor, width: 1),
           ),
         ),
-        child: const SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Column(
-            children: [Text("小部件列表(未完成)")],
+            children: [Text(S.current.userWidgetUnSupport)],
           ),
         ),
       ),

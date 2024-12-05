@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/logger.dart';
@@ -8,7 +7,6 @@ import 'package:moekey/pages/notes/note_page.dart';
 import 'package:moekey/pages/notifications/notifications_page.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/mk_tabbar_refresh_scroll_state.dart';
-import 'package:moekey/status/user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
@@ -23,7 +21,6 @@ import '../pages/search/search_page.dart';
 import '../pages/splash_page/splash_page.dart';
 import '../pages/timeline/timeline_page.dart';
 import '../pages/users/user_follow.dart';
-import '../widgets/notes/note_card.dart';
 
 part 'router.g.dart';
 
@@ -153,6 +150,13 @@ GoRouter router(Ref ref) {
                 ),
               ),
             ]),
+        GoRoute(
+          path: "/user/null/:username",
+          builder: (_, status) => UserPage(
+            host: null,
+            username: status.pathParameters['username']!,
+          ),
+        ),
         GoRoute(
           path: "/user/:host/:username",
           builder: (_, status) => UserPage(

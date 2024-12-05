@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/login_user.dart';
 import 'package:moekey/apis/models/user_full.dart';
-import 'package:moekey/pages/home/home_page.dart';
-import 'package:moekey/pages/users/user_follow.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/status/user.dart';
@@ -17,7 +15,7 @@ import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../router/main_router_delegate.dart';
+import '../../generated/l10n.dart';
 import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_card.dart';
 import '../../widgets/mk_image.dart';
@@ -148,7 +146,7 @@ class _UserFollowsCount extends StatelessWidget {
               Text("${userData.notesCount}",
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.bold)),
-              const Text("帖子", style: TextStyle(fontSize: 12)),
+              Text(S.current.notes, style: TextStyle(fontSize: 12)),
             ],
           ),
           if (userData.followingVisibility == null ||
@@ -176,7 +174,7 @@ class _UserFollowsCount extends StatelessWidget {
                     Text("${userData.followingCount}",
                         style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold)),
-                    const Text("关注中", style: TextStyle(fontSize: 12)),
+                    Text(S.current.following, style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
@@ -205,7 +203,7 @@ class _UserFollowsCount extends StatelessWidget {
                     Text("${userData.followersCount}",
                         style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold)),
-                    const Text("关注者", style: TextStyle(fontSize: 12)),
+                    Text(S.current.followers, style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
@@ -290,8 +288,8 @@ class _UserRegisterTime extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(TablerIcons.calendar, color: themes.fgColor, size: 15),
-                  const Text(
-                    "注册于",
+                  Text(
+                    S.current.userRegisterBy,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
@@ -331,7 +329,7 @@ class _UserDescriptionSmall extends StatelessWidget {
             child: DefaultTextStyle(
               style: DefaultTextStyle.of(context).style.copyWith(fontSize: 13),
               child: MFMText(
-                text: userData.description ?? "此用户尚无自我介绍",
+                text: userData.description ?? S.current.userDescriptionIsNull,
                 bigEmojiCode: false,
                 emojis: userData.emojis,
                 textAlign: TextAlign.center,
@@ -369,7 +367,8 @@ class _UserDescription extends StatelessWidget {
                   style:
                       DefaultTextStyle.of(context).style.copyWith(fontSize: 13),
                   child: MFMText(
-                    text: userData.description ?? "此用户尚无自我介绍",
+                    text:
+                        userData.description ?? S.current.userDescriptionIsNull,
                     bigEmojiCode: false,
                     emojis: userData.emojis,
                     currentServerHost: userData.host,
@@ -425,7 +424,7 @@ class _UserNames extends StatelessWidget {
                 menuListBuilder: () {
                   return [
                     ContextMenuItem(
-                        label: "复制用户名",
+                        label: S.current.copyUsername,
                         onTap: () {
                           Clipboard.setData(ClipboardData(
                               text: "@${userData.username}@${userData.host}"));
@@ -599,7 +598,7 @@ class _UserBanner extends StatelessWidget {
                         menuListBuilder: () {
                           return [
                             ContextMenuItem(
-                              label: "复制用户名",
+                              label: S.current.copyUsername,
                               onTap: () {
                                 Clipboard.setData(ClipboardData(
                                     text:
@@ -652,9 +651,9 @@ class _UserBanner extends StatelessWidget {
                   ),
                 ),
                 padding: const EdgeInsets.all(4),
-                child: const Text(
-                  "正在关注你",
-                  style: TextStyle(
+                child: Text(
+                  S.current.isFollowingYouNow,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,
                   ),
@@ -680,7 +679,7 @@ class _UserBanner extends StatelessWidget {
                             menuListBuilder: () {
                               return [
                                 ContextMenuItem(
-                                  label: "复制用户名",
+                                  label: S.current.copyUsername,
                                   icon: TablerIcons.at,
                                   onTap: () {
                                     Clipboard.setData(ClipboardData(
@@ -690,7 +689,7 @@ class _UserBanner extends StatelessWidget {
                                   },
                                 ),
                                 ContextMenuItem(
-                                  label: "复制RSS",
+                                  label: S.current.copyRSS,
                                   icon: TablerIcons.rss,
                                   onTap: () {
                                     Clipboard.setData(ClipboardData(
@@ -700,7 +699,7 @@ class _UserBanner extends StatelessWidget {
                                   },
                                 ),
                                 ContextMenuItem(
-                                  label: "转到浏览器显示",
+                                  label: S.current.openInNewTab,
                                   icon: TablerIcons.external_link,
                                   onTap: () {
                                     launchUrlString(
@@ -709,7 +708,7 @@ class _UserBanner extends StatelessWidget {
                                   },
                                 ),
                                 ContextMenuItem(
-                                  label: "复制用户主页地址",
+                                  label: S.current.copyUserHomeLink,
                                   icon: TablerIcons.home,
                                   onTap: () {
                                     Clipboard.setData(ClipboardData(
@@ -804,7 +803,9 @@ class _UserFollowButton extends HookConsumerWidget {
                 children: [
                   const SizedBox(width: 4),
                   Text(
-                    userData.isLocked ? "关注请求批准中" : "正在处理",
+                    userData.isLocked
+                        ? S.current.pendingFollowRequest
+                        : S.current.processing,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -831,7 +832,9 @@ class _UserFollowButton extends HookConsumerWidget {
                 children: [
                   const SizedBox(width: 4),
                   Text(
-                    userData.isFollowing ? "取消关注" : "关注",
+                    userData.isFollowing
+                        ? S.current.unfollow
+                        : S.current.follow,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: userData.isFollowing
