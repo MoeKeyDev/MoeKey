@@ -7,13 +7,13 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
-import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:moekey/widgets/hover_builder.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog.dart';
 import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../apis/models/drive.dart';
+import '../../generated/l10n.dart';
 import '../mk_dialog.dart';
 import '../mk_image.dart';
 import 'drive.dart';
@@ -48,7 +48,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
             return [
               if (data.runtimeType == DriverFolderModel) ...[
                 ContextMenuItem(
-                  label: "重命名",
+                  label: S.current.rename,
                   icon: TablerIcons.forms,
                   divider: true,
                   onTap: () {
@@ -69,7 +69,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                   },
                 ),
                 ContextMenuItem(
-                    label: "删除",
+                    label: S.current.delete,
                     icon: TablerIcons.trash,
                     danger: true,
                     onTap: () {
@@ -90,7 +90,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     })
               ] else if (data.runtimeType == DriveFileModel) ...[
                 ContextMenuItem(
-                  label: "重命名",
+                  label: S.current.rename,
                   icon: TablerIcons.forms,
                   onTap: () {
                     Timer(
@@ -111,7 +111,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                 ),
                 if ((data as DriveFileModel).isSensitive)
                   ContextMenuItem(
-                      label: "取消标记为敏感内容",
+                      label: S.current.cancelSensitive,
                       icon: TablerIcons.eye,
                       onTap: () {
                         ref
@@ -121,7 +121,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                       })
                 else
                   ContextMenuItem(
-                    label: "标记为敏感内容",
+                    label: S.current.markAsSensitive,
                     icon: TablerIcons.eye_exclamation,
                     onTap: () {
                       ref
@@ -131,7 +131,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     },
                   ),
                 ContextMenuItem(
-                  label: "添加标题",
+                  label: S.current.addTitle,
                   icon: TablerIcons.text_caption,
                   divider: true,
                   onTap: () {
@@ -152,7 +152,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                   },
                 ),
                 ContextMenuItem(
-                  label: "从文件创建帖子",
+                  label: S.current.createNoteFormFile,
                   icon: TablerIcons.pencil,
                   onTap: () async {
                     Timer(const Duration(milliseconds: 150), () {
@@ -165,7 +165,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                   },
                 ),
                 ContextMenuItem(
-                  label: "复制链接",
+                  label: S.current.copyLink,
                   icon: TablerIcons.link,
                   onTap: () {
                     Clipboard.setData(ClipboardData(
@@ -175,15 +175,17 @@ class DriveImageThumbnail extends HookConsumerWidget {
                   },
                 ),
                 ContextMenuItem(
-                    label: "下载",
+                    label: S.current.download,
                     icon: TablerIcons.download,
                     divider: true,
                     onTap: () {
-                      launchUrl(Uri.parse((data as DriveFileModel).url,));
+                      launchUrl(Uri.parse(
+                        (data as DriveFileModel).url,
+                      ));
                       return false;
                     }),
                 ContextMenuItem(
-                  label: "删除",
+                  label: S.current.delete,
                   icon: TablerIcons.trash,
                   danger: true,
                   onTap: () {
@@ -288,7 +290,9 @@ class DriveImageThumbnail extends HookConsumerWidget {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  data.runtimeType == DriveFileModel ? "重命名文件" : "重命名文件夹",
+                  data.runtimeType == DriveFileModel
+                      ? S.current.renameFile
+                      : S.current.renameFolder,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 15),
                 ),
@@ -305,7 +309,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                             BorderSide(width: 1, color: themes.fgColor)),
                     contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
                     isDense: true,
-                    hintText: "请输入新文件名",
+                    hintText: S.current.enterNewFileName,
                     enabledBorder: OutlineInputBorder(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(6)),
@@ -370,7 +374,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                             foregroundColor:
                                 WidgetStateProperty.all(themes.fgColor),
                             elevation: WidgetStateProperty.all(0)),
-                        child: const Text("取消")),
+                        child: Text(S.current.cancel)),
                   )
                 ],
               )
@@ -391,10 +395,10 @@ class DriveImageThumbnail extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Align(
+              Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "添加标题",
+                  S.current.addTitle,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
               ),
@@ -410,7 +414,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                             BorderSide(width: 1, color: themes.fgColor)),
                     contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
                     isDense: true,
-                    hintText: "请输入新标题",
+                    hintText: S.current.enterNewTitle,
                     enabledBorder: OutlineInputBorder(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(6)),
@@ -468,7 +472,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                             foregroundColor:
                                 WidgetStateProperty.all(themes.fgColor),
                             elevation: WidgetStateProperty.all(0)),
-                        child: const Text("取消")),
+                        child: Text(S.current.cancel)),
                   )
                 ],
               )
@@ -500,7 +504,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "要删除「${data.name}」文件吗？附加此文件的帖子也会被删除。",
+                    S.current.deleteFileConfirmation(data.name),
                     textAlign: TextAlign.center,
                   ),
                 )
@@ -508,7 +512,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "要删除「${data.name}」 文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。",
+                    S.current.deleteFolderConfirmation(data.name),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -559,7 +563,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                             foregroundColor:
                                 WidgetStateProperty.all(themes.fgColor),
                             elevation: WidgetStateProperty.all(0)),
-                        child: const Text("取消")),
+                        child: Text(S.current.cancel)),
                   )
                 ],
               )

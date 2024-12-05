@@ -154,6 +154,13 @@ GoRouter router(Ref ref) {
               ),
             ]),
         GoRoute(
+          path: "/user/null/:username",
+          builder: (_, status) => UserPage(
+            host: null,
+            username: status.pathParameters['username']!,
+          ),
+        ),
+        GoRoute(
           path: "/user/:host/:username",
           builder: (_, status) => UserPage(
             host: status.pathParameters['host']!,

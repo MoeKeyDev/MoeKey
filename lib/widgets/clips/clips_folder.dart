@@ -1,18 +1,14 @@
-import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/pages/clips/clips_notes.dart';
-import 'package:moekey/pages/home/home_page.dart';
-import 'package:moekey/pages/users/user_page.dart';
-import 'package:moekey/router/main_router_delegate.dart';
+import 'package:intl/intl.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_overflow_show.dart';
-
+import 'package:moekey/generated/l10n.dart';
 import '../../apis/models/clips.dart';
 import '../../status/themes.dart';
 import '../../utils/time_ago_since_date.dart';
@@ -111,22 +107,7 @@ class ClipsCardComponent extends HookConsumerWidget {
                           )),
                           if (data.lastClippedAt != null)
                             Text(
-                                "${formatDate(
-                                  data.lastClippedAt!,
-                                  [
-                                    yyyy,
-                                    "-",
-                                    mm,
-                                    "-",
-                                    dd,
-                                    " ",
-                                    HH,
-                                    ":",
-                                    nn,
-                                    ":",
-                                    ss
-                                  ],
-                                )}(${timeAgoSinceDate(data.createdAt)})",
+                                "${DateFormat('yyyy-MM-dd HH:mm:ss').format(data.lastClippedAt!)}(${timeAgoSinceDate(data.createdAt)})",
                                 style: TextStyle(fontSize: fontsize * 0.9)),
                           const SizedBox(
                             width: 6,
@@ -163,7 +144,7 @@ class ClipsCardComponent extends HookConsumerWidget {
                       MkOverflowShow(
                           content: MFMText(text: data.description ?? ""),
                           action: (isShow, p1) {
-                            return const Text("查看更多");
+                            return Text(S.current.viewMore);
                           },
                           limit: limit,
                           height: height)

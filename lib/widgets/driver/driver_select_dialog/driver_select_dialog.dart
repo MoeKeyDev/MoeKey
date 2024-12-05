@@ -8,6 +8,7 @@ import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:moekey/widgets/driver/upload_file_dialog.dart';
 
+import '../../../generated/l10n.dart';
 import '../../../logger.dart';
 import '../../mk_card.dart';
 import '../../mk_switch.dart';
@@ -55,7 +56,7 @@ class DriverSelectContextMenu extends HookConsumerWidget {
                               // 这里没有对齐，手动对齐
                               padding:
                                   EdgeInsets.fromLTRB(4, large ? 7 : 2, 0, 0),
-                              child: const Text("保留原图"),
+                              child: Text(S.current.keepOriginal),
                             ),
                             const Spacer(),
                             SizedBox(
@@ -80,8 +81,8 @@ class DriverSelectContextMenu extends HookConsumerWidget {
               divider: true,
             ),
             ContextMenuItem(
-              title: "添加文件",
-              label: "本地上传",
+              title: S.current.addFile,
+              label: S.current.localUpload,
               icon: TablerIcons.upload,
               onTap: () {
                 logger.d("本地上传");
@@ -102,7 +103,7 @@ class DriverSelectContextMenu extends HookConsumerWidget {
               },
             ),
             ContextMenuItem(
-              label: "从网盘中",
+              label: S.current.fromCloud,
               icon: TablerIcons.cloud,
               onTap: () {
                 Timer(

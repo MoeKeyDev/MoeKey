@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/generated/l10n.dart';
 import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/widgets/clips/clips_create_dialog_state.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
@@ -50,7 +51,7 @@ class ClipCreateDialog extends HookConsumerWidget {
               if (clipId == null ||
                   (clipId != null && clipData.value != null)) ...[
                 MkInput(
-                    label: "名称",
+                    label: S.current.name,
                     initialValue: state.name,
                     onChanged: (name) {
                       ref.read(provider.notifier).updateName(name);
@@ -59,7 +60,7 @@ class ClipCreateDialog extends HookConsumerWidget {
                   height: 24,
                 ),
                 MkInput(
-                  label: "描述",
+                  label: S.current.description,
                   initialValue: state.description,
                   maxLines: 6,
                   onChanged: (description) {
@@ -78,7 +79,7 @@ class ClipCreateDialog extends HookConsumerWidget {
                           .updateIsPreview(!state.isPreview);
                     },
                     child: Text(
-                      "预览",
+                      S.current.preview,
                       style: TextStyle(color: themes.accentColor),
                     ),
                   ),
@@ -111,7 +112,7 @@ class ClipCreateDialog extends HookConsumerWidget {
                     const SizedBox(
                       width: 12,
                     ),
-                    const Text("公开")
+                    Text(S.current.public)
                   ],
                 )
               ]

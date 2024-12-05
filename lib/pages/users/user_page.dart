@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/user_full.dart';
+import 'package:moekey/logger.dart';
 import 'package:moekey/pages/users/user_clip_list.dart';
 import 'package:moekey/pages/users/user_notes_list.dart';
 import 'package:moekey/pages/users/user_overview.dart';
@@ -131,7 +132,9 @@ class UserPage extends HookConsumerWidget {
           ),
         ],
         showBack: true,
-        tabAlignment: constraints.maxWidth > 500 ? TabAlignment.start : TabAlignment.center,
+        tabAlignment: constraints.maxWidth > 500
+            ? TabAlignment.start
+            : TabAlignment.center,
         leading: AppBarUserTitle(user: userData),
       );
     });

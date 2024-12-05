@@ -6,6 +6,7 @@ import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_modal.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 import 'hashtag_select_dialog_state.dart';
 
@@ -72,7 +73,7 @@ class HashtagSelectDialog extends HookConsumerWidget {
             const SizedBox(
               width: 4,
             ),
-            const Text("选择Hashtag"),
+            Text(S.current.selectHashtag),
             Text("(${selectList.length})"),
             const Spacer(),
             if (data.isLoading)

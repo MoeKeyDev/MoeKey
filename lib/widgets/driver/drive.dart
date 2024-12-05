@@ -142,7 +142,8 @@ class DriverUploader extends _$DriverUploader {
 
   void _showErrorDialog(DioException e, BuildContext context) {
     MkInfoDialog.show(
-        info: "上传失败\n ${e.response?.data.toString() ?? e.toString()}",
+        info:
+            S.current.uploadFailed(e.response?.data.toString() ?? e.toString()),
         isError: true,
         context: context);
   }

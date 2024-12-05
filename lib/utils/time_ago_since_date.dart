@@ -1,20 +1,22 @@
+import '../generated/l10n.dart';
+
 String timeAgoSinceDate(DateTime notificationDate) {
   final date2 = DateTime.now();
   final difference = date2.difference(notificationDate);
 
   if (difference.inSeconds < 5) {
-    return '刚刚';
+    return S.current.justNow;
   } else if (difference.inSeconds < 60) {
-    return '${difference.inSeconds}秒前';
+    return S.current.secondsAgo(difference.inSeconds);
   } else if (difference.inMinutes < 60) {
-    return '${difference.inMinutes}分钟前';
+    return S.current.minutesAgo(difference.inMinutes);
   } else if (difference.inHours < 24) {
-    return '${difference.inHours}小时前';
+    return S.current.hoursAgo(difference.inHours);
   } else if (difference.inDays < 30) {
-    return '${difference.inDays}天前';
+    return S.current.daysAgo(difference.inDays);
   } else if (difference.inDays < 365) {
-    return '${(difference.inDays / 30).floor()}月前';
+    return S.current.monthsAgo((difference.inDays / 30).floor());
   } else {
-    return '${(difference.inDays / 365).floor()}年前';
+    return S.current.yearsAgo((difference.inDays / 365).floor());
   }
 }

@@ -10,6 +10,7 @@ import 'package:moekey/widgets/login/servers_select_state.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
 
+import '../../generated/l10n.dart';
 import '../../main.dart';
 import '../../status/server.dart';
 import '../../status/themes.dart';
@@ -35,13 +36,11 @@ class ServersSelectCard extends HookConsumerWidget {
         padding: EdgeInsets.zero,
         child: Column(
           children: [
-            const SizedBox(
+            SizedBox(
               width: double.infinity,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Text(
-                  "用户登陆",
-                ),
+                child: Text(S.current.selectServer),
               ),
             ),
             Divider(color: themes.dividerColor, height: 0.5),
@@ -50,7 +49,7 @@ class ServersSelectCard extends HookConsumerWidget {
               child: TextFormField(
                 decoration: inputDecoration(
                   themes,
-                  "搜索或输入服务器地址",
+                  S.current.searchServers,
                   prefixIcon: const Icon(TablerIcons.server),
                 ),
                 keyboardType: TextInputType.url,

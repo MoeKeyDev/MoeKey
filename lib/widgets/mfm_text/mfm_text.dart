@@ -277,6 +277,7 @@ _getParse({
                 var host = item.props?["host"] ?? currentServerHost;
                 return GestureDetector(
                   onTap: () {
+                    logger.d('/user/$host/$user');
                     // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
                     //   path: "user/@$user${host != null ? "@$host" : ""}",
                     //   page: () {
