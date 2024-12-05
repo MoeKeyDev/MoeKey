@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0
+
+- Add English language support
+- Add Japanese language support
+
 ## 0.6.1
 
 ### Fixed

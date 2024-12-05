@@ -1,41 +1,51 @@
+English | [简体中文](./README.zh_CN.md)
+
 ![](./docs/banner.png)
+
+[![Crowdin](https://badges.crowdin.net/moekey/localized.svg)](https://crowdin.com/project/moekey)
 
 # MoeKey
 
-MoeKey is a misskey client for Flutter
-
-> This project is currently under development and has many functional deficiencies
+MoeKey is a cross-platform misskey client made by Flutter.
 
 ## Features
 
-- [x] misskey Servers Selection List
-- [x] misskey Login
-- [x] TimeLine
-- [x] Drive
-- [x] Notifications
-- [x] Create,reply and forward Notes
-- [x] Streaming Apis
-- [x] Compatible with moekey themes file
-- [x] Mfm text
-- [x] Emoji reactions
-- [x] Multi users login
-- [ ] I18n
-- [X] User Profile
-- [ ] User Widgets
-- [X] Clips
-- [X] Explore
-- [x] Announcements
-- [x] Search
-- [ ] User Lists
-- [ ] Achievements
-- [ ] Channels
-- [ ] Firefish Apis
+MoeKey wants to be a UI style consistent with the original Misskey. A fully functional Misskey client.
+
+> This project is currently under development and has many functional deficiencies
+
+Currently implemented features:
+
+- Multi-user login
+- Timeline view, search
+- Notes related functions
+- Notification view
+- Clip
+- Misskey Announcements
+- Explore
+
+Temporarily unimplemented features
+
+- HashTag Page
+- User Profile Edit
+- Misskey Settings
+- Antennas, Channels, Lists
+- User widgets
+- User Achievements
+
+## Download
+
+- [GitHub Releases](https://github.com/MoeKeyDev/MoeKey/releases/latest)
 
 ## Screenshot
 
 ![](./docs/Screenshot.png)
 
 ## Developers
+
+### Localize
+
+Help us translate MoeKey into your language on [Crowdin](https://crowdin.com/project/moekey)
 
 riverpod code gen
 

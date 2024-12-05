@@ -6,10 +6,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/logger.dart';
-import 'package:moekey/main.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
-import 'package:moekey/pages/users/user_page.dart';
-import 'package:moekey/router/router.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
@@ -406,14 +403,8 @@ class UserAvatarButton extends ConsumerWidget {
                   Future.delayed(
                     Durations.medium1,
                     () {
-                      // logic.changePageByRouterItem(RouterItem(
-                      //   path: "member/${user?.id}",
-                      //   page: () {
-                      //     return UserPage(
-                      //       userId: user?.id,
-                      //     );
-                      //   },
-                      // ));
+                      if (!context.mounted) return;
+                      context.push("/user/${user?.id}");
                     },
                   );
                   return false;
