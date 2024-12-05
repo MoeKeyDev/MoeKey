@@ -16,6 +16,7 @@ import 'package:moekey/widgets/mk_scaffold.dart';
 
 import '../../apis/models/clips.dart';
 import '../../apis/models/note.dart';
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/mk_info_dialog.dart';
@@ -87,7 +88,7 @@ class ClipsNotes extends HookConsumerWidget {
                       customContextmenu: [
                         ContextMenuItem(
                           danger: true,
-                          label: "移除便签",
+                          label: S.current.clipRemove,
                           icon: TablerIcons.trash,
                           divider: true,
                           onTap: () {
@@ -158,7 +159,7 @@ class ClipsNotes extends HookConsumerWidget {
                   },
                 );
               },
-              tooltip: "编辑",
+              tooltip: S.current.edit,
               icon: const Icon(TablerIcons.pencil, size: 18),
               color: themes.fgColor,
             ),
@@ -174,7 +175,7 @@ class ClipsNotes extends HookConsumerWidget {
                         height: 12,
                       ),
                       Text(
-                        "要删掉「${showDate?.name ?? ""}」吗？",
+                        S.current.deleteConfirm(showDate?.name ?? ""),
                         style: const TextStyle(fontSize: 15),
                       ),
                     ], context: context) ??
@@ -189,7 +190,7 @@ class ClipsNotes extends HookConsumerWidget {
                   ref.invalidate(clipsProvider);
                 }
               },
-              tooltip: "删除",
+              tooltip: S.current.delete,
               icon: const Icon(TablerIcons.trash, size: 18),
               color: themes.fgColor,
             )
@@ -222,7 +223,7 @@ class _ClipContentCard extends HookConsumerWidget {
               child: UserInfo(
                 data: showDate.value!.user,
                 suffix: Tooltip(
-                  message: "添加到收藏",
+                  message: S.current.clipFavorite,
                   child: IconButton(
                     onPressed: () async {
                       var apis = ref.read(misskeyApisProvider);
@@ -237,9 +238,9 @@ class _ClipContentCard extends HookConsumerWidget {
                                 const SizedBox(
                                   height: 12,
                                 ),
-                                const Text(
-                                  "确定要取消收藏吗？",
-                                  style: TextStyle(fontSize: 15),
+                                Text(
+                                  S.current.clipCancelFavoriteText,
+                                  style: const TextStyle(fontSize: 15),
                                 ),
                               ], context: context) ??
                               false;

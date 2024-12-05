@@ -7,6 +7,7 @@ import 'package:moekey/pages/clips/clips_my.dart';
 import 'package:moekey/widgets/clips/clips_create_dialog.dart';
 import 'package:moekey/widgets/mk_modal.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 import '../../widgets/keep_alive_wrapper.dart';
 import '../../widgets/mk_header.dart';
@@ -19,23 +20,24 @@ class ClipsPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
 
-    var tabs = const [
+    var tabs = [
       Tab(
         child: Row(
           children: [
-            Icon(
+            const Icon(
               TablerIcons.paperclip,
               size: 14,
             ),
-            Text("我的便签", style: TextStyle(fontSize: 12)),
+            Text(S.current.myCLips, style: const TextStyle(fontSize: 12)),
           ],
         ),
       ),
       Tab(
         child: Row(
           children: [
-            Icon(TablerIcons.heart, size: 14),
-            Text("收藏", style: TextStyle(fontSize: 12)),
+            const Icon(TablerIcons.heart, size: 14),
+            Text(S.current.clipFavoriteList,
+                style: const TextStyle(fontSize: 12)),
           ],
         ),
       )
@@ -65,7 +67,7 @@ class ClipsPage extends HookConsumerWidget {
                 const SizedBox(
                   width: 8,
                 ),
-                const Text("便签"),
+                Text(S.current.clips),
               ],
             ),
           ),
@@ -87,7 +89,7 @@ class ClipsPage extends HookConsumerWidget {
                       },
                     );
                   },
-                  tooltip: "添加",
+                  tooltip: S.current.add,
                   icon: const Icon(TablerIcons.plus, size: 18),
                   color: themes.fgColor,
                 )

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/utils/get_padding_note.dart';
@@ -14,6 +13,7 @@ import 'package:moekey/widgets/notes/note_children.dart';
 
 import '../../apis/models/note.dart';
 import '../../apis/models/user_lite.dart';
+import '../../generated/l10n.dart';
 import '../../status/apis.dart';
 import '../../status/notes.dart';
 import '../../status/server.dart';
@@ -26,7 +26,6 @@ import '../../widgets/mk_image.dart';
 import '../../widgets/mk_scaffold.dart';
 import '../../widgets/notes/note_card.dart';
 import '../../widgets/reactions.dart';
-import '../users/user_page.dart';
 
 class NotesPage extends HookConsumerWidget {
   const NotesPage({super.key, required this.noteId, this.previewNote});
@@ -89,7 +88,7 @@ class NotesPage extends HookConsumerWidget {
                             emojis: data?.user.emojis,
                             bigEmojiCode: false,
                             feature: const [MFMFeature.emojiCode],
-                            after: const [TextSpan(text: " 的帖子")],
+                            after: [TextSpan(text: S.current.somebodyNote)],
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -144,7 +143,7 @@ class NotesPage extends HookConsumerWidget {
                                               .read(notes.notifier)
                                               .loadConversation();
                                         },
-                                        child: const Text("查看对话"),
+                                        child: Text(S.current.showConversation),
                                       ),
                               )
                             ],
@@ -263,7 +262,9 @@ class NotesPageNoteCard extends HookConsumerWidget {
                         foregroundColor:
                             WidgetStateProperty.all(themes.fgColor),
                         elevation: WidgetStateProperty.all(0)),
-                    child: Text(isHiddenCw.value ? "查看更多" : "收起"),
+                    child: Text(isHiddenCw.value
+                        ? S.current.noteCwShow
+                        : S.current.noteCwHide),
                   ),
                 ),
               ],
@@ -288,7 +289,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6),
                         child: Text(
-                          "翻译帖子",
+                          S.current.noteTranslate,
                           style: TextStyle(color: themes.accentColor),
                         ),
                       ),
@@ -324,11 +325,12 @@ class NotesPageNoteCard extends HookConsumerWidget {
                           currentServerHost: data.user.host,
                           before: [
                             TextSpan(
-                                text: "从${data.noteTranslate!.sourceLang}翻译:\n",
+                                text: S.current.noteFormLanguageTranslation(
+                                    data.noteTranslate!.sourceLang),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold))
                           ],
-                          text: data.noteTranslate!.text ?? "",
+                          text: data.noteTranslate!.text,
                         ),
                     ][0],
                   ),

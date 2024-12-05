@@ -1410,6 +1410,16 @@ class S {
     );
   }
 
+  /// `翻译帖子`
+  String get noteTranslate {
+    return Intl.message(
+      '翻译帖子',
+      name: 'noteTranslate',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `便签`
   String get clip {
     return Intl.message(
@@ -1635,6 +1645,286 @@ class S {
     return Intl.message(
       '未分类',
       name: 'uncategorized',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `现在的公告`
+  String get announcementActive {
+    return Intl.message(
+      '现在的公告',
+      name: 'announcementActive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `过去的公告`
+  String get announcementExpired {
+    return Intl.message(
+      '过去的公告',
+      name: 'announcementExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `创建日期`
+  String get createdDate {
+    return Intl.message(
+      '创建日期',
+      name: 'createdDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `更新日期`
+  String get updatedDate {
+    return Intl.message(
+      '更新日期',
+      name: 'updatedDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `移除便签`
+  String get clipRemove {
+    return Intl.message(
+      '移除便签',
+      name: 'clipRemove',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `编辑`
+  String get edit {
+    return Intl.message(
+      '编辑',
+      name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `收藏`
+  String get favorite {
+    return Intl.message(
+      '收藏',
+      name: 'favorite',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `我的便签`
+  String get myCLips {
+    return Intl.message(
+      '我的便签',
+      name: 'myCLips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `收藏`
+  String get clipFavoriteList {
+    return Intl.message(
+      '收藏',
+      name: 'clipFavoriteList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `要删掉「{thing}」吗？`
+  String deleteConfirm(Object thing) {
+    return Intl.message(
+      '要删掉「$thing」吗？',
+      name: 'deleteConfirm',
+      desc: '',
+      args: [thing],
+    );
+  }
+
+  /// `添加到收藏`
+  String get clipFavorite {
+    return Intl.message(
+      '添加到收藏',
+      name: 'clipFavorite',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `确定要取消收藏吗？`
+  String get clipCancelFavoriteText {
+    return Intl.message(
+      '确定要取消收藏吗？',
+      name: 'clipCancelFavoriteText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `热门`
+  String get exploreHot {
+    return Intl.message(
+      '热门',
+      name: 'exploreHot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `用户`
+  String get exploreUsers {
+    return Intl.message(
+      '用户',
+      name: 'exploreUsers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `本地`
+  String get local {
+    return Intl.message(
+      '本地',
+      name: 'local',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `远程`
+  String get remote {
+    return Intl.message(
+      '远程',
+      name: 'remote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `热门用户`
+  String get exploreUserHot {
+    return Intl.message(
+      '热门用户',
+      name: 'exploreUserHot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `最近登录的用户`
+  String get exploreUserLast {
+    return Intl.message(
+      '最近登录的用户',
+      name: 'exploreUserLast',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `最近投稿的用户`
+  String get exploreUserUpdated {
+    return Intl.message(
+      '最近投稿的用户',
+      name: 'exploreUserUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `置顶用户`
+  String get exploreUserPined {
+    return Intl.message(
+      '置顶用户',
+      name: 'exploreUserPined',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `添加账号`
+  String get addAccount {
+    return Intl.message(
+      '添加账号',
+      name: 'addAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `管理账号`
+  String get manageAccount {
+    return Intl.message(
+      '管理账号',
+      name: 'manageAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `账号`
+  String get account {
+    return Intl.message(
+      '账号',
+      name: 'account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `保存图片`
+  String get saveImage {
+    return Intl.message(
+      '保存图片',
+      name: 'saveImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `保存成功`
+  String get saveSuccess {
+    return Intl.message(
+      '保存成功',
+      name: 'saveSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `保存失败`
+  String get saveFailed {
+    return Intl.message(
+      '保存失败',
+      name: 'saveFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` 的帖子`
+  String get somebodyNote {
+    return Intl.message(
+      ' 的帖子',
+      name: 'somebodyNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `查看对话`
+  String get showConversation {
+    return Intl.message(
+      '查看对话',
+      name: 'showConversation',
       desc: '',
       args: [],
     );
