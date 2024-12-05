@@ -5,14 +5,12 @@ import 'package:moekey/apis/models/note.dart';
 import 'package:moekey/logger.dart';
 import 'package:moekey/status/misskey_api.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_input.dart';
-import 'package:moekey/widgets/mk_refresh_loading_empty_wrapper.dart';
 import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../widgets/notes/note_card.dart';
+import '../../generated/l10n.dart';
 
 part 'notes_search.g.dart';
 
@@ -74,7 +72,7 @@ class NotesSearchPanel extends HookConsumerWidget {
                       .read(notesSearchStatusProvider.notifier)
                       .updateServerType(value!),
                 ),
-                Text("全部"),
+                Text(S.current.all),
                 const SizedBox(width: 8),
                 Radio(
                   value: 2,
@@ -84,7 +82,7 @@ class NotesSearchPanel extends HookConsumerWidget {
                       .read(notesSearchStatusProvider.notifier)
                       .updateServerType(value!),
                 ),
-                Text("本地"),
+                Text(S.current.local),
                 const SizedBox(width: 8),
                 Radio(
                   value: 3,
@@ -94,7 +92,7 @@ class NotesSearchPanel extends HookConsumerWidget {
                       .read(notesSearchStatusProvider.notifier)
                       .updateServerType(value!),
                 ),
-                Text("指定主机名")
+                Text(S.current.searchHost),
               ],
             ),
             if (status.serverType == 3) ...[
@@ -116,7 +114,7 @@ class NotesSearchPanel extends HookConsumerWidget {
                         WidgetStateProperty.all(themes.accentColor),
                     foregroundColor: WidgetStateProperty.all(themes.panelColor),
                     elevation: WidgetStateProperty.all(0)),
-                child: const Text("   搜索   "))
+                child: Text("   ${S.current.search}   "))
           ],
         ));
   }

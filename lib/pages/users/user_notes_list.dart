@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/mk_header.dart';
-import 'package:moekey/widgets/mk_refresh_indicator.dart';
 import 'package:moekey/widgets/notes/note_pagination_list.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/user.dart';
 import '../../widgets/mk_nav_button.dart';
 
@@ -54,7 +52,13 @@ class UserNotesPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
     var select = useState(2);
-    const navs = ["热门", "帖子", "全部", "附件"];
+    var navs = [
+      S.current.userHot,
+      S.current.userNote,
+      S.current.userAll,
+      S.current.userFile,
+    ];
+
     var dataProvider = userNotesListProvider(
       userId: userId,
       withRenotes: _noteFilter[select.value]["withRenotes"]!,

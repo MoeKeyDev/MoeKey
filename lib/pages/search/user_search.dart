@@ -6,6 +6,7 @@ import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/mk_refresh_load.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../generated/l10n.dart';
 import '../../logger.dart';
 import '../../status/misskey_api.dart';
 import '../../status/themes.dart';
@@ -93,7 +94,7 @@ class UserSearchPanel extends HookConsumerWidget {
                       .read(userSearchStatusProvider.notifier)
                       .updateOrigin(value!),
                 ),
-                const Text("全部"),
+                Text(S.current.searchAll),
                 const SizedBox(width: 8),
                 Radio(
                   value: "local",
@@ -103,7 +104,7 @@ class UserSearchPanel extends HookConsumerWidget {
                       .read(userSearchStatusProvider.notifier)
                       .updateOrigin(value!),
                 ),
-                const Text("本地"),
+                Text(S.current.searchLocal),
                 const SizedBox(width: 8),
                 Radio(
                   value: "remote",
@@ -113,7 +114,7 @@ class UserSearchPanel extends HookConsumerWidget {
                       .read(userSearchStatusProvider.notifier)
                       .updateOrigin(value!),
                 ),
-                const Text("远程"),
+                Text(S.current.searchRemote),
               ],
             ),
             const SizedBox(height: 16),
@@ -125,7 +126,7 @@ class UserSearchPanel extends HookConsumerWidget {
                         WidgetStateProperty.all(themes.accentColor),
                     foregroundColor: WidgetStateProperty.all(themes.panelColor),
                     elevation: WidgetStateProperty.all(0)),
-                child: const Text("   搜索   "))
+                child: Text("   ${S.current.search}   "))
           ],
         ));
   }

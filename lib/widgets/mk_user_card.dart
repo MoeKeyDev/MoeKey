@@ -76,7 +76,7 @@ class MkUserCard extends HookConsumerWidget {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(4))),
                               child: Text(
-                                S.current.followingYouNow,
+                                S.current.isFollowingYouNow,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 10),
                               ),

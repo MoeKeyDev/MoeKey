@@ -1,13 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/note.dart';
-import 'package:moekey/pages/home/home_page.dart';
-import 'package:moekey/pages/notes/note_page.dart';
 import 'package:moekey/status/notifications.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
@@ -17,11 +12,11 @@ import 'package:moekey/widgets/notifications/notifications_user_card.dart';
 
 import '../../apis/models/notification.dart';
 import '../../apis/models/user_lite.dart';
+import '../../generated/l10n.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/notes/note_card.dart';
 import '../../widgets/reactions.dart';
-import '../users/user_page.dart';
 
 class NotificationsGroupList extends HookConsumerWidget {
   NotificationsGroupList({super.key});
@@ -57,7 +52,7 @@ class NotificationsGroupList extends HookConsumerWidget {
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
-          content: const Text("你有新的关注者"),
+          content: Text(S.current.notifyFollowedYou),
           avatarBadge: Container(
             width: 20,
             height: 20,
@@ -82,7 +77,7 @@ class NotificationsGroupList extends HookConsumerWidget {
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
-          content: const Text("你的关注请求被通过了"),
+          content: Text(S.current.notifyFollowedAccepted),
           avatarBadge: Container(
             width: 20,
             height: 20,
@@ -316,13 +311,13 @@ class NotificationsGroupList extends HookConsumerWidget {
           data: data,
           borderRadius: borderRadius,
           content: MFMText(
-            text: "${data.note?.text}(投票)",
+            text: "${data.note?.text}(${S.current.vote})",
             bigEmojiCode: false,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             currentServerHost: data.note?.user.host,
           ),
-          name: const Text("投票结果已经生成"),
+          name: Text(S.current.voteResult),
           avatarBadge: Container(
             width: 20,
             height: 20,
@@ -382,9 +377,10 @@ class NotificationsGroupList extends HookConsumerWidget {
                 return Padding(
                   padding: padding,
                   child: MkCard(
-                      shadow: false,
-                      borderRadius: borderRadius,
-                      child: Text("暂时不支持的通知:${list[index].type}")),
+                    shadow: false,
+                    borderRadius: borderRadius,
+                    child: Text(S.current.notifyNotSupport(list[index].type)),
+                  ),
                 );
                 // return SizedBox();
               },

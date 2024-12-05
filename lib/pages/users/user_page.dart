@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/user_full.dart';
-import 'package:moekey/logger.dart';
 import 'package:moekey/pages/users/user_clip_list.dart';
 import 'package:moekey/pages/users/user_notes_list.dart';
 import 'package:moekey/pages/users/user_overview.dart';
@@ -15,6 +14,7 @@ import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
+import '../../generated/l10n.dart';
 import '../../status/themes.dart';
 
 class UserPage extends HookConsumerWidget {
@@ -74,28 +74,29 @@ class UserPage extends HookConsumerWidget {
       return MkTabBarRefreshScroll(
         items: [
           MkTabBarItem(
-            label: const Tab(
+            label: Tab(
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     TablerIcons.home,
                     size: 14,
                   ),
-                  Text("概览", style: TextStyle(fontSize: 12)),
+                  Text(S.current.overviews,
+                      style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),
             child: UserOverview(userId: userId),
           ),
           MkTabBarItem(
-            label: const Tab(
+            label: Tab(
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     TablerIcons.pencil,
                     size: 14,
                   ),
-                  Text("帖子", style: TextStyle(fontSize: 12)),
+                  Text(S.current.notes, style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -103,28 +104,29 @@ class UserPage extends HookConsumerWidget {
           ),
           if (userData.publicReactions)
             MkTabBarItem(
-              label: const Tab(
+              label: Tab(
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       TablerIcons.mood_happy,
                       size: 14,
                     ),
-                    Text("回应", style: TextStyle(fontSize: 12)),
+                    Text(S.current.reaction,
+                        style: const TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
               child: UserReactionsPage(userId: userId),
             ),
           MkTabBarItem(
-            label: const Tab(
+            label: Tab(
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     TablerIcons.paperclip,
                     size: 14,
                   ),
-                  Text("便签", style: TextStyle(fontSize: 12)),
+                  Text(S.current.clips, style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),

@@ -960,6 +960,16 @@ class S {
     );
   }
 
+  /// `投票结果已经生成`
+  String get voteResult {
+    return Intl.message(
+      '投票结果已经生成',
+      name: 'voteResult',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `天`
   String get day {
     return Intl.message(
@@ -1045,6 +1055,16 @@ class S {
     return Intl.message(
       '预览帖子',
       name: 'previewNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `回应`
+  String get reaction {
+    return Intl.message(
+      '回应',
+      name: 'reaction',
       desc: '',
       args: [],
     );
@@ -1531,10 +1551,10 @@ class S {
   }
 
   /// `正在关注你`
-  String get followingYouNow {
+  String get isFollowingYouNow {
     return Intl.message(
       '正在关注你',
-      name: 'followingYouNow',
+      name: 'isFollowingYouNow',
       desc: '',
       args: [],
     );
@@ -1925,6 +1945,316 @@ class S {
     return Intl.message(
       '查看对话',
       name: 'showConversation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `通知`
+  String get notification {
+    return Intl.message(
+      '通知',
+      name: 'notification',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `你有新的关注者`
+  String get notifyFollowedYou {
+    return Intl.message(
+      '你有新的关注者',
+      name: 'notifyFollowedYou',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `你的关注请求被通过了`
+  String get notifyFollowedAccepted {
+    return Intl.message(
+      '你的关注请求被通过了',
+      name: 'notifyFollowedAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `不支持的通知类型:{type}`
+  String notifyNotSupport(Object type) {
+    return Intl.message(
+      '不支持的通知类型:$type',
+      name: 'notifyNotSupport',
+      desc: '',
+      args: [type],
+    );
+  }
+
+  /// `全部`
+  String get notifyAll {
+    return Intl.message(
+      '全部',
+      name: 'notifyAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `提到我的`
+  String get notifyMention {
+    return Intl.message(
+      '提到我的',
+      name: 'notifyMention',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `私信`
+  String get notifyMessage {
+    return Intl.message(
+      '私信',
+      name: 'notifyMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `筛选`
+  String get notifyFilter {
+    return Intl.message(
+      '筛选',
+      name: 'notifyFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `全部标记为已读`
+  String get notifyMarkAllRead {
+    return Intl.message(
+      '全部标记为已读',
+      name: 'notifyMarkAllRead',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `全部`
+  String get all {
+    return Intl.message(
+      '全部',
+      name: 'all',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `指定域名`
+  String get searchHost {
+    return Intl.message(
+      '指定域名',
+      name: 'searchHost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `全部`
+  String get searchAll {
+    return Intl.message(
+      '全部',
+      name: 'searchAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `本站`
+  String get searchLocal {
+    return Intl.message(
+      '本站',
+      name: 'searchLocal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `远程`
+  String get searchRemote {
+    return Intl.message(
+      '远程',
+      name: 'searchRemote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `首页`
+  String get timelineHome {
+    return Intl.message(
+      '首页',
+      name: 'timelineHome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `本地`
+  String get timelineLocal {
+    return Intl.message(
+      '本地',
+      name: 'timelineLocal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `全局`
+  String get timelineGlobal {
+    return Intl.message(
+      '全局',
+      name: 'timelineGlobal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `社交`
+  String get timelineHybrid {
+    return Intl.message(
+      '社交',
+      name: 'timelineHybrid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `小部件列表(未完成)`
+  String get userWidgetUnSupport {
+    return Intl.message(
+      '小部件列表(未完成)',
+      name: 'userWidgetUnSupport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `用户`
+  String get userHot {
+    return Intl.message(
+      '用户',
+      name: 'userHot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `帖子`
+  String get userNote {
+    return Intl.message(
+      '帖子',
+      name: 'userNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `全部`
+  String get userAll {
+    return Intl.message(
+      '全部',
+      name: 'userAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `附件`
+  String get userFile {
+    return Intl.message(
+      '附件',
+      name: 'userFile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `注册于`
+  String get userRegisterBy {
+    return Intl.message(
+      '注册于',
+      name: 'userRegisterBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `复制用户名`
+  String get copyUsername {
+    return Intl.message(
+      '复制用户名',
+      name: 'copyUsername',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `复制RSS`
+  String get copyRSS {
+    return Intl.message(
+      '复制RSS',
+      name: 'copyRSS',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `转到浏览器显示`
+  String get openInNewTab {
+    return Intl.message(
+      '转到浏览器显示',
+      name: 'openInNewTab',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `复制用户主页地址`
+  String get copyUserHomeLink {
+    return Intl.message(
+      '复制用户主页地址',
+      name: 'copyUserHomeLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `关注请求批准中`
+  String get pendingFollowRequest {
+    return Intl.message(
+      '关注请求批准中',
+      name: 'pendingFollowRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `处理中`
+  String get processing {
+    return Intl.message(
+      '处理中',
+      name: 'processing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `概览`
+  String get overviews {
+    return Intl.message(
+      '概览',
+      name: 'overviews',
       desc: '',
       args: [],
     );
