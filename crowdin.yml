@@ -4,8 +4,8 @@ base_path: .
 base_url: 'https://api.crowdin.com'
 preserve_hierarchy: 1
 files:
-  - source: lib/l10n/intl_en.arb
-    translation: lib/l10n/intl_%locale%.arb
+  - source: /lib/l10n/intl_en.arb
+    translation: /%original_path%/intl_%locale_with_underscore%.arb
     type: arb
     update_option: update_as_unapproved
 bundles:
