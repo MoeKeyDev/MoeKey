@@ -760,6 +760,36 @@ class S {
     );
   }
 
+  /// `登录失败`
+  String get loginFailed {
+    return Intl.message(
+      '登录失败',
+      name: 'loginFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `登录失败: 应用创建失败`
+  String get loginFailedWithAppCreate {
+    return Intl.message(
+      '登录失败: 应用创建失败',
+      name: 'loginFailedWithAppCreate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `登录失败: token获取失败`
+  String get loginFailedWithToken {
+    return Intl.message(
+      '登录失败: token获取失败',
+      name: 'loginFailedWithToken',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `正在登录{server}`
   String loginLoading(Object server) {
     return Intl.message(
@@ -1470,6 +1500,16 @@ class S {
     );
   }
 
+  /// `用户`
+  String get user {
+    return Intl.message(
+      '用户',
+      name: 'user',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `域名`
   String get hostnames {
     return Intl.message(
@@ -1545,6 +1585,56 @@ class S {
     return Intl.message(
       '关注中',
       name: 'following',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{day}天{hour}小时{minute}分钟{second}秒`
+  String durationDay(Object day, Object hour, Object minute, Object second) {
+    return Intl.message(
+      '$day天$hour小时$minute分钟$second秒',
+      name: 'durationDay',
+      desc: '',
+      args: [day, hour, minute, second],
+    );
+  }
+
+  /// `{hour}小时{minute}分钟{second}秒`
+  String durationHour(Object hour, Object minute, Object second) {
+    return Intl.message(
+      '$hour小时$minute分钟$second秒',
+      name: 'durationHour',
+      desc: '',
+      args: [hour, minute, second],
+    );
+  }
+
+  /// `{minute}分钟{second}秒`
+  String durationMinute(Object minute, Object second) {
+    return Intl.message(
+      '$minute分钟$second秒',
+      name: 'durationMinute',
+      desc: '',
+      args: [minute, second],
+    );
+  }
+
+  /// `{second}秒`
+  String durationSecond(Object second) {
+    return Intl.message(
+      '$second秒',
+      name: 'durationSecond',
+      desc: '',
+      args: [second],
+    );
+  }
+
+  /// `未分类`
+  String get uncategorized {
+    return Intl.message(
+      '未分类',
+      name: 'uncategorized',
       desc: '',
       args: [],
     );

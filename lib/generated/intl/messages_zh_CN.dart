@@ -31,33 +31,42 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m4(name) => "要删除「${name}」文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。";
 
-  static String m5(error) => "发送帖子失败\n\n${error}";
+  static String m5(day, hour, minute, second) =>
+      "${day}天${hour}小时${minute}分钟${second}秒";
 
-  static String m6(hours) => "${hours}小时前";
+  static String m6(hour, minute, second) => "${hour}小时${minute}分钟${second}秒";
 
-  static String m7(server) => "正在登录${server}";
+  static String m7(minute, second) => "${minute}分钟${second}秒";
 
-  static String m8(minutes) => "${minutes}分钟前";
+  static String m8(second) => "${second}秒";
 
-  static String m9(months) => "${months}个月前";
+  static String m9(error) => "发送帖子失败\n\n${error}";
 
-  static String m10(language) => "从${language}翻译 \n";
+  static String m10(hours) => "${hours}小时前";
 
-  static String m11(seconds) => "${seconds}秒前";
+  static String m11(server) => "正在登录${server}";
 
-  static String m12(msg) => "上传失败\n ${msg}";
+  static String m12(minutes) => "${minutes}分钟前";
 
-  static String m13(count) => "总票数 ${count}";
+  static String m13(months) => "${months}个月前";
 
-  static String m14(count) => "${count}票";
+  static String m14(language) => "从${language}翻译 \n";
 
-  static String m15(index) => "选项${index}";
+  static String m15(seconds) => "${seconds}秒前";
 
-  static String m16(index) => "选项${index}不能为空";
+  static String m16(msg) => "上传失败\n ${msg}";
 
-  static String m17(datetime) => "${datetime}后截止";
+  static String m17(count) => "总票数 ${count}";
 
-  static String m18(years) => "${years}年前";
+  static String m18(count) => "${count}票";
+
+  static String m19(index) => "选项${index}";
+
+  static String m20(index) => "选项${index}不能为空";
+
+  static String m21(datetime) => "${datetime}后截止";
+
+  static String m22(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -89,13 +98,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("完成"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
         "drive": MessageLookupByLibrary.simpleMessage("网盘"),
+        "durationDay": m5,
+        "durationHour": m6,
+        "durationMinute": m7,
+        "durationSecond": m8,
         "emoji": MessageLookupByLibrary.simpleMessage("表情符号"),
         "enterNewFileName": MessageLookupByLibrary.simpleMessage("请输入新文件名"),
         "enterNewTitle": MessageLookupByLibrary.simpleMessage("请输入新标题"),
         "enterUrl": MessageLookupByLibrary.simpleMessage("请输入URL"),
         "exceptionContentNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
         "exceptionCwNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
-        "exceptionSendNote": m5,
+        "exceptionSendNote": m9,
         "explore": MessageLookupByLibrary.simpleMessage("发现"),
         "filter": MessageLookupByLibrary.simpleMessage("过滤"),
         "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
@@ -109,7 +122,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "hashtag": MessageLookupByLibrary.simpleMessage("话题标签"),
         "hostnames": MessageLookupByLibrary.simpleMessage("域名"),
         "hour": MessageLookupByLibrary.simpleMessage("小时"),
-        "hoursAgo": m6,
+        "hoursAgo": m10,
         "image": MessageLookupByLibrary.simpleMessage("图片"),
         "inputServer": MessageLookupByLibrary.simpleMessage("手动输入服务器"),
         "insertDriverFile": MessageLookupByLibrary.simpleMessage("插入附件"),
@@ -118,13 +131,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "loadingServers": MessageLookupByLibrary.simpleMessage("服务器正在加载"),
         "localUpload": MessageLookupByLibrary.simpleMessage("本地上传"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
-        "loginLoading": m7,
+        "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
+        "loginFailedWithAppCreate":
+            MessageLookupByLibrary.simpleMessage("登录失败: 应用创建失败"),
+        "loginFailedWithToken":
+            MessageLookupByLibrary.simpleMessage("登录失败: token获取失败"),
+        "loginLoading": m11,
         "loginSuccess": MessageLookupByLibrary.simpleMessage("登录成功"),
         "markAsSensitive": MessageLookupByLibrary.simpleMessage("标记为敏感内容"),
         "mention": MessageLookupByLibrary.simpleMessage("提及"),
         "minute": MessageLookupByLibrary.simpleMessage("分钟"),
-        "minutesAgo": m8,
-        "monthsAgo": m9,
+        "minutesAgo": m12,
+        "monthsAgo": m13,
         "more": MessageLookupByLibrary.simpleMessage("更多"),
         "name": MessageLookupByLibrary.simpleMessage("名称"),
         "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
@@ -134,7 +152,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
         "noteCwHide": MessageLookupByLibrary.simpleMessage("收起"),
         "noteCwShow": MessageLookupByLibrary.simpleMessage("显示内容"),
-        "noteFormLanguageTranslation": m10,
+        "noteFormLanguageTranslation": m14,
         "noteLocalOnly": MessageLookupByLibrary.simpleMessage("不参与联合"),
         "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("转到所在服务器显示"),
         "notePined": MessageLookupByLibrary.simpleMessage("已置顶的帖子"),
@@ -186,7 +204,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "replyNoteText": MessageLookupByLibrary.simpleMessage("回复帖子"),
         "search": MessageLookupByLibrary.simpleMessage("搜索"),
         "searchServers": MessageLookupByLibrary.simpleMessage("搜索服务器名称或者域名"),
-        "secondsAgo": m11,
+        "secondsAgo": m15,
         "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
         "selectServer": MessageLookupByLibrary.simpleMessage("请选择服务器"),
         "selectUser": MessageLookupByLibrary.simpleMessage("选择用户"),
@@ -198,9 +216,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "share": MessageLookupByLibrary.simpleMessage("分享"),
         "timeline": MessageLookupByLibrary.simpleMessage("时间线"),
         "translate": MessageLookupByLibrary.simpleMessage("翻译"),
+        "uncategorized": MessageLookupByLibrary.simpleMessage("未分类"),
         "unfollow": MessageLookupByLibrary.simpleMessage("取消关注"),
-        "uploadFailed": m12,
+        "uploadFailed": m16,
         "uploadFromUrl": MessageLookupByLibrary.simpleMessage("从网址上传"),
+        "user": MessageLookupByLibrary.simpleMessage("用户"),
         "userDescriptionIsNull":
             MessageLookupByLibrary.simpleMessage("此用户尚无自我介绍"),
         "username": MessageLookupByLibrary.simpleMessage("用户名"),
@@ -209,17 +229,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "view": MessageLookupByLibrary.simpleMessage("查看"),
         "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
         "vote": MessageLookupByLibrary.simpleMessage("投票"),
-        "voteAllCount": m13,
-        "voteCount": m14,
+        "voteAllCount": m17,
+        "voteCount": m18,
         "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
         "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
         "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
         "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
         "voteOptionAtLeastTwo":
             MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
-        "voteOptionHint": m15,
-        "voteOptionNullIndex": m16,
-        "voteWillExpired": m17,
-        "yearsAgo": m18
+        "voteOptionHint": m19,
+        "voteOptionNullIndex": m20,
+        "voteWillExpired": m21,
+        "yearsAgo": m22
       };
 }

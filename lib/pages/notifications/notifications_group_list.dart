@@ -17,7 +17,6 @@ import 'package:moekey/widgets/notifications/notifications_user_card.dart';
 
 import '../../apis/models/notification.dart';
 import '../../apis/models/user_lite.dart';
-import '../../router/main_router_delegate.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/notes/note_card.dart';

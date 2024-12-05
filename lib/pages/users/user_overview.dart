@@ -17,7 +17,6 @@ import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../router/main_router_delegate.dart';
 import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_card.dart';
 import '../../widgets/mk_image.dart';

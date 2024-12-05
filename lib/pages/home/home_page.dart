@@ -9,7 +9,6 @@ import 'package:moekey/logger.dart';
 import 'package:moekey/main.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/pages/users/user_page.dart';
-import 'package:moekey/router/main_router_delegate.dart';
 import 'package:moekey/router/router.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/server.dart';

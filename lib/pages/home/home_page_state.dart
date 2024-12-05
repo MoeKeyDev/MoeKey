@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:moekey/pages/announcements/announcements.dart';
-import 'package:moekey/pages/clips/clips_page.dart';
-import 'package:moekey/pages/drive/drive_page.dart';
-import 'package:moekey/pages/explore/explore.dart';
-import 'package:moekey/pages/notifications/notifications_page.dart';
-import 'package:moekey/pages/search/search_page.dart';
-import 'package:moekey/pages/test/test.dart';
-import 'package:moekey/pages/timeline/timeline_page.dart';
-import 'package:moekey/router/main_router_delegate.dart';
 import 'package:moekey/status/mk_tabbar_refresh_scroll_state.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
-import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../generated/l10n.dart';
 import '../../router/router.dart';
-import '../../widgets/keep_alive_wrapper.dart';
 
 part 'home_page_state.g.dart';
 

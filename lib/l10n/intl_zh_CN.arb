@@ -70,6 +70,9 @@
   "selectHashtag": "选择标签",
   "login": "登录",
   "loginSuccess": "登录成功",
+  "loginFailed": "登录失败",
+  "loginFailedWithAppCreate": "登录失败: 应用创建失败",
+  "loginFailedWithToken": "登录失败: token获取失败",
   "loginLoading": "正在登录{server}",
   "replyNoteText": "回复帖子",
   "replyNoteHint": "回复这个帖子...",
@@ -141,6 +144,7 @@
   "sensitiveClickShow": "点击显示",
   "selectUser": "选择用户",
   "username": "用户名",
+  "user": "用户",
   "hostnames": "域名",
   "followingYouNow": "正在关注你",
   "userDescriptionIsNull": "此用户尚无自我介绍",
@@ -148,5 +152,10 @@
   "unfollow": "取消关注",
   "followed": "已关注",
   "followers": "关注者",
-  "following": "关注中"
+  "following": "关注中",
+  "durationDay": "{day}天{hour}小时{minute}分钟{second}秒",
+  "durationHour": "{hour}小时{minute}分钟{second}秒",
+  "durationMinute": "{minute}分钟{second}秒",
+  "durationSecond": "{second}秒",
+  "uncategorized": "未分类"
 }

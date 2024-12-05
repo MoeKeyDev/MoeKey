@@ -1,5 +1,6 @@
 import 'package:moekey/apis/index.dart';
 import 'package:moekey/apis/models/user_full.dart';
+import 'package:moekey/generated/l10n.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -17,7 +18,7 @@ class ApiUserLogin extends _$ApiUserLogin {
   FutureOr<LoginUser> build() async {
     var userModel = await login();
     if (userModel == null) {
-      throw Exception("登陆失败");
+      throw Exception(S.current.loginFailed);
     }
     // 保存
     await ref.watch(loginUserListProvider.notifier).addUser(userModel);
@@ -34,13 +35,13 @@ class ApiUserLogin extends _$ApiUserLogin {
 
     var app = await apis.app.create();
     if (app == null) {
-      throw Exception("登陆失败： 应用创建失败");
+      throw Exception(S.current.loginFailedWithAppCreate);
     }
     String secret = app.secret!;
 
     var authSession = await apis.auth.sessionGenerate(appSecret: secret);
     if (authSession == null) {
-      throw Exception("登陆失败： token获取失败");
+      throw Exception(S.current.loginFailedWithToken);
     }
     String token = authSession.token;
     String url = authSession.url;
@@ -58,11 +59,11 @@ class ApiUserLogin extends _$ApiUserLogin {
           continue;
         } else {
           // 失败
-          throw Exception("登陆失败");
+          throw Exception(S.current.loginFailed);
         }
       }
       if (key == null) {
-        throw Exception("登陆失败");
+        throw Exception(S.current.loginFailed);
       }
       if (key["accessToken"] != null) {
         // 成功登陆

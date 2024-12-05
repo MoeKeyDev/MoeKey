@@ -7,7 +7,6 @@ import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/pages/notifications/notifications_group_list.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
-import '../../router/main_router_delegate.dart';
 import '../../status/themes.dart';
 import 'notifications_mentions_list.dart';
 

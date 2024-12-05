@@ -14,7 +14,6 @@ import 'package:moekey/widgets/notes/note_children.dart';
 
 import '../../apis/models/note.dart';
 import '../../apis/models/user_lite.dart';
-import '../../router/main_router_delegate.dart';
 import '../../status/apis.dart';
 import '../../status/notes.dart';
 import '../../status/server.dart';
