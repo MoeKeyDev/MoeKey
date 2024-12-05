@@ -51,7 +51,6 @@ MoeKey希望成为一个UI风格与原版Misskey保持一致。功能完善的Mi
 
 Riverpod 代码生成
 
-``shell
+```shell
 dart run build_runner watch --use-polling-watcher
-
 ```
