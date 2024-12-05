@@ -10,10 +10,8 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/meta.dart';
-import 'package:moekey/main.dart';
+import 'package:moekey/generated/l10n.dart';
 import 'package:moekey/pages/clips/clips.dart';
-import 'package:moekey/pages/home/home_page.dart';
-import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/server.dart';
@@ -34,8 +32,6 @@ import '../../apis/models/drive.dart';
 import '../../apis/models/note.dart';
 import '../../apis/models/translate.dart';
 import '../../apis/models/user_lite.dart';
-import '../../pages/image_preview/image_preview.dart';
-import '../../pages/notes/note_page.dart';
 import '../../status/misskey_api.dart';
 import '../../utils/parse_color.dart';
 import '../../utils/time_ago_since_date.dart';
@@ -146,18 +142,18 @@ class _NotePined extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(8.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             TablerIcons.pin,
             size: 17,
             color: Colors.orangeAccent,
           ),
           Text(
-            " 已置顶的帖子",
-            style: TextStyle(color: Colors.orangeAccent, fontSize: 13.5),
+            S.current.notePined,
+            style: const TextStyle(color: Colors.orangeAccent, fontSize: 13.5),
           ),
         ],
       ),
@@ -456,7 +452,7 @@ class _TimeLineNoteCardContent extends StatelessWidget {
         ],
       ),
       action: (isShow, p1) {
-        return const Text("查看更多");
+        return Text(S.current.viewMore);
       },
       limit: limit,
       height: height,
@@ -502,7 +498,8 @@ class NoteCardTranslate extends HookConsumerWidget {
             currentServerHost: data.user.host,
             before: [
               TextSpan(
-                  text: "从${data.noteTranslate!.sourceLang}翻译:\n",
+                  text: S.current.noteFormLanguageTranslation(
+                      data.noteTranslate!.sourceLang),
                   style: const TextStyle(fontWeight: FontWeight.bold))
             ],
             text: data.noteTranslate!.text ?? "",
@@ -552,7 +549,8 @@ class _NoteCardContentCw extends HookConsumerWidget {
                 }),
                 foregroundColor: WidgetStateProperty.all(themes.fgColor),
                 elevation: WidgetStateProperty.all(0)),
-            child: Text(isHiddenCw.value ? "查看更多" : "收起"),
+            child: Text(
+                isHiddenCw.value ? S.current.noteCwShow : S.current.noteCwHide),
           ),
         ),
       ],
@@ -631,7 +629,7 @@ class NoteLinkPreview extends HookConsumerWidget {
           },
           child: Row(
             children: [
-              if (data?.thumbnail != null)
+              if (data.thumbnail != null)
                 ClipRRect(
                   clipBehavior: Clip.hardEdge,
                   borderRadius: const BorderRadius.only(
@@ -642,7 +640,7 @@ class NoteLinkPreview extends HookConsumerWidget {
                     width: fontsize * 7,
                     height: fontsize * 7,
                     child: MkImage(
-                      data!.thumbnail!,
+                      data.thumbnail!,
                       height: fontsize * 7,
                       width: fontsize * 7,
                     ),
@@ -662,7 +660,7 @@ class NoteLinkPreview extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      data?.title ?? "...",
+                      data.title ?? "...",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -671,7 +669,7 @@ class NoteLinkPreview extends HookConsumerWidget {
                       ),
                     ),
                     Text(
-                      data?.description ?? "...",
+                      data.description ?? "...",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -680,12 +678,12 @@ class NoteLinkPreview extends HookConsumerWidget {
                     ),
                     Row(
                       children: [
-                        if (data?.icon != null) ...[
+                        if (data.icon != null) ...[
                           SizedBox(
                             width: 16,
                             height: 16,
                             child: MkImage(
-                              data!.icon!,
+                              data.icon!,
                               height: 16,
                               width: 16,
                             ),
@@ -696,7 +694,7 @@ class NoteLinkPreview extends HookConsumerWidget {
                         ],
                         Expanded(
                           child: Text(
-                            data?.sitename ?? "...",
+                            data.sitename ?? "...",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -781,7 +779,7 @@ class ReNoteUserInfo extends HookConsumerWidget {
                 text: data.user.name ?? data.user.username ?? "",
                 after: [
                   TextSpan(
-                      text: "转发了",
+                      text: S.current.noteReNoteByUser,
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: fontsize,
@@ -822,13 +820,6 @@ class UserNameRichText extends HookConsumerWidget {
     return GestureDetector(
       onTap: navigator
           ? () {
-              // main_router.MainRouterDelegate.of(context)
-              //     .setNewRoutePath(main_router.RouterItem(
-              //   path: "user/${data.id}",
-              //   page: () {
-              //     return UserPage(userId: data.id);
-              //   },
-              // ));
               context.push('/user/${data.id}');
             }
           : null,
@@ -885,7 +876,6 @@ class UserInstanceBar extends HookConsumerWidget {
       ),
       child: SizedBox(
         width: double.infinity,
-        height: 16,
         child: DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
@@ -1104,7 +1094,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
           if (customMenuItem != null) ...customMenuItem,
           ContextMenuItem(
             icon: TablerIcons.copy,
-            label: "复制内容",
+            label: S.current.copyContent,
             onTap: () {
               Clipboard.setData(
                 ClipboardData(text: data.text ?? ""),
@@ -1114,7 +1104,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
           ),
           ContextMenuItem(
             icon: TablerIcons.link,
-            label: "复制本站链接",
+            label: S.current.noteCopyLocalLink,
             onTap: () {
               Clipboard.setData(
                 ClipboardData(text: "$serverUrl/notes/${data.id}"),
@@ -1124,7 +1114,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
           ),
           ContextMenuItem(
             icon: TablerIcons.share,
-            label: "分享",
+            label: S.current.share,
             onTap: () {
               // ref.read(noteApisProvider.notifier).reNote(data.id);
               Share.shareUri(Uri.parse("$serverUrl/notes/${data.id}"));
@@ -1134,7 +1124,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
           if (data.user.host != null)
             ContextMenuItem(
               icon: TablerIcons.external_link,
-              label: "转到所在服务器显示",
+              label: S.current.noteOpenRemoteLink,
               onTap: () {
                 if (data.uri != null) {
                   launchUrlString(data.uri!);
@@ -1147,7 +1137,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
             ContextMenuItem(
               divider: true,
               icon: TablerIcons.language_hiragana,
-              label: "翻译",
+              label: S.current.translate,
               onTap: () {
                 translateNote(data, ref);
                 return false;
@@ -1155,7 +1145,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
             ),
           ContextMenuItem(
             icon: TablerIcons.paperclip,
-            label: "便签",
+            label: S.current.clip,
             child: ContextMenuCard(
               menuListBuilder: () async {
                 var list = await ref.read(clipsProvider.future);
@@ -1175,17 +1165,20 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
                       },
                     ),
                   ContextMenuItem(
-                    label: "新建",
+                    label: S.current.clipCreate,
                     icon: TablerIcons.plus,
                     onTap: () {
-                      Future.delayed(Duration.zero).then((value) {
-                        showModel(
-                          context: context,
-                          builder: (context) {
-                            return const ClipCreateDialog();
-                          },
-                        );
-                      });
+                      Future.delayed(Duration.zero).then(
+                        (value) {
+                          if (!context.mounted) return;
+                          showModel(
+                            context: context,
+                            builder: (context) {
+                              return const ClipCreateDialog();
+                            },
+                          );
+                        },
+                      );
 
                       return false;
                     },
@@ -1306,7 +1299,7 @@ class TimeLineActions extends HookConsumerWidget {
         return [
           ContextMenuItem(
             icon: TablerIcons.repeat,
-            label: "转发",
+            label: S.current.noteReNote,
             onTap: () {
               ref.read(misskeyApisProvider).notes.reNote(renoteId: data.id);
               return false;
@@ -1314,7 +1307,7 @@ class TimeLineActions extends HookConsumerWidget {
           ),
           ContextMenuItem(
             icon: TablerIcons.quote,
-            label: "引用",
+            label: S.current.noteQuote,
             onTap: () {
               NoteCreateDialog.open(
                   type: NoteType.reNote,
@@ -1492,7 +1485,8 @@ class PollCard extends HookConsumerWidget {
                                     if (isVoted || isExpires.value)
                                       Opacity(
                                         opacity: 0.7,
-                                        child: Text(" (${item.votes}票) "),
+                                        child: Text(
+                                            " ${S.current.voteCount(item.votes)} "),
                                       ),
                                   ],
                                 ),
@@ -1510,13 +1504,13 @@ class PollCard extends HookConsumerWidget {
             ),
             Row(
               children: [
-                Text("总票数 $count"),
+                Text(S.current.voteAllCount(count)),
                 if (isExpires.value)
-                  const Text(" · 已截止")
+                  Text(" · ${S.current.voteExpired}")
                 else if (duration.value != null) ...[
                   const Text(" · "),
-                  Text(formatDuration(duration.value!)),
-                  const Text("后截至")
+                  Text(S.current
+                      .voteWillExpired(formatDuration(duration.value!))),
                 ]
               ],
             )

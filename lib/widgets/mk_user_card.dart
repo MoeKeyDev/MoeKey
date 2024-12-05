@@ -7,6 +7,7 @@ import 'package:moekey/pages/home/home_page.dart';
 import 'package:moekey/router/main_router_delegate.dart';
 
 import '../apis/models/user_full.dart';
+import '../generated/l10n.dart';
 import '../pages/users/user_page.dart';
 import '../status/themes.dart';
 import '../status/user.dart';
@@ -77,8 +78,8 @@ class MkUserCard extends HookConsumerWidget {
                                   color: Color.fromARGB(180, 0, 0, 0),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(4))),
-                              child: const Text(
-                                "正在关注你",
+                              child: Text(
+                                S.current.followingYouNow,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 10),
                               ),
@@ -162,7 +163,8 @@ class MkUserCard extends HookConsumerWidget {
                             child: SizedBox(
                               width: double.infinity,
                               child: MFMText(
-                                text: user.description ?? "此用户尚无自我介绍",
+                                text: user.description ??
+                                    S.current.userDescriptionIsNull,
                                 maxLines: 3,
                                 textAlign: TextAlign.start,
                                 overflow: TextOverflow.ellipsis,
@@ -188,7 +190,8 @@ class MkUserCard extends HookConsumerWidget {
                       children: [
                         Column(
                           children: [
-                            const Text("帖子", style: TextStyle(fontSize: 11)),
+                            Text(S.current.notes,
+                                style: const TextStyle(fontSize: 11)),
                             Text("${user.notesCount}",
                                 style: TextStyle(
                                     fontSize: 13,
@@ -198,7 +201,8 @@ class MkUserCard extends HookConsumerWidget {
                         ),
                         Column(
                           children: [
-                            const Text("关注中", style: TextStyle(fontSize: 11)),
+                            Text(S.current.following,
+                                style: const TextStyle(fontSize: 11)),
                             Text("${user.followingCount}",
                                 style: TextStyle(
                                     fontSize: 13,
@@ -208,7 +212,8 @@ class MkUserCard extends HookConsumerWidget {
                         ),
                         Column(
                           children: [
-                            const Text("关注者", style: TextStyle(fontSize: 11)),
+                            Text(S.current.followers,
+                                style: const TextStyle(fontSize: 11)),
                             Text("${user.followersCount}",
                                 style: TextStyle(
                                     fontSize: 13,

@@ -769,6 +769,786 @@ class S {
       args: [server],
     );
   }
+
+  /// `回复帖子`
+  String get replyNoteText {
+    return Intl.message(
+      '回复帖子',
+      name: 'replyNoteText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `回复这个帖子...`
+  String get replyNoteHint {
+    return Intl.message(
+      '回复这个帖子...',
+      name: 'replyNoteHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `引用帖子`
+  String get reNoteText {
+    return Intl.message(
+      '引用帖子',
+      name: 'reNoteText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `引用这个帖子...`
+  String get reNoteHint {
+    return Intl.message(
+      '引用这个帖子...',
+      name: 'reNoteHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `发布新帖子`
+  String get createNote {
+    return Intl.message(
+      '发布新帖子',
+      name: 'createNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `发生了什么...`
+  String get createNoteHint {
+    return Intl.message(
+      '发生了什么...',
+      name: 'createNoteHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `发布`
+  String get publish {
+    return Intl.message(
+      '发布',
+      name: 'publish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `收件人`
+  String get recipient {
+    return Intl.message(
+      '收件人',
+      name: 'recipient',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `添加`
+  String get add {
+    return Intl.message(
+      '添加',
+      name: 'add',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `投票`
+  String get vote {
+    return Intl.message(
+      '投票',
+      name: 'vote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `投票数量不能少于两个`
+  String get voteOptionAtLeastTwo {
+    return Intl.message(
+      '投票数量不能少于两个',
+      name: 'voteOptionAtLeastTwo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `选项{index}不能为空`
+  String voteOptionNullIndex(Object index) {
+    return Intl.message(
+      '选项$index不能为空',
+      name: 'voteOptionNullIndex',
+      desc: '',
+      args: [index],
+    );
+  }
+
+  /// `选项{index}`
+  String voteOptionHint(Object index) {
+    return Intl.message(
+      '选项$index',
+      name: 'voteOptionHint',
+      desc: '',
+      args: [index],
+    );
+  }
+
+  /// `允许多个投票`
+  String get voteEnableMultiChoice {
+    return Intl.message(
+      '允许多个投票',
+      name: 'voteEnableMultiChoice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `截止日期`
+  String get voteDueDate {
+    return Intl.message(
+      '截止日期',
+      name: 'voteDueDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `永久`
+  String get voteNoDueDate {
+    return Intl.message(
+      '永久',
+      name: 'voteNoDueDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `天`
+  String get day {
+    return Intl.message(
+      '天',
+      name: 'day',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `小时`
+  String get hour {
+    return Intl.message(
+      '小时',
+      name: 'hour',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `分钟`
+  String get minute {
+    return Intl.message(
+      '分钟',
+      name: 'minute',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `插入附件`
+  String get insertDriverFile {
+    return Intl.message(
+      '插入附件',
+      name: 'insertDriverFile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `隐藏内容`
+  String get cw {
+    return Intl.message(
+      '隐藏内容',
+      name: 'cw',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `提及`
+  String get mention {
+    return Intl.message(
+      '提及',
+      name: 'mention',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `话题标签`
+  String get hashtag {
+    return Intl.message(
+      '话题标签',
+      name: 'hashtag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `表情符号`
+  String get emoji {
+    return Intl.message(
+      '表情符号',
+      name: 'emoji',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `预览帖子`
+  String get previewNote {
+    return Intl.message(
+      '预览帖子',
+      name: 'previewNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `接受表情回应`
+  String get reactionAccepting {
+    return Intl.message(
+      '接受表情回应',
+      name: 'reactionAccepting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `全部`
+  String get reactionAcceptingAll {
+    return Intl.message(
+      '全部',
+      name: 'reactionAcceptingAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `远程仅点赞`
+  String get reactionAcceptingLikeOnlyRemote {
+    return Intl.message(
+      '远程仅点赞',
+      name: 'reactionAcceptingLikeOnlyRemote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `仅限非敏感内容`
+  String get reactionAcceptingNoneSensitive {
+    return Intl.message(
+      '仅限非敏感内容',
+      name: 'reactionAcceptingNoneSensitive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `仅限非敏感内容（远程仅点赞）`
+  String get reactionAcceptingNoneSensitiveOrLocal {
+    return Intl.message(
+      '仅限非敏感内容（远程仅点赞）',
+      name: 'reactionAcceptingNoneSensitiveOrLocal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `仅点赞`
+  String get reactionAcceptingLikeOnly {
+    return Intl.message(
+      '仅点赞',
+      name: 'reactionAcceptingLikeOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `帖子`
+  String get notes {
+    return Intl.message(
+      '帖子',
+      name: 'notes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `不参与联合`
+  String get noteLocalOnly {
+    return Intl.message(
+      '不参与联合',
+      name: 'noteLocalOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `可见性`
+  String get noteVisibility {
+    return Intl.message(
+      '可见性',
+      name: 'noteVisibility',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `公开`
+  String get noteVisibilityPublic {
+    return Intl.message(
+      '公开',
+      name: 'noteVisibilityPublic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `您的帖子将出现在全局时间线上`
+  String get noteVisibilityPublicText {
+    return Intl.message(
+      '您的帖子将出现在全局时间线上',
+      name: 'noteVisibilityPublicText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `首页`
+  String get noteVisibilityHome {
+    return Intl.message(
+      '首页',
+      name: 'noteVisibilityHome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `仅发送至首页的时间线`
+  String get noteVisibilityHomeText {
+    return Intl.message(
+      '仅发送至首页的时间线',
+      name: 'noteVisibilityHomeText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `关注者`
+  String get noteVisibilityFollowers {
+    return Intl.message(
+      '关注者',
+      name: 'noteVisibilityFollowers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `仅发送至关注者`
+  String get noteVisibilityFollowersText {
+    return Intl.message(
+      '仅发送至关注者',
+      name: 'noteVisibilityFollowersText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `私信`
+  String get noteVisibilitySpecified {
+    return Intl.message(
+      '私信',
+      name: 'noteVisibilitySpecified',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `仅发送至指定用户`
+  String get noteVisibilitySpecifiedText {
+    return Intl.message(
+      '仅发送至指定用户',
+      name: 'noteVisibilitySpecifiedText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `内容不能为空`
+  String get exceptionContentNull {
+    return Intl.message(
+      '内容不能为空',
+      name: 'exceptionContentNull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `内容不能为空`
+  String get exceptionCwNull {
+    return Intl.message(
+      '内容不能为空',
+      name: 'exceptionCwNull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `发送帖子失败\n\n{error}`
+  String exceptionSendNote(Object error) {
+    return Intl.message(
+      '发送帖子失败\n\n$error',
+      name: 'exceptionSendNote',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `已置顶的帖子`
+  String get notePined {
+    return Intl.message(
+      '已置顶的帖子',
+      name: 'notePined',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `从{language}翻译 \n`
+  String noteFormLanguageTranslation(Object language) {
+    return Intl.message(
+      '从$language翻译 \n',
+      name: 'noteFormLanguageTranslation',
+      desc: '',
+      args: [language],
+    );
+  }
+
+  /// `显示内容`
+  String get noteCwShow {
+    return Intl.message(
+      '显示内容',
+      name: 'noteCwShow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `收起`
+  String get noteCwHide {
+    return Intl.message(
+      '收起',
+      name: 'noteCwHide',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `转发了`
+  String get noteReNoteByUser {
+    return Intl.message(
+      '转发了',
+      name: 'noteReNoteByUser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `转发`
+  String get noteReNote {
+    return Intl.message(
+      '转发',
+      name: 'noteReNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `引用`
+  String get noteQuote {
+    return Intl.message(
+      '引用',
+      name: 'noteQuote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count}票`
+  String voteCount(Object count) {
+    return Intl.message(
+      '$count票',
+      name: 'voteCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `总票数 {count}`
+  String voteAllCount(Object count) {
+    return Intl.message(
+      '总票数 $count',
+      name: 'voteAllCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `投票已结束`
+  String get voteExpired {
+    return Intl.message(
+      '投票已结束',
+      name: 'voteExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{datetime}后截止`
+  String voteWillExpired(Object datetime) {
+    return Intl.message(
+      '$datetime后截止',
+      name: 'voteWillExpired',
+      desc: '',
+      args: [datetime],
+    );
+  }
+
+  /// `复制内容`
+  String get copyContent {
+    return Intl.message(
+      '复制内容',
+      name: 'copyContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `复制本站链接`
+  String get noteCopyLocalLink {
+    return Intl.message(
+      '复制本站链接',
+      name: 'noteCopyLocalLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `分享`
+  String get share {
+    return Intl.message(
+      '分享',
+      name: 'share',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `转到所在服务器显示`
+  String get noteOpenRemoteLink {
+    return Intl.message(
+      '转到所在服务器显示',
+      name: 'noteOpenRemoteLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `翻译`
+  String get translate {
+    return Intl.message(
+      '翻译',
+      name: 'translate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `便签`
+  String get clip {
+    return Intl.message(
+      '便签',
+      name: 'clip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `新建便签`
+  String get clipCreate {
+    return Intl.message(
+      '新建便签',
+      name: 'clipCreate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `查看`
+  String get view {
+    return Intl.message(
+      '查看',
+      name: 'view',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `敏感内容`
+  String get sensitiveContent {
+    return Intl.message(
+      '敏感内容',
+      name: 'sensitiveContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `图片`
+  String get image {
+    return Intl.message(
+      '图片',
+      name: 'image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `视频`
+  String get video {
+    return Intl.message(
+      '视频',
+      name: 'video',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `点击显示`
+  String get sensitiveClickShow {
+    return Intl.message(
+      '点击显示',
+      name: 'sensitiveClickShow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `选择用户`
+  String get selectUser {
+    return Intl.message(
+      '选择用户',
+      name: 'selectUser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `用户名`
+  String get username {
+    return Intl.message(
+      '用户名',
+      name: 'username',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `域名`
+  String get hostnames {
+    return Intl.message(
+      '域名',
+      name: 'hostnames',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `正在关注你`
+  String get followingYouNow {
+    return Intl.message(
+      '正在关注你',
+      name: 'followingYouNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `此用户尚无自我介绍`
+  String get userDescriptionIsNull {
+    return Intl.message(
+      '此用户尚无自我介绍',
+      name: 'userDescriptionIsNull',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `关注`
+  String get follow {
+    return Intl.message(
+      '关注',
+      name: 'follow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `取消关注`
+  String get unfollow {
+    return Intl.message(
+      '取消关注',
+      name: 'unfollow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `已关注`
+  String get followed {
+    return Intl.message(
+      '已关注',
+      name: 'followed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `关注者`
+  String get followers {
+    return Intl.message(
+      '关注者',
+      name: 'followers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `关注中`
+  String get following {
+    return Intl.message(
+      '关注中',
+      name: 'following',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

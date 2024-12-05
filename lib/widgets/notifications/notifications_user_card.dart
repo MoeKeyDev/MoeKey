@@ -65,13 +65,6 @@ class NotificationsUserCard extends HookConsumerWidget {
                               height: double.infinity,
                             ),
                             onTap: () {
-                              // MainRouterDelegate.of(context)
-                              //     .setNewRoutePath(RouterItem(
-                              //   path: "user/${data.user?.id}",
-                              //   page: () {
-                              //     return UserPage(userId: data.user?.id);
-                              //   },
-                              // ));
                               context.push('/user/${data.user?.id}');
                             },
                           ),
