@@ -206,7 +206,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
             onTap: () {
-              context.push('/notes/${data.id}', extra: data);
+              context.push('/notes/${data.id}', extra: data.copyWith());
               // main_router.MainRouterDelegate.of(context)
               //     .setNewRoutePath(main_router.RouterItem(
               //   path: "notes/${data.id}",

@@ -137,6 +137,7 @@ class ImagePreviewPage extends HookConsumerWidget {
       }
     }
 
+    var appBarOpacity = useState(1.0);
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
@@ -204,24 +205,33 @@ class ImagePreviewPage extends HookConsumerWidget {
                             onDoubleTap: onDoubleTap,
                           );
                         }
-                        return ExtendedImage(
-                          image:
-                              ExtendedNetworkImageProvider(item, cache: true),
-                          fit: BoxFit.contain,
-                          mode: ExtendedImageMode.gesture,
-                          enableSlideOutPage: true,
-                          heroBuilderForSlidingPage: (widget) {
-                            // print(galleryItems[index]);
-                            if (galleryItems[index].hero != null) {
-                              return Hero(
-                                tag: galleryItems[index].hero!,
-                                child: widget,
-                              );
+                        return GestureDetector(
+                          onTap: () {
+                            if (appBarOpacity.value == 1.0) {
+                              appBarOpacity.value = 0.0;
+                            } else {
+                              appBarOpacity.value = 1.0;
                             }
-                            return widget;
                           },
-                          initGestureConfigHandler: initGestureConfigHandler,
-                          onDoubleTap: onDoubleTap,
+                          child: ExtendedImage(
+                            image:
+                                ExtendedNetworkImageProvider(item, cache: true),
+                            fit: BoxFit.contain,
+                            mode: ExtendedImageMode.gesture,
+                            enableSlideOutPage: true,
+                            heroBuilderForSlidingPage: (widget) {
+                              // print(galleryItems[index]);
+                              if (galleryItems[index].hero != null) {
+                                return Hero(
+                                  tag: galleryItems[index].hero!,
+                                  child: widget,
+                                );
+                              }
+                              return widget;
+                            },
+                            initGestureConfigHandler: initGestureConfigHandler,
+                            onDoubleTap: onDoubleTap,
+                          ),
                         );
                       },
                     );
@@ -246,7 +256,7 @@ class ImagePreviewPage extends HookConsumerWidget {
               Positioned(
                 top: 0,
                 child: AnimatedOpacity(
-                  opacity: 1,
+                  opacity: appBarOpacity.value,
                   duration: const Duration(milliseconds: 200),
                   child: SizedBox(
                     width: constraints.maxWidth,

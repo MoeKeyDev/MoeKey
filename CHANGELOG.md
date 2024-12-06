@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.1
+
+### Fixed
+
+- fix: blurhash flickering
+
+### Feature
+
+- Image preview click to hidden app bar
+
 ## 0.7.0
 
 - Add English language support
