@@ -1,4 +1,4 @@
-import 'package:blurhash_ffi/blurhashffi_widget.dart';
+import 'package:blurhash_shader/blurhash_shader.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -184,8 +184,8 @@ class ImagePreviewPage extends HookConsumerWidget {
                                                 .properties
                                                 ?.height ??
                                             9),
-                                    child: BlurhashFfi(
-                                        hash: galleryItems[index].blurhash!),
+                                    child:
+                                        BlurHash(galleryItems[index].blurhash!),
                                   ),
                                 );
                               }

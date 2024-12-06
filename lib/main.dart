@@ -1,3 +1,4 @@
+import 'package:blurhash_shader/blurhash_shader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -6,6 +7,8 @@ import 'package:moekey/status/themes.dart';
 import 'generated/l10n.dart';
 
 Future<void> main() async {
+  // 初始化BlurHash
+  await BlurHash.loadShader();
   runApp(const ProviderScope(child: MyApp()));
 }
 

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:blurhash_ffi/blurhashffi_widget.dart';
+import 'package:blurhash_shader/blurhash_shader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -73,7 +73,7 @@ class NoteImage extends HookConsumerWidget {
                   // ClipRect(
                   //   child:
                   if (imageFile.blurhash != null)
-                    BlurhashFfi(hash: imageFile.blurhash!)
+                    BlurHash(imageFile.blurhash!)
                   else if (imageFile.thumbnailUrl != null)
                     ImageFiltered(
                       imageFilter: ImageFilter.blur(

@@ -1,7 +1,7 @@
+import 'package:blurhash_shader/blurhash_shader.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:blurhash_ffi/blurhash_ffi.dart';
 
 ExtendedResizeImage getExtendedResizeImage(String url) {
   return ExtendedResizeImage(ExtendedNetworkImageProvider(url, cache: true),
@@ -66,7 +66,7 @@ class MkImage extends StatelessWidget {
                     height: height ?? constraintsHeight,
                     color: const Color.fromARGB(10, 0, 0, 0),
                     child: (blurHash != null && blurHash!.isNotEmpty)
-                        ? BlurhashFfi(hash: blurHash!)
+                        ? BlurHash(blurHash!)
                         : null,
                   );
                 },
