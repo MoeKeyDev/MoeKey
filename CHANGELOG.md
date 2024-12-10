@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.2
+
+### Added
+
+- Added Korean language support by [@everyscreennetwork](https://crowdin.com/profile/everyscreennetwork)
+
 ## 0.7.1
 
 ### Fixed
