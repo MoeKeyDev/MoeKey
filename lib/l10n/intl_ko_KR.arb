@@ -122,7 +122,7 @@
   "exceptionCwNull": "내용을 입력해 주세요",
   "exceptionSendNote": "노트 전송 실패\n\n{error}",
   "notePined": "고정된 노트",
-  "noteFormLanguageTranslation": "{language}에서 번역",
+  "noteFormLanguageTranslation": "{language}에서 번역 \n",
   "noteCwShow": "펼치기",
   "noteCwHide": "접기",
   "noteReNoteByUser": "리노트했습니다",
