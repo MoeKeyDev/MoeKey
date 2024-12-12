@@ -31,7 +31,7 @@
   "preview": "プレビュー",
   "public": "公開",
   "nameCannotBeEmpty": "名前は空欄にできません",
-  "creationFailedDialog": "\n\n {error} の作成に失敗しました",
+  "creationFailedDialog": "作成の失敗\n\n {error}",
   "justNow": "たった今",
   "secondsAgo": "{seconds} 秒前",
   "minutesAgo": "{minutes} 分前",
