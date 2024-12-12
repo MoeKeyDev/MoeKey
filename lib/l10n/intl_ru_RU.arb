@@ -1,6 +1,6 @@
 {
-  "selectServer": "Please Select Your Server",
-  "serverList": "List of Servers",
+  "selectServer": "Пожалуйста, выберите сервер",
+  "serverList": "Список серверов",
   "notesCount": "Notes Count",
   "usersCount": "Users Count",
   "registration": "Registration",
@@ -23,7 +23,7 @@
   "more": "подробнее",
   "viewMore": "Смотреть далее",
   "settings": "устанавливать",
-  "noLists": "You don't have any lists",
+  "noLists": "Список пуст",
   "gotIt": "Got it!",
   "back": "возвращаться (или уходить)",
   "name": "название (вещи)",
