@@ -93,6 +93,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clipFavorite": MessageLookupByLibrary.simpleMessage("添加到收藏"),
         "clipFavoriteList": MessageLookupByLibrary.simpleMessage("收藏"),
         "clipRemove": MessageLookupByLibrary.simpleMessage("移除便签"),
+        "clipUpdate": MessageLookupByLibrary.simpleMessage("更新便签"),
         "clips": MessageLookupByLibrary.simpleMessage("便签"),
         "confirmSelection": m0,
         "copyContent": MessageLookupByLibrary.simpleMessage("复制内容"),

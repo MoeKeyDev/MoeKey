@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/hover_builder.dart';
+import 'package:moekey/widgets/mk_button.dart';
+import 'package:moekey/widgets/mk_text_input_dialog.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog.dart';
 import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -137,14 +138,17 @@ class DriveImageThumbnail extends HookConsumerWidget {
                   onTap: () {
                     Timer(
                       const Duration(milliseconds: 150),
-                      () {
+                      () async {
                         if (!context.mounted) return;
-                        showDialog(
+                        var text = await showDialog(
                           context: context,
                           builder: (context) {
                             return getCommentDialog(themes);
                           },
                         );
+                        ref
+                            .read(driverUploaderProvider.notifier)
+                            .updateFile(fileId: data.id, comment: text);
                       },
                     );
 
@@ -280,106 +284,20 @@ class DriveImageThumbnail extends HookConsumerWidget {
   Widget getRenameDialog(ThemeColorModel themes) {
     return HookConsumer(
       builder: (context, ref, child) {
-        var name = useState(data.name);
-        return MkDialog(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  data.runtimeType == DriveFileModel
-                      ? S.current.renameFile
-                      : S.current.renameFolder,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(6)),
-                        borderSide:
-                            BorderSide(width: 1, color: themes.fgColor)),
-                    contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
-                    isDense: true,
-                    hintText: S.current.enterNewFileName,
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(6)),
-                        borderSide:
-                            BorderSide(width: 1, color: themes.dividerColor)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(6)),
-                        borderSide:
-                            BorderSide(width: 1, color: themes.accentColor))),
-                style: const TextStyle(fontSize: 14),
-                cursorWidth: 1,
-                cursorColor: themes.fgColor,
-                maxLines: 2,
-                textAlignVertical: TextAlignVertical.center,
-                onChanged: (value) {
-                  name.value = value;
-                },
-                initialValue: name.value,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        var notifier =
-                            ref.read(driverUploaderProvider.notifier);
-                        if (data.runtimeType == DriveFileModel) {
-                          notifier.updateFile(
-                              fileId: data.id, name: name.value);
-                        } else {
-                          notifier.updateFolders(
-                              folderId: data.id, name: name.value);
-                        }
-
-                        Navigator.of(context).pop();
-                      },
-                      style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStateProperty.all(themes.accentColor),
-                          foregroundColor:
-                              WidgetStateProperty.all(themes.fgOnAccentColor),
-                          elevation: WidgetStateProperty.all(0)),
-                      child: const Text("OK"),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: FilledButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(themes.buttonBgColor),
-                            foregroundColor:
-                                WidgetStateProperty.all(themes.fgColor),
-                            elevation: WidgetStateProperty.all(0)),
-                        child: Text(S.current.cancel)),
-                  )
-                ],
-              )
-            ],
-          ),
+        return MkTextInputDialog(
+          title: data.runtimeType == DriveFileModel
+              ? S.current.renameFile
+              : S.current.renameFolder,
+          initialValue: data.name,
+          onConfirm: (value) async {
+            var notifier = ref.read(driverUploaderProvider.notifier);
+            if (data.runtimeType == DriveFileModel) {
+              await notifier.updateFile(fileId: data.id, name: value);
+            } else {
+              await notifier.updateFolders(folderId: data.id, name: value);
+            }
+            return true;
+          },
         );
       },
     );
@@ -388,96 +306,15 @@ class DriveImageThumbnail extends HookConsumerWidget {
   Widget getCommentDialog(ThemeColorModel themes) {
     return HookConsumer(
       builder: (context, ref, child) {
-        var name = useState((data as DriveFileModel).comment);
-        return MkDialog(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  S.current.addTitle,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(6)),
-                        borderSide:
-                            BorderSide(width: 1, color: themes.fgColor)),
-                    contentPadding: const EdgeInsets.fromLTRB(14, 11, 14, 11),
-                    isDense: true,
-                    hintText: S.current.enterNewTitle,
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(6)),
-                        borderSide:
-                            BorderSide(width: 1, color: themes.dividerColor)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(6)),
-                        borderSide:
-                            BorderSide(width: 1, color: themes.accentColor))),
-                style: const TextStyle(fontSize: 14),
-                cursorWidth: 1,
-                cursorColor: themes.fgColor,
-                maxLines: 4,
-                textAlignVertical: TextAlignVertical.center,
-                onChanged: (value) {
-                  name.value = value;
-                },
-                initialValue: name.value,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ref
-                            .read(driverUploaderProvider.notifier)
-                            .updateFile(fileId: data.id, comment: name.value);
-                        Navigator.of(context).pop();
-                      },
-                      style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStateProperty.all(themes.accentColor),
-                          foregroundColor:
-                              WidgetStateProperty.all(themes.fgOnAccentColor),
-                          elevation: WidgetStateProperty.all(0)),
-                      child: const Text("OK"),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: FilledButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(themes.buttonBgColor),
-                            foregroundColor:
-                                WidgetStateProperty.all(themes.fgColor),
-                            elevation: WidgetStateProperty.all(0)),
-                        child: Text(S.current.cancel)),
-                  )
-                ],
-              )
-            ],
-          ),
+        return MkTextInputDialog(
+          title: S.current.addTitle,
+          initialValue: (data as DriveFileModel).comment,
+          onConfirm: (value) async {
+            await ref
+                .read(driverUploaderProvider.notifier)
+                .updateFile(fileId: data.id, comment: value);
+            return true;
+          },
         );
       },
     );
@@ -523,47 +360,29 @@ class DriveImageThumbnail extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 100,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        var notifier =
-                            ref.read(driverUploaderProvider.notifier);
-                        if (data.runtimeType == DriveFileModel) {
-                          notifier.deleteFile(data.id);
-                        } else {
-                          notifier.deleteFolder(data.id);
-                        }
-                        if (onRemove != null) {
-                          onRemove!();
-                        }
-                        Navigator.of(context).pop();
-                      },
-                      style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStateProperty.all(themes.accentColor),
-                          foregroundColor:
-                              WidgetStateProperty.all(themes.fgOnAccentColor),
-                          elevation: WidgetStateProperty.all(0)),
-                      child: const Text("OK"),
-                    ),
+                  MkPrimaryButton(
+                    child: Text(S.current.ok),
+                    onPressed: () {
+                      var notifier = ref.read(driverUploaderProvider.notifier);
+                      if (data.runtimeType == DriveFileModel) {
+                        notifier.deleteFile(data.id);
+                      } else {
+                        notifier.deleteFolder(data.id);
+                      }
+                      if (onRemove != null) {
+                        onRemove!();
+                      }
+                      Navigator.of(context).pop();
+                    },
                   ),
                   const SizedBox(
                     width: 15,
                   ),
-                  SizedBox(
-                    width: 100,
-                    child: FilledButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(themes.buttonBgColor),
-                            foregroundColor:
-                                WidgetStateProperty.all(themes.fgColor),
-                            elevation: WidgetStateProperty.all(0)),
-                        child: Text(S.current.cancel)),
+                  MkSecondaryButton(
+                    child: Text(S.current.cancel),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
                   )
                 ],
               )

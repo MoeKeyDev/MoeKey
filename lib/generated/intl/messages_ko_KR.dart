@@ -54,7 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m14(months) => "${months}개월 전";
 
-  static String m15(language) => "${language}에서 번역";
+  static String m15(language) => "${language}에서 번역 \n";
 
   static String m16(type) => "지원하지 않는 알림 유형: ${type}";
 

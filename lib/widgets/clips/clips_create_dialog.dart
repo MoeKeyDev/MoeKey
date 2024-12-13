@@ -136,7 +136,7 @@ class ClipCreateDialog extends HookConsumerWidget {
             ),
           ),
           Text(
-            clipId != null ? "更新便签" : "新建便签",
+            clipId != null ? S.current.clipUpdate : S.current.clipCreate,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const Spacer(),

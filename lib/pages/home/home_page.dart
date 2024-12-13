@@ -212,7 +212,6 @@ class NavBar extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var state = ref.watch(homePageStateProvider);
     var currentId = GoRouter.of(context).state?.name;
-    logger.d(currentId);
     return AnimatedContainer(
       width: width,
       color: themes.navBgColor,

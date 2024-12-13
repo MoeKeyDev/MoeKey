@@ -21,296 +21,348 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ar_SA';
 
   static String m0(selectListLength, maxSelect) =>
-      "确定(${selectListLength}/${maxSelect})";
+      "تأكيد(${selectListLength}/${maxSelect})";
 
-  static String m1(error) => "创建失败\n\n ${error}";
+  static String m1(error) => "فشل الإنشاء\n\n ${error}";
 
-  static String m2(days) => "${days}天前";
+  static String m2(days) => "قبل ${days} يومًا";
 
-  static String m3(thing) => "要删掉「${thing}」吗？";
+  static String m3(thing) => "هل تريد حذف \"${thing}\"؟";
 
-  static String m4(name) => "要删除「${name}」文件吗？附加此文件的帖子也会被删除。";
+  static String m4(name) =>
+      "هل تريد حذف الملف \"${name}؟ سيتم أيضًا حذف المشاركات المرتبطة بهذا الملف.";
 
-  static String m5(name) => "要删除「${name}」文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。";
+  static String m5(name) =>
+      "هل تريد حذف المجلد \"${name}\"؟ إذا كان هناك محتوى في المجلد، يرجى حذف المحتوى أولاً.";
 
   static String m6(day, hour, minute, second) =>
-      "${day}天${hour}小时${minute}分钟${second}秒";
+      "${day} يوم ${hour} ساعة ${minute} دقيقة ${second} ثانية";
 
-  static String m7(hour, minute, second) => "${hour}小时${minute}分钟${second}秒";
+  static String m7(hour, minute, second) =>
+      "${hour} ساعة ${minute} دقيقة ${second} ثانية";
 
-  static String m8(minute, second) => "${minute}分钟${second}秒";
+  static String m8(minute, second) => "${minute} دقيقة ${second} ثانية";
 
-  static String m9(second) => "${second}秒";
+  static String m9(second) => "${second} ثانية";
 
-  static String m10(error) => "发送帖子失败\n\n${error}";
+  static String m10(error) => "فشل في إرسال المشاركة\n\n${error}";
 
-  static String m11(hours) => "${hours}小时前";
+  static String m11(hours) => "قبل ${hours} ساعة";
 
-  static String m12(server) => "正在登录${server}";
+  static String m12(server) => "جارِ تسجيل الدخول إلى ${server}";
 
-  static String m13(minutes) => "${minutes}分钟前";
+  static String m13(minutes) => "قبل ${minutes} دقيقة";
 
-  static String m14(months) => "${months}个月前";
+  static String m14(months) => "قبل ${months} شهرًا";
 
-  static String m15(language) => "从${language}翻译 \n";
+  static String m15(language) => "تمت الترجمة من ${language} \n";
 
-  static String m16(type) => "不支持的通知类型:${type}";
+  static String m16(type) => "نوع الإشعار غير المدعوم: ${type}";
 
-  static String m17(seconds) => "${seconds}秒前";
+  static String m17(seconds) => "قبل ${seconds} ثانية";
 
-  static String m18(msg) => "上传失败\n ${msg}";
+  static String m18(msg) => "فشل التحميل\n ${msg}";
 
-  static String m19(count) => "总票数 ${count}";
+  static String m19(count) => "إجمالي الأصوات ${count}";
 
-  static String m20(count) => "${count}票";
+  static String m20(count) => "${count} تصويت";
 
-  static String m21(index) => "选项${index}";
+  static String m21(index) => "الخيار ${index}";
 
-  static String m22(index) => "选项${index}不能为空";
+  static String m22(index) => "لا يمكن أن يكون الخيار ${index} فارغًا";
 
-  static String m23(datetime) => "${datetime}后截止";
+  static String m23(datetime) => "ينتهي في ${datetime}";
 
-  static String m24(years) => "${years}年前";
+  static String m24(years) => "قبل ${years} سنة";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "account": MessageLookupByLibrary.simpleMessage("账号"),
-        "add": MessageLookupByLibrary.simpleMessage("添加"),
-        "addAccount": MessageLookupByLibrary.simpleMessage("添加账号"),
-        "addFile": MessageLookupByLibrary.simpleMessage("添加文件"),
-        "addTitle": MessageLookupByLibrary.simpleMessage("添加标题"),
-        "all": MessageLookupByLibrary.simpleMessage("全部"),
-        "announcementActive": MessageLookupByLibrary.simpleMessage("现在的公告"),
-        "announcementExpired": MessageLookupByLibrary.simpleMessage("过去的公告"),
-        "announcements": MessageLookupByLibrary.simpleMessage("公告"),
-        "back": MessageLookupByLibrary.simpleMessage("返回"),
-        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
-        "cancelSensitive": MessageLookupByLibrary.simpleMessage("取消标记为敏感内容"),
-        "clip": MessageLookupByLibrary.simpleMessage("便签"),
-        "clipCancelFavoriteText":
-            MessageLookupByLibrary.simpleMessage("确定要取消收藏吗？"),
-        "clipCreate": MessageLookupByLibrary.simpleMessage("新建便签"),
-        "clipFavorite": MessageLookupByLibrary.simpleMessage("添加到收藏"),
-        "clipFavoriteList": MessageLookupByLibrary.simpleMessage("收藏"),
-        "clipRemove": MessageLookupByLibrary.simpleMessage("移除便签"),
-        "clips": MessageLookupByLibrary.simpleMessage("便签"),
+        "account": MessageLookupByLibrary.simpleMessage("الحساب"),
+        "add": MessageLookupByLibrary.simpleMessage("إضافة"),
+        "addAccount": MessageLookupByLibrary.simpleMessage("إضافة حساب"),
+        "addFile": MessageLookupByLibrary.simpleMessage("إضافة ملف"),
+        "addTitle": MessageLookupByLibrary.simpleMessage("إضافة عنوان"),
+        "all": MessageLookupByLibrary.simpleMessage("الكل"),
+        "announcementActive":
+            MessageLookupByLibrary.simpleMessage("الإعلانات الحالية"),
+        "announcementExpired":
+            MessageLookupByLibrary.simpleMessage("الإعلانات السابقة"),
+        "announcements": MessageLookupByLibrary.simpleMessage("الإعلانات"),
+        "back": MessageLookupByLibrary.simpleMessage("عودة"),
+        "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
+        "cancelSensitive": MessageLookupByLibrary.simpleMessage(
+            "إلغاء وضع علامة كالمحتوى الحساس"),
+        "clip": MessageLookupByLibrary.simpleMessage("ملف"),
+        "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
+            "هل تريد بالتأكيد إلغاء المفضلة؟"),
+        "clipCreate": MessageLookupByLibrary.simpleMessage("إنشاء ملف جديد"),
+        "clipFavorite":
+            MessageLookupByLibrary.simpleMessage("إضافة إلى المفضلة"),
+        "clipFavoriteList":
+            MessageLookupByLibrary.simpleMessage("قائمة المفضلة"),
+        "clipRemove": MessageLookupByLibrary.simpleMessage("حذف الملف"),
+        "clips": MessageLookupByLibrary.simpleMessage("الملاحظات"),
         "confirmSelection": m0,
-        "copyContent": MessageLookupByLibrary.simpleMessage("复制内容"),
-        "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
-        "copyRSS": MessageLookupByLibrary.simpleMessage("复制RSS"),
-        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage("复制用户主页地址"),
-        "copyUsername": MessageLookupByLibrary.simpleMessage("复制用户名"),
-        "createFolder": MessageLookupByLibrary.simpleMessage("新建文件夹"),
-        "createNote": MessageLookupByLibrary.simpleMessage("发布新帖子"),
-        "createNoteFormFile": MessageLookupByLibrary.simpleMessage("从文件创建帖子"),
-        "createNoteHint": MessageLookupByLibrary.simpleMessage("发生了什么..."),
-        "createdDate": MessageLookupByLibrary.simpleMessage("创建日期"),
+        "copyContent": MessageLookupByLibrary.simpleMessage("نسخ المحتوى"),
+        "copyLink": MessageLookupByLibrary.simpleMessage("نسخ الرابط"),
+        "copyRSS": MessageLookupByLibrary.simpleMessage("نسخ RSS"),
+        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage(
+            "نسخ رابط الصفحة الرئيسية للمستخدم"),
+        "copyUsername":
+            MessageLookupByLibrary.simpleMessage("نسخ اسم المستخدم"),
+        "createFolder": MessageLookupByLibrary.simpleMessage("إنشاء مجلد جديد"),
+        "createNote": MessageLookupByLibrary.simpleMessage("نشر مشاركة جديدة"),
+        "createNoteFormFile":
+            MessageLookupByLibrary.simpleMessage("إنشاء مشاركة من ملف"),
+        "createNoteHint": MessageLookupByLibrary.simpleMessage("ماذا حدث..."),
+        "createdDate": MessageLookupByLibrary.simpleMessage("تاريخ الإنشاء"),
         "creationFailedDialog": m1,
-        "cw": MessageLookupByLibrary.simpleMessage("隐藏内容"),
-        "day": MessageLookupByLibrary.simpleMessage("天"),
+        "cw": MessageLookupByLibrary.simpleMessage("إخفاء المحتوى"),
+        "day": MessageLookupByLibrary.simpleMessage("أيام"),
         "daysAgo": m2,
-        "delete": MessageLookupByLibrary.simpleMessage("删除"),
+        "delete": MessageLookupByLibrary.simpleMessage("حذف"),
         "deleteConfirm": m3,
         "deleteFileConfirmation": m4,
         "deleteFolderConfirmation": m5,
-        "description": MessageLookupByLibrary.simpleMessage("描述"),
-        "done": MessageLookupByLibrary.simpleMessage("完成"),
-        "download": MessageLookupByLibrary.simpleMessage("下载"),
-        "drive": MessageLookupByLibrary.simpleMessage("网盘"),
+        "description": MessageLookupByLibrary.simpleMessage("الوصف"),
+        "done": MessageLookupByLibrary.simpleMessage("إنهاء"),
+        "download": MessageLookupByLibrary.simpleMessage("تنزيل"),
+        "drive": MessageLookupByLibrary.simpleMessage("محرك السحابة"),
         "durationDay": m6,
         "durationHour": m7,
         "durationMinute": m8,
         "durationSecond": m9,
-        "edit": MessageLookupByLibrary.simpleMessage("编辑"),
-        "emoji": MessageLookupByLibrary.simpleMessage("表情符号"),
-        "enterNewFileName": MessageLookupByLibrary.simpleMessage("请输入新文件名"),
-        "enterNewTitle": MessageLookupByLibrary.simpleMessage("请输入新标题"),
-        "enterUrl": MessageLookupByLibrary.simpleMessage("请输入URL"),
-        "exceptionContentNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
-        "exceptionCwNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
+        "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
+        "emoji": MessageLookupByLibrary.simpleMessage("الرموز التعبيرية"),
+        "enterNewFileName":
+            MessageLookupByLibrary.simpleMessage("الرجاء إدخال اسم ملف جديد"),
+        "enterNewTitle":
+            MessageLookupByLibrary.simpleMessage("الرجاء إدخال عنوان جديد"),
+        "enterUrl":
+            MessageLookupByLibrary.simpleMessage("يرجى إدخال عنوان URL"),
+        "exceptionContentNull": MessageLookupByLibrary.simpleMessage(
+            "لا يمكن أن يكون المحتوى فارغًا"),
+        "exceptionCwNull": MessageLookupByLibrary.simpleMessage(
+            "لا يمكن أن يكون المحتوى فارغًا"),
         "exceptionSendNote": m10,
-        "explore": MessageLookupByLibrary.simpleMessage("发现"),
-        "exploreHot": MessageLookupByLibrary.simpleMessage("热门"),
-        "exploreUserHot": MessageLookupByLibrary.simpleMessage("热门用户"),
-        "exploreUserLast": MessageLookupByLibrary.simpleMessage("最近登录的用户"),
-        "exploreUserPined": MessageLookupByLibrary.simpleMessage("置顶用户"),
-        "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿的用户"),
-        "exploreUsers": MessageLookupByLibrary.simpleMessage("用户"),
-        "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
-        "filter": MessageLookupByLibrary.simpleMessage("Filter"),
-        "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
-        "follow": MessageLookupByLibrary.simpleMessage("关注"),
-        "followed": MessageLookupByLibrary.simpleMessage("已关注"),
-        "followers": MessageLookupByLibrary.simpleMessage("关注者"),
-        "following": MessageLookupByLibrary.simpleMessage("关注中"),
-        "fromCloud": MessageLookupByLibrary.simpleMessage("从网盘中"),
-        "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
-        "hashtag": MessageLookupByLibrary.simpleMessage("话题标签"),
-        "hostnames": MessageLookupByLibrary.simpleMessage("域名"),
-        "hour": MessageLookupByLibrary.simpleMessage("小时"),
+        "explore": MessageLookupByLibrary.simpleMessage("استكشاف"),
+        "exploreHot": MessageLookupByLibrary.simpleMessage("الأكثر رواجاً"),
+        "exploreUserHot":
+            MessageLookupByLibrary.simpleMessage("المستخدمون الرائجون"),
+        "exploreUserLast": MessageLookupByLibrary.simpleMessage(
+            "المستخدمون الذين قاموا بتسجيل دخول مؤخرًا"),
+        "exploreUserPined":
+            MessageLookupByLibrary.simpleMessage("المستخدمون المثبتون"),
+        "exploreUserUpdated": MessageLookupByLibrary.simpleMessage(
+            "المستخدمون الذين قدموا المشاركات مؤخرًا"),
+        "exploreUsers": MessageLookupByLibrary.simpleMessage("المستخدمين"),
+        "favorite": MessageLookupByLibrary.simpleMessage("المفضلة"),
+        "filter": MessageLookupByLibrary.simpleMessage("تصفية"),
+        "folderName": MessageLookupByLibrary.simpleMessage("اسم المجلد"),
+        "follow": MessageLookupByLibrary.simpleMessage("متابعة"),
+        "followed": MessageLookupByLibrary.simpleMessage("تمت المتابعة"),
+        "followers": MessageLookupByLibrary.simpleMessage("المتابعون"),
+        "following": MessageLookupByLibrary.simpleMessage("متابعة"),
+        "fromCloud": MessageLookupByLibrary.simpleMessage("من السحابة"),
+        "gotIt": MessageLookupByLibrary.simpleMessage("فهمت"),
+        "hashtag": MessageLookupByLibrary.simpleMessage("وسم الموضوعات"),
+        "hostnames": MessageLookupByLibrary.simpleMessage("النطاقات"),
+        "hour": MessageLookupByLibrary.simpleMessage("ساعات"),
         "hoursAgo": m11,
-        "image": MessageLookupByLibrary.simpleMessage("图片"),
-        "inputServer": MessageLookupByLibrary.simpleMessage("手动输入服务器"),
-        "insertDriverFile": MessageLookupByLibrary.simpleMessage("插入附件"),
-        "isFollowingYouNow": MessageLookupByLibrary.simpleMessage("正在关注你"),
-        "justNow": MessageLookupByLibrary.simpleMessage("刚刚"),
-        "keepOriginal": MessageLookupByLibrary.simpleMessage("保留原图"),
+        "image": MessageLookupByLibrary.simpleMessage("صورة"),
+        "inputServer":
+            MessageLookupByLibrary.simpleMessage("إدخال الخادم يدويًا"),
+        "insertDriverFile": MessageLookupByLibrary.simpleMessage("إدراج مرفق"),
+        "isFollowingYouNow":
+            MessageLookupByLibrary.simpleMessage("يتابعك الآن"),
+        "justNow": MessageLookupByLibrary.simpleMessage("الآن"),
+        "keepOriginal":
+            MessageLookupByLibrary.simpleMessage("الاحتفاظ بالصورة الأصلية"),
         "loadingServers":
-            MessageLookupByLibrary.simpleMessage("Server Loading"),
-        "local": MessageLookupByLibrary.simpleMessage("本地"),
-        "localUpload": MessageLookupByLibrary.simpleMessage("本地上传"),
-        "login": MessageLookupByLibrary.simpleMessage("登录"),
-        "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
-        "loginFailedWithAppCreate":
-            MessageLookupByLibrary.simpleMessage("登录失败: 应用创建失败"),
-        "loginFailedWithToken":
-            MessageLookupByLibrary.simpleMessage("登录失败: token获取失败"),
+            MessageLookupByLibrary.simpleMessage("جارٍ تحميل الخادم"),
+        "local": MessageLookupByLibrary.simpleMessage("محلي"),
+        "localUpload": MessageLookupByLibrary.simpleMessage("تحميل محلي"),
+        "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+        "loginFailed": MessageLookupByLibrary.simpleMessage("فشل تسجيل الدخول"),
+        "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
+            "فشل تسجيل الدخول: فشل إنشاء التطبيق"),
+        "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
+            "فشل تسجيل الدخول: فشل في الحصول على الرمز المميز"),
         "loginLoading": m12,
-        "loginSuccess": MessageLookupByLibrary.simpleMessage("登录成功"),
-        "manageAccount": MessageLookupByLibrary.simpleMessage("管理账号"),
-        "markAsSensitive": MessageLookupByLibrary.simpleMessage("标记为敏感内容"),
-        "mention": MessageLookupByLibrary.simpleMessage("提及"),
-        "minute": MessageLookupByLibrary.simpleMessage("分钟"),
+        "loginSuccess":
+            MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول بنجاح"),
+        "manageAccount": MessageLookupByLibrary.simpleMessage("إدارة الحساب"),
+        "markAsSensitive":
+            MessageLookupByLibrary.simpleMessage("وضع علامة كالمحتوى الحساس"),
+        "mention": MessageLookupByLibrary.simpleMessage("إشارة"),
+        "minute": MessageLookupByLibrary.simpleMessage("دقائق"),
         "minutesAgo": m13,
         "monthsAgo": m14,
-        "more": MessageLookupByLibrary.simpleMessage("更多"),
-        "myCLips": MessageLookupByLibrary.simpleMessage("我的便签"),
-        "name": MessageLookupByLibrary.simpleMessage("名称"),
-        "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
-        "next": MessageLookupByLibrary.simpleMessage("下一步"),
-        "noLists":
-            MessageLookupByLibrary.simpleMessage("You don\'t have any lists"),
-        "notFindServer": MessageLookupByLibrary.simpleMessage("没有找到你所在的服务器？"),
-        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
-        "noteCwHide": MessageLookupByLibrary.simpleMessage("收起"),
-        "noteCwShow": MessageLookupByLibrary.simpleMessage("显示内容"),
+        "more": MessageLookupByLibrary.simpleMessage("المزيد"),
+        "myCLips": MessageLookupByLibrary.simpleMessage("ملفاتي"),
+        "name": MessageLookupByLibrary.simpleMessage("الاسم"),
+        "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
+            "لا يمكن أن يكون الاسم فارغًا"),
+        "next": MessageLookupByLibrary.simpleMessage("الخطوة التالية"),
+        "noLists": MessageLookupByLibrary.simpleMessage("القائمة فارغة"),
+        "notFindServer": MessageLookupByLibrary.simpleMessage(
+            "لم يُعثر على الخادم الذي تستخدمه؟"),
+        "noteCopyLocalLink":
+            MessageLookupByLibrary.simpleMessage("نسخ رابط الموقع المحلي"),
+        "noteCwHide": MessageLookupByLibrary.simpleMessage("إخفاء"),
+        "noteCwShow": MessageLookupByLibrary.simpleMessage("عرض المحتوى"),
         "noteFormLanguageTranslation": m15,
-        "noteLocalOnly": MessageLookupByLibrary.simpleMessage("不参与联合"),
-        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("转到所在服务器显示"),
-        "notePined": MessageLookupByLibrary.simpleMessage("已置顶的帖子"),
-        "noteQuote": MessageLookupByLibrary.simpleMessage("引用"),
-        "noteReNote": MessageLookupByLibrary.simpleMessage("转发"),
-        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("转发了"),
-        "noteTranslate": MessageLookupByLibrary.simpleMessage("翻译帖子"),
-        "noteVisibility": MessageLookupByLibrary.simpleMessage("可见性"),
-        "noteVisibilityFollowers": MessageLookupByLibrary.simpleMessage("关注者"),
+        "noteLocalOnly":
+            MessageLookupByLibrary.simpleMessage("غير مشاركة في الاتحاد"),
+        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage(
+            "الانتقال إلى عرض خادم الموقع"),
+        "notePined": MessageLookupByLibrary.simpleMessage("المشاركة المثبتة"),
+        "noteQuote": MessageLookupByLibrary.simpleMessage("اقتباس"),
+        "noteReNote": MessageLookupByLibrary.simpleMessage("إعادة نشر"),
+        "noteReNoteByUser":
+            MessageLookupByLibrary.simpleMessage("تمت إعادة النشر"),
+        "noteTranslate": MessageLookupByLibrary.simpleMessage("ترجمة المشاركة"),
+        "noteVisibility": MessageLookupByLibrary.simpleMessage("الرؤية"),
+        "noteVisibilityFollowers":
+            MessageLookupByLibrary.simpleMessage("المتابعون"),
         "noteVisibilityFollowersText":
-            MessageLookupByLibrary.simpleMessage("仅发送至关注者"),
-        "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("首页"),
-        "noteVisibilityHomeText":
-            MessageLookupByLibrary.simpleMessage("仅发送至首页的时间线"),
-        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("公开"),
-        "noteVisibilityPublicText":
-            MessageLookupByLibrary.simpleMessage("您的帖子将出现在全局时间线上"),
-        "noteVisibilitySpecified": MessageLookupByLibrary.simpleMessage("私信"),
-        "noteVisibilitySpecifiedText":
-            MessageLookupByLibrary.simpleMessage("仅发送至指定用户"),
-        "notes": MessageLookupByLibrary.simpleMessage("帖子"),
-        "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
-        "notification": MessageLookupByLibrary.simpleMessage("通知"),
-        "notifications": MessageLookupByLibrary.simpleMessage("通知"),
-        "notifyAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "notifyFilter": MessageLookupByLibrary.simpleMessage("筛选"),
+            MessageLookupByLibrary.simpleMessage("أرسل فقط إلى المتابعين"),
+        "noteVisibilityHome":
+            MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية"),
+        "noteVisibilityHomeText": MessageLookupByLibrary.simpleMessage(
+            "أرسل فقط إلى الجدول الزمني للصفحة الرئيسية"),
+        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("علني"),
+        "noteVisibilityPublicText": MessageLookupByLibrary.simpleMessage(
+            "ستظهر مشاركتك في الجدول الزمني العالمي"),
+        "noteVisibilitySpecified":
+            MessageLookupByLibrary.simpleMessage("رسالة خاصة"),
+        "noteVisibilitySpecifiedText": MessageLookupByLibrary.simpleMessage(
+            "أرسل فقط إلى المستخدمين المحددين"),
+        "notes": MessageLookupByLibrary.simpleMessage("المشاركات"),
+        "notesCount": MessageLookupByLibrary.simpleMessage("عدد المشاركات"),
+        "notification": MessageLookupByLibrary.simpleMessage("الإشعارات"),
+        "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
+        "notifyAll": MessageLookupByLibrary.simpleMessage("الكل"),
+        "notifyFilter": MessageLookupByLibrary.simpleMessage("تصفية"),
         "notifyFollowedAccepted":
-            MessageLookupByLibrary.simpleMessage("你的关注请求被通过了"),
-        "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("你有新的关注者"),
-        "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全部标记为已读"),
-        "notifyMention": MessageLookupByLibrary.simpleMessage("提到我的"),
-        "notifyMessage": MessageLookupByLibrary.simpleMessage("私信"),
+            MessageLookupByLibrary.simpleMessage("تم قبول طلب متابعتك"),
+        "notifyFollowedYou":
+            MessageLookupByLibrary.simpleMessage("لديك متابعون جدد"),
+        "notifyMarkAllRead":
+            MessageLookupByLibrary.simpleMessage("وضع علامة للكل كمقروء"),
+        "notifyMention": MessageLookupByLibrary.simpleMessage("إشاراتي"),
+        "notifyMessage": MessageLookupByLibrary.simpleMessage("الرسائل الخاصة"),
         "notifyNotSupport": m16,
-        "ok": MessageLookupByLibrary.simpleMessage("确定"),
-        "openInNewTab": MessageLookupByLibrary.simpleMessage("转到浏览器显示"),
-        "overviews": MessageLookupByLibrary.simpleMessage("概览"),
-        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage("关注请求批准中"),
-        "preview": MessageLookupByLibrary.simpleMessage("预览"),
-        "previewNote": MessageLookupByLibrary.simpleMessage("预览帖子"),
-        "processing": MessageLookupByLibrary.simpleMessage("处理中"),
-        "public": MessageLookupByLibrary.simpleMessage("公开"),
-        "publish": MessageLookupByLibrary.simpleMessage("发布"),
-        "reNoteHint": MessageLookupByLibrary.simpleMessage("引用这个帖子..."),
-        "reNoteText": MessageLookupByLibrary.simpleMessage("引用帖子"),
-        "reaction": MessageLookupByLibrary.simpleMessage("回应"),
-        "reactionAccepting": MessageLookupByLibrary.simpleMessage("接受表情回应"),
-        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "ok": MessageLookupByLibrary.simpleMessage("تأكيد"),
+        "openInNewTab": MessageLookupByLibrary.simpleMessage(
+            "الانتقال إلى العرض في المتصفح"),
+        "overviews": MessageLookupByLibrary.simpleMessage("نظرة عامة"),
+        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage(
+            "طلب المتابعة في انتظار الموافقة"),
+        "preview": MessageLookupByLibrary.simpleMessage("معاينة"),
+        "previewNote": MessageLookupByLibrary.simpleMessage("معاينة المشاركة"),
+        "processing": MessageLookupByLibrary.simpleMessage("يعالج حالياً"),
+        "public": MessageLookupByLibrary.simpleMessage("عام"),
+        "publish": MessageLookupByLibrary.simpleMessage("نشر"),
+        "reNoteHint":
+            MessageLookupByLibrary.simpleMessage("اقتبس من هذه المشاركة..."),
+        "reNoteText": MessageLookupByLibrary.simpleMessage("اقتباس المشاركة"),
+        "reaction": MessageLookupByLibrary.simpleMessage("الردود"),
+        "reactionAccepting":
+            MessageLookupByLibrary.simpleMessage("قبول ردود الفعل التعبيرية"),
+        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("الكل"),
         "reactionAcceptingLikeOnly":
-            MessageLookupByLibrary.simpleMessage("仅点赞"),
+            MessageLookupByLibrary.simpleMessage("الإعجاب فقط"),
         "reactionAcceptingLikeOnlyRemote":
-            MessageLookupByLibrary.simpleMessage("远程仅点赞"),
-        "reactionAcceptingNoneSensitive":
-            MessageLookupByLibrary.simpleMessage("仅限非敏感内容"),
+            MessageLookupByLibrary.simpleMessage("الإعجاب فقط عن بُعد"),
+        "reactionAcceptingNoneSensitive": MessageLookupByLibrary.simpleMessage(
+            "فقط من أجل المحتوى غير الحساس"),
         "reactionAcceptingNoneSensitiveOrLocal":
-            MessageLookupByLibrary.simpleMessage("仅限非敏感内容（远程仅点赞）"),
-        "recipient": MessageLookupByLibrary.simpleMessage("收件人"),
-        "refresh": MessageLookupByLibrary.simpleMessage("刷新"),
-        "registration": MessageLookupByLibrary.simpleMessage("Registration"),
-        "registrationClosed": MessageLookupByLibrary.simpleMessage("closed"),
-        "registrationOpen": MessageLookupByLibrary.simpleMessage("open"),
-        "remote": MessageLookupByLibrary.simpleMessage("远程"),
-        "rename": MessageLookupByLibrary.simpleMessage("重命名"),
-        "renameFile": MessageLookupByLibrary.simpleMessage("重命名文件"),
-        "renameFolder": MessageLookupByLibrary.simpleMessage("重命名文件夹"),
-        "replyNoteHint": MessageLookupByLibrary.simpleMessage("回复这个帖子..."),
-        "replyNoteText": MessageLookupByLibrary.simpleMessage("回复帖子"),
-        "saveFailed": MessageLookupByLibrary.simpleMessage("保存失败"),
-        "saveImage": MessageLookupByLibrary.simpleMessage("保存图片"),
-        "saveSuccess": MessageLookupByLibrary.simpleMessage("保存成功"),
-        "search": MessageLookupByLibrary.simpleMessage("搜索"),
-        "searchAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "searchHost": MessageLookupByLibrary.simpleMessage("指定域名"),
-        "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
-        "searchRemote": MessageLookupByLibrary.simpleMessage("远程"),
-        "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
+            MessageLookupByLibrary.simpleMessage(
+                "فقط من أجل المحتوى غير الحساس (الإعجاب فقط عن بُعد)"),
+        "recipient": MessageLookupByLibrary.simpleMessage("المستلم"),
+        "refresh": MessageLookupByLibrary.simpleMessage("تحديث"),
+        "registration": MessageLookupByLibrary.simpleMessage("وضع التسجيل"),
+        "registrationClosed":
+            MessageLookupByLibrary.simpleMessage("عن طريق الدعوة فقط"),
+        "registrationOpen": MessageLookupByLibrary.simpleMessage("مفتوح"),
+        "remote": MessageLookupByLibrary.simpleMessage("بعيد"),
+        "rename": MessageLookupByLibrary.simpleMessage("إعادة تسمية"),
+        "renameFile": MessageLookupByLibrary.simpleMessage("إعادة تسمية الملف"),
+        "renameFolder":
+            MessageLookupByLibrary.simpleMessage("إعادة تسمية المجلد"),
+        "replyNoteHint":
+            MessageLookupByLibrary.simpleMessage("رد على هذه المشاركة..."),
+        "replyNoteText":
+            MessageLookupByLibrary.simpleMessage("الرد على المشاركة"),
+        "saveFailed": MessageLookupByLibrary.simpleMessage("فشل الحفظ"),
+        "saveImage": MessageLookupByLibrary.simpleMessage("حفظ الصورة"),
+        "saveSuccess": MessageLookupByLibrary.simpleMessage("تم الحفظ بنجاح"),
+        "search": MessageLookupByLibrary.simpleMessage("بحث"),
+        "searchAll": MessageLookupByLibrary.simpleMessage("الكل"),
+        "searchHost": MessageLookupByLibrary.simpleMessage("النطاق المخصص"),
+        "searchLocal": MessageLookupByLibrary.simpleMessage("محلي"),
+        "searchRemote": MessageLookupByLibrary.simpleMessage("عن بُعد"),
+        "searchServers": MessageLookupByLibrary.simpleMessage(
+            "البحث عن اسم الخادم أو النطاق"),
         "secondsAgo": m17,
-        "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
+        "selectHashtag": MessageLookupByLibrary.simpleMessage("حدد الوسوم"),
         "selectServer":
-            MessageLookupByLibrary.simpleMessage("Please Select Your Server"),
-        "selectUser": MessageLookupByLibrary.simpleMessage("选择用户"),
-        "sensitiveClickShow": MessageLookupByLibrary.simpleMessage("点击显示"),
-        "sensitiveContent": MessageLookupByLibrary.simpleMessage("敏感内容"),
-        "serverAddr": MessageLookupByLibrary.simpleMessage("服务器地址"),
-        "serverList": MessageLookupByLibrary.simpleMessage("List of Servers"),
-        "settings": MessageLookupByLibrary.simpleMessage("设置"),
-        "share": MessageLookupByLibrary.simpleMessage("分享"),
-        "showConversation": MessageLookupByLibrary.simpleMessage("查看对话"),
-        "somebodyNote": MessageLookupByLibrary.simpleMessage(" 的帖子"),
-        "timeline": MessageLookupByLibrary.simpleMessage("时间线"),
-        "timelineGlobal": MessageLookupByLibrary.simpleMessage("全局"),
-        "timelineHome": MessageLookupByLibrary.simpleMessage("首页"),
-        "timelineHybrid": MessageLookupByLibrary.simpleMessage("社交"),
-        "timelineLocal": MessageLookupByLibrary.simpleMessage("本地"),
-        "translate": MessageLookupByLibrary.simpleMessage("翻译"),
-        "uncategorized": MessageLookupByLibrary.simpleMessage("未分类"),
-        "unfollow": MessageLookupByLibrary.simpleMessage("取消关注"),
-        "updatedDate": MessageLookupByLibrary.simpleMessage("更新日期"),
+            MessageLookupByLibrary.simpleMessage("من فضلك اختر الخادم"),
+        "selectUser": MessageLookupByLibrary.simpleMessage("حدد المستخدم"),
+        "sensitiveClickShow":
+            MessageLookupByLibrary.simpleMessage("اضغط للعرض"),
+        "sensitiveContent":
+            MessageLookupByLibrary.simpleMessage("المحتوى الحساس"),
+        "serverAddr": MessageLookupByLibrary.simpleMessage("عنوان الخادم"),
+        "serverList": MessageLookupByLibrary.simpleMessage("قائمة الخوادم"),
+        "settings": MessageLookupByLibrary.simpleMessage("إعدادات"),
+        "share": MessageLookupByLibrary.simpleMessage("مشاركة"),
+        "showConversation":
+            MessageLookupByLibrary.simpleMessage("عرض المحادثة"),
+        "somebodyNote":
+            MessageLookupByLibrary.simpleMessage("منشورات المستخدم"),
+        "timeline": MessageLookupByLibrary.simpleMessage("الجدول الزمني"),
+        "timelineGlobal": MessageLookupByLibrary.simpleMessage("عالمي"),
+        "timelineHome": MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية"),
+        "timelineHybrid": MessageLookupByLibrary.simpleMessage("اجتماعي"),
+        "timelineLocal": MessageLookupByLibrary.simpleMessage("محلي"),
+        "translate": MessageLookupByLibrary.simpleMessage("ترجمة"),
+        "uncategorized": MessageLookupByLibrary.simpleMessage("غير مصنف"),
+        "unfollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
+        "updatedDate": MessageLookupByLibrary.simpleMessage("تاريخ التحديث"),
         "uploadFailed": m18,
-        "uploadFromUrl": MessageLookupByLibrary.simpleMessage("从网址上传"),
-        "user": MessageLookupByLibrary.simpleMessage("用户"),
-        "userAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "userDescriptionIsNull":
-            MessageLookupByLibrary.simpleMessage("此用户尚无自我介绍"),
-        "userFile": MessageLookupByLibrary.simpleMessage("附件"),
-        "userHot": MessageLookupByLibrary.simpleMessage("用户"),
-        "userNote": MessageLookupByLibrary.simpleMessage("帖子"),
-        "userRegisterBy": MessageLookupByLibrary.simpleMessage("注册于"),
+        "uploadFromUrl":
+            MessageLookupByLibrary.simpleMessage("تحميل من عنوان ويب"),
+        "user": MessageLookupByLibrary.simpleMessage("المستخدم"),
+        "userAll": MessageLookupByLibrary.simpleMessage("الكل"),
+        "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage(
+            "هذا المستخدم ليس له وصف ذاتي"),
+        "userFile": MessageLookupByLibrary.simpleMessage("المرفقات"),
+        "userHot": MessageLookupByLibrary.simpleMessage("المستخدمون"),
+        "userNote": MessageLookupByLibrary.simpleMessage("المشاركات"),
+        "userRegisterBy": MessageLookupByLibrary.simpleMessage("مسجل في"),
         "userWidgetUnSupport":
-            MessageLookupByLibrary.simpleMessage("小部件列表(未完成)"),
-        "username": MessageLookupByLibrary.simpleMessage("用户名"),
-        "usersCount": MessageLookupByLibrary.simpleMessage("Users Count"),
-        "video": MessageLookupByLibrary.simpleMessage("视频"),
-        "view": MessageLookupByLibrary.simpleMessage("查看"),
-        "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
-        "vote": MessageLookupByLibrary.simpleMessage("投票"),
+            MessageLookupByLibrary.simpleMessage("قائمة الأدوات (غير مكتمل)"),
+        "username": MessageLookupByLibrary.simpleMessage("اسم المستخدم"),
+        "usersCount": MessageLookupByLibrary.simpleMessage("عدد المستخدمين"),
+        "video": MessageLookupByLibrary.simpleMessage("فيديو"),
+        "view": MessageLookupByLibrary.simpleMessage("عرض"),
+        "viewMore": MessageLookupByLibrary.simpleMessage("شاهد المزيد"),
+        "vote": MessageLookupByLibrary.simpleMessage("التصويت"),
         "voteAllCount": m19,
         "voteCount": m20,
-        "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
-        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
-        "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
-        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
-        "voteOptionAtLeastTwo":
-            MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
+        "voteDueDate": MessageLookupByLibrary.simpleMessage("تاريخ الانتهاء"),
+        "voteEnableMultiChoice":
+            MessageLookupByLibrary.simpleMessage("السماح بتعدد الخيارات"),
+        "voteExpired": MessageLookupByLibrary.simpleMessage("انتهى التصويت"),
+        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("دائم"),
+        "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
+            "لا يمكن أن يكون عدد خيارات التصويت أقل من خيارين"),
         "voteOptionHint": m21,
         "voteOptionNullIndex": m22,
-        "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
+        "voteResult":
+            MessageLookupByLibrary.simpleMessage("تم إنشاء نتيجة التصويت"),
         "voteWillExpired": m23,
         "yearsAgo": m24
       };

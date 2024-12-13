@@ -23,7 +23,6 @@ class DriveFileModel extends DriveModel {
   String? comment;
   Properties? properties;
   String? thumbnailUrl;
-  UniqueKey? hero;
 
   DriveFileModel({
     this.blurhash,
@@ -34,7 +33,6 @@ class DriveFileModel extends DriveModel {
     this.properties,
     this.thumbnailUrl,
     this.comment,
-    required this.hero,
     required super.id,
     required super.name,
     required super.createdAt,
@@ -42,7 +40,7 @@ class DriveFileModel extends DriveModel {
 
   @override
   String toString() {
-    return 'DriveFileModel{blurhash: $blurhash, type: $type, url: $url, createdAt: $createdAt, size: $size, isSensitive: $isSensitive, name: $name, comment: $comment, id: $id, properties: $properties, thumbnailUrl: $thumbnailUrl, hero: $hero}';
+    return 'DriveFileModel{blurhash: $blurhash, type: $type, url: $url, createdAt: $createdAt, size: $size, isSensitive: $isSensitive, name: $name, comment: $comment, id: $id, properties: $properties, thumbnailUrl: $thumbnailUrl}';
   }
 
   factory DriveFileModel.fromMap(dynamic map) {
@@ -59,7 +57,6 @@ class DriveFileModel extends DriveModel {
       isSensitive: map['isSensitive'] ?? false,
       thumbnailUrl: map['thumbnailUrl'],
       comment: map['comment'],
-      hero: UniqueKey(),
     );
   }
 
@@ -107,7 +104,6 @@ class DriveFileModel extends DriveModel {
       id: id ?? this.id,
       properties: properties ?? this.properties,
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
-      hero: hero ?? this.hero,
       comment: comment ?? this.comment,
     );
   }

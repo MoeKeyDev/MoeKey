@@ -577,7 +577,9 @@ class _NoteCardContentUerHeader extends StatelessWidget {
       children: [
         Expanded(child: UserNameRichText(data: data.user)),
         Text(timeAgoSinceDate(data.createdAt),
-            style: TextStyle(fontSize: fontsize * 0.9)),
+            style: TextStyle(fontSize: fontsize * 0.9),
+            maxLines: 1,
+            overflow: TextOverflow.fade),
         const SizedBox(
           width: 6,
         ),
@@ -927,30 +929,35 @@ class UserInstanceBar extends HookConsumerWidget {
   }
 }
 
-class TimeLineImage extends StatelessWidget {
+class TimeLineImage extends StatefulWidget {
   final List<DriveFileModel> files;
   final double mainAxisExtent;
 
   const TimeLineImage(
       {super.key, this.mainAxisExtent = 0, required this.files});
 
-  open(index, BuildContext context) {
-    // Navigator.of(context).push(
-    //     // FFTransparentPageRoute(
-    //     //   pageBuilder: (BuildContext context, Animation<double> animation,
-    //     //       Animation<double> secondaryAnimation) {
-    //     //     return ImagePreviewPage(
-    //     //       initialIndex: index,
-    //     //       galleryItems: files,
-    //     //       backgroundDecoration: null,
-    //     //     );
-    //     //   },
-    //     // ),
-    //     );
+  @override
+  State<TimeLineImage> createState() => _TimeLineImageState();
+}
+
+class _TimeLineImageState extends State<TimeLineImage> {
+  open(index) {
     context.push('/image-preview', extra: {
       'initialIndex': index,
-      'galleryItems': files,
+      'galleryItems': widget.files,
+      'heroKeys': heroKeys
     });
+  }
+
+  List<UniqueKey> heroKeys = [];
+
+  @override
+  @override
+  void initState() {
+    super.initState();
+    for (var i = 0; i < widget.files.length; i++) {
+      heroKeys.add(UniqueKey());
+    }
   }
 
   @override
@@ -958,7 +965,8 @@ class TimeLineImage extends StatelessWidget {
     // 过滤出所有的图片和视频
     List<DriveFileModel> media = [];
     List<Widget> filesWidget = [];
-    for (var item in files) {
+
+    for (var item in widget.files) {
       if (item.type.startsWith("image") || item.type.startsWith("video")) {
         media.add(item);
       } else {
@@ -988,8 +996,9 @@ class TimeLineImage extends StatelessWidget {
       imageListWidget = NoteImage(
         imageFile: media[0],
         maxHeight: 460,
+        heroKey: heroKeys[0],
         onClick: () {
-          open(0, context);
+          open(0);
         },
       );
     } else if (media.length == 2) {
@@ -999,22 +1008,24 @@ class TimeLineImage extends StatelessWidget {
         crossAxisSpacing: 8,
         children: [
           StaggeredGridTile.extent(
-            mainAxisExtent: mainAxisExtent / 2,
+            mainAxisExtent: widget.mainAxisExtent / 2,
             crossAxisCellCount: 1,
             child: NoteImage(
               imageFile: media[0],
+              heroKey: heroKeys[0],
               onClick: () {
-                open(0, context);
+                open(0);
               },
             ),
           ),
           StaggeredGridTile.extent(
-            mainAxisExtent: mainAxisExtent / 2,
+            mainAxisExtent: widget.mainAxisExtent / 2,
             crossAxisCellCount: 1,
             child: NoteImage(
                 imageFile: media[1],
+                heroKey: heroKeys[1],
                 onClick: () {
-                  open(1, context);
+                  open(1);
                 }),
           ),
         ],
@@ -1026,29 +1037,32 @@ class TimeLineImage extends StatelessWidget {
         crossAxisSpacing: 8,
         children: [
           StaggeredGridTile.extent(
-              mainAxisExtent: mainAxisExtent / 1.5 + 8,
+              mainAxisExtent: widget.mainAxisExtent / 1.5 + 8,
               crossAxisCellCount: 2,
               child: NoteImage(
                   imageFile: media[0],
+                  heroKey: heroKeys[0],
                   onClick: () {
-                    open(0, context);
+                    open(0);
                   })),
           StaggeredGridTile.extent(
-            mainAxisExtent: mainAxisExtent / 3,
+            mainAxisExtent: widget.mainAxisExtent / 3,
             crossAxisCellCount: 1,
             child: NoteImage(
                 imageFile: media[1],
+                heroKey: heroKeys[1],
                 onClick: () {
-                  open(1, context);
+                  open(1);
                 }),
           ),
           StaggeredGridTile.extent(
-            mainAxisExtent: mainAxisExtent / 3,
+            mainAxisExtent: widget.mainAxisExtent / 3,
             crossAxisCellCount: 1,
             child: NoteImage(
                 imageFile: media[2],
+                heroKey: heroKeys[2],
                 onClick: () {
-                  open(2, context);
+                  open(2);
                 }),
           ),
         ],
@@ -1061,12 +1075,13 @@ class TimeLineImage extends StatelessWidget {
         children: [
           for (var (index, file) in media.indexed)
             StaggeredGridTile.extent(
-              mainAxisExtent: mainAxisExtent / 2.5,
+              mainAxisExtent: widget.mainAxisExtent / 2.5,
               crossAxisCellCount: 1,
               child: NoteImage(
                   imageFile: file,
+                  heroKey: heroKeys[index],
                   onClick: () {
-                    open(index, context);
+                    open(index);
                   }),
             ),
         ],

@@ -25,7 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(error) => "Failed to create\n\n ${error}";
 
-  static String m2(days) => "${days} Days ago";
+  static String m2(days) => "${days}d ago";
 
   static String m3(thing) => "Should I delete ‘${thing}’?";
 
@@ -46,19 +46,19 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m10(error) => "Failed to send note\n\n${error}";
 
-  static String m11(hours) => "${hours}";
+  static String m11(hours) => "${hours}h Ago";
 
   static String m12(server) => "Logging in ${server}";
 
-  static String m13(minutes) => "${minutes} Minutes ago";
+  static String m13(minutes) => "${minutes}m ago";
 
-  static String m14(months) => "${months} Months ago";
+  static String m14(months) => "${months}mo ago";
 
-  static String m15(language) => "Translation from ${language} ";
+  static String m15(language) => "Translation from ${language} \n";
 
   static String m16(type) => "Unsupported notification types:${type}";
 
-  static String m17(seconds) => "${seconds} Seconds ago";
+  static String m17(seconds) => "${seconds}s ago";
 
   static String m18(msg) => "Upload Failed\n ${msg}";
 
@@ -72,7 +72,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(datetime) => "Deadline after ${datetime}";
 
-  static String m24(years) => "${years} Years ago";
+  static String m24(years) => "${years}y ago";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -88,7 +88,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "back": MessageLookupByLibrary.simpleMessage("Back"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "cancelSensitive":
-            MessageLookupByLibrary.simpleMessage("Unmark as NSFW"),
+            MessageLookupByLibrary.simpleMessage("Cancel Mark as NSFW"),
         "clip": MessageLookupByLibrary.simpleMessage("Clips"),
         "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
             "Really remove from favorites?"),
@@ -134,7 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Please input a new filename"),
         "enterNewTitle":
             MessageLookupByLibrary.simpleMessage("Please enter a new title"),
-        "enterUrl": MessageLookupByLibrary.simpleMessage("Please enter URL"),
+        "enterUrl": MessageLookupByLibrary.simpleMessage("Please Enter URL"),
         "exceptionContentNull":
             MessageLookupByLibrary.simpleMessage("Body cannot be empty."),
         "exceptionCwNull":
@@ -144,7 +144,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "exploreHot": MessageLookupByLibrary.simpleMessage("Popular"),
         "exploreUserHot": MessageLookupByLibrary.simpleMessage("Popular users"),
         "exploreUserLast":
-            MessageLookupByLibrary.simpleMessage("Recently logged in users"),
+            MessageLookupByLibrary.simpleMessage("Newly login users"),
         "exploreUserPined":
             MessageLookupByLibrary.simpleMessage("Pinned users"),
         "exploreUserUpdated":
@@ -273,7 +273,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Non-sensitive only"),
         "reactionAcceptingNoneSensitiveOrLocal":
             MessageLookupByLibrary.simpleMessage(
-                "Non-sensitive only (Only likes from remote)"),
+                "Non-sensitive only(Only likes from remote)"),
         "recipient": MessageLookupByLibrary.simpleMessage("Recipient"),
         "refresh": MessageLookupByLibrary.simpleMessage("Refresh"),
         "registration": MessageLookupByLibrary.simpleMessage("Registration"),
@@ -309,7 +309,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "share": MessageLookupByLibrary.simpleMessage("Share"),
         "showConversation":
             MessageLookupByLibrary.simpleMessage("View Conversation"),
-        "somebodyNote": MessageLookupByLibrary.simpleMessage("\'s Posts"),
+        "somebodyNote": MessageLookupByLibrary.simpleMessage(" \'s Posts"),
         "timeline": MessageLookupByLibrary.simpleMessage("Timeline"),
         "timelineGlobal": MessageLookupByLibrary.simpleMessage("Global"),
         "timelineHome": MessageLookupByLibrary.simpleMessage("Home"),

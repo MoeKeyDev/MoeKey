@@ -153,11 +153,7 @@ class NoteModel {
       createdAt: createdAt ?? this.createdAt,
       cw: cw ?? this.cw,
       emojis: emojis ?? this.emojis,
-      files: files ??
-          this
-              .files
-              .map((element) => element.copyWith(hero: UniqueKey()))
-              .toList(),
+      files: files ?? this.files,
       localOnly: localOnly ?? this.localOnly,
       reactionAcceptance: reactionAcceptance ?? this.reactionAcceptance,
       reactionEmojis: reactionEmojis ?? this.reactionEmojis,

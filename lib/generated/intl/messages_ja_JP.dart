@@ -23,7 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m0(selectListLength, maxSelect) =>
       "はい(${selectListLength}/${maxSelect})";
 
-  static String m1(error) => "\n\n ${error} の作成に失敗しました";
+  static String m1(error) => "作成の失敗\n\n ${error}";
 
   static String m2(days) => "${days}日前";
 

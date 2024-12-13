@@ -167,25 +167,26 @@ GoRouter router(Ref ref) {
       ],
     ),
     GoRoute(
-        path: '/image-preview',
-        pageBuilder: (_, status) {
-          var params = status.extra as Map<String, dynamic>;
-          return CustomTransitionPage(
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            opaque: false,
-            child: ImagePreviewPage(
-              initialIndex: params['initialIndex'],
-              galleryItems: params['galleryItems'],
-              backgroundDecoration: null,
-            ),
-          );
-        }),
+      path: '/image-preview',
+      pageBuilder: (_, status) {
+        var params = status.extra as Map<String, dynamic>;
+        return CustomTransitionPage(
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          opaque: false,
+          child: ImagePreviewPage(
+            initialIndex: params['initialIndex'],
+            galleryItems: params['galleryItems'],
+            heroKeys: params['heroKeys'],
+            backgroundDecoration: null,
+          ),
+        );
+      },
+    ),
     GoRoute(
       name: 'login',
       path: '/login',

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.3
+
+### Fixed
+
+- Fixed Hero animation conflict during image preview
+- Fixed translation issues
+
+### Added
+
+- More translations
+
 ## 0.7.2
 
 ### Added

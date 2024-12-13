@@ -4,7 +4,7 @@ String timeAgoSinceDate(DateTime notificationDate) {
   final date2 = DateTime.now();
   final difference = date2.difference(notificationDate);
 
-  if (difference.inSeconds < 5) {
+  if (difference.inSeconds < 10) {
     return S.current.justNow;
   } else if (difference.inSeconds < 60) {
     return S.current.secondsAgo(difference.inSeconds);

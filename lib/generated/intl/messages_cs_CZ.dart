@@ -21,296 +21,370 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'cs_CZ';
 
   static String m0(selectListLength, maxSelect) =>
-      "确定(${selectListLength}/${maxSelect})";
+      "${selectListLength}${maxSelect}Určete ( / )";
 
-  static String m1(error) => "创建失败\n\n ${error}";
+  static String m1(error) => "\n\n ${error}Vytvoření se nezdařilo";
 
-  static String m2(days) => "${days}天前";
+  static String m2(days) => "${days}před několika dny";
 
-  static String m3(thing) => "要删掉「${thing}」吗？";
+  static String m3(thing) => "${thing}Chcete odstranit \" \"?";
 
-  static String m4(name) => "要删除「${name}」文件吗？附加此文件的帖子也会被删除。";
+  static String m4(name) =>
+      "${name}Chcete odstranit soubor \" \"? Příspěvky s tímto souborem budou také smazány.";
 
-  static String m5(name) => "要删除「${name}」文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。";
+  static String m5(name) =>
+      "${name}Chcete odstranit složku \" \"? Pokud je ve složce obsah, odstraňte nejprve obsah složky.";
 
   static String m6(day, hour, minute, second) =>
-      "${day}天${hour}小时${minute}分钟${second}秒";
+      "${day}${hour}${minute}${second}Dny hodiny minuty sekundy";
 
-  static String m7(hour, minute, second) => "${hour}小时${minute}分钟${second}秒";
+  static String m7(hour, minute, second) =>
+      "${hour}${minute}${second}Hodiny Minuty Sekundy";
 
-  static String m8(minute, second) => "${minute}分钟${second}秒";
+  static String m8(minute, second) => "${minute}${second}Minuty sekundy";
 
-  static String m9(second) => "${second}秒";
+  static String m9(second) =>
+      "${second}jednotka úhlu nebo oblouku odpovídající jedné šedesátině stupně";
 
-  static String m10(error) => "发送帖子失败\n\n${error}";
+  static String m10(error) => "\n\n${error}Nepodařilo se odeslat poštu";
 
-  static String m11(hours) => "${hours}小时前";
+  static String m11(hours) => "${hours}před několika hodinami";
 
-  static String m12(server) => "正在登录${server}";
+  static String m12(server) => "${server}Aktuálně přihlášený";
 
-  static String m13(minutes) => "${minutes}分钟前";
+  static String m13(minutes) => "${minutes}před několika minutami";
 
-  static String m14(months) => "${months}个月前";
+  static String m14(months) => "${months}před několika měsíci";
 
-  static String m15(language) => "从${language}翻译 \n";
+  static String m15(language) => "${language} \nPřeložit z na";
 
-  static String m16(type) => "不支持的通知类型:${type}";
+  static String m16(type) => "${type}Nepodporované typy oznámení:";
 
-  static String m17(seconds) => "${seconds}秒前";
+  static String m17(seconds) => "${seconds}před několika sekundami";
 
-  static String m18(msg) => "上传失败\n ${msg}";
+  static String m18(msg) => "\n ${msg}Odeslání se nezdařilo";
 
-  static String m19(count) => "总票数 ${count}";
+  static String m19(count) => "${count}Celkový počet hlasů";
 
-  static String m20(count) => "${count}票";
+  static String m20(count) => "${count}osoba držená za výkupné";
 
-  static String m21(index) => "选项${index}";
+  static String m21(index) => "${index}Možnosti";
 
-  static String m22(index) => "选项${index}不能为空";
+  static String m22(index) => "${index}Tato možnost nesmí být prázdná";
 
-  static String m23(datetime) => "${datetime}后截止";
+  static String m23(datetime) => "${datetime}lhůta po dokončení";
 
-  static String m24(years) => "${years}年前";
+  static String m24(years) => "${years}...před lety";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "account": MessageLookupByLibrary.simpleMessage("账号"),
-        "add": MessageLookupByLibrary.simpleMessage("添加"),
-        "addAccount": MessageLookupByLibrary.simpleMessage("添加账号"),
-        "addFile": MessageLookupByLibrary.simpleMessage("添加文件"),
-        "addTitle": MessageLookupByLibrary.simpleMessage("添加标题"),
-        "all": MessageLookupByLibrary.simpleMessage("全部"),
-        "announcementActive": MessageLookupByLibrary.simpleMessage("现在的公告"),
-        "announcementExpired": MessageLookupByLibrary.simpleMessage("过去的公告"),
-        "announcements": MessageLookupByLibrary.simpleMessage("公告"),
-        "back": MessageLookupByLibrary.simpleMessage("返回"),
-        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
-        "cancelSensitive": MessageLookupByLibrary.simpleMessage("取消标记为敏感内容"),
-        "clip": MessageLookupByLibrary.simpleMessage("便签"),
-        "clipCancelFavoriteText":
-            MessageLookupByLibrary.simpleMessage("确定要取消收藏吗？"),
-        "clipCreate": MessageLookupByLibrary.simpleMessage("新建便签"),
-        "clipFavorite": MessageLookupByLibrary.simpleMessage("添加到收藏"),
-        "clipFavoriteList": MessageLookupByLibrary.simpleMessage("收藏"),
-        "clipRemove": MessageLookupByLibrary.simpleMessage("移除便签"),
-        "clips": MessageLookupByLibrary.simpleMessage("便签"),
+        "account": MessageLookupByLibrary.simpleMessage("uživatelské jméno"),
+        "add": MessageLookupByLibrary.simpleMessage("zvýšit"),
+        "addAccount": MessageLookupByLibrary.simpleMessage("Přidat účet"),
+        "addFile": MessageLookupByLibrary.simpleMessage("Přidat soubor"),
+        "addTitle": MessageLookupByLibrary.simpleMessage("Přidat název"),
+        "all": MessageLookupByLibrary.simpleMessage("kompletní"),
+        "announcementActive":
+            MessageLookupByLibrary.simpleMessage("Oznámení nyní"),
+        "announcementExpired":
+            MessageLookupByLibrary.simpleMessage("Minulá oznámení"),
+        "announcements": MessageLookupByLibrary.simpleMessage("bulletiny"),
+        "back": MessageLookupByLibrary.simpleMessage("vrátit se (nebo odejít)"),
+        "cancel": MessageLookupByLibrary.simpleMessage("zrušení"),
+        "cancelSensitive": MessageLookupByLibrary.simpleMessage(
+            "Zrušení označení jako citlivého obsahu"),
+        "clip": MessageLookupByLibrary.simpleMessage("memo"),
+        "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
+            "Určitě chcete sbírku zrušit?"),
+        "clipCreate":
+            MessageLookupByLibrary.simpleMessage("Nové samolepicí poznámky"),
+        "clipFavorite":
+            MessageLookupByLibrary.simpleMessage("Přidat do oblíbených"),
+        "clipFavoriteList":
+            MessageLookupByLibrary.simpleMessage("záložka (Internet)"),
+        "clipRemove": MessageLookupByLibrary.simpleMessage(
+            "Odstranění samolepicích poznámek"),
+        "clips": MessageLookupByLibrary.simpleMessage("memo"),
         "confirmSelection": m0,
-        "copyContent": MessageLookupByLibrary.simpleMessage("复制内容"),
-        "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
-        "copyRSS": MessageLookupByLibrary.simpleMessage("复制RSS"),
-        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage("复制用户主页地址"),
-        "copyUsername": MessageLookupByLibrary.simpleMessage("复制用户名"),
-        "createFolder": MessageLookupByLibrary.simpleMessage("新建文件夹"),
-        "createNote": MessageLookupByLibrary.simpleMessage("发布新帖子"),
-        "createNoteFormFile": MessageLookupByLibrary.simpleMessage("从文件创建帖子"),
-        "createNoteHint": MessageLookupByLibrary.simpleMessage("发生了什么..."),
-        "createdDate": MessageLookupByLibrary.simpleMessage("创建日期"),
+        "copyContent":
+            MessageLookupByLibrary.simpleMessage("Kopírování obsahu"),
+        "copyLink": MessageLookupByLibrary.simpleMessage("Kopírovat odkaz"),
+        "copyRSS": MessageLookupByLibrary.simpleMessage("Kopírovat RSS"),
+        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage(
+            "Zkopírování adresy domovské stránky uživatele"),
+        "copyUsername":
+            MessageLookupByLibrary.simpleMessage("Kopírovat uživatelské jméno"),
+        "createFolder": MessageLookupByLibrary.simpleMessage("Nová složka"),
+        "createNote":
+            MessageLookupByLibrary.simpleMessage("Přidat nové vlákno"),
+        "createNoteFormFile": MessageLookupByLibrary.simpleMessage(
+            "Vytvoření příspěvku ze souboru"),
+        "createNoteHint":
+            MessageLookupByLibrary.simpleMessage("Co se stalo..."),
+        "createdDate": MessageLookupByLibrary.simpleMessage("Datum vytvoření"),
         "creationFailedDialog": m1,
-        "cw": MessageLookupByLibrary.simpleMessage("隐藏内容"),
-        "day": MessageLookupByLibrary.simpleMessage("天"),
+        "cw": MessageLookupByLibrary.simpleMessage("skrytý obsah"),
+        "day": MessageLookupByLibrary.simpleMessage("den"),
         "daysAgo": m2,
-        "delete": MessageLookupByLibrary.simpleMessage("删除"),
+        "delete": MessageLookupByLibrary.simpleMessage("odstranění"),
         "deleteConfirm": m3,
         "deleteFileConfirmation": m4,
         "deleteFolderConfirmation": m5,
-        "description": MessageLookupByLibrary.simpleMessage("描述"),
-        "done": MessageLookupByLibrary.simpleMessage("完成"),
-        "download": MessageLookupByLibrary.simpleMessage("下载"),
-        "drive": MessageLookupByLibrary.simpleMessage("网盘"),
+        "description": MessageLookupByLibrary.simpleMessage("popisy"),
+        "done": MessageLookupByLibrary.simpleMessage("splnit"),
+        "download": MessageLookupByLibrary.simpleMessage("stahování"),
+        "drive":
+            MessageLookupByLibrary.simpleMessage("cloudové úložiště souborů"),
         "durationDay": m6,
         "durationHour": m7,
         "durationMinute": m8,
         "durationSecond": m9,
-        "edit": MessageLookupByLibrary.simpleMessage("编辑"),
-        "emoji": MessageLookupByLibrary.simpleMessage("表情符号"),
-        "enterNewFileName": MessageLookupByLibrary.simpleMessage("请输入新文件名"),
-        "enterNewTitle": MessageLookupByLibrary.simpleMessage("请输入新标题"),
-        "enterUrl": MessageLookupByLibrary.simpleMessage("请输入URL"),
-        "exceptionContentNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
-        "exceptionCwNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
+        "edit": MessageLookupByLibrary.simpleMessage("kompilátor"),
+        "emoji": MessageLookupByLibrary.simpleMessage("emotikon"),
+        "enterNewFileName": MessageLookupByLibrary.simpleMessage(
+            "Zadejte prosím nový název souboru"),
+        "enterNewTitle":
+            MessageLookupByLibrary.simpleMessage("Zadejte prosím nový název"),
+        "enterUrl":
+            MessageLookupByLibrary.simpleMessage("Zadejte prosím adresu URL"),
+        "exceptionContentNull":
+            MessageLookupByLibrary.simpleMessage("Obsah nemůže být prázdný"),
+        "exceptionCwNull":
+            MessageLookupByLibrary.simpleMessage("Obsah nemůže být prázdný"),
         "exceptionSendNote": m10,
-        "explore": MessageLookupByLibrary.simpleMessage("发现"),
-        "exploreHot": MessageLookupByLibrary.simpleMessage("热门"),
-        "exploreUserHot": MessageLookupByLibrary.simpleMessage("热门用户"),
-        "exploreUserLast": MessageLookupByLibrary.simpleMessage("最近登录的用户"),
-        "exploreUserPined": MessageLookupByLibrary.simpleMessage("置顶用户"),
-        "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿的用户"),
-        "exploreUsers": MessageLookupByLibrary.simpleMessage("用户"),
-        "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
+        "explore": MessageLookupByLibrary.simpleMessage("objevy"),
+        "exploreHot": MessageLookupByLibrary.simpleMessage("v módě"),
+        "exploreUserHot":
+            MessageLookupByLibrary.simpleMessage("populární uživatel"),
+        "exploreUserLast": MessageLookupByLibrary.simpleMessage(
+            "Nedávno přihlášení uživatelé"),
+        "exploreUserPined":
+            MessageLookupByLibrary.simpleMessage("uživatel na začátku seznamu"),
+        "exploreUserUpdated":
+            MessageLookupByLibrary.simpleMessage("Nedávní přispěvatelé"),
+        "exploreUsers": MessageLookupByLibrary.simpleMessage("uživatel"),
+        "favorite": MessageLookupByLibrary.simpleMessage("záložka (Internet)"),
         "filter": MessageLookupByLibrary.simpleMessage("Filter"),
-        "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
-        "follow": MessageLookupByLibrary.simpleMessage("关注"),
-        "followed": MessageLookupByLibrary.simpleMessage("已关注"),
-        "followers": MessageLookupByLibrary.simpleMessage("关注者"),
-        "following": MessageLookupByLibrary.simpleMessage("关注中"),
-        "fromCloud": MessageLookupByLibrary.simpleMessage("从网盘中"),
+        "folderName": MessageLookupByLibrary.simpleMessage("Název složky"),
+        "follow": MessageLookupByLibrary.simpleMessage("zaměření"),
+        "followed": MessageLookupByLibrary.simpleMessage("Sledováno"),
+        "followers": MessageLookupByLibrary.simpleMessage("watcher"),
+        "following": MessageLookupByLibrary.simpleMessage("Znepokojený"),
+        "fromCloud": MessageLookupByLibrary.simpleMessage("Z netbooku"),
         "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
-        "hashtag": MessageLookupByLibrary.simpleMessage("话题标签"),
-        "hostnames": MessageLookupByLibrary.simpleMessage("域名"),
-        "hour": MessageLookupByLibrary.simpleMessage("小时"),
+        "hashtag": MessageLookupByLibrary.simpleMessage("hashtag"),
+        "hostnames": MessageLookupByLibrary.simpleMessage("název domény"),
+        "hour": MessageLookupByLibrary.simpleMessage("hodin"),
         "hoursAgo": m11,
-        "image": MessageLookupByLibrary.simpleMessage("图片"),
-        "inputServer": MessageLookupByLibrary.simpleMessage("手动输入服务器"),
-        "insertDriverFile": MessageLookupByLibrary.simpleMessage("插入附件"),
-        "isFollowingYouNow": MessageLookupByLibrary.simpleMessage("正在关注你"),
-        "justNow": MessageLookupByLibrary.simpleMessage("刚刚"),
-        "keepOriginal": MessageLookupByLibrary.simpleMessage("保留原图"),
+        "image": MessageLookupByLibrary.simpleMessage("fotografie"),
+        "inputServer":
+            MessageLookupByLibrary.simpleMessage("Ruční vstupní server"),
+        "insertDriverFile":
+            MessageLookupByLibrary.simpleMessage("Vložení příslušenství"),
+        "isFollowingYouNow":
+            MessageLookupByLibrary.simpleMessage("Sleduji tě."),
+        "justNow": MessageLookupByLibrary.simpleMessage("nedávno"),
+        "keepOriginal":
+            MessageLookupByLibrary.simpleMessage("Zachování původního obrazu"),
         "loadingServers":
             MessageLookupByLibrary.simpleMessage("Server Loading"),
-        "local": MessageLookupByLibrary.simpleMessage("本地"),
-        "localUpload": MessageLookupByLibrary.simpleMessage("本地上传"),
-        "login": MessageLookupByLibrary.simpleMessage("登录"),
-        "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
-        "loginFailedWithAppCreate":
-            MessageLookupByLibrary.simpleMessage("登录失败: 应用创建失败"),
-        "loginFailedWithToken":
-            MessageLookupByLibrary.simpleMessage("登录失败: token获取失败"),
+        "local": MessageLookupByLibrary.simpleMessage("tato lokalita"),
+        "localUpload": MessageLookupByLibrary.simpleMessage("místní nahrávání"),
+        "login": MessageLookupByLibrary.simpleMessage("přihlásit se"),
+        "loginFailed":
+            MessageLookupByLibrary.simpleMessage("Selhání přihlášení"),
+        "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
+            "Přihlášení se nezdařilo: Vytvoření aplikace se nezdařilo"),
+        "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
+            "Přihlášení se nezdařilo: získání tokenu se nezdařilo"),
         "loginLoading": m12,
-        "loginSuccess": MessageLookupByLibrary.simpleMessage("登录成功"),
-        "manageAccount": MessageLookupByLibrary.simpleMessage("管理账号"),
-        "markAsSensitive": MessageLookupByLibrary.simpleMessage("标记为敏感内容"),
-        "mention": MessageLookupByLibrary.simpleMessage("提及"),
-        "minute": MessageLookupByLibrary.simpleMessage("分钟"),
+        "loginSuccess":
+            MessageLookupByLibrary.simpleMessage("Úspěšné přihlášení"),
+        "manageAccount": MessageLookupByLibrary.simpleMessage("Správa účtu"),
+        "markAsSensitive":
+            MessageLookupByLibrary.simpleMessage("Označit jako citlivý obsah"),
+        "mention": MessageLookupByLibrary.simpleMessage("zvýšit (předmět)"),
+        "minute": MessageLookupByLibrary.simpleMessage("minuty"),
         "minutesAgo": m13,
         "monthsAgo": m14,
-        "more": MessageLookupByLibrary.simpleMessage("更多"),
-        "myCLips": MessageLookupByLibrary.simpleMessage("我的便签"),
-        "name": MessageLookupByLibrary.simpleMessage("名称"),
-        "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
-        "next": MessageLookupByLibrary.simpleMessage("下一步"),
+        "more": MessageLookupByLibrary.simpleMessage("více"),
+        "myCLips": MessageLookupByLibrary.simpleMessage("Moje poznámky."),
+        "name": MessageLookupByLibrary.simpleMessage("název (věci)"),
+        "nameCannotBeEmpty":
+            MessageLookupByLibrary.simpleMessage("Název nesmí být prázdný"),
+        "next": MessageLookupByLibrary.simpleMessage("další krok"),
         "noLists":
             MessageLookupByLibrary.simpleMessage("You don\'t have any lists"),
-        "notFindServer": MessageLookupByLibrary.simpleMessage("没有找到你所在的服务器？"),
-        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
-        "noteCwHide": MessageLookupByLibrary.simpleMessage("收起"),
-        "noteCwShow": MessageLookupByLibrary.simpleMessage("显示内容"),
+        "notFindServer":
+            MessageLookupByLibrary.simpleMessage("Nenašli jste svůj server?"),
+        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
+            "Zkopírujte odkaz na tuto stránku"),
+        "noteCwHide": MessageLookupByLibrary.simpleMessage("uklidit"),
+        "noteCwShow": MessageLookupByLibrary.simpleMessage("Zobrazení obsahu"),
         "noteFormLanguageTranslation": m15,
-        "noteLocalOnly": MessageLookupByLibrary.simpleMessage("不参与联合"),
-        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("转到所在服务器显示"),
-        "notePined": MessageLookupByLibrary.simpleMessage("已置顶的帖子"),
-        "noteQuote": MessageLookupByLibrary.simpleMessage("引用"),
-        "noteReNote": MessageLookupByLibrary.simpleMessage("转发"),
-        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("转发了"),
-        "noteTranslate": MessageLookupByLibrary.simpleMessage("翻译帖子"),
-        "noteVisibility": MessageLookupByLibrary.simpleMessage("可见性"),
-        "noteVisibilityFollowers": MessageLookupByLibrary.simpleMessage("关注者"),
+        "noteLocalOnly":
+            MessageLookupByLibrary.simpleMessage("Neúčast na společném"),
+        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage(
+            "Přejděte na hostitelský server a zobrazte"),
+        "notePined": MessageLookupByLibrary.simpleMessage("Nejlepší příspěvky"),
+        "noteQuote": MessageLookupByLibrary.simpleMessage("citace"),
+        "noteReNote": MessageLookupByLibrary.simpleMessage(
+            "přeposílání (pošta, SMS, datové pakety)."),
+        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("Předáno."),
+        "noteTranslate":
+            MessageLookupByLibrary.simpleMessage("Překlad příspěvků"),
+        "noteVisibility": MessageLookupByLibrary.simpleMessage("viditelnost"),
+        "noteVisibilityFollowers":
+            MessageLookupByLibrary.simpleMessage("watcher"),
         "noteVisibilityFollowersText":
-            MessageLookupByLibrary.simpleMessage("仅发送至关注者"),
-        "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("首页"),
-        "noteVisibilityHomeText":
-            MessageLookupByLibrary.simpleMessage("仅发送至首页的时间线"),
-        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("公开"),
-        "noteVisibilityPublicText":
-            MessageLookupByLibrary.simpleMessage("您的帖子将出现在全局时间线上"),
-        "noteVisibilitySpecified": MessageLookupByLibrary.simpleMessage("私信"),
-        "noteVisibilitySpecifiedText":
-            MessageLookupByLibrary.simpleMessage("仅发送至指定用户"),
-        "notes": MessageLookupByLibrary.simpleMessage("帖子"),
+            MessageLookupByLibrary.simpleMessage("Odeslat pouze následovníkům"),
+        "noteVisibilityHome":
+            MessageLookupByLibrary.simpleMessage("obr. začátek"),
+        "noteVisibilityHomeText": MessageLookupByLibrary.simpleMessage(
+            "Časová osa odeslaná pouze na domovskou stránku"),
+        "noteVisibilityPublic":
+            MessageLookupByLibrary.simpleMessage("otevřeně"),
+        "noteVisibilityPublicText": MessageLookupByLibrary.simpleMessage(
+            "Váš příspěvek se zobrazí na globální časové ose"),
+        "noteVisibilitySpecified":
+            MessageLookupByLibrary.simpleMessage("soukromý dopis"),
+        "noteVisibilitySpecifiedText": MessageLookupByLibrary.simpleMessage(
+            "Odesílání pouze zadaným uživatelům"),
+        "notes": MessageLookupByLibrary.simpleMessage("karta"),
         "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
-        "notification": MessageLookupByLibrary.simpleMessage("通知"),
-        "notifications": MessageLookupByLibrary.simpleMessage("通知"),
-        "notifyAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "notifyFilter": MessageLookupByLibrary.simpleMessage("筛选"),
-        "notifyFollowedAccepted":
-            MessageLookupByLibrary.simpleMessage("你的关注请求被通过了"),
-        "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("你有新的关注者"),
-        "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全部标记为已读"),
-        "notifyMention": MessageLookupByLibrary.simpleMessage("提到我的"),
-        "notifyMessage": MessageLookupByLibrary.simpleMessage("私信"),
+        "notification": MessageLookupByLibrary.simpleMessage("oznámení"),
+        "notifications": MessageLookupByLibrary.simpleMessage("oznámení"),
+        "notifyAll": MessageLookupByLibrary.simpleMessage("kompletní"),
+        "notifyFilter": MessageLookupByLibrary.simpleMessage("screening"),
+        "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
+            "Vaše žádost o pozornost byla schválena."),
+        "notifyFollowedYou":
+            MessageLookupByLibrary.simpleMessage("Máte nové příznivce."),
+        "notifyMarkAllRead":
+            MessageLookupByLibrary.simpleMessage("Označit vše jako přečtené"),
+        "notifyMention":
+            MessageLookupByLibrary.simpleMessage("Když už mluvíme o mém"),
+        "notifyMessage": MessageLookupByLibrary.simpleMessage("soukromý dopis"),
         "notifyNotSupport": m16,
-        "ok": MessageLookupByLibrary.simpleMessage("确定"),
-        "openInNewTab": MessageLookupByLibrary.simpleMessage("转到浏览器显示"),
-        "overviews": MessageLookupByLibrary.simpleMessage("概览"),
-        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage("关注请求批准中"),
-        "preview": MessageLookupByLibrary.simpleMessage("预览"),
-        "previewNote": MessageLookupByLibrary.simpleMessage("预览帖子"),
-        "processing": MessageLookupByLibrary.simpleMessage("处理中"),
-        "public": MessageLookupByLibrary.simpleMessage("公开"),
-        "publish": MessageLookupByLibrary.simpleMessage("发布"),
-        "reNoteHint": MessageLookupByLibrary.simpleMessage("引用这个帖子..."),
-        "reNoteText": MessageLookupByLibrary.simpleMessage("引用帖子"),
-        "reaction": MessageLookupByLibrary.simpleMessage("回应"),
-        "reactionAccepting": MessageLookupByLibrary.simpleMessage("接受表情回应"),
-        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "ok": MessageLookupByLibrary.simpleMessage("definovat"),
+        "openInNewTab": MessageLookupByLibrary.simpleMessage(
+            "Přejít na zobrazení prohlížeče"),
+        "overviews": MessageLookupByLibrary.simpleMessage("zběžně projít"),
+        "pendingFollowRequest":
+            MessageLookupByLibrary.simpleMessage("Obavy z vyhovění žádostem"),
+        "preview": MessageLookupByLibrary.simpleMessage("náhledy"),
+        "previewNote": MessageLookupByLibrary.simpleMessage("Náhled příspěvků"),
+        "processing": MessageLookupByLibrary.simpleMessage("probíhá"),
+        "public": MessageLookupByLibrary.simpleMessage("otevřeně"),
+        "publish": MessageLookupByLibrary.simpleMessage("příspěvek"),
+        "reNoteHint":
+            MessageLookupByLibrary.simpleMessage("Citace tohoto příspěvku..."),
+        "reNoteText": MessageLookupByLibrary.simpleMessage("Citovat příspěvek"),
+        "reaction": MessageLookupByLibrary.simpleMessage("odpověď"),
+        "reactionAccepting":
+            MessageLookupByLibrary.simpleMessage("Přijímání odpovědí Emoji"),
+        "reactionAcceptingAll":
+            MessageLookupByLibrary.simpleMessage("kompletní"),
         "reactionAcceptingLikeOnly":
-            MessageLookupByLibrary.simpleMessage("仅点赞"),
+            MessageLookupByLibrary.simpleMessage("Líbí se pouze"),
         "reactionAcceptingLikeOnlyRemote":
-            MessageLookupByLibrary.simpleMessage("远程仅点赞"),
+            MessageLookupByLibrary.simpleMessage("Pouze vzdálené Kudos"),
         "reactionAcceptingNoneSensitive":
-            MessageLookupByLibrary.simpleMessage("仅限非敏感内容"),
+            MessageLookupByLibrary.simpleMessage("Pouze necitlivý obsah"),
         "reactionAcceptingNoneSensitiveOrLocal":
-            MessageLookupByLibrary.simpleMessage("仅限非敏感内容（远程仅点赞）"),
-        "recipient": MessageLookupByLibrary.simpleMessage("收件人"),
-        "refresh": MessageLookupByLibrary.simpleMessage("刷新"),
+            MessageLookupByLibrary.simpleMessage(
+                "Pouze necitlivý obsah (pouze vzdálené lajky)"),
+        "recipient":
+            MessageLookupByLibrary.simpleMessage("Komu: (záhlaví e-mailu)"),
+        "refresh":
+            MessageLookupByLibrary.simpleMessage("refresh (okno počítače)"),
         "registration": MessageLookupByLibrary.simpleMessage("Registration"),
         "registrationClosed": MessageLookupByLibrary.simpleMessage("closed"),
         "registrationOpen": MessageLookupByLibrary.simpleMessage("open"),
-        "remote": MessageLookupByLibrary.simpleMessage("远程"),
-        "rename": MessageLookupByLibrary.simpleMessage("重命名"),
-        "renameFile": MessageLookupByLibrary.simpleMessage("重命名文件"),
-        "renameFolder": MessageLookupByLibrary.simpleMessage("重命名文件夹"),
-        "replyNoteHint": MessageLookupByLibrary.simpleMessage("回复这个帖子..."),
-        "replyNoteText": MessageLookupByLibrary.simpleMessage("回复帖子"),
-        "saveFailed": MessageLookupByLibrary.simpleMessage("保存失败"),
-        "saveImage": MessageLookupByLibrary.simpleMessage("保存图片"),
-        "saveSuccess": MessageLookupByLibrary.simpleMessage("保存成功"),
-        "search": MessageLookupByLibrary.simpleMessage("搜索"),
-        "searchAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "searchHost": MessageLookupByLibrary.simpleMessage("指定域名"),
-        "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
-        "searchRemote": MessageLookupByLibrary.simpleMessage("远程"),
+        "remote": MessageLookupByLibrary.simpleMessage("na dálku"),
+        "rename": MessageLookupByLibrary.simpleMessage("přejmenovat"),
+        "renameFile":
+            MessageLookupByLibrary.simpleMessage("Přejmenování souboru"),
+        "renameFolder":
+            MessageLookupByLibrary.simpleMessage("Přejmenování složky"),
+        "replyNoteHint": MessageLookupByLibrary.simpleMessage(
+            "Odpovědět na tento příspěvek..."),
+        "replyNoteText":
+            MessageLookupByLibrary.simpleMessage("Odpovědět na příspěvek"),
+        "saveFailed":
+            MessageLookupByLibrary.simpleMessage("se nepodařilo zachránit"),
+        "saveImage": MessageLookupByLibrary.simpleMessage("Uložit obrázek"),
+        "saveSuccess": MessageLookupByLibrary.simpleMessage("Uložit úspěšné"),
+        "search": MessageLookupByLibrary.simpleMessage("hledat něco"),
+        "searchAll": MessageLookupByLibrary.simpleMessage("kompletní"),
+        "searchHost":
+            MessageLookupByLibrary.simpleMessage("Zadejte název domény"),
+        "searchLocal": MessageLookupByLibrary.simpleMessage("tato stránka"),
+        "searchRemote": MessageLookupByLibrary.simpleMessage("na dálku"),
         "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
         "secondsAgo": m17,
-        "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
+        "selectHashtag": MessageLookupByLibrary.simpleMessage("Vybrat značku"),
         "selectServer":
             MessageLookupByLibrary.simpleMessage("Please Select Your Server"),
-        "selectUser": MessageLookupByLibrary.simpleMessage("选择用户"),
-        "sensitiveClickShow": MessageLookupByLibrary.simpleMessage("点击显示"),
-        "sensitiveContent": MessageLookupByLibrary.simpleMessage("敏感内容"),
-        "serverAddr": MessageLookupByLibrary.simpleMessage("服务器地址"),
+        "selectUser": MessageLookupByLibrary.simpleMessage("Vybrat uživatele"),
+        "sensitiveClickShow":
+            MessageLookupByLibrary.simpleMessage("Klikněte pro zobrazení"),
+        "sensitiveContent":
+            MessageLookupByLibrary.simpleMessage("Citlivý obsah"),
+        "serverAddr": MessageLookupByLibrary.simpleMessage("adresa serveru"),
         "serverList": MessageLookupByLibrary.simpleMessage("List of Servers"),
-        "settings": MessageLookupByLibrary.simpleMessage("设置"),
-        "share": MessageLookupByLibrary.simpleMessage("分享"),
-        "showConversation": MessageLookupByLibrary.simpleMessage("查看对话"),
-        "somebodyNote": MessageLookupByLibrary.simpleMessage(" 的帖子"),
-        "timeline": MessageLookupByLibrary.simpleMessage("时间线"),
-        "timelineGlobal": MessageLookupByLibrary.simpleMessage("全局"),
-        "timelineHome": MessageLookupByLibrary.simpleMessage("首页"),
-        "timelineHybrid": MessageLookupByLibrary.simpleMessage("社交"),
-        "timelineLocal": MessageLookupByLibrary.simpleMessage("本地"),
-        "translate": MessageLookupByLibrary.simpleMessage("翻译"),
-        "uncategorized": MessageLookupByLibrary.simpleMessage("未分类"),
-        "unfollow": MessageLookupByLibrary.simpleMessage("取消关注"),
-        "updatedDate": MessageLookupByLibrary.simpleMessage("更新日期"),
+        "settings": MessageLookupByLibrary.simpleMessage("nastavit"),
+        "share": MessageLookupByLibrary.simpleMessage(
+            "sdílet (radosti, výhody, privilegia atd.) s ostatními."),
+        "showConversation":
+            MessageLookupByLibrary.simpleMessage("Zobrazit dialog"),
+        "somebodyNote": MessageLookupByLibrary.simpleMessage(" příspěvky"),
+        "timeline": MessageLookupByLibrary.simpleMessage("časová osa"),
+        "timelineGlobal":
+            MessageLookupByLibrary.simpleMessage("bezpečnostní situace"),
+        "timelineHome": MessageLookupByLibrary.simpleMessage("obr. začátek"),
+        "timelineHybrid": MessageLookupByLibrary.simpleMessage("socializace"),
+        "timelineLocal": MessageLookupByLibrary.simpleMessage("tato lokalita"),
+        "translate": MessageLookupByLibrary.simpleMessage("vykreslování"),
+        "uncategorized":
+            MessageLookupByLibrary.simpleMessage("Nekategorizované"),
+        "unfollow": MessageLookupByLibrary.simpleMessage("Zrušit sledování"),
+        "updatedDate":
+            MessageLookupByLibrary.simpleMessage("Datum aktualizace"),
         "uploadFailed": m18,
-        "uploadFromUrl": MessageLookupByLibrary.simpleMessage("从网址上传"),
-        "user": MessageLookupByLibrary.simpleMessage("用户"),
-        "userAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "userDescriptionIsNull":
-            MessageLookupByLibrary.simpleMessage("此用户尚无自我介绍"),
-        "userFile": MessageLookupByLibrary.simpleMessage("附件"),
-        "userHot": MessageLookupByLibrary.simpleMessage("用户"),
-        "userNote": MessageLookupByLibrary.simpleMessage("帖子"),
-        "userRegisterBy": MessageLookupByLibrary.simpleMessage("注册于"),
-        "userWidgetUnSupport":
-            MessageLookupByLibrary.simpleMessage("小部件列表(未完成)"),
-        "username": MessageLookupByLibrary.simpleMessage("用户名"),
+        "uploadFromUrl":
+            MessageLookupByLibrary.simpleMessage("Nahrávání z webové stránky"),
+        "user": MessageLookupByLibrary.simpleMessage("uživatel"),
+        "userAll": MessageLookupByLibrary.simpleMessage("kompletní"),
+        "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage(
+            "Tento uživatel se ještě nepředstavil"),
+        "userFile": MessageLookupByLibrary.simpleMessage("příloha (e-mail)"),
+        "userHot": MessageLookupByLibrary.simpleMessage("uživatel"),
+        "userNote": MessageLookupByLibrary.simpleMessage("karta"),
+        "userRegisterBy":
+            MessageLookupByLibrary.simpleMessage("registrovaná v"),
+        "userWidgetUnSupport": MessageLookupByLibrary.simpleMessage(
+            "Seznam widgetů (nedokončený)"),
+        "username": MessageLookupByLibrary.simpleMessage("ID uživatele"),
         "usersCount": MessageLookupByLibrary.simpleMessage("Users Count"),
-        "video": MessageLookupByLibrary.simpleMessage("视频"),
-        "view": MessageLookupByLibrary.simpleMessage("查看"),
-        "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
-        "vote": MessageLookupByLibrary.simpleMessage("投票"),
+        "video": MessageLookupByLibrary.simpleMessage("video"),
+        "view": MessageLookupByLibrary.simpleMessage("podívejte se"),
+        "viewMore": MessageLookupByLibrary.simpleMessage("Zobrazit více"),
+        "vote": MessageLookupByLibrary.simpleMessage("referendum"),
         "voteAllCount": m19,
         "voteCount": m20,
-        "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
-        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
-        "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
-        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
-        "voteOptionAtLeastTwo":
-            MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
+        "voteDueDate": MessageLookupByLibrary.simpleMessage("datum uzávěrky"),
+        "voteEnableMultiChoice":
+            MessageLookupByLibrary.simpleMessage("Povoleno více hlasů"),
+        "voteExpired":
+            MessageLookupByLibrary.simpleMessage("Hlasování je ukončeno."),
+        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("trvale"),
+        "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
+            "Počet hlasů nesmí být menší než dva"),
         "voteOptionHint": m21,
         "voteOptionNullIndex": m22,
-        "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
+        "voteResult": MessageLookupByLibrary.simpleMessage(
+            "Byly vygenerovány výsledky hlasování"),
         "voteWillExpired": m23,
         "yearsAgo": m24
       };

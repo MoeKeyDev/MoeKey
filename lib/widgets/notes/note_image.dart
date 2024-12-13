@@ -9,6 +9,7 @@ import 'package:moekey/status/themes.dart';
 
 import '../../apis/models/drive.dart';
 import '../../generated/l10n.dart';
+import '../../utils/custom_rect_tween.dart';
 import '../mk_image.dart';
 import '../video_player.dart';
 
@@ -19,10 +20,12 @@ class NoteImage extends HookConsumerWidget {
     required this.imageFile,
     this.onClick,
     this.minHeight,
+    required this.heroKey,
   });
 
   final num? maxHeight;
   final num? minHeight;
+  final UniqueKey? heroKey;
   final DriveFileModel imageFile;
   final void Function()? onClick;
 
@@ -136,23 +139,20 @@ class NoteImage extends HookConsumerWidget {
                   if (!isHidden.value)
                     if (isImage) ...[
                       if (imageFile.thumbnailUrl != null)
-                        Hero(
-                            tag: imageFile.hero ?? UniqueKey(),
-                            child: MkImage(
-                              imageFile.thumbnailUrl!,
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.contain,
-                            ))
+                        MkImage(
+                          heroKey: heroKey,
+                          imageFile.thumbnailUrl!,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.contain,
+                        )
                       else
-                        Hero(
-                          tag: imageFile.hero ?? UniqueKey(),
-                          child: MkImage(
-                            imageFile.url,
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.contain,
-                          ),
+                        MkImage(
+                          heroKey: heroKey,
+                          imageFile.url,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.contain,
                         ),
                     ] else if (isVideo)
                       VideoPlayerComponent(url: imageFile.url),

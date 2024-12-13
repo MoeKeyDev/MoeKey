@@ -1460,6 +1460,16 @@ class S {
     );
   }
 
+  /// `更新便签`
+  String get clipUpdate {
+    return Intl.message(
+      '更新便签',
+      name: 'clipUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `查看`
   String get view {
     return Intl.message(

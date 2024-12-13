@@ -1,9 +1,11 @@
 import 'package:blurhash_shader/blurhash_shader.dart';
+import 'package:dio/src/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/hook/useExtendedPageController.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/dio.dart';
@@ -13,6 +15,7 @@ import 'package:moekey/widgets/mk_image.dart';
 import '../../apis/models/drive.dart';
 import '../../generated/l10n.dart';
 import '../../logger.dart';
+import '../../utils/custom_rect_tween.dart';
 
 List<double> _doubleTapScales = <double>[1.0, 2.0];
 
@@ -25,12 +28,15 @@ class ImagePreviewPage extends HookConsumerWidget {
 
   final int initialIndex;
 
+  final List<UniqueKey> heroKeys;
+
   const ImagePreviewPage({
     super.key,
     required this.initialIndex,
     required this.galleryItems,
     this.onPageChanged,
     required this.backgroundDecoration,
+    required this.heroKeys,
   });
 
   void setBar() {
@@ -154,57 +160,28 @@ class ImagePreviewPage extends HookConsumerWidget {
                 },
                 child: ExtendedImageGesturePageView.builder(
                   itemBuilder: (BuildContext context, int index) {
-                    var item = galleryItems[index].url;
+                    var item = galleryItems[index];
                     Widget image = FutureBuilder(
                       future: precacheImage(
-                        ExtendedNetworkImageProvider(item, cache: true),
+                        ExtendedNetworkImageProvider(item.url, cache: true),
                         context,
                       ),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState != ConnectionState.done &&
-                            galleryItems[index].thumbnailUrl != null) {
-                          return ExtendedImage(
-                            image: getExtendedResizeImage(
-                                galleryItems[index].thumbnailUrl!),
-                            fit: BoxFit.contain,
-                            mode: ExtendedImageMode.gesture,
-                            enableSlideOutPage: true,
-                            loadStateChanged: (state) {
-                              if (galleryItems[index].blurhash == null) {
-                                return null;
-                              }
-                              if (state.extendedImageLoadState !=
-                                  LoadState.completed) {
-                                return Center(
-                                  child: AspectRatio(
-                                    aspectRatio: (galleryItems[index]
-                                                .properties
-                                                ?.width ??
-                                            16) /
-                                        (galleryItems[index]
-                                                .properties
-                                                ?.height ??
-                                            9),
-                                    child:
-                                        BlurHash(galleryItems[index].blurhash!),
-                                  ),
-                                );
-                              }
-                              return null;
-                            },
-                            heroBuilderForSlidingPage: (widget) {
-                              if (galleryItems[index].hero != null) {
-                                return Hero(
-                                  tag: galleryItems[index].hero!,
-                                  child: widget,
-                                );
-                              }
-                              return widget;
-                            },
-                            initGestureConfigHandler: initGestureConfigHandler,
-                            onDoubleTap: onDoubleTap,
-                          );
-                        }
+                        var isLoaded =
+                            snapshot.connectionState == ConnectionState.done &&
+                                snapshot.hasData;
+                        Widget image = _Image(
+                          heroKey: currentIndex.value == index
+                              ? heroKeys[index]
+                              : null,
+                          initGestureConfigHandler: initGestureConfigHandler,
+                          onDoubleTap: onDoubleTap,
+                          src: isLoaded ? item.url : item.thumbnailUrl,
+                          blurhash: item.blurhash,
+                          width: item.properties?.width,
+                          height: item.properties?.height,
+                        );
+
                         return GestureDetector(
                           onTap: () {
                             if (appBarOpacity.value == 1.0) {
@@ -213,34 +190,13 @@ class ImagePreviewPage extends HookConsumerWidget {
                               appBarOpacity.value = 1.0;
                             }
                           },
-                          child: ExtendedImage(
-                            image:
-                                ExtendedNetworkImageProvider(item, cache: true),
-                            fit: BoxFit.contain,
-                            mode: ExtendedImageMode.gesture,
-                            enableSlideOutPage: true,
-                            heroBuilderForSlidingPage: (widget) {
-                              // print(galleryItems[index]);
-                              if (galleryItems[index].hero != null) {
-                                return Hero(
-                                  tag: galleryItems[index].hero!,
-                                  child: widget,
-                                );
-                              }
-                              return widget;
-                            },
-                            initGestureConfigHandler: initGestureConfigHandler,
-                            onDoubleTap: onDoubleTap,
-                          ),
+                          onDoubleTap: () {
+                            onDoubleTap(ExtendedImageGestureState());
+                          },
+                          child: image,
                         );
                       },
                     );
-
-                    image = Container(
-                      padding: const EdgeInsets.all(5.0),
-                      child: image,
-                    );
-
                     return image;
                   },
                   itemCount: galleryItems.length,
@@ -253,51 +209,156 @@ class ImagePreviewPage extends HookConsumerWidget {
                   },
                 ),
               ),
-              Positioned(
-                top: 0,
-                child: AnimatedOpacity(
-                  opacity: appBarOpacity.value,
-                  duration: const Duration(milliseconds: 200),
-                  child: SizedBox(
-                    width: constraints.maxWidth,
-                    child: AppBar(
-                      backgroundColor: Colors.black.withOpacity(0.4),
-                      iconTheme: const IconThemeData(color: Colors.white),
-                      title: Text(
-                        "${currentIndex.value + 1} / ${galleryItems.length} ",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      actions: [
-                        IconButton(
-                            onPressed: () async {
-                              if (http.valueOrNull != null) {
-                                var res = await saveImage(
-                                    http: http.valueOrNull!,
-                                    url: galleryItems[currentIndex.value].url,
-                                    album: meta.valueOrNull?.name ?? "MoeKey",
-                                    name:
-                                        galleryItems[currentIndex.value].name);
-                                if (context.mounted) {
-                                  var snackBar = SnackBar(
-                                    content: Text(res
-                                        ? S.current.saveSuccess
-                                        : S.current.saveFailed),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                }
-                              }
-                            },
-                            icon: const Icon(Icons.download))
-                      ],
-                    ),
-                  ),
-                ),
-              )
+              ImagePreviewTabbar(
+                  appBarOpacity: appBarOpacity,
+                  currentIndex: currentIndex,
+                  galleryItems: galleryItems,
+                  http: http,
+                  meta: meta)
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _Image extends StatefulWidget {
+  const _Image({
+    super.key,
+    required this.heroKey,
+    required this.initGestureConfigHandler,
+    required this.onDoubleTap,
+    required this.src,
+    this.blurhash,
+    this.width,
+    this.height,
+  });
+
+  final String? blurhash;
+  final String? src;
+  final double? width;
+  final double? height;
+  final UniqueKey? heroKey;
+  final GestureConfig Function(ExtendedImageState)? initGestureConfigHandler;
+  final void Function(ExtendedImageGestureState) onDoubleTap;
+
+  @override
+  State<_Image> createState() => _ImageState();
+}
+
+class _ImageState extends State<_Image> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 300),
+        lowerBound: 0.0,
+        upperBound: 1.0);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.src == null) {
+      return const SizedBox();
+    }
+    return ExtendedImage(
+      image: getExtendedResizeImage(widget.src!),
+      fit: BoxFit.contain,
+      mode: ExtendedImageMode.gesture,
+      enableSlideOutPage: true,
+      loadStateChanged: (state) {
+        if (widget.blurhash == null) {
+          return null;
+        }
+        if (state.extendedImageLoadState != LoadState.completed) {
+          return Center(
+            child: AspectRatio(
+              aspectRatio: (widget.width ?? 16) / (widget.height ?? 9),
+              child: BlurHash(widget.blurhash!),
+            ),
+          );
+        }
+        return null;
+      },
+      heroBuilderForSlidingPage: (child) {
+        return Hero(
+          createRectTween: (begin, end) {
+            return CustomRectTween(a: begin, b: end);
+          },
+          tag: widget.heroKey ?? UniqueKey(),
+          child: child,
+        );
+      },
+      initGestureConfigHandler: widget.initGestureConfigHandler,
+      onDoubleTap: widget.onDoubleTap,
+    );
+  }
+}
+
+class ImagePreviewTabbar extends StatelessWidget {
+  const ImagePreviewTabbar({
+    super.key,
+    required this.appBarOpacity,
+    required this.currentIndex,
+    required this.galleryItems,
+    required this.http,
+    required this.meta,
+  });
+
+  final ValueNotifier<double> appBarOpacity;
+  final ValueNotifier<int> currentIndex;
+  final List<DriveFileModel> galleryItems;
+  final AsyncValue<Dio> http;
+  final AsyncValue<MetaDetailedModel?> meta;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: AnimatedOpacity(
+        opacity: appBarOpacity.value,
+        duration: const Duration(milliseconds: 200),
+        child: AppBar(
+          backgroundColor: Colors.black.withOpacity(0.4),
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: Text(
+            "${currentIndex.value + 1} / ${galleryItems.length} ",
+            style: const TextStyle(color: Colors.white),
+          ),
+          actions: [
+            IconButton(
+                onPressed: () async {
+                  if (http.valueOrNull != null) {
+                    var res = await saveImage(
+                        http: http.valueOrNull!,
+                        url: galleryItems[currentIndex.value].url,
+                        album: meta.valueOrNull?.name ?? "MoeKey",
+                        name: galleryItems[currentIndex.value].name);
+                    if (context.mounted) {
+                      var snackBar = SnackBar(
+                        content: Text(
+                            res ? S.current.saveSuccess : S.current.saveFailed),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  }
+                },
+                icon: const Icon(Icons.download))
+          ],
+        ),
+      ),
     );
   }
 }
