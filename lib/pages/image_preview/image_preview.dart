@@ -177,7 +177,7 @@ class ImagePreviewPage extends HookConsumerWidget {
                           initGestureConfigHandler: initGestureConfigHandler,
                           onDoubleTap: onDoubleTap,
                           src: isLoaded ? item.url : item.thumbnailUrl,
-                          blurhash: item.blurhash,
+                          blurhash: isLoaded ? null : item.blurhash,
                           width: item.properties?.width,
                           height: item.properties?.height,
                         );
