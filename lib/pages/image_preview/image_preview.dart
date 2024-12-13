@@ -1,5 +1,5 @@
 import 'package:blurhash_shader/blurhash_shader.dart';
-import 'package:dio/src/dio.dart';
+import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -163,10 +163,11 @@ class ImagePreviewPage extends HookConsumerWidget {
                     var item = galleryItems[index];
                     Widget image = FutureBuilder(
                       future: precacheImage(
-                        ExtendedNetworkImageProvider(item.url, cache: true),
+                        getExtendedResizeImage(item.url),
                         context,
                       ),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        print(snapshot);
                         var isLoaded =
                             snapshot.connectionState == ConnectionState.done ||
                                 snapshot.hasError;

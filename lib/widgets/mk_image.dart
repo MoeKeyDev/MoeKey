@@ -63,60 +63,62 @@ class _MkImageState extends State<MkImage> with SingleTickerProviderStateMixin {
             width: widget.width, height: widget.height, fit: widget.fit),
       );
     }
+    Widget image = ExtendedImage(
+      image: getExtendedResizeImage(widget.url),
+      shape: widget.shape,
+      loadStateChanged: (state) {
+        switch (state.extendedImageLoadState) {
+          case LoadState.completed:
+            _controller.forward();
+            var image = FadeTransition(
+              opacity: _controller,
+              child: ExtendedRawImage(
+                image: state.extendedImageInfo?.image,
+                height: widget.height,
+                width: widget.width,
+                fit: widget.fit,
+                filterQuality: FilterQuality.medium,
+              ),
+            );
+            if (widget.blurHash == null || widget.blurHash!.isEmpty) {
+              return image;
+            }
+            return BlurHash(
+              widget.blurHash!,
+              child: image,
+            );
+          case LoadState.loading:
+          case LoadState.failed:
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                var constraintsHeight = constraints.maxHeight;
+                var constraintsWidth = constraints.maxWidth;
+                if (constraints.maxHeight == double.infinity) {
+                  constraintsHeight = constraints.minHeight;
+                }
+                if (constraints.maxWidth == double.infinity) {
+                  constraintsWidth = constraints.minWidth;
+                }
+                return Container(
+                  width: widget.width ?? widget.height ?? constraintsWidth,
+                  height: widget.height ?? constraintsHeight,
+                  color: const Color.fromARGB(10, 0, 0, 0),
+                  child:
+                      (widget.blurHash != null && widget.blurHash!.isNotEmpty)
+                          ? BlurHash(widget.blurHash!)
+                          : null,
+                );
+              },
+            );
+        }
+      },
+    );
+
+    if (widget.heroKey != null) {
+      image = Hero(tag: widget.heroKey ?? UniqueKey(), child: image);
+    }
     return RepaintBoundary(
-      child: Hero(
-          tag: widget.heroKey ?? UniqueKey(),
-          child: ExtendedImage(
-            image: getExtendedResizeImage(widget.url),
-            shape: widget.shape,
-            loadStateChanged: (state) {
-              switch (state.extendedImageLoadState) {
-                case LoadState.completed:
-                  _controller.forward();
-                  var image = FadeTransition(
-                    opacity: _controller,
-                    child: ExtendedRawImage(
-                      image: state.extendedImageInfo?.image,
-                      height: widget.height,
-                      width: widget.width,
-                      fit: widget.fit,
-                      filterQuality: FilterQuality.medium,
-                    ),
-                  );
-                  if (widget.blurHash == null || widget.blurHash!.isEmpty) {
-                    return image;
-                  }
-                  return BlurHash(
-                    widget.blurHash!,
-                    child: image,
-                  );
-                case LoadState.loading:
-                case LoadState.failed:
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      var constraintsHeight = constraints.maxHeight;
-                      var constraintsWidth = constraints.maxWidth;
-                      if (constraints.maxHeight == double.infinity) {
-                        constraintsHeight = constraints.minHeight;
-                      }
-                      if (constraints.maxWidth == double.infinity) {
-                        constraintsWidth = constraints.minWidth;
-                      }
-                      return Container(
-                        width:
-                            widget.width ?? widget.height ?? constraintsWidth,
-                        height: widget.height ?? constraintsHeight,
-                        color: const Color.fromARGB(10, 0, 0, 0),
-                        child: (widget.blurHash != null &&
-                                widget.blurHash!.isNotEmpty)
-                            ? BlurHash(widget.blurHash!)
-                            : null,
-                      );
-                    },
-                  );
-              }
-            },
-          )),
+      child: image,
     );
   }
 }

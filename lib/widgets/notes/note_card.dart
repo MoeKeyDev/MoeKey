@@ -944,7 +944,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
   open(index) {
     context.push('/image-preview', extra: {
       'initialIndex': index,
-      'galleryItems': widget.files,
+      'galleryItems': [
+        for (var value in widget.files)
+          if (value.type.startsWith("image")) value
+      ],
       'heroKeys': heroKeys
     });
   }
@@ -955,8 +958,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < widget.files.length; i++) {
-      heroKeys.add(UniqueKey());
+    for (var value in widget.files) {
+      if (value.type.startsWith("image")) {
+        heroKeys.add(UniqueKey());
+      }
     }
   }
 
