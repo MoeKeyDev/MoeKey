@@ -168,8 +168,8 @@ class ImagePreviewPage extends HookConsumerWidget {
                       ),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         var isLoaded =
-                            snapshot.connectionState == ConnectionState.done &&
-                                snapshot.hasData;
+                            snapshot.connectionState == ConnectionState.done ||
+                                snapshot.hasError;
                         Widget image = _Image(
                           heroKey: currentIndex.value == index
                               ? heroKeys[index]

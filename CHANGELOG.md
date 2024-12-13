@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.4
+
+### Chore
+
+- Update Flutter 3.27
+
+### Fixed
+
+- Fixed Image Preview Load
+
 ## 0.7.3
 
 ### Fixed
