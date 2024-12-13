@@ -140,6 +140,7 @@
   "noteTranslate": "Virkojen käännös",
   "clip": "muistio",
   "clipCreate": "Uudet muistiinpanot",
+  "clipUpdate": "Päivitä muistiinpanot",
   "view": "tsekkaa",
   "sensitiveContent": "Arkaluonteinen sisältö",
   "image": "valokuva",
