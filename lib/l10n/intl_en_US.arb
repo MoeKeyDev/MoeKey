@@ -35,7 +35,7 @@
   "justNow": "Just now",
   "secondsAgo": "{seconds} Seconds ago",
   "minutesAgo": "{minutes} Minutes ago",
-  "hoursAgo": "{hours}",
+  "hoursAgo": "{hours} Hours Ago",
   "daysAgo": "{days} Days ago",
   "monthsAgo": "{months} Months ago",
   "yearsAgo": "{years} Years ago",
