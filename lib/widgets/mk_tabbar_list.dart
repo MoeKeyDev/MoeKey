@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'keep_alive_wrapper.dart';
 import 'mk_header.dart';
 import 'mk_refresh_indicator.dart';
+import 'mk_refresh_load.dart';
 import 'mk_scaffold.dart';
 
 class MkTabBarItem {
@@ -47,8 +48,7 @@ class MkTabBarRefreshScroll extends StatefulWidget {
 class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
-  late List<MkRefreshController> refreshControllers;
-  late List<ScrollController> scrollControllers;
+  late List<MkRefreshLoadListController> loadControllers;
   int lastIndex = 0;
 
   @override
@@ -68,9 +68,8 @@ class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
         lastIndex = tabController.index;
       }
     });
-    refreshControllers = List<MkRefreshController>.from(
-        widget.items.map((_) => MkRefreshController()));
-    scrollControllers = List.from(widget.items.map((_) => ScrollController()));
+    loadControllers =
+        List.from(widget.items.map((_) => MkRefreshLoadListController()));
   }
 
   @override
@@ -88,12 +87,9 @@ class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
             children: [
               for (var (index, item) in widget.items.indexed)
                 KeepAliveWrapper(
-                  child: DefaultMkRefreshController(
-                    controller: refreshControllers[index],
-                    child: PrimaryScrollController(
-                      controller: scrollControllers[index],
-                      child: item.child,
-                    ),
+                  child: DefaultMkRefreshLoadListController(
+                    controller: loadControllers[index],
+                    child: item.child,
                   ),
                 ),
             ],
@@ -130,20 +126,7 @@ class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
 
   void refresh() {
     var value = tabController.index;
-    var controller = scrollControllers[value];
-    var refreshController = refreshControllers[value];
-    if (!controller.hasClients) return;
-
-    if (controller.offset > 0) {
-      controller.animateTo(
-        0,
-        duration: Duration(
-          milliseconds: (controller.offset).toInt().clamp(100, 300),
-        ),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      refreshController.refresh();
-    }
+    var controller = loadControllers[value];
+    controller.refresh();
   }
 }

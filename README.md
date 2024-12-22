@@ -23,10 +23,11 @@ Currently implemented features:
 - Clip
 - Misskey Announcements
 - Explore
+- HashTag Page
+-
 
 Temporarily unimplemented features
 
-- HashTag Page
 - User Profile Edit
 - Misskey Settings
 - Antennas, Channels, Lists

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/logger.dart';
+import 'package:moekey/pages/hashtag/hashtag_page.dart';
 import 'package:moekey/pages/login/login_page.dart';
 import 'package:moekey/pages/notes/note_page.dart';
 import 'package:moekey/pages/notifications/notifications_page.dart';
@@ -164,6 +165,9 @@ GoRouter router(Ref ref) {
             username: status.pathParameters['username']!,
           ),
         ),
+        GoRoute(path: "/tags/:name", builder: (_, status) => HashtagPage(
+              name: status.pathParameters['name']!,
+        )),
       ],
     ),
     GoRoute(

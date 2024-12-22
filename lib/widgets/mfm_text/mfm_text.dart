@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../apis/models/emojis.dart';
 import '../../logger.dart';
 import '../../status/themes.dart';
+import '../../utils/time_to_desired_format.dart';
 import '../hover_builder.dart';
 import '../mk_image.dart';
 import 'animate/spin.dart';
@@ -68,6 +69,7 @@ class MFMText extends HookConsumerWidget {
       loginServerUrl: meta.valueOrNull?.uri ?? "",
       currentServerHost: currentServerHost,
       systemEmojis: emoji.valueOrNull ?? {},
+      context: context,
     );
 
     var textSpan = [
@@ -111,6 +113,7 @@ _getParse({
   required String loginServerUrl,
   String? currentServerHost,
   required Map<String, EmojiSimple> systemEmojis,
+  required BuildContext context,
 }) {
   feature ??= [
     MFMFeature.hashtag,
@@ -133,6 +136,10 @@ _getParse({
         return TextSpan(
           text: "#${item.props?["hashtag"]}",
           style: textStyle.copyWith(color: themes.accentColor),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              context.push('/tags/${item.props?["hashtag"]}');
+            },
         );
       } else {
         return TextSpan(text: "#${item.props?["hashtag"]}");
@@ -181,6 +188,7 @@ _getParse({
           bigEmojiCode: bigEmojiCode,
           feature: feature,
           currentServerHost: currentServerHost,
+          context: context,
         );
         return WidgetSpan(
           child: Tooltip(
@@ -344,6 +352,7 @@ _getParse({
         bigEmojiCode: bigEmojiCode,
         feature: feature,
         currentServerHost: currentServerHost,
+        context: context,
       );
       var a = item.children;
       if (a != null) {
@@ -367,6 +376,7 @@ _getParse({
         bigEmojiCode: bigEmojiCode,
         feature: feature,
         currentServerHost: currentServerHost,
+        context: context,
       );
       var a = item.children;
       if (a != null) {
@@ -403,6 +413,7 @@ _getParse({
         bigEmojiCode: bigEmojiCode,
         feature: feature,
         currentServerHost: currentServerHost,
+        context: context,
       );
       var a = item.children;
       if (a != null) {
@@ -459,6 +470,7 @@ _getParse({
         bigEmojiCode: bigEmojiCode,
         feature: feature,
         currentServerHost: currentServerHost,
+        context: context,
       );
       var a = item.children;
       if (a != null) {
@@ -490,6 +502,7 @@ _getParse({
         bigEmojiCode: bigEmojiCode,
         feature: feature,
         currentServerHost: currentServerHost,
+        context: context,
       );
       var a = item.children;
       if (a != null) {
@@ -544,6 +557,7 @@ _getParse({
         bigEmojiCode: bigEmojiCode,
         feature: feature,
         currentServerHost: currentServerHost,
+        context: context,
       );
       var child = TextSpan(children: [
         for (var item in item.children ?? [])
@@ -635,6 +649,33 @@ _getParse({
           return child;
         case "sparkle":
           return child;
+        case "unixtime":
+          var unixtime = item.children?[0].props?["text"];
+          unixtime = int.parse(unixtime) * 1000;
+          var date = DateTime.fromMillisecondsSinceEpoch(unixtime);
+          return WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: themes.accentColor.withAlpha(25),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      TablerIcons.clock,
+                      size: 14,
+                      color: themes.accentColor,
+                    ),
+                    Text(
+                      timeToDesiredFormat(date),
+                      style: textStyle.copyWith(color: themes.accentColor),
+                    )
+                  ],
+                ),
+              ));
       }
       return TextSpan(text: item.toString(), style: textStyle);
     }

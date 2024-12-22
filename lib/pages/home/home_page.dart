@@ -96,12 +96,12 @@ class HomePage extends HookConsumerWidget {
                 onSelect: _closeDrawer,
               )
             : null,
-        endDrawer: constraints.maxWidth < 500
-            ? Container(
-                color: themes.panelColor,
-                child: const WidgetsListPage(),
-              )
-            : null,
+        // endDrawer: constraints.maxWidth < 500
+        //     ? Container(
+        //         color: themes.panelColor,
+        //         child: const WidgetsListPage(),
+        //       )
+        //     : null,
         body: Stack(
           children: [
             Row(
@@ -125,7 +125,7 @@ class HomePage extends HookConsumerWidget {
                     child: child,
                   ),
                 ),
-                if (constraints.maxWidth >= 1090) const WidgetsListPage()
+                // if (constraints.maxWidth >= 1090) const WidgetsListPage()
               ],
             ),
             if (constraints.maxWidth < 500)

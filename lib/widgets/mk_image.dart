@@ -59,7 +59,7 @@ class MkImage extends StatelessWidget {
             return Container(
               width: width ?? height ?? constraintsWidth,
               height: height ?? constraintsHeight,
-              color: const Color.fromARGB(10, 0, 0, 0),
+              color: const Color.fromARGB(255, 0, 0, 0),
             );
           },
         );
@@ -76,7 +76,7 @@ class MkImage extends StatelessWidget {
 
         child = AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
-          opacity: state.extendedImageLoadState == LoadState.completed ? 1.0 : 0.0,
+          opacity: state.extendedImageLoadState == LoadState.completed ? 1.0 : 0.01,
           child: child,
         );
 

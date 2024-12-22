@@ -23,10 +23,10 @@ MoeKey希望成为一个UI风格与原版Misskey保持一致。功能完善的Mi
 - 便签
 - 系统公告
 - 发现
+- HashTag 浏览
 
 暂时未实现的功能
 
-- HashTag 浏览
 - 个人资料编辑
 - Misskey设置
 - 天线，频道，列表

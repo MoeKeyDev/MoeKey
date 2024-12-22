@@ -18,6 +18,7 @@ class MkPaginationNoteList extends HookConsumerWidget {
     this.padding = EdgeInsets.zero,
     required this.hasMore,
     this.items,
+    this.controller,
   });
 
   final Future Function() onLoad;
@@ -27,6 +28,7 @@ class MkPaginationNoteList extends HookConsumerWidget {
   final bool? hasMore;
 
   final List<NoteModel>? items;
+  final MkRefreshLoadListController? controller;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,17 +42,23 @@ class MkPaginationNoteList extends HookConsumerWidget {
           onLoad: onLoad,
           onRefresh: onRefresh,
           padding: padding,
+          controller: controller,
           slivers: [
             ...?slivers,
             SliverList.separated(
               itemBuilder: (BuildContext context, int index) {
-                BorderRadius borderRadius;
+                BorderRadius borderRadius = const BorderRadius.all(Radius.zero);
                 if (index == 0) {
-                  borderRadius = const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12));
-                } else {
-                  borderRadius = const BorderRadius.all(Radius.zero);
+                  borderRadius = borderRadius.copyWith(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  );
+                }
+                if (index + 1 == items?.length) {
+                  borderRadius = borderRadius.copyWith(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  );
                 }
                 return RepaintBoundary(
                   child: NoteCard(

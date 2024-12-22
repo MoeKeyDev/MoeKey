@@ -171,4 +171,22 @@ class NotesService extends MisskeyApiServices {
     }
     return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
   }
+
+  Future<List<NoteModel>> searchByTag({
+    required String tag,
+    String? sinceId,
+    String? untilId,
+    int limit = 10,
+  }) async {
+    var data = await client.post("/notes/search-by-tag", data: {
+      "tag": tag,
+      "limit": limit,
+      if (sinceId != null) "sinceId": sinceId,
+      if (untilId != null) "untilId": untilId,
+    });
+    if (data == null) {
+      return [];
+    }
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+  }
 }

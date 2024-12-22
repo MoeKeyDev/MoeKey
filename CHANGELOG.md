@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### Feature
+
+- Add HashTag Page
+
 ## 0.7.4
 
 ### Chore

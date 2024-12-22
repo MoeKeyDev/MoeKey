@@ -52,7 +52,6 @@ class HomeState {
       "icon": TablerIcons.bell,
       "label": S.current.notifications,
       "id": "notifications",
-      "key": GlobalKey<MkTabBarRefreshScrollState>(),
       "onTop": ({Key? key}) => {
             (key as GlobalKey<MkTabBarRefreshScrollState>)
                 .currentState

@@ -20,6 +20,7 @@ import '../../widgets/loading_weight.dart';
 import '../../widgets/mk_card.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/mk_parallax.dart';
+import '../../widgets/notes/note_card.dart';
 
 class UserOverview extends HookConsumerWidget {
   const UserOverview({
@@ -31,8 +32,17 @@ class UserOverview extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var dataProvider = userNotesListProvider(userId: userId);
-
+    var dataProvider = userNotesListProvider(
+      userId: userId,
+      withChannelNotes: true,
+      withFiles: false,
+      withRenotes: true,
+      withReplies: true,
+    );
+    var userProvider = userInfoProvider(userId: userId);
+    var user = ref.watch(userProvider);
+    var userPinNote = user.valueOrNull?.pinnedNotes ?? [];
+    var themes = ref.watch(themeColorsProvider);
     var data = ref.watch(dataProvider);
     return MkPaginationNoteList(
       onLoad: () => ref.read(dataProvider.notifier).load(),
@@ -43,10 +53,52 @@ class UserOverview extends HookConsumerWidget {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: UserHomeCard(userId: userId),
           ),
-        )
+        ),
+        SliverList.separated(
+          itemBuilder: (BuildContext context, int index) {
+            BorderRadius borderRadius = const BorderRadius.all(Radius.zero);
+            if (index == 0) {
+              borderRadius = borderRadius.copyWith(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              );
+            }
+            if (index + 1 == userPinNote.length) {
+              borderRadius = borderRadius.copyWith(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              );
+            }
+
+            return RepaintBoundary(
+              child: NoteCard(
+                  key: ValueKey(userPinNote[index].id),
+                  borderRadius: borderRadius,
+                  pined: true,
+                  data: userPinNote[index]),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return SizedBox(
+              width: double.infinity,
+              height: 1,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: themes.dividerColor,
+                ),
+              ),
+            );
+          },
+          itemCount: userPinNote.length,
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+          ),
+        ),
       ],
       hasMore: data.valueOrNull?.hasMore ?? true,
-      items: data.valueOrNull?.list ?? [],
+      items: data.valueOrNull?.list,
     );
   }
 }
@@ -702,8 +754,9 @@ class _UserBanner extends StatelessWidget {
                                   label: S.current.openInNewTab,
                                   icon: TablerIcons.external_link,
                                   onTap: () {
-                                    launchUrlString(
-                                        "https://${userData.host}/@${userData.username}");
+                                    var url = userData.url ??
+                                        "https://${userData.host}/@${userData.username}";
+                                    launchUrlString(url);
                                     return false;
                                   },
                                 ),
@@ -711,9 +764,9 @@ class _UserBanner extends StatelessWidget {
                                   label: S.current.copyUserHomeLink,
                                   icon: TablerIcons.home,
                                   onTap: () {
-                                    Clipboard.setData(ClipboardData(
-                                        text:
-                                            "https://${userData.host}/@${userData.username}"));
+                                    var url = userData.url ??
+                                        "https://${userData.host}/@${userData.username}";
+                                    Clipboard.setData(ClipboardData(text: url));
                                     return false;
                                   },
                                 ),
