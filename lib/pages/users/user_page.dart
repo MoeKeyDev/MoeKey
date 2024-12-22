@@ -15,6 +15,7 @@ import 'package:moekey/widgets/mk_scaffold.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 
 import '../../generated/l10n.dart';
+import '../../status/server.dart';
 import '../../status/themes.dart';
 
 class UserPage extends HookConsumerWidget {
@@ -33,6 +34,8 @@ class UserPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var userProvider =
         userInfoProvider(username: username, host: host, userId: this.userId);
+
+    var loginUser = ref.watch(currentLoginUserProvider);
     var user = ref.watch(userProvider);
     if (user.isLoading) {
       return MkScaffold(
@@ -102,7 +105,7 @@ class UserPage extends HookConsumerWidget {
             ),
             child: UserNotesPage(userId: userId),
           ),
-          if (userData.publicReactions)
+          if (userData.publicReactions || userData.id == loginUser?.id)
             MkTabBarItem(
               label: Tab(
                 child: Row(

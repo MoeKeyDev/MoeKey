@@ -959,7 +959,7 @@ class _TimeLineImageState extends State<TimeLineImage> {
   void initState() {
     super.initState();
     for (var value in widget.files) {
-      if (value.type.startsWith("image")) {
+      if (value.type.startsWith("image") || value.type.startsWith("video")) {
         heroKeys.add(UniqueKey());
       }
     }
