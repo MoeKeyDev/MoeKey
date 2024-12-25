@@ -151,6 +151,8 @@ flutter_launcher_icons:
   linux: true
   image_path: "assets/favicon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
+  adaptive_icon_background: "#E9AFC6"
+  adaptive_icon_foreground: "assets/favicon.png"
   #  web:
   #    generate: true
   #    image_path: "assets/favicon.ico"
