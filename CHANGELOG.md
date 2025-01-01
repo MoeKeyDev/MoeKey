@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1
+
+### Feature
+
+- Add Android Adaptive Icon support
+
 ## 0.8.0
 
 ### Feature

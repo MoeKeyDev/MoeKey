@@ -24,7 +24,6 @@ Currently implemented features:
 - Misskey Announcements
 - Explore
 - HashTag Page
--
 
 Temporarily unimplemented features
 
