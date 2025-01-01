@@ -55,6 +55,15 @@ class ContextMenuBuilder extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ContextMenuBuilder> createState() => ContextMenuBuilderState();
+
+  static ContextMenuBuilderState of(BuildContext context) {
+    return context.findAncestorStateOfType<ContextMenuBuilderState>()!;
+  }
+
+  static show(BuildContext context, TapUpDetails details) {
+    var offset = details.globalPosition;
+    of(context).show(offset);
+  }
 }
 
 class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>

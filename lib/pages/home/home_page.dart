@@ -14,6 +14,7 @@ import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/login/servers_select.dart';
 
 import '../../generated/l10n.dart';
+import '../../main.dart';
 import '../../status/misskey_api.dart';
 import '../../widgets/blur_widget.dart';
 import '../../widgets/hover_builder.dart';
@@ -74,7 +75,8 @@ class HomePage extends HookConsumerWidget {
       "drives",
       "explore",
       "announcements",
-      "search"
+      "search",
+      "settings",
     ].contains(currentId);
     useEffect(() {
       updateUserInfo(ref);
@@ -212,6 +214,7 @@ class NavBar extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var state = ref.watch(homePageStateProvider);
     var currentId = GoRouter.of(context).state?.name;
+    var isWide = WindowSize.of(context)!.isWide;
     return AnimatedContainer(
       width: width,
       color: themes.navBgColor,
@@ -251,10 +254,41 @@ class NavBar extends HookConsumerWidget {
                     ));
                   }
                 }
+
                 return SizedBox(
                   width: double.infinity,
                   child: Column(
-                    children: list,
+                    children: [
+                      ...list,
+                      if (isWide)
+                        NavbarItem(
+                          icon: TablerIcons.settings,
+                          label: S.current.settings,
+                          id: "settingsAccountManager",
+                          currentId: currentId ?? '',
+                          onSelect: () {
+                            if (onSelect != null) {
+                              onSelect!();
+                            }
+
+                            context.goNamed("settingsAccountManager");
+                          },
+                        )
+                      else
+                        NavbarItem(
+                          icon: TablerIcons.settings,
+                          label: S.current.settings,
+                          id: "settings",
+                          currentId: currentId ?? '',
+                          onSelect: () {
+                            if (onSelect != null) {
+                              onSelect!();
+                            }
+
+                            context.goNamed("settings");
+                          },
+                        ),
+                    ],
                   ),
                 );
               }),
@@ -463,32 +497,7 @@ class UserAvatarButton extends ConsumerWidget {
                 label: S.current.addAccount,
                 onTap: () {
                   Timer(const Duration(milliseconds: 150), () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Material(
-                              color: Colors.transparent,
-                              child: Center(
-                                child: SizedBox(
-                                  width: 450,
-                                  height: 600,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: GestureDetector(
-                                      onTap: () {},
-                                      child: const ServersSelectCard(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        useRootNavigator: true);
+                    showServerListDialog(context);
                   });
                   return false;
                 },
@@ -548,6 +557,35 @@ class UserAvatarButton extends ConsumerWidget {
       );
     });
   }
+}
+
+Future<dynamic> showServerListDialog(BuildContext context) {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Material(
+            color: Colors.transparent,
+            child: Center(
+              child: SizedBox(
+                width: 450,
+                height: 600,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: const ServersSelectCard(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      useRootNavigator: true);
 }
 
 class NavbarItem extends ConsumerWidget {

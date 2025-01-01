@@ -6,8 +6,13 @@ import 'package:moekey/pages/hashtag/hashtag_page.dart';
 import 'package:moekey/pages/login/login_page.dart';
 import 'package:moekey/pages/notes/note_page.dart';
 import 'package:moekey/pages/notifications/notifications_page.dart';
+import 'package:moekey/pages/settings/settings_page.dart';
+import 'package:moekey/pages/settings/test/test_page.dart';
+import 'package:moekey/pages/settings/two_panel_layout.dart';
+import 'package:moekey/pages/test/test.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/mk_tabbar_refresh_scroll_state.dart';
+import 'package:moekey/widgets/loading_weight.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
@@ -19,6 +24,7 @@ import '../pages/explore/explore.dart';
 import '../pages/home/home_page.dart';
 import '../pages/image_preview/image_preview.dart';
 import '../pages/search/search_page.dart';
+import '../pages/settings/router.dart';
 import '../pages/splash_page/splash_page.dart';
 import '../pages/timeline/timeline_page.dart';
 import '../pages/users/user_follow.dart';
@@ -51,78 +57,82 @@ GoRouter router(Ref ref) {
           )),
       routes: [
         StatefulShellRoute.indexedStack(
-            builder: (context, status, child) => child,
-            branches: [
-              StatefulShellBranch(routes: [
-                GoRoute(
-                  name: "timeline",
-                  path: "/timeline",
-                  builder: (_, __) => Consumer(builder: (context, ref, _) {
-                    var key = ref
-                        .read(mkTabBarRefreshScrollStatusProvider("timeline"));
-                    return TimelinePage(
-                      mkTabBarListKey: key,
-                    );
-                  }),
-                ),
-              ]),
-              StatefulShellBranch(routes: [
-                GoRoute(
-                  name: "notifications",
-                  path: "/notifications",
-                  builder: (_, __) => Consumer(builder: (context, ref, _) {
-                    var key = ref.read(
-                        mkTabBarRefreshScrollStatusProvider("notifications"));
-                    return NotificationsPage(
-                      mkTabBarListKey: key,
-                    );
-                  }),
-                ),
-              ]),
-              StatefulShellBranch(routes: [
-                GoRoute(
-                  name: "clips",
-                  path: "/clips",
-                  builder: (_, __) => const ClipsPage(),
-                  routes: [
-                    GoRoute(
-                      path: ":id",
-                      builder: (_, status) {
-                        return ClipsNotes(status.pathParameters['id']!);
-                      },
-                    ),
-                  ],
-                ),
-              ]),
-              StatefulShellBranch(routes: [
-                GoRoute(
-                  name: "drives",
-                  path: "/drives",
-                  builder: (_, __) => const DrivePage(),
-                ),
-              ]),
-              StatefulShellBranch(routes: [
-                GoRoute(
-                  name: "explore",
-                  path: "/explore",
-                  builder: (_, __) => const ExplorePage(),
-                ),
-              ]),
-              StatefulShellBranch(routes: [
-                GoRoute(
-                  name: "announcements",
-                  path: "/announcements",
-                  builder: (_, __) => const AnnouncementsPage(),
-                ),
-              ]),
-              StatefulShellBranch(routes: [
-                GoRoute(
-                  name: "search",
-                  path: "/search",
-                  builder: (_, __) => const SearchPage(),
-                )
-              ]),
+          builder: (context, status, child) => child,
+          branches: [
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: "timeline",
+                path: "/timeline",
+                builder: (_, __) => Consumer(builder: (context, ref, _) {
+                  var key =
+                      ref.read(mkTabBarRefreshScrollStatusProvider("timeline"));
+                  return TimelinePage(
+                    mkTabBarListKey: key,
+                  );
+                }),
+              ),
             ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: "notifications",
+                path: "/notifications",
+                builder: (_, __) => Consumer(builder: (context, ref, _) {
+                  var key = ref.read(
+                      mkTabBarRefreshScrollStatusProvider("notifications"));
+                  return NotificationsPage(
+                    mkTabBarListKey: key,
+                  );
+                }),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: "clips",
+                path: "/clips",
+                builder: (_, __) => const ClipsPage(),
+                routes: [
+                  GoRoute(
+                    path: ":id",
+                    builder: (_, status) {
+                      return ClipsNotes(status.pathParameters['id']!);
+                    },
+                  ),
+                ],
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: "drives",
+                path: "/drives",
+                builder: (_, __) => const DrivePage(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: "explore",
+                path: "/explore",
+                builder: (_, __) => const ExplorePage(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: "announcements",
+                path: "/announcements",
+                builder: (_, __) => const AnnouncementsPage(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                name: "search",
+                path: "/search",
+                builder: (_, __) => const SearchPage(),
+              )
+            ]),
+            StatefulShellBranch(
+              routes: [settingsRouter],
+            ),
+          ],
+        ),
         GoRoute(
           path: "/notes/:id",
           builder: (_, status) => NotesPage(
@@ -165,9 +175,12 @@ GoRouter router(Ref ref) {
             username: status.pathParameters['username']!,
           ),
         ),
-        GoRoute(path: "/tags/:name", builder: (_, status) => HashtagPage(
-              name: status.pathParameters['name']!,
-        )),
+        GoRoute(
+          path: "/tags/:name",
+          builder: (_, status) => HashtagPage(
+            name: status.pathParameters['name']!,
+          ),
+        ),
       ],
     ),
     GoRoute(

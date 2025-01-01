@@ -90,10 +90,5 @@ class HomeState {
       "label": S.current.more,
       "id": "more",
     },
-    {
-      "icon": TablerIcons.settings,
-      "label": S.current.settings,
-      "id": "settings",
-    },
   ];
 }

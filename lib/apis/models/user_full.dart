@@ -248,4 +248,9 @@ class UserFullModel {
       'isLocked': isLocked,
     };
   }
+
+  @override
+  String toString() {
+    return 'UserFullModel{avatarBlurhash: $avatarBlurhash, avatarUrl: $avatarUrl, bannerBlurhash: $bannerBlurhash, bannerUrl: $bannerUrl, birthday: $birthday, createdAt: $createdAt, description: $description, email: $email, emojis: $emojis, followersCount: $followersCount, followingCount: $followingCount, host: $host, id: $id, isAdmin: $isAdmin, publicReactions: $publicReactions, onlineStatus: $onlineStatus, updatedAt: $updatedAt, username: $username, name: $name, fields: $fields, avatarDecorations: $avatarDecorations, ffVisibility: $ffVisibility, followersVisibility: $followersVisibility, followingVisibility: $followingVisibility, pinnedNotes: $pinnedNotes, pinnedNotesIds: $pinnedNotesIds, uri: $uri, url: $url, notesCount: $notesCount, isFollowed: $isFollowed, isFollowing: $isFollowing, hasPendingFollowRequestFromYou: $hasPendingFollowRequestFromYou, hasPendingFollowRequestToYou: $hasPendingFollowRequestToYou, isLocked: $isLocked}';
+  }
 }

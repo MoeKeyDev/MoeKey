@@ -38,8 +38,7 @@ class MkImage extends StatelessWidget {
         decoration: BoxDecoration(
           shape: shape ?? BoxShape.rectangle,
         ),
-        child: SvgPicture.network(url,
-            width: width, height: height, fit: fit),
+        child: SvgPicture.network(url, width: width, height: height, fit: fit),
       );
     }
     Widget image = ExtendedImage(
@@ -59,12 +58,12 @@ class MkImage extends StatelessWidget {
             return Container(
               width: width ?? height ?? constraintsWidth,
               height: height ?? constraintsHeight,
-              color: const Color.fromARGB(255, 0, 0, 0),
+              color: const Color.fromARGB(128, 0, 0, 0),
             );
           },
         );
 
-        if(state.extendedImageLoadState == LoadState.completed) {
+        if (state.extendedImageLoadState == LoadState.completed) {
           child = ExtendedRawImage(
             image: state.extendedImageInfo?.image,
             height: height,
@@ -76,14 +75,16 @@ class MkImage extends StatelessWidget {
 
         child = AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
-          opacity: state.extendedImageLoadState == LoadState.completed ? 1.0 : 0.01,
+          opacity:
+              state.extendedImageLoadState == LoadState.completed ? 1.0 : 0.1,
           child: child,
         );
 
-        if(blurHash == null || blurHash!.isEmpty) {
+        if (blurHash == null ||
+            blurHash!.isEmpty ||
+            state.extendedImageLoadState == LoadState.completed) {
           return child;
         }
-
         return BlurHash(
           blurHash!,
           child: child,

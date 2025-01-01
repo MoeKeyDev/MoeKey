@@ -13,6 +13,43 @@ Future<void> main() async {
 }
 
 // final globalNav = GlobalKey<NavigatorState>();
+class WindowSize extends InheritedWidget {
+  const WindowSize({
+    super.key,
+    required this.isWide,
+    required super.child,
+  });
+
+  final bool isWide;
+
+  static WindowSize? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<WindowSize>();
+  }
+
+  @override
+  bool updateShouldNotify(WindowSize oldWidget) {
+    return isWide != oldWidget.isWide;
+  }
+}
+
+class WindowSizeProvider extends HookConsumerWidget {
+  const WindowSizeProvider({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var isWide = constraints.maxWidth > 800;
+        return WindowSize(
+          isWide: isWide,
+          child: child,
+        );
+      },
+    );
+  }
+}
 
 class MyApp extends HookConsumerWidget {
   const MyApp({super.key});
@@ -43,7 +80,8 @@ class MyApp extends HookConsumerWidget {
     // );
     return MediaQuery(
         data: mediaQueryData,
-        child: MaterialApp.router(
+        child: WindowSizeProvider(
+            child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
           theme: theme,
           routerConfig: ref.watch(routerProvider),
@@ -54,6 +92,6 @@ class MyApp extends HookConsumerWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: S.delegate.supportedLocales,
-        ));
+        )));
   }
 }

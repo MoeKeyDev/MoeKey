@@ -43,6 +43,16 @@ class LoginUserList extends _$LoginUserList {
     db.put("LoginUserList", list);
     ref.notifyListeners();
   }
+
+  Future removeUser(String id) async {
+    var v = state;
+    v.remove(id);
+    var db = getPreferencesDatabase();
+    var list = db.get("LoginUserList", defaultValue: {});
+    list.remove(id);
+    db.put("LoginUserList", list);
+    ref.notifyListeners();
+  }
 }
 
 @Riverpod(keepAlive: true)
