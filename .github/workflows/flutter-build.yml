@@ -39,7 +39,7 @@ jobs:
   build-apk:
     name: 编译android
     runs-on: ubuntu-latest
-    needs: [ pre-build ]
+    needs: [pre-build]
     steps:
       - name: 设置Flutter环境
         uses: subosito/flutter-action@v2
@@ -57,7 +57,6 @@ jobs:
         with:
           distribution: "adopt"
           java-version: "21"
-
 
       - name: 运行代码生成器
         run: dart run build_runner build
@@ -82,7 +81,7 @@ jobs:
   build-linux:
     name: 编译linux
     runs-on: ubuntu-latest
-    needs: [ pre-build ]
+    needs: [pre-build]
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
@@ -121,7 +120,7 @@ jobs:
   build-windows:
     name: 编译windows
     runs-on: windows-latest
-    needs: [ pre-build ]
+    needs: [pre-build]
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
@@ -136,7 +135,6 @@ jobs:
 
       - name: 启动windows桌面
         run: flutter config --enable-windows-desktop
-
 
       - name: 运行代码生成器
         run: dart run build_runner build
@@ -159,7 +157,7 @@ jobs:
   build-macos:
     name: 编译macOS
     runs-on: macos-latest
-    needs: [ pre-build ]
+    needs: [pre-build]
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
@@ -186,15 +184,6 @@ jobs:
           cd build/macos/Build/Products/Release
           zip -rq MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.zip MoeKey.app
           mv MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.zip $GITHUB_WORKSPACE
-          mkdir dmg && cp -r MoeKey.app dmg
-          hdiutil create -volname "MoeKey" -srcfolder dmg -ov -format UDRW MoeKey.dmg
-          hdiutil attach MoeKey.dmg
-          cp $GITHUB_WORKSPACE/assets/favicon.icns /Volumes/MoeKey/.VolumeIcon.icns
-          SetFile -c icnC /Volumes/MoeKey/.VolumeIcon.icns
-          SetFile -a C /Volumes/MoeKey
-          hdiutil detach /Volumes/MoeKey
-          hdiutil convert MoeKey.dmg -format UDZO -o MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.dmg
-          mv MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.dmg $GITHUB_WORKSPACE
 
       - name: 上传到工作流程
         uses: actions/upload-artifact@v4
@@ -202,11 +191,10 @@ jobs:
           name: build-macos
           path: |
             MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.zip
-            MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.dmg
 
   release:
     name: 上传包
-    needs: [ build-apk, build-linux, build-windows, build-macos, pre-build ]
+    needs: [build-apk, build-linux, build-windows, build-macos, pre-build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
