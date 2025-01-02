@@ -5,6 +5,7 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/login_user.dart';
+import 'package:moekey/router/router.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
@@ -21,86 +22,91 @@ class AccountManagerPage extends HookConsumerWidget {
     var list = ref.watch(loginUserListProvider);
     var user = ref.watch(currentLoginUserProvider);
     var theme = ref.watch(themeColorsProvider);
+    var mediaPadding = MediaQuery.paddingOf(context);
     return MkScaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: SingleChildScrollView(
-            child: Column(
-              spacing: 16,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FilledButton(
-                    onPressed: () {
-                      showServerListDialog(context);
-                    },
-                    child: Row(
-                      spacing: 8,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(TablerIcons.plus),
-                        Text("Add Account"),
-                      ],
-                    )),
-                for (var item in list.values)
-                  ContextMenuBuilder(
-                    menu: ContextMenuCard(
-                      menuListBuilder: () async {
-                        return [
-                          if (item.userInfo.id != user?.userInfo.id)
-                            ContextMenuItem(
-                              icon: TablerIcons.user_check,
-                              label: "切换到此账户",
-                              onTap: () {
-                                ref
-                                    .read(currentLoginUserProvider.notifier)
-                                    .setLoginUser(item.id);
-                                return false;
-                              },
-                            ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        child: SingleChildScrollView(
+          padding: mediaPadding,
+          child: Column(
+            spacing: 16,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FilledButton(
+                  onPressed: () {
+                    showServerListDialog(context);
+                  },
+                  child: Row(
+                    spacing: 8,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(TablerIcons.plus),
+                      Text("Add Account"),
+                    ],
+                  )),
+              for (var item in list.values)
+                ContextMenuBuilder(
+                  menu: ContextMenuCard(
+                    menuListBuilder: () async {
+                      return [
+                        if (item.userInfo.id != user?.userInfo.id)
                           ContextMenuItem(
-                            icon: TablerIcons.user,
-                            label: "账户信息",
+                            icon: TablerIcons.user_check,
+                            label: "切换到此账户",
                             onTap: () {
-                              context.push(
-                                  "/user/${Uri.parse(item.serverUrl).host}/${item.userInfo.username}");
-                              return false;
-                            },
-                          ),
-                          ContextMenuItem(
-                            icon: TablerIcons.trash,
-                            label: "删除账户",
-                            danger: true,
-                            onTap: () {
-                              // 如果删除的是当前登录用户，切换到第一个账户
-                              if (item.userInfo.id == user?.userInfo.id) {
-                                // 如果列表中只有一个账户，跳转登录
-                                if (list.length == 1) {
-                                  ref
-                                      .read(currentLoginUserProvider.notifier)
-                                      .setLoginUser(list.keys.first);
-                                  // 退出app
-                                  exit(0);
-                                } else {
-                                  ref
-                                      .read(currentLoginUserProvider.notifier)
-                                      .setLoginUser(list.keys.first);
-                                }
-                              }
                               ref
-                                  .read(loginUserListProvider.notifier)
-                                  .removeUser(item.id);
+                                  .read(currentLoginUserProvider.notifier)
+                                  .setLoginUser(item.id);
                               return false;
                             },
                           ),
-                        ];
-                      },
-                    ),
-                    child: _UserItem(item: item, user: user, theme: theme),
-                  )
-              ],
-            ),
+                        ContextMenuItem(
+                          icon: TablerIcons.user,
+                          label: "账户信息",
+                          onTap: () {
+                            context.push(
+                                "/user/${Uri.parse(item.serverUrl).host}/${item.userInfo.username}");
+                            return false;
+                          },
+                        ),
+                        ContextMenuItem(
+                          icon: TablerIcons.trash,
+                          label: "删除账户",
+                          danger: true,
+                          onTap: () {
+                            Future.delayed(
+                              Duration(milliseconds: 300),
+                              () {
+                                // 如果删除的是当前登录用户，切换到第一个账户
+                                if (item.userInfo.id == user?.userInfo.id) {
+                                  // 如果列表中只有一个账户，跳转登录
+                                  if (list.length == 1) {
+                                    if (context.mounted) {
+                                      context.pushNamedAndRemoveUntil("logout");
+                                    }
+                                  } else {
+                                    ref
+                                        .read(currentLoginUserProvider.notifier)
+                                        .setLoginUser(list.keys.first);
+
+                                    ref
+                                        .read(loginUserListProvider.notifier)
+                                        .removeUser(item.id);
+                                  }
+                                }
+                              },
+                            );
+
+                            return false;
+                          },
+                        ),
+                      ];
+                    },
+                  ),
+                  child: _UserItem(item: item, user: user, theme: theme),
+                )
+            ],
           ),
         ),
       ),

@@ -17,7 +17,7 @@ var settingList = [
       {
         'label': '个人资料',
         'icon': TablerIcons.user,
-        'routerId': 'settingsTest1',
+        'routerId': 'settingProfile',
       },
       {
         'label': '隐私',

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/router/router.dart';
+import 'package:moekey/widgets/mk_scaffold.dart';
 
+import '../../status/server.dart';
 import '../../status/themes.dart';
 import '../../widgets/login/servers_select.dart';
 
@@ -101,5 +104,21 @@ class LoginPage extends HookConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+class LogoutPage extends HookConsumerWidget {
+  const LogoutPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var list = ref.watch(loginUserListProvider);
+    Future.delayed(Duration.zero, () {
+      ref.read(loginUserListProvider.notifier).removeUser(list.keys.first);
+      if (context.mounted) {
+        context.pushNamedAndRemoveUntil("login");
+      }
+    });
+    return MkScaffold(body: SizedBox());
   }
 }

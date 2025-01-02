@@ -44,34 +44,38 @@ class MkInput extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.read(themeColorsProvider);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (label != null) ...[
-          Text(
-            label!,
-            style: const TextStyle(fontSize: 13),
-          ),
-          const SizedBox(
-            height: 6,
-          ),
+    return Material(
+      color: themes.panelColor,
+      borderRadius: BorderRadius.circular(6),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (label != null) ...[
+            Text(
+              label!,
+              style: const TextStyle(fontSize: 13),
+            ),
+            const SizedBox(
+              height: 6,
+            ),
+          ],
+          TextFormField(
+            decoration: inputDecoration(
+              themes,
+              hintText,
+              prefixIcon: prefixIcon,
+            ),
+            cursorWidth: 1,
+            style: const TextStyle(fontSize: 14),
+            cursorColor: themes.fgColor,
+            maxLines: maxLines ?? 1,
+            textAlignVertical: TextAlignVertical.center,
+            onChanged: onChanged,
+            initialValue: initialValue,
+          )
         ],
-        TextFormField(
-          decoration: inputDecoration(
-            themes,
-            hintText,
-            prefixIcon: prefixIcon,
-          ),
-          cursorWidth: 1,
-          style: const TextStyle(fontSize: 14),
-          cursorColor: themes.fgColor,
-          maxLines: maxLines ?? 1,
-          textAlignVertical: TextAlignVertical.center,
-          onChanged: onChanged,
-          initialValue: initialValue,
-        )
-      ],
+      ),
     );
   }
 }

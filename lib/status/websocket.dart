@@ -12,10 +12,13 @@ part 'websocket.g.dart';
 @Riverpod(keepAlive: true)
 class MoekeyWebSocket extends _$MoekeyWebSocket {
   @override
-  FutureOr<WebSocketChannel> build() async {
+  FutureOr<WebSocketChannel?> build() async {
     var user = ref.watch(currentLoginUserProvider);
-    var host = user!.serverUrl;
+    var host = user?.serverUrl;
     var scheme = "wss";
+    if (host == null) {
+      return null;
+    }
     if (Uri.parse(host).scheme == "http") {
       scheme = "ws";
     }
@@ -25,7 +28,7 @@ class MoekeyWebSocket extends _$MoekeyWebSocket {
     logger.d(uri.port);
     logger.d(uri.host);
     uri = Uri.parse(
-        "$scheme://${uri.host}:${uri.port}/streaming?i=${user.token ?? ""}");
+        "$scheme://${uri.host}:${uri.port}/streaming?i=${user?.token ?? ""}");
     var channel = WebSocketChannel.connect(uri);
     ref.onDispose(() {
       channel.sink.close();
@@ -77,7 +80,7 @@ class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
       type: MoekeyEventType.load,
       data: {},
     ));
-    channel.stream.listen(
+    channel?.stream.listen(
       (data) {
         logger.d("=========emit moekeyEvent=======");
         logger.d(data);
@@ -115,7 +118,7 @@ class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
   sendString(String data) async {
     try {
       var channel = await ref.read(moekeyWebSocketProvider.future);
-      channel.sink.add(data);
+      channel?.sink.add(data);
     } catch (e) {
       logger.d(e);
       ref.invalidate(moekeyWebSocketProvider);
