@@ -43,7 +43,7 @@ class MkInput extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var themes = ref.read(themeColorsProvider);
+    var themes = ref.watch(themeColorsProvider);
     return Material(
       color: themes.panelColor,
       borderRadius: BorderRadius.circular(6),

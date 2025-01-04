@@ -19,6 +19,15 @@ Color parseColor(String colorString) {
   if (colorString.toLowerCase().startsWith('#')) {
     // 解析#xxxxxx格式
     final String hex = colorString.substring(1);
+    if (hex.length == 8) {
+      // R G B A
+      final int red = int.parse(hex.substring(0, 2), radix: 16);
+      final int green = int.parse(hex.substring(2, 4), radix: 16);
+      final int blue = int.parse(hex.substring(4, 6), radix: 16);
+      final int alpha = int.parse(hex.substring(6, 8), radix: 16);
+
+      return Color.fromRGBO(red, green, blue, alpha / 255.0);
+    }
     if (hex.length == 6) {
       final int red = int.parse(hex.substring(0, 2), radix: 16);
       final int green = int.parse(hex.substring(2, 4), radix: 16);
@@ -70,7 +79,8 @@ Color transformColor(
 
   final hslColor = HSLColor.fromColor(color);
 
-  final lightness = hslColor.lightness + (lighten / 100.0) - (darken / 100.0);
+  final lightness = (hslColor.lightness + (lighten / 100.0) - (darken / 100.0))
+      .clamp(0.0, 1.0);
   final saturation = hslColor.saturation * saturate;
   final hueAngle = hslColor.hue + hue;
 

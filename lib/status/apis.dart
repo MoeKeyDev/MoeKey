@@ -37,8 +37,9 @@ Future<MetaDetailedModel?> instanceMeta(InstanceMetaRef ref) async {
     meta = await apis.meta.meta();
     await instance.setMeta(meta!);
   }
+  var brightness = ref.watch(systemBrightnessProvider);
 
-  colors.updateThemes(meta);
+  colors.updateThemes(meta, brightness);
   return meta;
 }
 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:chinese_font_library/chinese_font_library.dart';
 import 'package:flutter/material.dart';
+import 'package:moekey/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/meta.dart';
@@ -49,78 +50,103 @@ class ThemeColors extends _$ThemeColors {
     return ThemeColorModel();
   }
 
-  updateThemes(MetaDetailedModel metas) {
+  updateThemes(MetaDetailedModel metas, Brightness brightness) {
     var model = ThemeColorModel();
-    if (metas.defaultLightTheme != null) {
-      var themeData = jsonDecode(metas.defaultLightTheme!);
-      Map<String, dynamic> themes = themeData["props"];
-      model.isDark = themeData["base"] == "dark";
-      model.accentColor =
-          getThemesColor(themes["accent"] ?? "", themes) ?? model.accentColor;
-      model.bgColor =
-          getThemesColor(themes["bg"] ?? "", themes) ?? model.bgColor;
-      model.fgColor =
-          getThemesColor(themes["fg"] ?? "", themes) ?? model.fgColor;
+    if (metas.defaultLightTheme != null && metas.defaultDarkTheme != null) {
+      try {
+        // 获取系统是否是深色模式
 
-      model.accentLightenColor =
-          getThemesColor(themes["accentLighten"] ?? "", themes) ??
-              model.accentLightenColor;
-      model.accentedBgColor =
-          getThemesColor(themes["accentedBg"] ?? "", themes) ??
-              model.accentedBgColor;
-      model.panelColor =
-          getThemesColor(themes["panel"] ?? "", themes) ?? model.panelColor;
-      model.navBgColor =
-          getThemesColor(themes["navBg"] ?? "", themes) ?? model.navBgColor;
-      model.headerColor =
-          getThemesColor(themes["header"] ?? "", themes) ?? model.headerColor;
-      model.dividerColor =
-          getThemesColor(themes["divider"] ?? "", themes) ?? model.dividerColor;
-      model.buttonGradateAColor =
-          getThemesColor(themes["buttonGradateA"] ?? "", themes) ??
-              model.buttonGradateAColor;
-      model.buttonGradateBColor =
-          getThemesColor(themes["buttonGradateB"] ?? "", themes) ??
-              model.buttonGradateBColor;
-      model.fgOnAccentColor =
-          getThemesColor(themes["fgOnAccent"] ?? "", themes) ??
-              model.fgOnAccentColor;
-      model.reNoteColor =
-          getThemesColor(themes["reNote"] ?? "", themes) ?? model.reNoteColor;
+        var themeData = jsonDecode(metas.defaultLightTheme!);
+        if (brightness == Brightness.dark) {
+          model.isDark = true;
+          themeData = jsonDecode(metas.defaultDarkTheme!);
+        }
+        Map<String, dynamic> themes = themeData["props"];
+        // model.isDark = themeData["base"] == "dark";
+        model.accentColor =
+            getThemesColor(themes["accent"] ?? "", themes) ?? model.accentColor;
+        model.bgColor =
+            getThemesColor(themes["bg"] ?? "", themes) ?? model.bgColor;
+        model.fgColor =
+            getThemesColor(themes["fg"] ?? "", themes) ?? model.fgColor;
 
-      model.buttonBgColor = getThemesColor(themes["buttonBg"] ?? "", themes) ??
-          model.buttonBgColor;
-      model.buttonHoverBgColor =
-          getThemesColor(themes["buttonHover"] ?? "", themes) ??
-              model.buttonHoverBgColor;
-      model.mentionColor =
-          getThemesColor(themes["mention"] ?? "", themes) ?? model.mentionColor;
-      model.shadowColor =
-          getThemesColor(themes["shadow"] ?? "", themes) ?? model.shadowColor;
-      model.switchOffBgColor =
-          getThemesColor(themes["switchOffBg"] ?? "", themes) ??
-              model.switchOffBgColor;
-      model.switchOffFgColor =
-          getThemesColor(themes["switchOffFg"] ?? "", themes) ??
-              model.switchOffFgColor;
-      model.switchOnBgColor =
-          getThemesColor(themes["switchOnBg"] ?? "", themes) ??
-              model.switchOnBgColor;
-      model.switchOnFgColor =
-          getThemesColor(themes["switchOnFg"] ?? "", themes) ??
-              model.switchOnFgColor;
-      // Color shadowColor = const Color.fromARGB(25, 0, 0, 0);
-      // Color switchOffBgColor = const Color.fromARGB(25, 0, 0, 0);
-      // Color switchOffFgColor = const Color.fromARGB(255, 255, 255, 255);
-      // Color switchOnBgColor = const Color.fromARGB(255, 134, 179, 0);
-      // Color switchOnFgColor = const Color.fromARGB(255, 255, 255, 255);
-      // Color warnColor = const Color.fromARGB(255, 236, 182, 55);
-      // Color errorColor = const Color.fromARGB(255, 236, 55, 109);
-      // Color windowHeaderColor = const Color.fromARGB(216, 255, 255, 255);
+        model.accentLightenColor =
+            getThemesColor(themes["accentLighten"] ?? "", themes) ??
+                model.accentLightenColor;
+        model.accentedBgColor =
+            getThemesColor(themes["accentedBg"] ?? "", themes) ??
+                model.accentedBgColor;
+        model.panelColor =
+            getThemesColor(themes["panel"] ?? "", themes) ?? model.panelColor;
+        model.navBgColor =
+            getThemesColor(themes["navBg"] ?? "", themes) ?? model.navBgColor;
+        model.headerColor =
+            getThemesColor(themes["header"] ?? "", themes) ?? model.headerColor;
+        model.dividerColor = getThemesColor(themes["divider"] ?? "", themes) ??
+            model.dividerColor;
+        model.buttonGradateAColor =
+            getThemesColor(themes["buttonGradateA"] ?? "", themes) ??
+                model.buttonGradateAColor;
+        model.buttonGradateBColor =
+            getThemesColor(themes["buttonGradateB"] ?? "", themes) ??
+                model.buttonGradateBColor;
+        model.fgOnAccentColor =
+            getThemesColor(themes["fgOnAccent"] ?? "", themes) ??
+                model.fgOnAccentColor;
+        model.reNoteColor =
+            getThemesColor(themes["reNote"] ?? "", themes) ?? model.reNoteColor;
 
-      model.themeColor = model.accentColor;
+        model.buttonBgColor =
+            getThemesColor(themes["buttonBg"] ?? "", themes) ??
+                model.buttonBgColor;
+        model.buttonHoverBgColor =
+            getThemesColor(themes["buttonHover"] ?? "", themes) ??
+                model.buttonHoverBgColor;
+        model.mentionColor = getThemesColor(themes["mention"] ?? "", themes) ??
+            model.mentionColor;
+        model.shadowColor =
+            getThemesColor(themes["shadow"] ?? "", themes) ?? model.shadowColor;
+        model.switchOffBgColor =
+            getThemesColor(themes["switchOffBg"] ?? "", themes) ??
+                model.switchOffBgColor;
+        model.switchOffFgColor =
+            getThemesColor(themes["switchOffFg"] ?? "", themes) ??
+                model.switchOffFgColor;
+        model.switchOnBgColor =
+            getThemesColor(themes["switchOnBg"] ?? "", themes) ??
+                model.switchOnBgColor;
+        model.switchOnFgColor =
+            getThemesColor(themes["switchOnFg"] ?? "", themes) ??
+                model.switchOnFgColor;
+        // Color shadowColor = const Color.fromARGB(25, 0, 0, 0);
+        // Color switchOffBgColor = const Color.fromARGB(25, 0, 0, 0);
+        // Color switchOffFgColor = const Color.fromARGB(255, 255, 255, 255);
+        // Color switchOnBgColor = const Color.fromARGB(255, 134, 179, 0);
+        // Color switchOnFgColor = const Color.fromARGB(255, 255, 255, 255);
+        // Color warnColor = const Color.fromARGB(255, 236, 182, 55);
+        // Color errorColor = const Color.fromARGB(255, 236, 55, 109);
+        // Color windowHeaderColor = const Color.fromARGB(216, 255, 255, 255);
+
+        model.themeColor = model.accentColor;
+      } catch (e) {
+        logger.e(e);
+      }
     }
     state = model;
+  }
+}
+
+@riverpod
+class SystemBrightness extends _$SystemBrightness {
+  @override
+  Brightness build() {
+    return Brightness.light;
+  }
+
+  updateBrightness(Brightness brightness) {
+    if (state == brightness) return;
+    state = brightness;
+    ref.notifyListeners();
   }
 }
 

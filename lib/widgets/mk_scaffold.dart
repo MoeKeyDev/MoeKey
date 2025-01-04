@@ -15,7 +15,7 @@ class MkScaffold extends ConsumerWidget {
     // logger.d(mediaQueryData);
     var topPaddingHeight = mediaQueryData.padding.top;
     var body = this.body;
-
+    var themes = ref.watch(themeColorsProvider);
     return LayoutBuilder(
       builder: (context, constraints) {
         if (header != null) {
@@ -30,18 +30,24 @@ class MkScaffold extends ConsumerWidget {
             child: body,
           );
         }
+        // 颜色与 RGBA(255,255,255,255) 叠加
+        // 叠加颜色
         return Material(
-          child: Stack(
-            children: [
-              body,
-              if (header != null)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: header!,
-                ),
-            ],
+          color: themes.isDark ? Colors.black : Colors.white,
+          child: Material(
+            color: themes.bgColor,
+            child: Stack(
+              children: [
+                body,
+                if (header != null)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: header!,
+                  ),
+              ],
+            ),
           ),
         );
       },

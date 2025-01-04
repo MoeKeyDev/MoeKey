@@ -91,7 +91,7 @@ class HomePage extends HookConsumerWidget {
       }));
       return Scaffold(
         key: _scaffoldKey,
-        backgroundColor: themes.bgColor,
+        backgroundColor: themes.isDark ? Colors.black : Colors.white,
         resizeToAvoidBottomInset: false,
         drawer: constraints.maxWidth < 500
             ? NavBar(
@@ -384,6 +384,7 @@ class UserAvatarButton extends ConsumerWidget {
       var extend = constraints.maxWidth >= 100;
       return ContextMenuBuilder(
         menu: ContextMenuCard(
+          width: 250,
           menuListBuilder: () async {
             var list = ref.read(loginUserListProvider);
             var user = ref.read(currentLoginUserProvider);
@@ -413,12 +414,14 @@ class UserAvatarButton extends ConsumerWidget {
                               Text(
                                 "@${user?.userInfo.username ?? ""}@${Uri.parse(user?.serverUrl ?? "").host}",
                                 style: const TextStyle(fontSize: 12),
+                                maxLines: 1,
                               )
                             ] else ...[
                               Text("@${user?.userInfo.username ?? ""}"),
                               Text(
                                 Uri.parse(user?.serverUrl ?? "").host,
                                 style: const TextStyle(fontSize: 12),
+                                maxLines: 1,
                               )
                             ]
                           ],
@@ -468,12 +471,14 @@ class UserAvatarButton extends ConsumerWidget {
                                   Text(
                                     "@${item.userInfo.username}@${Uri.parse(item.serverUrl).host}",
                                     style: const TextStyle(fontSize: 12),
+                                    maxLines: 1,
                                   )
                                 ] else ...[
                                   Text("@${item.userInfo.username}"),
                                   Text(
                                     Uri.parse(item.serverUrl).host,
                                     style: const TextStyle(fontSize: 12),
+                                    maxLines: 1,
                                   )
                                 ]
                               ],
