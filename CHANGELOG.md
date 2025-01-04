@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.5
+
+- Add Freezed instead Menual JSON Serialize
+
 ## 0.8.1
 
 ### Feature

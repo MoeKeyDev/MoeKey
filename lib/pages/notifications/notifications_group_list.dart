@@ -48,7 +48,7 @@ class NotificationsGroupList extends HookConsumerWidget {
       NotificationType,
       Widget Function(NotificationModel data, BorderRadius borderRadius,
           ThemeColorModel themes)> widgetList = {
-    NotificationType.follow: (data, borderRadius, themes) =>
+    NotificationType.FOLLOW: (data, borderRadius, themes) =>
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
@@ -73,7 +73,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             openUser(context, data.user!.id);
           },
         ),
-    NotificationType.followRequestAccepted: (data, borderRadius, themes) =>
+    NotificationType.FOLLOW_REQUEST_ACCEPTED: (data, borderRadius, themes) =>
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
@@ -98,7 +98,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             openUser(context, data.user!.id);
           },
         ),
-    NotificationType.reaction: (data, borderRadius, themes) =>
+    NotificationType.REACTION: (data, borderRadius, themes) =>
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
@@ -125,7 +125,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             openNote(context, data.note!);
           },
         ),
-    NotificationType.reactionGrouped: (data, borderRadius, themes) =>
+    NotificationType.REACTION_GROUPED: (data, borderRadius, themes) =>
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
@@ -201,11 +201,11 @@ class NotificationsGroupList extends HookConsumerWidget {
             openNote(context, data.note!);
           },
         ),
-    NotificationType.reply: (data, borderRadius, themes) => NoteCard(
+    NotificationType.REPLY: (data, borderRadius, themes) => NoteCard(
           data: data.note!,
           borderRadius: borderRadius,
         ),
-    NotificationType.renote: (data, borderRadius, themes) =>
+    NotificationType.RENOTE: (data, borderRadius, themes) =>
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
@@ -236,7 +236,7 @@ class NotificationsGroupList extends HookConsumerWidget {
             openNote(context, data.note!);
           },
         ),
-    NotificationType.renoteGrouped: (data, borderRadius, themes) =>
+    NotificationType.RENOTE_GROUPED: (data, borderRadius, themes) =>
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,
@@ -294,19 +294,19 @@ class NotificationsGroupList extends HookConsumerWidget {
             openNote(context, data.note!);
           },
         ),
-    NotificationType.quote: (data, borderRadius, themes) => NoteCard(
+    NotificationType.QUOTE: (data, borderRadius, themes) => NoteCard(
           data: data.note!,
           borderRadius: borderRadius,
         ),
-    NotificationType.mention: (data, borderRadius, themes) => NoteCard(
+    NotificationType.MENTION: (data, borderRadius, themes) => NoteCard(
           data: data.note!,
           borderRadius: borderRadius,
         ),
-    NotificationType.note: (data, borderRadius, themes) => NoteCard(
+    NotificationType.NOTE: (data, borderRadius, themes) => NoteCard(
           data: data.note!,
           borderRadius: borderRadius,
         ),
-    NotificationType.pollEnded: (data, borderRadius, themes) =>
+    NotificationType.POLL_ENDED: (data, borderRadius, themes) =>
         NotificationsUserCard(
           data: data,
           borderRadius: borderRadius,

@@ -72,7 +72,7 @@ class ApiUserLogin extends _$ApiUserLogin {
             name: key["user"]["name"] ?? key["user"]["username"],
             serverUrl: host,
             token: getToken(key["accessToken"], secret),
-            userInfo: UserFullModel.fromMap(key["user"]));
+            userInfo: UserFullModel.fromJson(key["user"]));
       }
     }
     return null;

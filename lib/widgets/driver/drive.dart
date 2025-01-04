@@ -307,7 +307,7 @@ class DriveList extends _$DriveList {
     var list = state.valueOrNull ?? [];
     var fileIndex = -1;
     for (var (index, item) in list.indexed) {
-      if (item.runtimeType == DriveFileModel) {
+      if (item is DriveFileModel) {
         fileIndex = index;
         break;
       }
@@ -326,7 +326,7 @@ class DriveList extends _$DriveList {
   updateFile(String id, dynamic data) {
     var list = state.valueOrNull ?? [];
     for (var (index, item) in list.indexed) {
-      if (item.runtimeType == DriveFileModel && item.id == id) {
+      if (item is DriveFileModel && item.id == id) {
         list[index] = data;
         break;
       }
@@ -337,7 +337,7 @@ class DriveList extends _$DriveList {
   updateFolder(String id, dynamic data) {
     var list = state.valueOrNull ?? [];
     for (var (index, item) in list.indexed) {
-      if (item.runtimeType == DriverFolderModel && item.id == id) {
+      if (item is DriverFolderModel && item.id == id) {
         list[index] = data;
         break;
       }
@@ -349,7 +349,7 @@ class DriveList extends _$DriveList {
     var list = state.valueOrNull ?? [];
     var fileIndex = 0;
     for (var (index, item) in list.indexed) {
-      if (item.runtimeType == DriveFileModel && item.id == fileId) {
+      if (item is DriveFileModel && item.id == fileId) {
         fileIndex = index;
         break;
       }
@@ -362,7 +362,7 @@ class DriveList extends _$DriveList {
     var list = state.valueOrNull ?? [];
     var fileIndex = 0;
     for (var (index, item) in list.indexed) {
-      if (item.runtimeType == DriverFolderModel && item.id == folderId) {
+      if (item is DriverFolderModel && item.id == folderId) {
         fileIndex = index;
         break;
       }

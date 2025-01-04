@@ -8,7 +8,7 @@ class AccountService extends MisskeyApiServices {
   Future<UserLiteModel?> i() async {
     var data = await client.post("/i");
     if (data != null) {
-      return UserLiteModel.fromMap(data);
+      return UserLiteModel.fromJson(data);
     }
     return null;
   }
@@ -23,6 +23,6 @@ class AccountService extends MisskeyApiServices {
       return [];
     }
     return List<NotificationModel>.from(
-        res.map((e) => NotificationModel.fromMap(e)));
+        res.map((e) => NotificationModel.fromJson(e)));
   }
 }

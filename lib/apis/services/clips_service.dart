@@ -16,7 +16,7 @@ class ClipsService extends MisskeyApiServices {
       "description": description,
       "isPublic": isPublic,
     });
-    return ClipsModel.fromMap(res);
+    return ClipsModel.fromJson(res);
   }
 
   Future<ClipsModel> update({
@@ -31,7 +31,7 @@ class ClipsService extends MisskeyApiServices {
       "description": description,
       "isPublic": isPublic,
     });
-    return ClipsModel.fromMap(res);
+    return ClipsModel.fromJson(res);
   }
 
   Future delete({
@@ -51,7 +51,7 @@ class ClipsService extends MisskeyApiServices {
       return [];
     }
 
-    return List<ClipsModel>.from(res.map((e) => ClipsModel.fromMap(e)));
+    return List<ClipsModel>.from(res.map((e) => ClipsModel.fromJson(e)));
   }
 
   Future<List<NoteModel>> notes({
@@ -68,7 +68,7 @@ class ClipsService extends MisskeyApiServices {
       return [];
     }
 
-    return List<NoteModel>.from(res.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(res.map((e) => NoteModel.fromJson(e)));
   }
 
   Future<List<ClipsModel>> myFavorites() async {
@@ -79,7 +79,7 @@ class ClipsService extends MisskeyApiServices {
       return [];
     }
 
-    return List<ClipsModel>.from(res.map((e) => ClipsModel.fromMap(e)));
+    return List<ClipsModel>.from(res.map((e) => ClipsModel.fromJson(e)));
   }
 
   Future<ClipsModel?> show({required String clipId}) async {
@@ -90,7 +90,7 @@ class ClipsService extends MisskeyApiServices {
       return null;
     }
 
-    return ClipsModel.fromMap(res);
+    return ClipsModel.fromJson(res);
   }
 
   Future addNote({

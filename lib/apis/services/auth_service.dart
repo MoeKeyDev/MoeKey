@@ -13,7 +13,7 @@ class AuthService extends MisskeyApiServices {
       auth: false,
     );
     if (data != null) {
-      return SessionGenerateModel.fromMap(data);
+      return SessionGenerateModel.fromJson(data);
     }
     return null;
   }

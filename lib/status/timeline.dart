@@ -22,15 +22,22 @@ Future<TimelineDatabase> timelineDatabase(TimelineDatabaseRef ref) async {
 class Timeline extends _$Timeline {
   @override
   FutureOr<NoteListModel> build({String api = "timeline"}) async {
-    var db = await ref.watch(timelineDatabaseProvider.future);
-    var cache = await db.getTimeline(api);
+    List<NoteModel>? cache;
+    TimelineDatabase? db;
+    try {
+      db = await ref.watch(timelineDatabaseProvider.future);
+      cache = await db?.getTimeline(api);
+    } catch (e) {
+      logger.e(e);
+      db?.cleanTimeline(api);
+    }
     var model = NoteListModel();
-    if (cache != null) {
+    if (cache != null && cache.isNotEmpty) {
       model.list = cache;
     } else {
       var list = await timeline();
       model.list = list;
-      db.setTimeline(api, list);
+      db?.setTimeline(api, list);
     }
 
     return model;

@@ -1,190 +1,62 @@
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
-import 'package:flutter/cupertino.dart';
+part 'drive.freezed.dart';
 
-abstract class DriveModel {
-  String id;
-  String name;
-  String createdAt;
+part 'drive.g.dart';
 
-  DriveModel({
-    required this.id,
-    required this.name,
-    required this.createdAt,
-  });
+class DriveModel {}
+
+extension DriveModelExtension on DriveModel {
+  String get id => (this as dynamic).id;
+
+  String get name => (this as dynamic).name;
+
+  String get createdAt => (this as dynamic).createdAt;
 }
 
-class DriveFileModel extends DriveModel {
-  String? blurhash;
-  String type;
-  String url;
-  int size;
-  bool isSensitive;
-  String? comment;
-  Properties? properties;
-  String? thumbnailUrl;
-
-  DriveFileModel({
-    this.blurhash,
-    required this.type,
-    required this.url,
-    required this.size,
-    required this.isSensitive,
-    this.properties,
-    this.thumbnailUrl,
-    this.comment,
-    required super.id,
-    required super.name,
-    required super.createdAt,
-  });
-
-  @override
-  String toString() {
-    return 'DriveFileModel{blurhash: $blurhash, type: $type, url: $url, createdAt: $createdAt, size: $size, isSensitive: $isSensitive, name: $name, comment: $comment, id: $id, properties: $properties, thumbnailUrl: $thumbnailUrl}';
-  }
-
-  factory DriveFileModel.fromMap(dynamic map) {
-    return DriveFileModel(
-      blurhash: map['blurhash'],
-      type: map['type'],
-      url: map['url'],
-      createdAt: map['createdAt'],
-      size: map['size'],
-      name: map['name'],
-      id: map['id'],
-      properties:
-          Properties.fromMap(Map<String, dynamic>.from(map['properties'])),
-      isSensitive: map['isSensitive'] ?? false,
-      thumbnailUrl: map['thumbnailUrl'],
-      comment: map['comment'],
-    );
-  }
-
-  factory DriveFileModel.fromJson(String str) =>
-      DriveFileModel.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  Map<String, dynamic> toMap() => {
-        "blurhash": blurhash,
-        "comment": comment,
-        "createdAt": createdAt,
-        "id": id,
-        "isSensitive": isSensitive,
-        "name": name,
-        "properties": properties?.toMap(),
-        "size": size,
-        "thumbnailUrl": thumbnailUrl,
-        "type": type,
-        "url": url,
-      };
-
-  DriveFileModel copyWith({
+@freezed
+class DriveFileModel extends DriveModel with _$DriveFileModel {
+  factory DriveFileModel({
     String? blurhash,
-    String? type,
-    String? url,
-    String? createdAt,
-    int? size,
-    bool? isSensitive,
-    String? name,
-    String? id,
+    required String type,
+    required String url,
+    required int size,
+    required bool isSensitive,
+    String? comment,
     Properties? properties,
     String? thumbnailUrl,
-    UniqueKey? hero,
-    String? comment,
-  }) {
-    return DriveFileModel(
-      blurhash: blurhash ?? this.blurhash,
-      type: type ?? this.type,
-      url: url ?? this.url,
-      createdAt: createdAt ?? this.createdAt,
-      size: size ?? this.size,
-      isSensitive: isSensitive ?? this.isSensitive,
-      name: name ?? this.name,
-      id: id ?? this.id,
-      properties: properties ?? this.properties,
-      thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
-      comment: comment ?? this.comment,
-    );
-  }
+    required String id,
+    required String name,
+    required String createdAt,
+  }) = _DriveFileModel;
+
+  factory DriveFileModel.fromJson(Map<String, dynamic> map) =>
+      _$DriveFileModelFromJson(map);
 }
 
-class Properties {
-  final String? avgColor;
-  final double? height;
-  final double? orientation;
-  final double? width;
-
-  Properties({
-    this.avgColor,
-    this.height,
-    this.orientation,
-    this.width,
-  });
-
-  Properties copyWith({
+@freezed
+class Properties with _$Properties {
+  const factory Properties({
     String? avgColor,
     double? height,
     double? orientation,
     double? width,
-  }) =>
-      Properties(
-        avgColor: avgColor ?? this.avgColor,
-        height: height ?? this.height,
-        orientation: orientation ?? this.orientation,
-        width: width ?? this.width,
-      );
+  }) = _Properties;
 
-  factory Properties.fromJson(String str) =>
-      Properties.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Properties.fromMap(Map<String, dynamic> json) => Properties(
-        avgColor: json["avgColor"],
-        height: json["height"]?.toDouble(),
-        orientation: json["orientation"]?.toDouble(),
-        width: json["width"]?.toDouble(),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "avgColor": avgColor,
-        "height": height,
-        "orientation": orientation,
-        "width": width,
-      };
+  factory Properties.fromJson(Map<String, dynamic> map) =>
+      _$PropertiesFromJson(map);
 }
 
-class DriverFolderModel extends DriveModel {
-  String? parentId;
-
-  DriverFolderModel({
-    required super.id,
-    this.parentId,
-    required super.name,
-    required super.createdAt,
-  });
-
-  factory DriverFolderModel.fromMap(dynamic map) {
-    return DriverFolderModel(
-      createdAt: map['createdAt'],
-      name: map['name'],
-      id: map['id'],
-      parentId: map['parentId']?.toString(),
-    );
-  }
-
-  DriverFolderModel copyWith({
-    String? createdAt,
-    String? name,
-    String? id,
+@freezed
+class DriverFolderModel extends DriveModel with _$DriverFolderModel {
+  const factory DriverFolderModel({
+    required String id,
     String? parentId,
-  }) {
-    return DriverFolderModel(
-      createdAt: createdAt ?? this.createdAt,
-      name: name ?? this.name,
-      id: id ?? this.id,
-      parentId: parentId ?? this.parentId,
-    );
-  }
+    required String name,
+    required String createdAt,
+  }) = _DriverFolderModel;
+
+  factory DriverFolderModel.fromJson(Map<String, dynamic> map) =>
+      _$DriverFolderModelFromJson(map);
 }

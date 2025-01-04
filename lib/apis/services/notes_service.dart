@@ -22,7 +22,7 @@ class NotesService extends MisskeyApiServices {
     if (res == null) {
       return [];
     }
-    return List<NoteModel>.from(res.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(res.map((e) => NoteModel.fromJson(e)));
   }
 
   Future<NoteTranslate?> translate({required String noteId}) async {
@@ -33,7 +33,7 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return null;
     }
-    return NoteTranslate.fromMap(data);
+    return NoteTranslate.fromJson(data);
   }
 
   Future<LinkPreview?> linkPreview({required String url}) async {
@@ -45,7 +45,7 @@ class NotesService extends MisskeyApiServices {
     if (res == null) {
       return null;
     }
-    return LinkPreview.fromMap(res);
+    return LinkPreview.fromJson(res);
   }
 
   Future<NoteModel?> show({required String noteId}) async {
@@ -58,7 +58,7 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return null;
     }
-    return NoteModel.fromMap(data);
+    return NoteModel.fromJson(data);
   }
 
   Future<List<NoteModel>> children({
@@ -74,7 +74,7 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return [];
     }
-    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
   }
 
   Future<List<NoteModel>> pollsRecommendation(
@@ -89,7 +89,7 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return [];
     }
-    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
   }
 
   Future<List<NoteModel>> featured({int limit = 10, String? untilId}) async {
@@ -103,7 +103,7 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return [];
     }
-    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
   }
 
   Future<NoteModel?> reNote({required String renoteId}) async {
@@ -115,7 +115,7 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return null;
     }
-    return NoteModel.fromMap(data);
+    return NoteModel.fromJson(data);
   }
 
   Future createReactions(
@@ -145,7 +145,7 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return [];
     }
-    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
   }
 
   Future<List<NoteModel>> search({
@@ -169,7 +169,7 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return [];
     }
-    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
   }
 
   Future<List<NoteModel>> searchByTag({
@@ -187,6 +187,6 @@ class NotesService extends MisskeyApiServices {
     if (data == null) {
       return [];
     }
-    return List<NoteModel>.from(data.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
   }
 }

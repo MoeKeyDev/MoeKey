@@ -43,7 +43,7 @@ class AppService extends MisskeyApiServices {
       auth: false,
     );
     if (data != null) {
-      return AppModel.fromMap(data);
+      return AppModel.fromJson(data);
     }
     return null;
   }

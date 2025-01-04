@@ -23,7 +23,7 @@ class UserService extends MisskeyApiServices {
     if (res == null) {
       return [];
     }
-    return List<Following>.from(res.map((e) => Following.fromMap(e)));
+    return List<Following>.from(res.map((e) => Following.fromJson(e)));
   }
 
   Future<UserFullModel?> show({
@@ -39,7 +39,7 @@ class UserService extends MisskeyApiServices {
     if (res == null) {
       return null;
     }
-    return UserFullModel.fromMap(res);
+    return UserFullModel.fromJson(res);
   }
 
   Future<List<NoteModel>> notes({
@@ -67,7 +67,7 @@ class UserService extends MisskeyApiServices {
     if (res == null) {
       return [];
     }
-    return List<NoteModel>.from(res.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(res.map((e) => NoteModel.fromJson(e)));
   }
 
   Future<List<NoteModel>> reactions({
@@ -82,7 +82,7 @@ class UserService extends MisskeyApiServices {
     if (res == null) {
       return [];
     }
-    return List<NoteModel>.from(res.map((e) => NoteModel.fromMap(e["note"])));
+    return List<NoteModel>.from(res.map((e) => NoteModel.fromJson(e["note"])));
   }
 
   Future<List<ClipsModel>> clips({
@@ -98,7 +98,7 @@ class UserService extends MisskeyApiServices {
       if (untilId != null) "untilId": untilId,
     });
     return List<ClipsModel>.from(res.map(
-      (e) => ClipsModel.fromMap(e),
+      (e) => ClipsModel.fromJson(e),
     ));
   }
 
@@ -106,7 +106,7 @@ class UserService extends MisskeyApiServices {
   Future<List<UserFullModel>> pinnedUsers() async {
     var res = await client.post<List>("/pinned-users");
     return List<UserFullModel>.from(res.map(
-      (e) => UserFullModel.fromMap(e),
+      (e) => UserFullModel.fromJson(e),
     ));
   }
 
@@ -124,7 +124,7 @@ class UserService extends MisskeyApiServices {
       if (state != null) "state": state,
     });
     return List<UserFullModel>.from(res.map(
-      (e) => UserFullModel.fromMap(e),
+      (e) => UserFullModel.fromJson(e),
     ));
   }
 
@@ -142,7 +142,7 @@ class UserService extends MisskeyApiServices {
       if (untilId != null) "untilId": untilId,
     });
     return List<UserFullModel>.from(res.map(
-      (e) => UserFullModel.fromMap(e),
+      (e) => UserFullModel.fromJson(e),
     ));
   }
 }

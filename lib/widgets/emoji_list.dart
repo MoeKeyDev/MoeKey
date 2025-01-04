@@ -202,7 +202,7 @@ class _EmojiTile extends StatelessWidget {
         message: item.name,
         child: GestureDetector(
           onTap: () {
-            var item1 = Map.from(item.toMap());
+            var item1 = Map.from(item.toJson());
             item1["name"] = ":${item1["name"]}:";
             onInsert(item1);
           },
@@ -219,7 +219,7 @@ class _EmojiTile extends StatelessWidget {
         message: item.name,
         child: GestureDetector(
           onTap: () {
-            var item1 = Map.from(item.toMap());
+            var item1 = Map.from(item.toJson());
             item1["name"] = item1["url"];
             onInsert(item1);
           },

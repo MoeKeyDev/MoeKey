@@ -62,7 +62,7 @@ class UserSelectDialogState extends _$UserSelectDialogState {
       });
 
       state = AsyncData(List<UserFullModel>.from(
-          data.data!.map((e) => UserFullModel.fromMap(e))));
+          data.data!.map((e) => UserFullModel.fromJson(e))));
     } else {
       var data = await loadFollowing();
       state = AsyncData(data);

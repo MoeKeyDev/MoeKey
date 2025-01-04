@@ -1,22 +1,18 @@
-class NoteTranslate {
-  String sourceLang;
-  String text;
-  bool loading = true;
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
-  NoteTranslate({
-    required this.sourceLang,
-    required this.text,
-  });
+part 'translate.freezed.dart';
 
-  factory NoteTranslate.fromMap(dynamic map) {
-    return NoteTranslate(
-      sourceLang: map['sourceLang'],
-      text: map['text'],
-    );
-  }
+part 'translate.g.dart';
 
-  @override
-  String toString() {
-    return 'Translate{sourceLang: $sourceLang, text: $text}';
-  }
+@unfreezed
+class NoteTranslate with _$NoteTranslate {
+  factory NoteTranslate({
+    required String sourceLang,
+    required String text,
+    @Default(true) bool loading,
+  }) = _NoteTranslate;
+
+  factory NoteTranslate.fromJson(Map<String, dynamic> json) =>
+      _$NoteTranslateFromJson(json);
 }

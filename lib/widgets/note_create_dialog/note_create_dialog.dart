@@ -1074,7 +1074,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 ),
                 minLines: isFullscreen ? 4 : 4,
                 maxLines: isFullscreen ? 200 : 100,
-                maxLength: meta?.maxNoteTextLength ?? 300,
+                maxLength: meta?.maxNoteTextLength.toInt() ?? 300,
 
                 // initialValue: state.text,
                 onChanged: (value) {

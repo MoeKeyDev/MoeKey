@@ -1,36 +1,17 @@
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
-class SessionGenerateModel {
-  final String token;
-  final String url;
+part 'auth.freezed.dart';
 
-  SessionGenerateModel({
-    required this.token,
-    required this.url,
-  });
+part 'auth.g.dart';
 
-  SessionGenerateModel copyWith({
-    String? token,
-    String? url,
-  }) =>
-      SessionGenerateModel(
-        token: token ?? this.token,
-        url: url ?? this.url,
-      );
+@freezed
+class SessionGenerateModel with _$SessionGenerateModel {
+  const factory SessionGenerateModel({
+    required String token,
+    required String url,
+  }) = _SessionGenerateModel;
 
-  factory SessionGenerateModel.fromJson(String str) =>
-      SessionGenerateModel.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory SessionGenerateModel.fromMap(Map<String, dynamic> json) =>
-      SessionGenerateModel(
-        token: json["token"],
-        url: json["url"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "token": token,
-        "url": url,
-      };
+  factory SessionGenerateModel.fromJson(Map<String, dynamic> json) =>
+      _$SessionGenerateModelFromJson(json);
 }

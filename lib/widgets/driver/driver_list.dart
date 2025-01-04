@@ -346,7 +346,7 @@ class DriverList extends HookConsumerWidget {
               // if (selectList.length >= maxSelect) return;
               var notifier =
                   ref.read(driverSelectDialogStateProvider(this.id).notifier);
-              if (driverModel.runtimeType == DriveFileModel) {
+              if (driverModel is DriveFileModel) {
                 if (isSelect.value) {
                   notifier.remove(id);
                   isSelect.value = false;

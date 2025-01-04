@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -7,11 +9,29 @@ Future<void> initDatabase() async {
   final appDocumentDirectory = await getApplicationSupportDirectory();
   Hive.init(appDocumentDirectory.path);
 
-  await Hive.openBox("preferences");
+  await Hive.openBox<String>("preferences_string");
 }
 
-Box getPreferencesDatabase() {
-  return Hive.box("preferences");
+class Preferences {
+  static Box<String> getPreferencesDatabase() {
+    return Hive.box<String>("preferences_string");
+  }
+
+  static get(String key, {dynamic defaultValue}) {
+    var value = getPreferencesDatabase().get(key);
+    if (value == null) {
+      return defaultValue;
+    }
+    return jsonDecode(value);
+  }
+
+  static set(String key, dynamic value) {
+    getPreferencesDatabase().put(key, jsonEncode(value));
+  }
+}
+
+Preferences getPreferencesDatabase() {
+  return Preferences();
 }
 
 Future<Box<T>> openDatabase<T>({

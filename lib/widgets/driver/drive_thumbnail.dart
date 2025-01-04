@@ -34,20 +34,19 @@ class DriveImageThumbnail extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-
     return ContextMenuBuilder(
         mode: const [
           ContextMenuMode.onSecondaryTap,
           ContextMenuMode.onLongPress
         ],
         menu: ContextMenuCard(
-          initialChildSize: data.runtimeType == DriverFolderModel ? 0.3 : 0.6,
-          maxChildSize: data.runtimeType == DriverFolderModel ? 0.3 : 0.6,
-          minChildSize: data.runtimeType == DriverFolderModel ? 0.3 : 0.6,
+          initialChildSize: data is DriverFolderModel ? 0.3 : 0.6,
+          maxChildSize: data is DriverFolderModel ? 0.3 : 0.6,
+          minChildSize: data is DriverFolderModel ? 0.3 : 0.6,
           width: 200,
           menuListBuilder: () {
             return [
-              if (data.runtimeType == DriverFolderModel) ...[
+              if (data is DriverFolderModel) ...[
                 ContextMenuItem(
                   label: S.current.rename,
                   icon: TablerIcons.forms,
@@ -89,7 +88,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
 
                       return false;
                     })
-              ] else if (data.runtimeType == DriveFileModel) ...[
+              ] else if (data is DriveFileModel) ...[
                 ContextMenuItem(
                   label: S.current.rename,
                   icon: TablerIcons.forms,
@@ -214,7 +213,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
           },
         ),
         child: GestureDetector(
-          onTap: data.runtimeType == DriverFolderModel
+          onTap: data is DriverFolderModel
               ? () {
                   ref
                       .read(drivePathProvider.notifier)
@@ -245,7 +244,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                       child: AspectRatio(
                         aspectRatio: 1,
                         child: [
-                          if (data.runtimeType == DriveFileModel)
+                          if (data is DriveFileModel)
                             RepaintBoundary(
                               child: DriverFileIcon(
                                   themes: themes, data: data as DriveFileModel),
@@ -285,13 +284,13 @@ class DriveImageThumbnail extends HookConsumerWidget {
     return HookConsumer(
       builder: (context, ref, child) {
         return MkTextInputDialog(
-          title: data.runtimeType == DriveFileModel
+          title: data is DriveFileModel
               ? S.current.renameFile
               : S.current.renameFolder,
           initialValue: data.name,
           onConfirm: (value) async {
             var notifier = ref.read(driverUploaderProvider.notifier);
-            if (data.runtimeType == DriveFileModel) {
+            if (data is DriveFileModel) {
               await notifier.updateFile(fileId: data.id, name: value);
             } else {
               await notifier.updateFolders(folderId: data.id, name: value);
@@ -337,7 +336,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                   color: themes.warnColor,
                 ),
               ),
-              if (data.runtimeType == DriveFileModel)
+              if (data is DriveFileModel)
                 Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -364,7 +363,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                     child: Text(S.current.ok),
                     onPressed: () {
                       var notifier = ref.read(driverUploaderProvider.notifier);
-                      if (data.runtimeType == DriveFileModel) {
+                      if (data is DriveFileModel) {
                         notifier.deleteFile(data.id);
                       } else {
                         notifier.deleteFolder(data.id);

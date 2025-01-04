@@ -19,7 +19,7 @@ class InstanceDatabase {
   /// 设置元数据
   setMeta(MetaDetailedModel model) async {
     var db = await _getDatabase();
-    db.put("meta", model.toJson());
+    db.put("meta", jsonEncode(model.toJson()));
   }
 
   /// 获取元数据
@@ -29,7 +29,7 @@ class InstanceDatabase {
     if (res == null) {
       return null;
     }
-    return MetaDetailedModel.fromJson(res);
+    return MetaDetailedModel.fromJson(jsonDecode(res));
   }
 
   /// 设置表情
@@ -45,7 +45,11 @@ class InstanceDatabase {
     if (res == null) {
       return null;
     }
+    var emojis = jsonDecode(res);
     return List<EmojiSimple>.from(
-        jsonDecode(res).map((x) => EmojiSimple.fromJson(x)));
+      emojis.map(
+        (x) => EmojiSimple.fromJson(x),
+      ),
+    );
   }
 }

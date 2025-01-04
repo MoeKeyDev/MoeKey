@@ -1,43 +1,26 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:moekey/apis/models/user_lite.dart';
 
-///Clip
-class ClipsModel {
-  DateTime createdAt;
-  String? description;
-  int favoritedCount;
-  String id;
-  bool isFavorited;
-  bool isPublic;
-  DateTime? lastClippedAt;
-  String name;
-  UserLiteModel user;
-  String userId;
+part 'clips.freezed.dart';
 
-  ClipsModel({
-    required this.createdAt,
-    required this.description,
-    required this.favoritedCount,
-    required this.id,
-    required this.isFavorited,
-    required this.isPublic,
-    required this.lastClippedAt,
-    required this.name,
-    required this.user,
-    required this.userId,
-  });
+part 'clips.g.dart';
 
-  factory ClipsModel.fromMap(Map<String, dynamic> json) => ClipsModel(
-        createdAt: DateTime.parse(json["createdAt"]),
-        description: json["description"],
-        favoritedCount: json["favoritedCount"],
-        id: json["id"],
-        isFavorited: json["isFavorited"],
-        isPublic: json["isPublic"],
-        lastClippedAt: json["lastClippedAt"] == null
-            ? null
-            : DateTime.parse(json["lastClippedAt"]),
-        name: json["name"],
-        user: UserLiteModel.fromMap(json["user"]),
-        userId: json["userId"],
-      );
+@freezed
+class ClipsModel with _$ClipsModel {
+  const factory ClipsModel({
+    required DateTime createdAt,
+    String? description,
+    required int favoritedCount,
+    required String id,
+    required bool isFavorited,
+    required bool isPublic,
+    DateTime? lastClippedAt,
+    required String name,
+    required UserLiteModel user,
+    required String userId,
+  }) = _ClipsModel;
+
+  factory ClipsModel.fromJson(Map<String, dynamic> json) =>
+      _$ClipsModelFromJson(json);
 }

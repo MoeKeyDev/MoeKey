@@ -23,7 +23,8 @@ class TimelineDatabase {
     db.put(
         "$name-timeline",
         await compute(
-            (list) => jsonEncode(List.from(list.map((e) => e.toMap()))), list));
+            (list) => jsonEncode(List.from(list.map((e) => e.toJson()))),
+            list));
   }
 
   cleanTimeline(String name) async {
@@ -40,6 +41,6 @@ class TimelineDatabase {
     List list = await compute((message) {
       return jsonDecode(message);
     }, res);
-    return List<NoteModel>.from(list.map((e) => NoteModel.fromMap(e)));
+    return List<NoteModel>.from(list.map((e) => NoteModel.fromJson(e)));
   }
 }

@@ -1,140 +1,49 @@
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
-///Announcement
-class Announcement {
-  double? closeDuration;
-  DateTime createdAt;
-  AnnouncementDisplay display;
-  double? displayOrder;
-  bool forYou;
-  AnnouncementIcon icon;
-  String id;
-  String? imageUrl;
-  bool isRead;
-  bool needConfirmationToRead;
-  bool silence;
-  String text;
-  String title;
-  DateTime? updatedAt;
+part 'announcement.freezed.dart';
 
-  Announcement({
-    required this.closeDuration,
-    required this.createdAt,
-    required this.display,
-    required this.displayOrder,
-    required this.forYou,
-    required this.icon,
-    required this.id,
-    required this.imageUrl,
-    required this.isRead,
-    required this.needConfirmationToRead,
-    required this.silence,
-    required this.text,
-    required this.title,
-    required this.updatedAt,
-  });
+part 'announcement.g.dart';
 
-  Announcement copyWith({
+@unfreezed
+class Announcement with _$Announcement {
+  factory Announcement({
     double? closeDuration,
-    DateTime? createdAt,
-    AnnouncementDisplay? display,
+    required DateTime createdAt,
+    required AnnouncementDisplay display,
     double? displayOrder,
-    bool? forYou,
-    AnnouncementIcon? icon,
-    String? id,
+    required bool forYou,
+    required AnnouncementIcon icon,
+    required String id,
     String? imageUrl,
-    bool? isRead,
-    bool? needConfirmationToRead,
-    bool? silence,
-    String? text,
-    String? title,
+    required bool isRead,
+    required bool needConfirmationToRead,
+    required bool silence,
+    required String text,
+    required String title,
     DateTime? updatedAt,
-  }) =>
-      Announcement(
-        closeDuration: closeDuration ?? this.closeDuration,
-        createdAt: createdAt ?? this.createdAt,
-        display: display ?? this.display,
-        displayOrder: displayOrder ?? this.displayOrder,
-        forYou: forYou ?? this.forYou,
-        icon: icon ?? this.icon,
-        id: id ?? this.id,
-        imageUrl: imageUrl ?? this.imageUrl,
-        isRead: isRead ?? this.isRead,
-        needConfirmationToRead:
-            needConfirmationToRead ?? this.needConfirmationToRead,
-        silence: silence ?? this.silence,
-        text: text ?? this.text,
-        title: title ?? this.title,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) = _Announcement;
 
-  factory Announcement.fromJson(String str) =>
-      Announcement.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Announcement.fromMap(Map<String, dynamic> json) => Announcement(
-        closeDuration: json["closeDuration"]?.toDouble(),
-        createdAt: DateTime.parse(json["createdAt"]),
-        display: displayValues.map[json["display"]]!,
-        displayOrder: json["displayOrder"]?.toDouble(),
-        forYou: json["forYou"],
-        icon: iconValues.map[json["icon"]]!,
-        id: json["id"],
-        imageUrl: json["imageUrl"],
-        isRead: json["isRead"] ?? false,
-        needConfirmationToRead: json["needConfirmationToRead"],
-        silence: json["silence"],
-        text: json["text"],
-        title: json["title"],
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "closeDuration": closeDuration,
-        "createdAt": createdAt.toIso8601String(),
-        "display": displayValues.reverse[display],
-        "displayOrder": displayOrder,
-        "forYou": forYou,
-        "icon": iconValues.reverse[icon],
-        "id": id,
-        "imageUrl": imageUrl,
-        "isRead": isRead,
-        "needConfirmationToRead": needConfirmationToRead,
-        "silence": silence,
-        "text": text,
-        "title": title,
-        "updatedAt": updatedAt?.toIso8601String(),
-      };
+  factory Announcement.fromJson(Map<String, dynamic> json) =>
+      _$AnnouncementFromJson(json);
 }
 
-enum AnnouncementDisplay { BANNER, DIALOG, NORMAL }
+enum AnnouncementDisplay {
+  @JsonValue('banner')
+  BANNER,
+  @JsonValue('dialog')
+  DIALOG,
+  @JsonValue('normal')
+  NORMAL,
+}
 
-final displayValues = EnumValues({
-  "banner": AnnouncementDisplay.BANNER,
-  "dialog": AnnouncementDisplay.DIALOG,
-  "normal": AnnouncementDisplay.NORMAL
-});
-
-enum AnnouncementIcon { ERROR, INFO, SUCCESS, WARNING }
-
-final iconValues = EnumValues({
-  "error": AnnouncementIcon.ERROR,
-  "info": AnnouncementIcon.INFO,
-  "success": AnnouncementIcon.SUCCESS,
-  "warning": AnnouncementIcon.WARNING
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
+enum AnnouncementIcon {
+  @JsonValue('error')
+  ERROR,
+  @JsonValue('info')
+  INFO,
+  @JsonValue('success')
+  SUCCESS,
+  @JsonValue('warning')
+  WARNING,
 }

@@ -1,58 +1,21 @@
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
-class AppModel {
-  final String? callbackUrl;
-  final String id;
-  final bool? isAuthorized;
-  final String name;
-  final List<String> permission;
-  final String? secret;
+part 'app.freezed.dart';
 
-  AppModel({
-    required this.callbackUrl,
-    required this.id,
-    this.isAuthorized,
-    required this.name,
-    required this.permission,
-    this.secret,
-  });
+part 'app.g.dart';
 
-  AppModel copyWith({
+@freezed
+class AppModel with _$AppModel {
+  const factory AppModel({
     String? callbackUrl,
-    String? id,
+    required String id,
     bool? isAuthorized,
-    String? name,
-    List<String>? permission,
+    required String name,
+    required List<String> permission,
     String? secret,
-  }) =>
-      AppModel(
-        callbackUrl: callbackUrl ?? this.callbackUrl,
-        id: id ?? this.id,
-        isAuthorized: isAuthorized ?? this.isAuthorized,
-        name: name ?? this.name,
-        permission: permission ?? this.permission,
-        secret: secret ?? this.secret,
-      );
+  }) = _AppModel;
 
-  factory AppModel.fromJson(String str) => AppModel.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory AppModel.fromMap(Map<String, dynamic> json) => AppModel(
-        callbackUrl: json["callbackUrl"],
-        id: json["id"],
-        isAuthorized: json["isAuthorized"],
-        name: json["name"],
-        permission: List<String>.from(json["permission"].map((x) => x)),
-        secret: json["secret"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "callbackUrl": callbackUrl,
-        "id": id,
-        "isAuthorized": isAuthorized,
-        "name": name,
-        "permission": List<dynamic>.from(permission.map((x) => x)),
-        "secret": secret,
-      };
+  factory AppModel.fromJson(Map<String, dynamic> json) =>
+      _$AppModelFromJson(json);
 }

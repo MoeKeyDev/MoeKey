@@ -10,7 +10,7 @@ class MetaService extends MisskeyApiServices {
   Future<MetaDetailedModel?> meta() async {
     var res = await client.post("/meta", data: {"detail": true});
     if (res != null) {
-      return MetaDetailedModel.fromMap(res);
+      return MetaDetailedModel.fromJson(res);
     }
     return null;
   }
@@ -21,7 +21,7 @@ class MetaService extends MisskeyApiServices {
       return [];
     }
     return List<EmojiSimple>.from(
-        data["emojis"].map((x) => EmojiSimple.fromMap(x)));
+        data["emojis"].map((x) => EmojiSimple.fromJson(x)));
   }
 
   Future<List<Announcement>> announcements(
@@ -38,7 +38,7 @@ class MetaService extends MisskeyApiServices {
     if (data == null) {
       return [];
     }
-    return List<Announcement>.from(data.map((x) => Announcement.fromMap(x)));
+    return List<Announcement>.from(data.map((x) => Announcement.fromJson(x)));
   }
 
   readAnnouncement({required String announcementId}) async {

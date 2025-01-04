@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -26,31 +27,31 @@ class SelectServerHost extends _$SelectServerHost {
 class LoginUserList extends _$LoginUserList {
   @override
   Map<String, LoginUser> build() {
-    var list = getPreferencesDatabase().get("LoginUserList", defaultValue: {});
-    return Map<String, LoginUser>.from(
-      list.map((key, value) {
-        return MapEntry<String, LoginUser>(key, LoginUser.fromMap(value));
-      }),
-    );
+    var list = Preferences.get("LoginUserList", defaultValue: {});
+    Map<String, LoginUser> status = {};
+
+    list.forEach((key, value) {
+      status[key.toString()] = LoginUser.fromJson(value);
+    });
+    //
+    // print(status);
+    return status;
   }
 
   Future addUser(LoginUser user) async {
-    var v = state;
-    v[user.userInfo.id] = user;
-    var db = getPreferencesDatabase();
-    var list = db.get("LoginUserList", defaultValue: {});
-    list[user.userInfo.id] = user.toMap();
-    db.put("LoginUserList", list);
+    state[user.userInfo.id] = user;
+    var list = Preferences.get("LoginUserList", defaultValue: {});
+    list[user.userInfo.id] = user.toJson();
+    Preferences.set("LoginUserList", list);
     ref.notifyListeners();
   }
 
   Future removeUser(String id) async {
     var v = state;
     v.remove(id);
-    var db = getPreferencesDatabase();
-    var list = db.get("LoginUserList", defaultValue: {});
+    var list = Preferences.get("LoginUserList", defaultValue: {});
     list.remove(id);
-    db.put("LoginUserList", list);
+    Preferences.set("LoginUserList", list);
     ref.notifyListeners();
   }
 }
@@ -62,7 +63,7 @@ class CurrentLoginUser extends _$CurrentLoginUser {
     try {
       var userList = ref.watch(loginUserListProvider);
       var preference = getPreferencesDatabase();
-      var userid = preference.get("currentLoginUser", defaultValue: "");
+      var userid = Preferences.get("currentLoginUser", defaultValue: "");
       if (!userList.containsKey(userid)) {
         return null;
       }
@@ -75,8 +76,7 @@ class CurrentLoginUser extends _$CurrentLoginUser {
   }
 
   setLoginUser(String id) {
-    var preference = getPreferencesDatabase();
-    preference.put("currentLoginUser", id);
+    Preferences.set("currentLoginUser", id);
     var userList = ref.watch(loginUserListProvider);
     if (!userList.containsKey(id)) {
       return null;

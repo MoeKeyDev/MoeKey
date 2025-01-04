@@ -30,7 +30,8 @@ void updateUserInfo(WidgetRef ref) {
       var user = ref.read(currentLoginUserProvider);
       var data = await api.user.show(userId: user?.id);
 
-      user = user?.copyWith(name: data?.name ?? data?.username, userInfo: data);
+      user =
+          user?.copyWith(name: data?.name ?? data!.username, userInfo: data!);
       ref.read(loginUserListProvider.notifier).addUser(user!);
     },
   );
@@ -110,7 +111,7 @@ class HomePage extends HookConsumerWidget {
               children: [
                 if (constraints.maxWidth >= 500)
                   NavBar(
-                    width: constraints.maxWidth < 1280 ? 80 : 250,
+                    width: constraints.maxWidth < 900 ? 80 : 250,
                   ),
                 Expanded(
                   child: MediaQuery(
@@ -134,7 +135,7 @@ class HomePage extends HookConsumerWidget {
               AnimatedPositioned(
                 bottom: isShowBottomNav ? 0 : -86,
                 left: 0,
-                duration: const Duration(milliseconds: 250),
+                duration: const Duration(milliseconds: 150),
                 child: SizedBox(
                   width: constraints.maxWidth,
                   height: 86,
@@ -219,87 +220,85 @@ class NavBar extends HookConsumerWidget {
       width: width,
       color: themes.navBgColor,
       height: double.infinity,
-      duration: const Duration(milliseconds: 200),
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          children: [
-            const ServerIconAndBanner(),
-            Expanded(child: SingleChildScrollView(
-              child: Builder(builder: (context) {
-                var list = <Widget>[];
-                for (var element in state.navItemList) {
-                  if (element["line"] == null) {
-                    list.add(NavbarItem(
-                      icon: element["icon"],
-                      label: element["label"],
-                      id: element["id"] ?? '',
-                      currentId: currentId ?? '',
-                      onSelect: () {
-                        if (onSelect != null) {
-                          onSelect!();
-                        }
-                      },
-                    ));
-                  } else {
-                    list.add(Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 1,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(color: themes.dividerColor),
-                        ),
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.easeInOut,
+      child: Column(
+        children: [
+          const ServerIconAndBanner(),
+          Expanded(child: SingleChildScrollView(
+            child: Builder(builder: (context) {
+              var list = <Widget>[];
+              for (var element in state.navItemList) {
+                if (element["line"] == null) {
+                  list.add(NavbarItem(
+                    icon: element["icon"],
+                    label: element["label"],
+                    id: element["id"] ?? '',
+                    currentId: currentId ?? '',
+                    onSelect: () {
+                      if (onSelect != null) {
+                        onSelect!();
+                      }
+                    },
+                  ));
+                } else {
+                  list.add(Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 1,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(color: themes.dividerColor),
                       ),
-                    ));
-                  }
+                    ),
+                  ));
                 }
+              }
 
-                return SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    children: [
-                      ...list,
-                      if (isWide)
-                        NavbarItem(
-                          icon: TablerIcons.settings,
-                          label: S.current.settings,
-                          id: "settingsAccountManager",
-                          currentId: currentId ?? '',
-                          onSelect: () {
-                            if (onSelect != null) {
-                              onSelect!();
-                            }
+              return SizedBox(
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    ...list,
+                    if (isWide)
+                      NavbarItem(
+                        icon: TablerIcons.settings,
+                        label: S.current.settings,
+                        id: "settingsAccountManager",
+                        currentId: currentId ?? '',
+                        onSelect: () {
+                          if (onSelect != null) {
+                            onSelect!();
+                          }
 
-                            context.goNamed("settingsAccountManager");
-                          },
-                        )
-                      else
-                        NavbarItem(
-                          icon: TablerIcons.settings,
-                          label: S.current.settings,
-                          id: "settings",
-                          currentId: currentId ?? '',
-                          onSelect: () {
-                            if (onSelect != null) {
-                              onSelect!();
-                            }
+                          context.goNamed("settingsAccountManager");
+                        },
+                      )
+                    else
+                      NavbarItem(
+                        icon: TablerIcons.settings,
+                        label: S.current.settings,
+                        id: "settings",
+                        currentId: currentId ?? '',
+                        onSelect: () {
+                          if (onSelect != null) {
+                            onSelect!();
+                          }
 
-                            context.goNamed("settings");
-                          },
-                        ),
-                    ],
-                  ),
-                );
-              }),
-            )),
-            const SizedBox(height: 20),
-            const CreateBottom(),
-            const SizedBox(height: 20),
-            UserAvatarButton(onSelect: onSelect),
-            const SizedBox(height: 20),
-          ],
-        ),
+                          context.goNamed("settings");
+                        },
+                      ),
+                  ],
+                ),
+              );
+            }),
+          )),
+          const SizedBox(height: 20),
+          const CreateBottom(),
+          const SizedBox(height: 20),
+          UserAvatarButton(onSelect: onSelect),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
@@ -382,7 +381,7 @@ class UserAvatarButton extends ConsumerWidget {
     var user = ref.watch(currentLoginUserProvider);
     var userData = user?.userInfo;
     return LayoutBuilder(builder: (context, constraints) {
-      var extend = constraints.maxWidth >= 250;
+      var extend = constraints.maxWidth >= 100;
       return ContextMenuBuilder(
         menu: ContextMenuCard(
           menuListBuilder: () async {
@@ -541,13 +540,22 @@ class UserAvatarButton extends ConsumerWidget {
                         ),
                   if (extend) const SizedBox(width: 8),
                   if (extend)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (userData?.name != null) Text(userData?.name ?? ""),
-                        Text("@${userData?.username ?? ""}"),
-                      ],
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (userData?.name != null)
+                            Text(
+                              userData?.name ?? "",
+                              maxLines: 1,
+                            ),
+                          Text(
+                            "@${userData?.username ?? ""}",
+                            maxLines: 1,
+                          ),
+                        ],
+                      ),
                     )
                 ],
               ),
@@ -610,7 +618,7 @@ class NavbarItem extends ConsumerWidget {
     var isActive = currentId == id;
     return LayoutBuilder(
       builder: (context, constraints) {
-        var extend = constraints.maxWidth >= 250;
+        var extend = constraints.maxWidth >= 100;
         if (extend) {
           return HoverBuilder(builder: (context, isHover) {
             var textColor =
@@ -642,12 +650,16 @@ class NavbarItem extends ConsumerWidget {
                     const SizedBox(
                       width: 16,
                     ),
-                    Text(
-                      label,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: textColor),
+                    Expanded(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: textColor),
+                      ),
                     ),
                   ],
                 ),
@@ -702,7 +714,7 @@ class CreateBottom extends ConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
 
     return LayoutBuilder(builder: (context, constraints) {
-      var extend = constraints.maxWidth >= 250;
+      var extend = constraints.maxWidth >= 100;
       if (extend) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
@@ -728,11 +740,14 @@ class CreateBottom extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: Row(
                 children: [
-                  const Icon(TablerIcons.pencil, size: 16),
+                  Icon(TablerIcons.pencil,
+                      size: 16, color: themes.fgOnAccentColor),
                   const SizedBox(
                     width: 16,
                   ),
-                  Text(S.current.notes)
+                  Expanded(
+                    child: Text(S.current.notes),
+                  )
                 ],
               ),
             ),

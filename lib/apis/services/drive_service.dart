@@ -23,7 +23,7 @@ class DriveService extends MisskeyApiServices {
       onSendProgress: onSendProgress,
     );
     if (res.data != null) {
-      return DriveFileModel.fromMap(res.data);
+      return DriveFileModel.fromJson(res.data);
     }
 
     return null;
@@ -43,7 +43,7 @@ class DriveService extends MisskeyApiServices {
     if (res == null) {
       return null;
     }
-    return DriverFolderModel.fromMap(res);
+    return DriverFolderModel.fromJson(res);
   }
 
   Future uploadFromUrl({
@@ -73,7 +73,7 @@ class DriveService extends MisskeyApiServices {
     if (res == null) {
       return null;
     }
-    return DriveFileModel.fromMap(res);
+    return DriveFileModel.fromJson(res);
   }
 
   Future<DriverFolderModel?> updateFolders({
@@ -89,7 +89,7 @@ class DriveService extends MisskeyApiServices {
     if (res == null) {
       return null;
     }
-    return DriverFolderModel.fromMap(res);
+    return DriverFolderModel.fromJson(res);
   }
 
   Future deleteFile({required String fileId}) async {
@@ -116,7 +116,8 @@ class DriveService extends MisskeyApiServices {
     if (res == null) {
       return [];
     }
-    return List<DriveFileModel>.from(res.map((x) => DriveFileModel.fromMap(x)));
+    return List<DriveFileModel>.from(
+        res.map((x) => DriveFileModel.fromJson(x)));
   }
 
   Future<List<DriverFolderModel>> folders({
@@ -132,6 +133,6 @@ class DriveService extends MisskeyApiServices {
       return [];
     }
     return List<DriverFolderModel>.from(
-        res.map((x) => DriverFolderModel.fromMap(x)));
+        res.map((x) => DriverFolderModel.fromJson(x)));
   }
 }

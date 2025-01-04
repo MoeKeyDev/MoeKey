@@ -1,55 +1,21 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:moekey/apis/models/user_full.dart';
+import 'package:flutter/foundation.dart';
 
-class LoginUser {
-  final String serverUrl;
-  final String token;
-  final UserFullModel userInfo;
-  final String name;
-  final String id;
+part 'login_user.freezed.dart';
 
-  LoginUser({
-    required this.serverUrl,
-    required this.token,
-    required this.userInfo,
-    required this.name,
-    required this.id,
-  });
+part 'login_user.g.dart';
 
-  @override
-  String toString() {
-    return 'LoginUser{serverUrl: $serverUrl, token: $token, userInfo: $userInfo, name: $name, id: $id}';
-  }
+@freezed
+class LoginUser with _$LoginUser {
+  const factory LoginUser({
+    required String serverUrl,
+    required String token,
+    required UserFullModel userInfo,
+    required String name,
+    required String id,
+  }) = _LoginUser;
 
-  Map<String, dynamic> toMap() {
-    return {
-      "serverUrl": serverUrl,
-      "token": token,
-      "userInfo": userInfo.toMap(),
-      "name": name,
-      "id": id,
-    };
-  }
-
-  LoginUser copyWith({
-    String? serverUrl,
-    String? token,
-    UserFullModel? userInfo,
-    String? name,
-    String? id,
-  }) {
-    return LoginUser(
-      name: name ?? this.name,
-      serverUrl: serverUrl ?? this.serverUrl,
-      token: token ?? this.token,
-      userInfo: userInfo ?? this.userInfo,
-      id: id ?? this.id,
-    );
-  }
-
-  factory LoginUser.fromMap(Map json) => LoginUser(
-      serverUrl: json["serverUrl"],
-      token: json["token"],
-      userInfo: UserFullModel.fromMap(json["userInfo"]),
-      name: json["name"],
-      id: json["id"]);
+  factory LoginUser.fromJson(Map<String, dynamic> json) =>
+      _$LoginUserFromJson(json);
 }

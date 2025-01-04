@@ -42,7 +42,7 @@ class Notes extends _$Notes {
     );
     List<NoteModel> list = [];
     for (var item in data.data.reversed) {
-      var note = NoteModel.fromMap(item);
+      var note = NoteModel.fromJson(item);
       list.add(note);
     }
     state.value?.conversation = list + state.value!.conversation;
