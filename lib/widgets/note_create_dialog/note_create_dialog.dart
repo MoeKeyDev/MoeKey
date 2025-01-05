@@ -1197,8 +1197,9 @@ class NoteCreateDialog extends HookConsumerWidget {
                       const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     TablerIcons.icons,
+                    color: themes.fgColor,
                     size: 16,
                   ),
                 );
@@ -1244,6 +1245,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 opacity: state.visibility == NoteVisibility.specified ? 0.5 : 1,
                 child: Icon(
                   state.localOnly ? TablerIcons.rocket_off : TablerIcons.rocket,
+                  color: themes.fgColor,
                   size: 16,
                 ),
               ),
@@ -1363,6 +1365,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   child: Icon(
                     icon,
                     size: 16,
+                    color: themes.fgColor,
                   ),
                 );
               })),

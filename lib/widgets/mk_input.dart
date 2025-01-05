@@ -79,3 +79,37 @@ class MkInput extends ConsumerWidget {
     );
   }
 }
+
+class MkSelect extends HookConsumerWidget {
+  const MkSelect({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var themes = ref.watch(themeColorsProvider);
+    return Material(
+      color: themes.panelColor,
+      child: FormField(builder: (FormFieldState state) {
+        return DropdownButtonFormField(
+          decoration: inputDecoration(themes, "请选择"),
+          style: TextStyle(fontSize: 14, color: themes.fgColor),
+          dropdownColor: themes.panelColor,
+          focusColor: themes.panelColor,
+          isExpanded: true,
+          items: const [
+            DropdownMenuItem(
+              child: Text("选项1"),
+              value: "1",
+            ),
+            DropdownMenuItem(
+              child: Text("选项2"),
+              value: "2",
+            ),
+          ],
+          onChanged: (value) {
+            state.didChange(value);
+          },
+        );
+      }),
+    );
+  }
+}

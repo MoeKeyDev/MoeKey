@@ -308,6 +308,7 @@ _getParse({
                           MkImage(
                             "$loginServerUrl/avatar/@$user${host != null ? "@$host" : ""}",
                             height: textStyle.fontSize! * 1.5,
+                            width: textStyle.fontSize! * 1.5,
                             shape: BoxShape.circle,
                           ),
                           Text.rich(

@@ -55,10 +55,16 @@ class MkImage extends StatelessWidget {
             if (constraints.maxWidth == double.infinity) {
               constraintsWidth = constraints.minWidth;
             }
-            return Container(
+            Widget child = ColoredBox(
+              color: const Color.fromARGB(40, 0, 0, 0),
+            );
+            if (blurHash != null && blurHash!.isNotEmpty) {
+              child = BlurHash(blurHash!);
+            }
+            return SizedBox(
               width: width ?? height ?? constraintsWidth,
               height: height ?? constraintsHeight,
-              color: const Color.fromARGB(128, 0, 0, 0),
+              child: child,
             );
           },
         );
@@ -73,20 +79,8 @@ class MkImage extends StatelessWidget {
           );
         }
 
-        child = AnimatedOpacity(
+        return AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
-          opacity:
-              state.extendedImageLoadState == LoadState.completed ? 1.0 : 0.1,
-          child: child,
-        );
-
-        if (blurHash == null ||
-            blurHash!.isEmpty ||
-            state.extendedImageLoadState == LoadState.completed) {
-          return child;
-        }
-        return BlurHash(
-          blurHash!,
           child: child,
         );
       },

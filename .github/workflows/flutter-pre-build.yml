@@ -5,8 +5,8 @@ name: 构建发布Flutter应用
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
 jobs:
   pre-build:
     name: 预构建
@@ -190,41 +190,41 @@ jobs:
           path: |
             MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.zip
 
-  release:
-    name: 上传包
-    needs: [ build-apk, build-linux, build-windows, build-macos, pre-build ]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: 下载apk
-        uses: actions/download-artifact@v4
-        with:
-          name: build-apk
-          path: artifact
-
-      - name: 下载linux
-        uses: actions/download-artifact@v4
-        with:
-          name: build-linux
-          path: artifact
-
-      - name: 下载windows
-        uses: actions/download-artifact@v4
-        with:
-          name: build-windows
-          path: artifact
-
-      - name: 下载macOS
-        uses: actions/download-artifact@v4
-        with:
-          name: build-macos
-          path: artifact
-
-      - name: 创建releases
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.pre-build.outputs.APP_VERSION }}
-          files: ./artifact/*
-          body: "[CHANGELOG.md](CHANGELOG.md)"
+#  release:
+#    name: 上传包
+#    needs: [build-apk, build-linux, build-windows, build-macos, pre-build]
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: write
+#    steps:
+#      - name: 下载apk
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: build-apk
+#          path: artifact
+#
+#      - name: 下载linux
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: build-linux
+#          path: artifact
+#
+#      - name: 下载windows
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: build-windows
+#          path: artifact
+#
+#      - name: 下载macOS
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: build-macos
+#          path: artifact
+#
+#      - name: 创建releases
+#        id: create_release
+#        uses: softprops/action-gh-release@v2
+#        with:
+#          tag_name: ${{ needs.pre-build.outputs.APP_VERSION }}
+#          files: ./artifact/*
+#          body: "[CHANGELOG.md](CHANGELOG.md)"

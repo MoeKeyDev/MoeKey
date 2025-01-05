@@ -27,9 +27,7 @@ class SettingsProfile extends HookConsumerWidget {
               MkFormItem(
                 label: "个人简介",
                 helperText: "你可以在个人简介中包含一些#标签。",
-                child: const MkInput(
-                  maxLines: 6,
-                ),
+                child: const MkSelect(),
               ),
               MkFormItem(
                 label: "位置",
