@@ -82,6 +82,12 @@ class MkImage extends StatelessWidget {
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           child: child,
+          transitionBuilder: (child, animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
         );
       },
     );
