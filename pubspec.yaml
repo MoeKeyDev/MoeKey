@@ -79,7 +79,7 @@ dependencies:
   hive_flutter: ^1.1.0
   mime: ^1.0.5
   go_router: ^14.6.1
-  blurhash_shader: ^1.1.0
+  blurhash_shader: ^1.1.2
   freezed: ^2.5.7
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
