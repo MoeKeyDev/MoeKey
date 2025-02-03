@@ -220,5 +220,7 @@
   "copyUserHomeLink": "사용자 홈 링크 복사",
   "pendingFollowRequest": "팔로우 승인 대기중",
   "processing": "처리 중",
-  "overviews": "요약"
+  "overviews": "요약",
+  "close": "关闭",
+  "loginExpired": "登录信息已经过期，请重新登录"
 }
