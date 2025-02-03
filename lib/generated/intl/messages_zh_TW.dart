@@ -93,7 +93,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "clipFavorite": MessageLookupByLibrary.simpleMessage("添加到收藏"),
         "clipFavoriteList": MessageLookupByLibrary.simpleMessage("收藏"),
         "clipRemove": MessageLookupByLibrary.simpleMessage("移除便簽"),
+        "clipUpdate": MessageLookupByLibrary.simpleMessage("更新便签"),
         "clips": MessageLookupByLibrary.simpleMessage("便簽"),
+        "close": MessageLookupByLibrary.simpleMessage("关闭"),
         "confirmSelection": m0,
         "copyContent": MessageLookupByLibrary.simpleMessage("複製內容"),
         "copyLink": MessageLookupByLibrary.simpleMessage("複製鏈接"),
@@ -159,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "local": MessageLookupByLibrary.simpleMessage("本地"),
         "localUpload": MessageLookupByLibrary.simpleMessage("本地上傳"),
         "login": MessageLookupByLibrary.simpleMessage("登錄"),
+        "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("登錄失敗"),
         "loginFailedWithAppCreate":
             MessageLookupByLibrary.simpleMessage("登錄失敗: 應用創建失敗"),

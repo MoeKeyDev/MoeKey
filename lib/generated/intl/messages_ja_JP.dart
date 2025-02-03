@@ -95,7 +95,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "clipFavorite": MessageLookupByLibrary.simpleMessage("お気に入りに追加"),
         "clipFavoriteList": MessageLookupByLibrary.simpleMessage("お気に入り"),
         "clipRemove": MessageLookupByLibrary.simpleMessage("クリップ解除"),
+        "clipUpdate": MessageLookupByLibrary.simpleMessage("ノートの更新"),
         "clips": MessageLookupByLibrary.simpleMessage("クリップ"),
+        "close": MessageLookupByLibrary.simpleMessage("关闭"),
         "confirmSelection": m0,
         "copyContent": MessageLookupByLibrary.simpleMessage("内容をコピー"),
         "copyLink": MessageLookupByLibrary.simpleMessage("リンクをコピー"),
@@ -167,6 +169,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "local": MessageLookupByLibrary.simpleMessage("ローカル"),
         "localUpload": MessageLookupByLibrary.simpleMessage("アップロード"),
         "login": MessageLookupByLibrary.simpleMessage("ログイン"),
+        "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("ログインに失敗しました。"),
         "loginFailedWithAppCreate":
             MessageLookupByLibrary.simpleMessage("ログイン失敗: アプリケーションの作成に失敗しました"),

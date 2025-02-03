@@ -21,366 +21,300 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'sv_SE';
 
   static String m0(selectListLength, maxSelect) =>
-      "${selectListLength}${maxSelect}Bestäm ( / )";
+      "确定(${selectListLength}/${maxSelect})";
 
-  static String m1(error) => "\n\n ${error}Skapandet misslyckades";
+  static String m1(error) => "创建失败\n\n ${error}";
 
-  static String m2(days) => "${days}dagar sedan";
+  static String m2(days) => "${days}天前";
 
-  static String m3(thing) => "${thing}Vill du ta bort \" \"?";
+  static String m3(thing) => "要删掉「${thing}」吗？";
 
-  static String m4(name) =>
-      "${name}Vill du ta bort filen \" \"? Inlägg med den här filen bifogad kommer också att raderas.";
+  static String m4(name) => "要删除「${name}」文件吗？附加此文件的帖子也会被删除。";
 
-  static String m5(name) =>
-      "${name}Vill du ta bort mappen \" \"? Om det finns innehåll i mappen ska du först radera innehållet i mappen.";
+  static String m5(name) => "要删除「${name}」文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。";
 
   static String m6(day, hour, minute, second) =>
-      "${day}${hour}${minute}${second}Dagar timmar minuter sekunder";
+      "${day}天${hour}小时${minute}分钟${second}秒";
 
-  static String m7(hour, minute, second) =>
-      "${hour}${minute}${second}Timmar Minuter Sekunder";
+  static String m7(hour, minute, second) => "${hour}小时${minute}分钟${second}秒";
 
-  static String m8(minute, second) => "${minute}${second}Minuter sekunder";
+  static String m8(minute, second) => "${minute}分钟${second}秒";
 
-  static String m9(second) =>
-      "${second}enhet för vinkel eller båge motsvarande en sextiondels grad";
+  static String m9(second) => "${second}秒";
 
-  static String m10(error) => "\n\n${error}Misslyckades med att skicka post";
+  static String m10(error) => "发送帖子失败\n\n${error}";
 
-  static String m11(hours) => "${hours}timmar sedan";
+  static String m11(hours) => "${hours}小时前";
 
-  static String m12(server) => "${server}För närvarande inloggad";
+  static String m12(server) => "正在登录${server}";
 
-  static String m13(minutes) => "${minutes}minuter sedan";
+  static String m13(minutes) => "${minutes}分钟前";
 
-  static String m14(months) => "${months}månader sedan";
+  static String m14(months) => "${months}个月前";
 
-  static String m15(language) => "${language} \nÖversätt från till";
+  static String m15(language) => "从${language}翻译 \n";
 
-  static String m16(type) => "${type}Meddelandetyper som inte stöds:";
+  static String m16(type) => "不支持的通知类型:${type}";
 
-  static String m17(seconds) => "${seconds}sekunder sedan";
+  static String m17(seconds) => "${seconds}秒前";
 
-  static String m18(msg) => "\n ${msg}Uppladdningen misslyckades";
+  static String m18(msg) => "上传失败\n ${msg}";
 
-  static String m19(count) => "${count}Totalt antal röster";
+  static String m19(count) => "总票数 ${count}";
 
-  static String m20(count) => "${count}person som hålls kvar för lösensumma";
+  static String m20(count) => "${count}票";
 
-  static String m21(index) => "${index}Alternativ";
+  static String m21(index) => "选项${index}";
 
-  static String m22(index) => "${index}Alternativet kan inte vara tomt";
+  static String m22(index) => "选项${index}不能为空";
 
-  static String m23(datetime) => "${datetime}tidsfrist efter slutförandet";
+  static String m23(datetime) => "${datetime}后截止";
 
-  static String m24(years) => "${years}...år sedan";
+  static String m24(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "account": MessageLookupByLibrary.simpleMessage("Användarnamn"),
-        "add": MessageLookupByLibrary.simpleMessage("öka"),
-        "addAccount": MessageLookupByLibrary.simpleMessage("Lägg till konto"),
-        "addFile": MessageLookupByLibrary.simpleMessage("Lägg till fil"),
-        "addTitle": MessageLookupByLibrary.simpleMessage("Lägg till titel"),
-        "all": MessageLookupByLibrary.simpleMessage("full"),
-        "announcementActive":
-            MessageLookupByLibrary.simpleMessage("Tillkännagivande nu"),
-        "announcementExpired":
-            MessageLookupByLibrary.simpleMessage("Tidigare tillkännagivanden"),
-        "announcements": MessageLookupByLibrary.simpleMessage("bulletin"),
-        "back":
-            MessageLookupByLibrary.simpleMessage("komma (eller gå) tillbaka"),
-        "cancel": MessageLookupByLibrary.simpleMessage("avbokningar"),
-        "cancelSensitive":
-            MessageLookupByLibrary.simpleMessage("Avflagga känsligt innehåll"),
-        "clip": MessageLookupByLibrary.simpleMessage("memo"),
-        "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
-            "Är du säker på att du vill avbryta insamlingen?"),
-        "clipCreate": MessageLookupByLibrary.simpleMessage("Nya klisterlappar"),
-        "clipFavorite":
-            MessageLookupByLibrary.simpleMessage("Lägg till bland favoriter"),
-        "clipFavoriteList":
-            MessageLookupByLibrary.simpleMessage("bokmärke (Internet)"),
-        "clipRemove":
-            MessageLookupByLibrary.simpleMessage("Ta bort klisterlappar"),
-        "clips": MessageLookupByLibrary.simpleMessage("memo"),
+        "account": MessageLookupByLibrary.simpleMessage("账号"),
+        "add": MessageLookupByLibrary.simpleMessage("添加"),
+        "addAccount": MessageLookupByLibrary.simpleMessage("添加账号"),
+        "addFile": MessageLookupByLibrary.simpleMessage("添加文件"),
+        "addTitle": MessageLookupByLibrary.simpleMessage("添加标题"),
+        "all": MessageLookupByLibrary.simpleMessage("全部"),
+        "announcementActive": MessageLookupByLibrary.simpleMessage("现在的公告"),
+        "announcementExpired": MessageLookupByLibrary.simpleMessage("过去的公告"),
+        "announcements": MessageLookupByLibrary.simpleMessage("公告"),
+        "back": MessageLookupByLibrary.simpleMessage("返回"),
+        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "cancelSensitive": MessageLookupByLibrary.simpleMessage("取消标记为敏感内容"),
+        "clip": MessageLookupByLibrary.simpleMessage("便签"),
+        "clipCancelFavoriteText":
+            MessageLookupByLibrary.simpleMessage("确定要取消收藏吗？"),
+        "clipCreate": MessageLookupByLibrary.simpleMessage("新建便签"),
+        "clipFavorite": MessageLookupByLibrary.simpleMessage("添加到收藏"),
+        "clipFavoriteList": MessageLookupByLibrary.simpleMessage("收藏"),
+        "clipRemove": MessageLookupByLibrary.simpleMessage("移除便签"),
+        "clipUpdate":
+            MessageLookupByLibrary.simpleMessage("Uppdatera klisterlappar"),
+        "clips": MessageLookupByLibrary.simpleMessage("便签"),
+        "close": MessageLookupByLibrary.simpleMessage("关闭"),
         "confirmSelection": m0,
-        "copyContent": MessageLookupByLibrary.simpleMessage("Kopiera innehåll"),
-        "copyLink": MessageLookupByLibrary.simpleMessage("Kopiera länk"),
-        "copyRSS": MessageLookupByLibrary.simpleMessage("Kopiera RSS"),
-        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage(
-            "Kopiera adressen till användarens hemsida"),
-        "copyUsername":
-            MessageLookupByLibrary.simpleMessage("Kopiera användarnamn"),
-        "createFolder": MessageLookupByLibrary.simpleMessage("Ny mapp"),
-        "createNote":
-            MessageLookupByLibrary.simpleMessage("Lägg upp en ny tråd"),
-        "createNoteFormFile": MessageLookupByLibrary.simpleMessage(
-            "Skapa ett inlägg från en fil"),
-        "createNoteHint": MessageLookupByLibrary.simpleMessage("Vad hände..."),
-        "createdDate":
-            MessageLookupByLibrary.simpleMessage("Datum för skapande"),
+        "copyContent": MessageLookupByLibrary.simpleMessage("复制内容"),
+        "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
+        "copyRSS": MessageLookupByLibrary.simpleMessage("复制RSS"),
+        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage("复制用户主页地址"),
+        "copyUsername": MessageLookupByLibrary.simpleMessage("复制用户名"),
+        "createFolder": MessageLookupByLibrary.simpleMessage("新建文件夹"),
+        "createNote": MessageLookupByLibrary.simpleMessage("发布新帖子"),
+        "createNoteFormFile": MessageLookupByLibrary.simpleMessage("从文件创建帖子"),
+        "createNoteHint": MessageLookupByLibrary.simpleMessage("发生了什么..."),
+        "createdDate": MessageLookupByLibrary.simpleMessage("创建日期"),
         "creationFailedDialog": m1,
-        "cw": MessageLookupByLibrary.simpleMessage("dolt innehåll"),
-        "day": MessageLookupByLibrary.simpleMessage("dag"),
+        "cw": MessageLookupByLibrary.simpleMessage("隐藏内容"),
+        "day": MessageLookupByLibrary.simpleMessage("天"),
         "daysAgo": m2,
-        "delete": MessageLookupByLibrary.simpleMessage("avlägsnande"),
+        "delete": MessageLookupByLibrary.simpleMessage("删除"),
         "deleteConfirm": m3,
         "deleteFileConfirmation": m4,
         "deleteFolderConfirmation": m5,
-        "description": MessageLookupByLibrary.simpleMessage("beskrivningar"),
-        "done": MessageLookupByLibrary.simpleMessage("uppfylla"),
-        "download": MessageLookupByLibrary.simpleMessage("nedladdning"),
-        "drive":
-            MessageLookupByLibrary.simpleMessage("lagring av filer i molnet"),
+        "description": MessageLookupByLibrary.simpleMessage("描述"),
+        "done": MessageLookupByLibrary.simpleMessage("完成"),
+        "download": MessageLookupByLibrary.simpleMessage("下载"),
+        "drive": MessageLookupByLibrary.simpleMessage("网盘"),
         "durationDay": m6,
         "durationHour": m7,
         "durationMinute": m8,
         "durationSecond": m9,
-        "edit": MessageLookupByLibrary.simpleMessage("kompilator"),
-        "emoji": MessageLookupByLibrary.simpleMessage("emoticon"),
-        "enterNewFileName":
-            MessageLookupByLibrary.simpleMessage("Ange ett nytt filnamn"),
-        "enterNewTitle":
-            MessageLookupByLibrary.simpleMessage("Vänligen ange en ny titel"),
-        "enterUrl": MessageLookupByLibrary.simpleMessage("Vänligen ange URL"),
-        "exceptionContentNull": MessageLookupByLibrary.simpleMessage(
-            "Innehållet kan inte vara tomt"),
-        "exceptionCwNull": MessageLookupByLibrary.simpleMessage(
-            "Innehållet kan inte vara tomt"),
+        "edit": MessageLookupByLibrary.simpleMessage("编辑"),
+        "emoji": MessageLookupByLibrary.simpleMessage("表情符号"),
+        "enterNewFileName": MessageLookupByLibrary.simpleMessage("请输入新文件名"),
+        "enterNewTitle": MessageLookupByLibrary.simpleMessage("请输入新标题"),
+        "enterUrl": MessageLookupByLibrary.simpleMessage("请输入URL"),
+        "exceptionContentNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
+        "exceptionCwNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
         "exceptionSendNote": m10,
-        "explore": MessageLookupByLibrary.simpleMessage("Upptäckter"),
-        "exploreHot": MessageLookupByLibrary.simpleMessage("på modet"),
-        "exploreUserHot":
-            MessageLookupByLibrary.simpleMessage("populär användare"),
-        "exploreUserLast":
-            MessageLookupByLibrary.simpleMessage("Nyligen inloggade användare"),
-        "exploreUserPined": MessageLookupByLibrary.simpleMessage(
-            "användaren högst upp på listan"),
-        "exploreUserUpdated":
-            MessageLookupByLibrary.simpleMessage("Senaste bidragsgivarna"),
-        "exploreUsers": MessageLookupByLibrary.simpleMessage("användare"),
-        "favorite": MessageLookupByLibrary.simpleMessage("bokmärke (Internet)"),
+        "explore": MessageLookupByLibrary.simpleMessage("发现"),
+        "exploreHot": MessageLookupByLibrary.simpleMessage("热门"),
+        "exploreUserHot": MessageLookupByLibrary.simpleMessage("热门用户"),
+        "exploreUserLast": MessageLookupByLibrary.simpleMessage("最近登录的用户"),
+        "exploreUserPined": MessageLookupByLibrary.simpleMessage("置顶用户"),
+        "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿的用户"),
+        "exploreUsers": MessageLookupByLibrary.simpleMessage("用户"),
+        "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
         "filter": MessageLookupByLibrary.simpleMessage("Filter"),
-        "folderName": MessageLookupByLibrary.simpleMessage("Mappens namn"),
-        "follow": MessageLookupByLibrary.simpleMessage("fokus"),
-        "followed": MessageLookupByLibrary.simpleMessage("Följt av"),
-        "followers": MessageLookupByLibrary.simpleMessage("observatör"),
-        "following": MessageLookupByLibrary.simpleMessage("Bekymrad"),
-        "fromCloud": MessageLookupByLibrary.simpleMessage("Från netbooken"),
+        "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
+        "follow": MessageLookupByLibrary.simpleMessage("关注"),
+        "followed": MessageLookupByLibrary.simpleMessage("已关注"),
+        "followers": MessageLookupByLibrary.simpleMessage("关注者"),
+        "following": MessageLookupByLibrary.simpleMessage("关注中"),
+        "fromCloud": MessageLookupByLibrary.simpleMessage("从网盘中"),
         "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
-        "hashtag": MessageLookupByLibrary.simpleMessage("hashtag"),
-        "hostnames": MessageLookupByLibrary.simpleMessage("domännamn"),
-        "hour": MessageLookupByLibrary.simpleMessage("timmar"),
+        "hashtag": MessageLookupByLibrary.simpleMessage("话题标签"),
+        "hostnames": MessageLookupByLibrary.simpleMessage("域名"),
+        "hour": MessageLookupByLibrary.simpleMessage("小时"),
         "hoursAgo": m11,
-        "image": MessageLookupByLibrary.simpleMessage("fotografi"),
-        "inputServer": MessageLookupByLibrary.simpleMessage(
-            "Server för manuell inmatning"),
-        "insertDriverFile":
-            MessageLookupByLibrary.simpleMessage("Insättning av tillbehör"),
-        "isFollowingYouNow":
-            MessageLookupByLibrary.simpleMessage("Jag håller ögonen på dig."),
-        "justNow": MessageLookupByLibrary.simpleMessage("alldeles nyligen"),
-        "keepOriginal": MessageLookupByLibrary.simpleMessage(
-            "Bevara den ursprungliga bilden"),
+        "image": MessageLookupByLibrary.simpleMessage("图片"),
+        "inputServer": MessageLookupByLibrary.simpleMessage("手动输入服务器"),
+        "insertDriverFile": MessageLookupByLibrary.simpleMessage("插入附件"),
+        "isFollowingYouNow": MessageLookupByLibrary.simpleMessage("正在关注你"),
+        "justNow": MessageLookupByLibrary.simpleMessage("刚刚"),
+        "keepOriginal": MessageLookupByLibrary.simpleMessage("保留原图"),
         "loadingServers":
             MessageLookupByLibrary.simpleMessage("Server Loading"),
-        "local": MessageLookupByLibrary.simpleMessage("denna plats"),
-        "localUpload":
-            MessageLookupByLibrary.simpleMessage("lokal uppladdning"),
-        "login": MessageLookupByLibrary.simpleMessage("logga in"),
-        "loginFailed":
-            MessageLookupByLibrary.simpleMessage("Felaktig inloggning"),
-        "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
-            "Inloggning misslyckades: Skapande av applikation misslyckades"),
-        "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
-            "Inloggning misslyckades: förvärv av token misslyckades"),
+        "local": MessageLookupByLibrary.simpleMessage("本地"),
+        "localUpload": MessageLookupByLibrary.simpleMessage("本地上传"),
+        "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
+        "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
+        "loginFailedWithAppCreate":
+            MessageLookupByLibrary.simpleMessage("登录失败: 应用创建失败"),
+        "loginFailedWithToken":
+            MessageLookupByLibrary.simpleMessage("登录失败: token获取失败"),
         "loginLoading": m12,
-        "loginSuccess":
-            MessageLookupByLibrary.simpleMessage("Inloggning framgångsrik"),
-        "manageAccount": MessageLookupByLibrary.simpleMessage("Hantera konto"),
-        "markAsSensitive": MessageLookupByLibrary.simpleMessage(
-            "Flagga som känsligt innehåll"),
-        "mention": MessageLookupByLibrary.simpleMessage("höja (ett ämne)"),
-        "minute": MessageLookupByLibrary.simpleMessage("Protokoll"),
+        "loginSuccess": MessageLookupByLibrary.simpleMessage("登录成功"),
+        "manageAccount": MessageLookupByLibrary.simpleMessage("管理账号"),
+        "markAsSensitive": MessageLookupByLibrary.simpleMessage("标记为敏感内容"),
+        "mention": MessageLookupByLibrary.simpleMessage("提及"),
+        "minute": MessageLookupByLibrary.simpleMessage("分钟"),
         "minutesAgo": m13,
         "monthsAgo": m14,
-        "more": MessageLookupByLibrary.simpleMessage("mer"),
-        "myCLips": MessageLookupByLibrary.simpleMessage("Min anmärkning."),
-        "name": MessageLookupByLibrary.simpleMessage("namn (på en sak)"),
-        "nameCannotBeEmpty":
-            MessageLookupByLibrary.simpleMessage("Namnet får inte vara tomt"),
-        "next": MessageLookupByLibrary.simpleMessage("nästa steg"),
+        "more": MessageLookupByLibrary.simpleMessage("更多"),
+        "myCLips": MessageLookupByLibrary.simpleMessage("我的便签"),
+        "name": MessageLookupByLibrary.simpleMessage("名称"),
+        "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
+        "next": MessageLookupByLibrary.simpleMessage("下一步"),
         "noLists":
             MessageLookupByLibrary.simpleMessage("You don\'t have any lists"),
-        "notFindServer":
-            MessageLookupByLibrary.simpleMessage("Hittade du inte din server?"),
-        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
-            "Kopiera länken till den här webbplatsen"),
-        "noteCwHide": MessageLookupByLibrary.simpleMessage("lägga undan"),
-        "noteCwShow": MessageLookupByLibrary.simpleMessage("Visa innehåll"),
+        "notFindServer": MessageLookupByLibrary.simpleMessage("没有找到你所在的服务器？"),
+        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
+        "noteCwHide": MessageLookupByLibrary.simpleMessage("收起"),
+        "noteCwShow": MessageLookupByLibrary.simpleMessage("显示内容"),
         "noteFormLanguageTranslation": m15,
-        "noteLocalOnly":
-            MessageLookupByLibrary.simpleMessage("Icke-deltagande i gemensam"),
-        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage(
-            "Gå till värdservern för att visa"),
-        "notePined": MessageLookupByLibrary.simpleMessage("Bästa inlägg"),
-        "noteQuote": MessageLookupByLibrary.simpleMessage("citat"),
-        "noteReNote": MessageLookupByLibrary.simpleMessage(
-            "vidarebefordran (e-post, SMS, datapaket)"),
-        "noteReNoteByUser":
-            MessageLookupByLibrary.simpleMessage("Vidarebefordrad."),
-        "noteTranslate":
-            MessageLookupByLibrary.simpleMessage("Översättning av inlägg"),
-        "noteVisibility": MessageLookupByLibrary.simpleMessage("synlighet"),
-        "noteVisibilityFollowers":
-            MessageLookupByLibrary.simpleMessage("observatör"),
+        "noteLocalOnly": MessageLookupByLibrary.simpleMessage("不参与联合"),
+        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("转到所在服务器显示"),
+        "notePined": MessageLookupByLibrary.simpleMessage("已置顶的帖子"),
+        "noteQuote": MessageLookupByLibrary.simpleMessage("引用"),
+        "noteReNote": MessageLookupByLibrary.simpleMessage("转发"),
+        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("转发了"),
+        "noteTranslate": MessageLookupByLibrary.simpleMessage("翻译帖子"),
+        "noteVisibility": MessageLookupByLibrary.simpleMessage("可见性"),
+        "noteVisibilityFollowers": MessageLookupByLibrary.simpleMessage("关注者"),
         "noteVisibilityFollowersText":
-            MessageLookupByLibrary.simpleMessage("Skicka endast till följare"),
-        "noteVisibilityHome":
-            MessageLookupByLibrary.simpleMessage("fig. början"),
-        "noteVisibilityHomeText": MessageLookupByLibrary.simpleMessage(
-            "Tidslinjen skickas endast till startsidan"),
-        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("öppet"),
-        "noteVisibilityPublicText": MessageLookupByLibrary.simpleMessage(
-            "Ditt inlägg kommer att visas på den globala tidslinjen"),
-        "noteVisibilitySpecified":
-            MessageLookupByLibrary.simpleMessage("privat brev"),
-        "noteVisibilitySpecifiedText": MessageLookupByLibrary.simpleMessage(
-            "Skicka endast till angivna användare"),
-        "notes": MessageLookupByLibrary.simpleMessage("kort"),
+            MessageLookupByLibrary.simpleMessage("仅发送至关注者"),
+        "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("首页"),
+        "noteVisibilityHomeText":
+            MessageLookupByLibrary.simpleMessage("仅发送至首页的时间线"),
+        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("公开"),
+        "noteVisibilityPublicText":
+            MessageLookupByLibrary.simpleMessage("您的帖子将出现在全局时间线上"),
+        "noteVisibilitySpecified": MessageLookupByLibrary.simpleMessage("私信"),
+        "noteVisibilitySpecifiedText":
+            MessageLookupByLibrary.simpleMessage("仅发送至指定用户"),
+        "notes": MessageLookupByLibrary.simpleMessage("帖子"),
         "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
-        "notification": MessageLookupByLibrary.simpleMessage("meddelanden"),
-        "notifications": MessageLookupByLibrary.simpleMessage("meddelanden"),
-        "notifyAll": MessageLookupByLibrary.simpleMessage("full"),
-        "notifyFilter": MessageLookupByLibrary.simpleMessage("screening"),
-        "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
-            "Din begäran om uppmärksamhet har godkänts."),
-        "notifyFollowedYou":
-            MessageLookupByLibrary.simpleMessage("Du har nya följare."),
-        "notifyMarkAllRead":
-            MessageLookupByLibrary.simpleMessage("Markera alla som lästa"),
-        "notifyMention": MessageLookupByLibrary.simpleMessage("På tal om min"),
-        "notifyMessage": MessageLookupByLibrary.simpleMessage("privat brev"),
+        "notification": MessageLookupByLibrary.simpleMessage("通知"),
+        "notifications": MessageLookupByLibrary.simpleMessage("通知"),
+        "notifyAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "notifyFilter": MessageLookupByLibrary.simpleMessage("筛选"),
+        "notifyFollowedAccepted":
+            MessageLookupByLibrary.simpleMessage("你的关注请求被通过了"),
+        "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("你有新的关注者"),
+        "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全部标记为已读"),
+        "notifyMention": MessageLookupByLibrary.simpleMessage("提到我的"),
+        "notifyMessage": MessageLookupByLibrary.simpleMessage("私信"),
         "notifyNotSupport": m16,
-        "ok": MessageLookupByLibrary.simpleMessage("definiera"),
-        "openInNewTab": MessageLookupByLibrary.simpleMessage(
-            "Gå till webbläsarens display"),
-        "overviews": MessageLookupByLibrary.simpleMessage("skumma igenom"),
-        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage(
-            "Oro för att förfrågningar ska beviljas"),
-        "preview": MessageLookupByLibrary.simpleMessage("förhandsvisningar"),
-        "previewNote":
-            MessageLookupByLibrary.simpleMessage("Förhandsgranska inlägg"),
-        "processing": MessageLookupByLibrary.simpleMessage("pågår"),
-        "public": MessageLookupByLibrary.simpleMessage("öppet"),
-        "publish": MessageLookupByLibrary.simpleMessage("post"),
-        "reNoteHint":
-            MessageLookupByLibrary.simpleMessage("Citerar detta inlägg..."),
-        "reNoteText": MessageLookupByLibrary.simpleMessage("Citat inlägg"),
-        "reaction": MessageLookupByLibrary.simpleMessage("svar"),
-        "reactionAccepting":
-            MessageLookupByLibrary.simpleMessage("Acceptera Emoji-svar"),
-        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("full"),
+        "ok": MessageLookupByLibrary.simpleMessage("确定"),
+        "openInNewTab": MessageLookupByLibrary.simpleMessage("转到浏览器显示"),
+        "overviews": MessageLookupByLibrary.simpleMessage("概览"),
+        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage("关注请求批准中"),
+        "preview": MessageLookupByLibrary.simpleMessage("预览"),
+        "previewNote": MessageLookupByLibrary.simpleMessage("预览帖子"),
+        "processing": MessageLookupByLibrary.simpleMessage("处理中"),
+        "public": MessageLookupByLibrary.simpleMessage("公开"),
+        "publish": MessageLookupByLibrary.simpleMessage("发布"),
+        "reNoteHint": MessageLookupByLibrary.simpleMessage("引用这个帖子..."),
+        "reNoteText": MessageLookupByLibrary.simpleMessage("引用帖子"),
+        "reaction": MessageLookupByLibrary.simpleMessage("回应"),
+        "reactionAccepting": MessageLookupByLibrary.simpleMessage("接受表情回应"),
+        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("全部"),
         "reactionAcceptingLikeOnly":
-            MessageLookupByLibrary.simpleMessage("Gillar bara"),
+            MessageLookupByLibrary.simpleMessage("仅点赞"),
         "reactionAcceptingLikeOnlyRemote":
-            MessageLookupByLibrary.simpleMessage("Endast fjärrstyrda Kudos"),
-        "reactionAcceptingNoneSensitive": MessageLookupByLibrary.simpleMessage(
-            "Endast icke-känsligt innehåll"),
+            MessageLookupByLibrary.simpleMessage("远程仅点赞"),
+        "reactionAcceptingNoneSensitive":
+            MessageLookupByLibrary.simpleMessage("仅限非敏感内容"),
         "reactionAcceptingNoneSensitiveOrLocal":
-            MessageLookupByLibrary.simpleMessage(
-                "Endast icke-känsligt innehåll (endast fjärrstyrning)"),
-        "recipient":
-            MessageLookupByLibrary.simpleMessage("Till: (e-posthuvud)"),
-        "refresh":
-            MessageLookupByLibrary.simpleMessage("uppdatera (datorfönster)"),
+            MessageLookupByLibrary.simpleMessage("仅限非敏感内容（远程仅点赞）"),
+        "recipient": MessageLookupByLibrary.simpleMessage("收件人"),
+        "refresh": MessageLookupByLibrary.simpleMessage("刷新"),
         "registration": MessageLookupByLibrary.simpleMessage("Registration"),
         "registrationClosed": MessageLookupByLibrary.simpleMessage("closed"),
         "registrationOpen": MessageLookupByLibrary.simpleMessage("open"),
-        "remote": MessageLookupByLibrary.simpleMessage("på distans"),
-        "rename": MessageLookupByLibrary.simpleMessage("byta namn på"),
-        "renameFile": MessageLookupByLibrary.simpleMessage("Byt namn på fil"),
-        "renameFolder":
-            MessageLookupByLibrary.simpleMessage("Byt namn på en mapp"),
-        "replyNoteHint":
-            MessageLookupByLibrary.simpleMessage("Svara på detta inlägg..."),
-        "replyNoteText":
-            MessageLookupByLibrary.simpleMessage("Svara på ett inlägg"),
-        "saveFailed":
-            MessageLookupByLibrary.simpleMessage("misslyckas med att spara"),
-        "saveImage": MessageLookupByLibrary.simpleMessage("Spara bild"),
-        "saveSuccess":
-            MessageLookupByLibrary.simpleMessage("Spara framgångsrikt"),
-        "search": MessageLookupByLibrary.simpleMessage("leta efter något"),
-        "searchAll": MessageLookupByLibrary.simpleMessage("full"),
-        "searchHost": MessageLookupByLibrary.simpleMessage("Ange domännamn"),
-        "searchLocal": MessageLookupByLibrary.simpleMessage("denna webbplats"),
-        "searchRemote": MessageLookupByLibrary.simpleMessage("på distans"),
+        "remote": MessageLookupByLibrary.simpleMessage("远程"),
+        "rename": MessageLookupByLibrary.simpleMessage("重命名"),
+        "renameFile": MessageLookupByLibrary.simpleMessage("重命名文件"),
+        "renameFolder": MessageLookupByLibrary.simpleMessage("重命名文件夹"),
+        "replyNoteHint": MessageLookupByLibrary.simpleMessage("回复这个帖子..."),
+        "replyNoteText": MessageLookupByLibrary.simpleMessage("回复帖子"),
+        "saveFailed": MessageLookupByLibrary.simpleMessage("保存失败"),
+        "saveImage": MessageLookupByLibrary.simpleMessage("保存图片"),
+        "saveSuccess": MessageLookupByLibrary.simpleMessage("保存成功"),
+        "search": MessageLookupByLibrary.simpleMessage("搜索"),
+        "searchAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "searchHost": MessageLookupByLibrary.simpleMessage("指定域名"),
+        "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
+        "searchRemote": MessageLookupByLibrary.simpleMessage("远程"),
         "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
         "secondsAgo": m17,
-        "selectHashtag": MessageLookupByLibrary.simpleMessage("Välj tagg"),
+        "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
         "selectServer":
             MessageLookupByLibrary.simpleMessage("Please Select Your Server"),
-        "selectUser": MessageLookupByLibrary.simpleMessage("Välj användare"),
-        "sensitiveClickShow":
-            MessageLookupByLibrary.simpleMessage("Klicka för att visa"),
-        "sensitiveContent":
-            MessageLookupByLibrary.simpleMessage("Känsligt innehåll"),
-        "serverAddr": MessageLookupByLibrary.simpleMessage("serveradress"),
+        "selectUser": MessageLookupByLibrary.simpleMessage("选择用户"),
+        "sensitiveClickShow": MessageLookupByLibrary.simpleMessage("点击显示"),
+        "sensitiveContent": MessageLookupByLibrary.simpleMessage("敏感内容"),
+        "serverAddr": MessageLookupByLibrary.simpleMessage("服务器地址"),
         "serverList": MessageLookupByLibrary.simpleMessage("List of Servers"),
-        "settings": MessageLookupByLibrary.simpleMessage("ställa upp"),
-        "share": MessageLookupByLibrary.simpleMessage(
-            "dela (glädjeämnen, förmåner, privilegier etc.) med andra"),
-        "showConversation": MessageLookupByLibrary.simpleMessage("Visa dialog"),
-        "somebodyNote": MessageLookupByLibrary.simpleMessage(" inlägg"),
-        "timeline": MessageLookupByLibrary.simpleMessage("Tidslinje"),
-        "timelineGlobal":
-            MessageLookupByLibrary.simpleMessage("säkerhetsläget"),
-        "timelineHome": MessageLookupByLibrary.simpleMessage("fig. början"),
-        "timelineHybrid": MessageLookupByLibrary.simpleMessage("socialisering"),
-        "timelineLocal": MessageLookupByLibrary.simpleMessage("denna plats"),
-        "translate": MessageLookupByLibrary.simpleMessage("rendering"),
-        "uncategorized":
-            MessageLookupByLibrary.simpleMessage("Okategoriserade"),
-        "unfollow": MessageLookupByLibrary.simpleMessage("Avföljning"),
-        "updatedDate":
-            MessageLookupByLibrary.simpleMessage("Datum för uppdatering"),
+        "settings": MessageLookupByLibrary.simpleMessage("设置"),
+        "share": MessageLookupByLibrary.simpleMessage("分享"),
+        "showConversation": MessageLookupByLibrary.simpleMessage("查看对话"),
+        "somebodyNote": MessageLookupByLibrary.simpleMessage(" 的帖子"),
+        "timeline": MessageLookupByLibrary.simpleMessage("时间线"),
+        "timelineGlobal": MessageLookupByLibrary.simpleMessage("全局"),
+        "timelineHome": MessageLookupByLibrary.simpleMessage("首页"),
+        "timelineHybrid": MessageLookupByLibrary.simpleMessage("社交"),
+        "timelineLocal": MessageLookupByLibrary.simpleMessage("本地"),
+        "translate": MessageLookupByLibrary.simpleMessage("翻译"),
+        "uncategorized": MessageLookupByLibrary.simpleMessage("未分类"),
+        "unfollow": MessageLookupByLibrary.simpleMessage("取消关注"),
+        "updatedDate": MessageLookupByLibrary.simpleMessage("更新日期"),
         "uploadFailed": m18,
-        "uploadFromUrl":
-            MessageLookupByLibrary.simpleMessage("Ladda upp från webbplatsen"),
-        "user": MessageLookupByLibrary.simpleMessage("användare"),
-        "userAll": MessageLookupByLibrary.simpleMessage("full"),
-        "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage(
-            "Denna användare har ännu inte presenterat sig"),
-        "userFile":
-            MessageLookupByLibrary.simpleMessage("bifogad fil (e-post)"),
-        "userHot": MessageLookupByLibrary.simpleMessage("användare"),
-        "userNote": MessageLookupByLibrary.simpleMessage("kort"),
-        "userRegisterBy": MessageLookupByLibrary.simpleMessage("registrerad i"),
-        "userWidgetUnSupport": MessageLookupByLibrary.simpleMessage(
-            "Lista över widgets (oavslutad)"),
-        "username": MessageLookupByLibrary.simpleMessage("Användar-ID"),
+        "uploadFromUrl": MessageLookupByLibrary.simpleMessage("从网址上传"),
+        "user": MessageLookupByLibrary.simpleMessage("用户"),
+        "userAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "userDescriptionIsNull":
+            MessageLookupByLibrary.simpleMessage("此用户尚无自我介绍"),
+        "userFile": MessageLookupByLibrary.simpleMessage("附件"),
+        "userHot": MessageLookupByLibrary.simpleMessage("用户"),
+        "userNote": MessageLookupByLibrary.simpleMessage("帖子"),
+        "userRegisterBy": MessageLookupByLibrary.simpleMessage("注册于"),
+        "userWidgetUnSupport":
+            MessageLookupByLibrary.simpleMessage("小部件列表(未完成)"),
+        "username": MessageLookupByLibrary.simpleMessage("用户名"),
         "usersCount": MessageLookupByLibrary.simpleMessage("Users Count"),
-        "video": MessageLookupByLibrary.simpleMessage("video"),
-        "view": MessageLookupByLibrary.simpleMessage("checka ut"),
-        "viewMore": MessageLookupByLibrary.simpleMessage("Visa mer"),
-        "vote": MessageLookupByLibrary.simpleMessage("folkomröstning"),
+        "video": MessageLookupByLibrary.simpleMessage("视频"),
+        "view": MessageLookupByLibrary.simpleMessage("查看"),
+        "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
+        "vote": MessageLookupByLibrary.simpleMessage("投票"),
         "voteAllCount": m19,
         "voteCount": m20,
-        "voteDueDate": MessageLookupByLibrary.simpleMessage("brytdatum"),
-        "voteEnableMultiChoice":
-            MessageLookupByLibrary.simpleMessage("Flera röster tillåtna"),
-        "voteExpired":
-            MessageLookupByLibrary.simpleMessage("Omröstningen är avslutad."),
-        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("permanent"),
-        "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
-            "Antalet röster får inte understiga två"),
+        "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
+        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
+        "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
+        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
+        "voteOptionAtLeastTwo":
+            MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
         "voteOptionHint": m21,
         "voteOptionNullIndex": m22,
-        "voteResult": MessageLookupByLibrary.simpleMessage(
-            "Röstningsresultat har genererats"),
+        "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
         "voteWillExpired": m23,
         "yearsAgo": m24
       };

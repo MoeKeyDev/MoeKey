@@ -95,7 +95,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "clipFavorite": MessageLookupByLibrary.simpleMessage("즐겨찾기에 추가"),
         "clipFavoriteList": MessageLookupByLibrary.simpleMessage("즐겨찾기"),
         "clipRemove": MessageLookupByLibrary.simpleMessage("클립 해제"),
+        "clipUpdate": MessageLookupByLibrary.simpleMessage("스티커 메모 업데이트"),
         "clips": MessageLookupByLibrary.simpleMessage("클립"),
+        "close": MessageLookupByLibrary.simpleMessage("关闭"),
         "confirmSelection": m0,
         "copyContent": MessageLookupByLibrary.simpleMessage("내용 복사"),
         "copyLink": MessageLookupByLibrary.simpleMessage("링크 복사"),
@@ -165,6 +167,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "local": MessageLookupByLibrary.simpleMessage("로컬"),
         "localUpload": MessageLookupByLibrary.simpleMessage("장치에서 업로드"),
         "login": MessageLookupByLibrary.simpleMessage("로그인"),
+        "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("로그인 실패"),
         "loginFailedWithAppCreate":
             MessageLookupByLibrary.simpleMessage("로그인 실패: 응용 프로그램 생성 실패"),

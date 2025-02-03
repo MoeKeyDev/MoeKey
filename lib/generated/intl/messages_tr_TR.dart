@@ -21,366 +21,300 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'tr_TR';
 
   static String m0(selectListLength, maxSelect) =>
-      "${selectListLength}${maxSelect}Belirle ( / )";
+      "确定(${selectListLength}/${maxSelect})";
 
-  static String m1(error) => "\n\n ${error}Yaratılış Başarısız";
+  static String m1(error) => "创建失败\n\n ${error}";
 
-  static String m2(days) => "${days}günler önce";
+  static String m2(days) => "${days}天前";
 
-  static String m3(thing) => "${thing}\" \" silmek ister misiniz?";
+  static String m3(thing) => "要删掉「${thing}」吗？";
 
-  static String m4(name) =>
-      "${name}\" \" dosyasını silmek ister misiniz? Bu dosyanın ekli olduğu gönderiler de silinecektir.";
+  static String m4(name) => "要删除「${name}」文件吗？附加此文件的帖子也会被删除。";
 
-  static String m5(name) =>
-      "${name}\" \" klasörünü silmek mi istiyorsunuz? Klasörde içerik varsa, lütfen önce klasörün içeriğini silin.";
+  static String m5(name) => "要删除「${name}」文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。";
 
   static String m6(day, hour, minute, second) =>
-      "${day}${hour}${minute}${second}Gün saat dakika saniye";
+      "${day}天${hour}小时${minute}分钟${second}秒";
 
-  static String m7(hour, minute, second) =>
-      "${hour}${minute}${second}Saat Dakika Saniye";
+  static String m7(hour, minute, second) => "${hour}小时${minute}分钟${second}秒";
 
-  static String m8(minute, second) => "${minute}${second}Dakika saniye";
+  static String m8(minute, second) => "${minute}分钟${second}秒";
 
-  static String m9(second) =>
-      "${second}bir derecenin altmışta birine eşdeğer açı veya yay birimi";
+  static String m9(second) => "${second}秒";
 
-  static String m10(error) => "\n\n${error}Gönderi gönderilemedi";
+  static String m10(error) => "发送帖子失败\n\n${error}";
 
-  static String m11(hours) => "${hours}saatler önce";
+  static String m11(hours) => "${hours}小时前";
 
-  static String m12(server) => "${server}Şu anda oturum açmış durumda";
+  static String m12(server) => "正在登录${server}";
 
-  static String m13(minutes) => "${minutes}dakikalar önce";
+  static String m13(minutes) => "${minutes}分钟前";
 
-  static String m14(months) => "${months}aylar önce";
+  static String m14(months) => "${months}个月前";
 
-  static String m15(language) => "${language}Ş \nuradan şuraya çevir";
+  static String m15(language) => "从${language}翻译 \n";
 
-  static String m16(type) => "${type}Desteklenmeyen bildirim türleri:";
+  static String m16(type) => "不支持的通知类型:${type}";
 
-  static String m17(seconds) => "${seconds}saniye önce";
+  static String m17(seconds) => "${seconds}秒前";
 
-  static String m18(msg) => "\n ${msg}Yükleme başarısız";
+  static String m18(msg) => "上传失败\n ${msg}";
 
-  static String m19(count) => "${count}Toplam oy sayısı";
+  static String m19(count) => "总票数 ${count}";
 
-  static String m20(count) => "${count}fidye için tutulan kişi";
+  static String m20(count) => "${count}票";
 
-  static String m21(index) => "${index}Seçenekler";
+  static String m21(index) => "选项${index}";
 
-  static String m22(index) => "${index}Seçenek boş olamaz";
+  static String m22(index) => "选项${index}不能为空";
 
-  static String m23(datetime) => "${datetime}kapanış sonrası tarih";
+  static String m23(datetime) => "${datetime}后截止";
 
-  static String m24(years) => "${years}yıllar önce";
+  static String m24(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "account": MessageLookupByLibrary.simpleMessage("kullanıcı adı"),
-        "add": MessageLookupByLibrary.simpleMessage("artış"),
-        "addAccount": MessageLookupByLibrary.simpleMessage("Hesap Ekle"),
-        "addFile": MessageLookupByLibrary.simpleMessage("Dosya ekle"),
-        "addTitle": MessageLookupByLibrary.simpleMessage("Başlık Ekle"),
-        "all": MessageLookupByLibrary.simpleMessage("Tam"),
-        "announcementActive":
-            MessageLookupByLibrary.simpleMessage("Duyuru şimdi"),
-        "announcementExpired":
-            MessageLookupByLibrary.simpleMessage("Geçmiş Duyurular"),
-        "announcements": MessageLookupByLibrary.simpleMessage("BÜLTEN"),
-        "back": MessageLookupByLibrary.simpleMessage("geri gel (veya git)"),
-        "cancel": MessageLookupByLibrary.simpleMessage("İPTALLER"),
-        "cancelSensitive": MessageLookupByLibrary.simpleMessage(
-            "Hassas içeriğin etiketini kaldırın"),
-        "clip": MessageLookupByLibrary.simpleMessage("memo"),
-        "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
-            "Koleksiyonu iptal etmek istediğinizden emin misiniz?"),
-        "clipCreate":
-            MessageLookupByLibrary.simpleMessage("Yeni Yapışkan Notlar"),
-        "clipFavorite": MessageLookupByLibrary.simpleMessage("Favorilere ekle"),
-        "clipFavoriteList":
-            MessageLookupByLibrary.simpleMessage("yer imi (İnternet)"),
-        "clipRemove":
-            MessageLookupByLibrary.simpleMessage("Yapışkan Notları Kaldırma"),
-        "clips": MessageLookupByLibrary.simpleMessage("memo"),
+        "account": MessageLookupByLibrary.simpleMessage("账号"),
+        "add": MessageLookupByLibrary.simpleMessage("添加"),
+        "addAccount": MessageLookupByLibrary.simpleMessage("添加账号"),
+        "addFile": MessageLookupByLibrary.simpleMessage("添加文件"),
+        "addTitle": MessageLookupByLibrary.simpleMessage("添加标题"),
+        "all": MessageLookupByLibrary.simpleMessage("全部"),
+        "announcementActive": MessageLookupByLibrary.simpleMessage("现在的公告"),
+        "announcementExpired": MessageLookupByLibrary.simpleMessage("过去的公告"),
+        "announcements": MessageLookupByLibrary.simpleMessage("公告"),
+        "back": MessageLookupByLibrary.simpleMessage("返回"),
+        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "cancelSensitive": MessageLookupByLibrary.simpleMessage("取消标记为敏感内容"),
+        "clip": MessageLookupByLibrary.simpleMessage("便签"),
+        "clipCancelFavoriteText":
+            MessageLookupByLibrary.simpleMessage("确定要取消收藏吗？"),
+        "clipCreate": MessageLookupByLibrary.simpleMessage("新建便签"),
+        "clipFavorite": MessageLookupByLibrary.simpleMessage("添加到收藏"),
+        "clipFavoriteList": MessageLookupByLibrary.simpleMessage("收藏"),
+        "clipRemove": MessageLookupByLibrary.simpleMessage("移除便签"),
+        "clipUpdate": MessageLookupByLibrary.simpleMessage(
+            "Yapışkan Notları Güncelleyin"),
+        "clips": MessageLookupByLibrary.simpleMessage("便签"),
+        "close": MessageLookupByLibrary.simpleMessage("关闭"),
         "confirmSelection": m0,
-        "copyContent": MessageLookupByLibrary.simpleMessage("İçeriği kopyala"),
-        "copyLink": MessageLookupByLibrary.simpleMessage("Bağlantıyı kopyala"),
-        "copyRSS": MessageLookupByLibrary.simpleMessage("RSS Kopyala"),
-        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage(
-            "Kullanıcının ana sayfasının adresini kopyalayın"),
-        "copyUsername":
-            MessageLookupByLibrary.simpleMessage("Kullanıcı Adını Kopyala"),
-        "createFolder": MessageLookupByLibrary.simpleMessage("Yeni Klasör"),
-        "createNote":
-            MessageLookupByLibrary.simpleMessage("Yeni bir başlık açın"),
-        "createNoteFormFile": MessageLookupByLibrary.simpleMessage(
-            "Bir dosyadan gönderi oluşturma"),
-        "createNoteHint": MessageLookupByLibrary.simpleMessage("Ne oldu?"),
-        "createdDate":
-            MessageLookupByLibrary.simpleMessage("Oluşturulma tarihi"),
+        "copyContent": MessageLookupByLibrary.simpleMessage("复制内容"),
+        "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
+        "copyRSS": MessageLookupByLibrary.simpleMessage("复制RSS"),
+        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage("复制用户主页地址"),
+        "copyUsername": MessageLookupByLibrary.simpleMessage("复制用户名"),
+        "createFolder": MessageLookupByLibrary.simpleMessage("新建文件夹"),
+        "createNote": MessageLookupByLibrary.simpleMessage("发布新帖子"),
+        "createNoteFormFile": MessageLookupByLibrary.simpleMessage("从文件创建帖子"),
+        "createNoteHint": MessageLookupByLibrary.simpleMessage("发生了什么..."),
+        "createdDate": MessageLookupByLibrary.simpleMessage("创建日期"),
         "creationFailedDialog": m1,
-        "cw": MessageLookupByLibrary.simpleMessage("GİZLİ İÇERİK"),
-        "day": MessageLookupByLibrary.simpleMessage("gökyüzü"),
+        "cw": MessageLookupByLibrary.simpleMessage("隐藏内容"),
+        "day": MessageLookupByLibrary.simpleMessage("天"),
         "daysAgo": m2,
-        "delete": MessageLookupByLibrary.simpleMessage("Kaldırma"),
+        "delete": MessageLookupByLibrary.simpleMessage("删除"),
         "deleteConfirm": m3,
         "deleteFileConfirmation": m4,
         "deleteFolderConfirmation": m5,
-        "description": MessageLookupByLibrary.simpleMessage("AÇIKLAMALAR"),
-        "done": MessageLookupByLibrary.simpleMessage("yerine getirmek"),
-        "download": MessageLookupByLibrary.simpleMessage("indiriliyor"),
-        "drive": MessageLookupByLibrary.simpleMessage("bulut dosya depolama"),
+        "description": MessageLookupByLibrary.simpleMessage("描述"),
+        "done": MessageLookupByLibrary.simpleMessage("完成"),
+        "download": MessageLookupByLibrary.simpleMessage("下载"),
+        "drive": MessageLookupByLibrary.simpleMessage("网盘"),
         "durationDay": m6,
         "durationHour": m7,
         "durationMinute": m8,
         "durationSecond": m9,
-        "edit": MessageLookupByLibrary.simpleMessage("derleyici"),
-        "emoji": MessageLookupByLibrary.simpleMessage("İfade"),
-        "enterNewFileName": MessageLookupByLibrary.simpleMessage(
-            "Lütfen yeni bir dosya adı girin"),
-        "enterNewTitle": MessageLookupByLibrary.simpleMessage(
-            "Lütfen yeni bir başlık girin"),
-        "enterUrl":
-            MessageLookupByLibrary.simpleMessage("Lütfen URL\'yi girin"),
-        "exceptionContentNull":
-            MessageLookupByLibrary.simpleMessage("İçerik boş olamaz"),
-        "exceptionCwNull":
-            MessageLookupByLibrary.simpleMessage("İçerik boş olamaz"),
+        "edit": MessageLookupByLibrary.simpleMessage("编辑"),
+        "emoji": MessageLookupByLibrary.simpleMessage("表情符号"),
+        "enterNewFileName": MessageLookupByLibrary.simpleMessage("请输入新文件名"),
+        "enterNewTitle": MessageLookupByLibrary.simpleMessage("请输入新标题"),
+        "enterUrl": MessageLookupByLibrary.simpleMessage("请输入URL"),
+        "exceptionContentNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
+        "exceptionCwNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
         "exceptionSendNote": m10,
-        "explore": MessageLookupByLibrary.simpleMessage("keşifler"),
-        "exploreHot": MessageLookupByLibrary.simpleMessage("moda"),
-        "exploreUserHot":
-            MessageLookupByLibrary.simpleMessage("popüler kullanıcı"),
-        "exploreUserLast": MessageLookupByLibrary.simpleMessage(
-            "Son giriş yapan kullanıcılar"),
-        "exploreUserPined": MessageLookupByLibrary.simpleMessage(
-            "listenin en üstündeki kullanıcı"),
-        "exploreUserUpdated":
-            MessageLookupByLibrary.simpleMessage("Son Katkıda Bulunanlar"),
-        "exploreUsers": MessageLookupByLibrary.simpleMessage("kullanıcı"),
-        "favorite": MessageLookupByLibrary.simpleMessage("yer imi (İnternet)"),
+        "explore": MessageLookupByLibrary.simpleMessage("发现"),
+        "exploreHot": MessageLookupByLibrary.simpleMessage("热门"),
+        "exploreUserHot": MessageLookupByLibrary.simpleMessage("热门用户"),
+        "exploreUserLast": MessageLookupByLibrary.simpleMessage("最近登录的用户"),
+        "exploreUserPined": MessageLookupByLibrary.simpleMessage("置顶用户"),
+        "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿的用户"),
+        "exploreUsers": MessageLookupByLibrary.simpleMessage("用户"),
+        "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
         "filter": MessageLookupByLibrary.simpleMessage("Filter"),
-        "folderName": MessageLookupByLibrary.simpleMessage("Klasör adı"),
-        "follow": MessageLookupByLibrary.simpleMessage("odaklanma"),
-        "followed": MessageLookupByLibrary.simpleMessage("Takip edildi"),
-        "followers": MessageLookupByLibrary.simpleMessage("gözlemci"),
-        "following": MessageLookupByLibrary.simpleMessage("Endişeli"),
-        "fromCloud": MessageLookupByLibrary.simpleMessage("Netbook\'tan"),
+        "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
+        "follow": MessageLookupByLibrary.simpleMessage("关注"),
+        "followed": MessageLookupByLibrary.simpleMessage("已关注"),
+        "followers": MessageLookupByLibrary.simpleMessage("关注者"),
+        "following": MessageLookupByLibrary.simpleMessage("关注中"),
+        "fromCloud": MessageLookupByLibrary.simpleMessage("从网盘中"),
         "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
-        "hashtag": MessageLookupByLibrary.simpleMessage("hashtag"),
-        "hostnames": MessageLookupByLibrary.simpleMessage("alan adı"),
-        "hour": MessageLookupByLibrary.simpleMessage("saat"),
+        "hashtag": MessageLookupByLibrary.simpleMessage("话题标签"),
+        "hostnames": MessageLookupByLibrary.simpleMessage("域名"),
+        "hour": MessageLookupByLibrary.simpleMessage("小时"),
         "hoursAgo": m11,
-        "image": MessageLookupByLibrary.simpleMessage("Fotoğraf"),
-        "inputServer":
-            MessageLookupByLibrary.simpleMessage("Manuel giriş sunucusu"),
-        "insertDriverFile": MessageLookupByLibrary.simpleMessage(
-            "Aksesuarların yerleştirilmesi"),
-        "isFollowingYouNow":
-            MessageLookupByLibrary.simpleMessage("Seni izliyorum."),
-        "justNow": MessageLookupByLibrary.simpleMessage("yakın zamanda"),
-        "keepOriginal":
-            MessageLookupByLibrary.simpleMessage("Orijinal görüntüyü koruyun"),
+        "image": MessageLookupByLibrary.simpleMessage("图片"),
+        "inputServer": MessageLookupByLibrary.simpleMessage("手动输入服务器"),
+        "insertDriverFile": MessageLookupByLibrary.simpleMessage("插入附件"),
+        "isFollowingYouNow": MessageLookupByLibrary.simpleMessage("正在关注你"),
+        "justNow": MessageLookupByLibrary.simpleMessage("刚刚"),
+        "keepOriginal": MessageLookupByLibrary.simpleMessage("保留原图"),
         "loadingServers":
             MessageLookupByLibrary.simpleMessage("Server Loading"),
-        "local": MessageLookupByLibrary.simpleMessage("bu bölge"),
-        "localUpload": MessageLookupByLibrary.simpleMessage("yerel yükleme"),
-        "login": MessageLookupByLibrary.simpleMessage("oturum aç"),
-        "loginFailed": MessageLookupByLibrary.simpleMessage("Giriş Hatası"),
-        "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
-            "Oturum Açma Başarısız: Uygulama Oluşturma Başarısız"),
-        "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
-            "Oturum açma başarısız oldu: belirteç edinme başarısız oldu"),
+        "local": MessageLookupByLibrary.simpleMessage("本地"),
+        "localUpload": MessageLookupByLibrary.simpleMessage("本地上传"),
+        "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
+        "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
+        "loginFailedWithAppCreate":
+            MessageLookupByLibrary.simpleMessage("登录失败: 应用创建失败"),
+        "loginFailedWithToken":
+            MessageLookupByLibrary.simpleMessage("登录失败: token获取失败"),
         "loginLoading": m12,
-        "loginSuccess": MessageLookupByLibrary.simpleMessage("Giriş Başarılı"),
-        "manageAccount": MessageLookupByLibrary.simpleMessage("Hesabı Yönet"),
-        "markAsSensitive": MessageLookupByLibrary.simpleMessage(
-            "Hassas içerik olarak işaretle"),
-        "mention":
-            MessageLookupByLibrary.simpleMessage("yükseltmek (bir konu)"),
-        "minute": MessageLookupByLibrary.simpleMessage("dakika"),
+        "loginSuccess": MessageLookupByLibrary.simpleMessage("登录成功"),
+        "manageAccount": MessageLookupByLibrary.simpleMessage("管理账号"),
+        "markAsSensitive": MessageLookupByLibrary.simpleMessage("标记为敏感内容"),
+        "mention": MessageLookupByLibrary.simpleMessage("提及"),
+        "minute": MessageLookupByLibrary.simpleMessage("分钟"),
         "minutesAgo": m13,
         "monthsAgo": m14,
-        "more": MessageLookupByLibrary.simpleMessage("daha fazla"),
-        "myCLips": MessageLookupByLibrary.simpleMessage("Benim notum."),
-        "name": MessageLookupByLibrary.simpleMessage("isim (bir şeyin)"),
-        "nameCannotBeEmpty":
-            MessageLookupByLibrary.simpleMessage("İsim boş olamaz"),
-        "next": MessageLookupByLibrary.simpleMessage("bir sonraki adım"),
+        "more": MessageLookupByLibrary.simpleMessage("更多"),
+        "myCLips": MessageLookupByLibrary.simpleMessage("我的便签"),
+        "name": MessageLookupByLibrary.simpleMessage("名称"),
+        "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
+        "next": MessageLookupByLibrary.simpleMessage("下一步"),
         "noLists":
             MessageLookupByLibrary.simpleMessage("You don\'t have any lists"),
-        "notFindServer":
-            MessageLookupByLibrary.simpleMessage("Sunucunuzu bulamadınız mı?"),
-        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
-            "Bu sitenin bağlantısını kopyalayın"),
-        "noteCwHide": MessageLookupByLibrary.simpleMessage("bir kenara koy"),
-        "noteCwShow": MessageLookupByLibrary.simpleMessage("İçeriği görüntüle"),
+        "notFindServer": MessageLookupByLibrary.simpleMessage("没有找到你所在的服务器？"),
+        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
+        "noteCwHide": MessageLookupByLibrary.simpleMessage("收起"),
+        "noteCwShow": MessageLookupByLibrary.simpleMessage("显示内容"),
         "noteFormLanguageTranslation": m15,
-        "noteLocalOnly":
-            MessageLookupByLibrary.simpleMessage("Ortak çalışmalara katılmama"),
-        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage(
-            "Görüntülemek için ana sunucuya gidin"),
-        "notePined": MessageLookupByLibrary.simpleMessage("En İyi Mesajlar"),
-        "noteQuote": MessageLookupByLibrary.simpleMessage("alıntı"),
-        "noteReNote": MessageLookupByLibrary.simpleMessage(
-            "yönlendirme (posta, SMS, veri paketleri)"),
-        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("İletildi."),
-        "noteTranslate":
-            MessageLookupByLibrary.simpleMessage("Gönderilerin çevirisi"),
-        "noteVisibility": MessageLookupByLibrary.simpleMessage("görünürlük"),
-        "noteVisibilityFollowers":
-            MessageLookupByLibrary.simpleMessage("gözlemci"),
+        "noteLocalOnly": MessageLookupByLibrary.simpleMessage("不参与联合"),
+        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("转到所在服务器显示"),
+        "notePined": MessageLookupByLibrary.simpleMessage("已置顶的帖子"),
+        "noteQuote": MessageLookupByLibrary.simpleMessage("引用"),
+        "noteReNote": MessageLookupByLibrary.simpleMessage("转发"),
+        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("转发了"),
+        "noteTranslate": MessageLookupByLibrary.simpleMessage("翻译帖子"),
+        "noteVisibility": MessageLookupByLibrary.simpleMessage("可见性"),
+        "noteVisibilityFollowers": MessageLookupByLibrary.simpleMessage("关注者"),
         "noteVisibilityFollowersText":
-            MessageLookupByLibrary.simpleMessage("Yalnızca takipçilere gönder"),
-        "noteVisibilityHome":
-            MessageLookupByLibrary.simpleMessage("şekil. başlangıç"),
-        "noteVisibilityHomeText": MessageLookupByLibrary.simpleMessage(
-            "Zaman çizelgesi yalnızca ana sayfaya gönderilir"),
-        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("Açıkça"),
-        "noteVisibilityPublicText": MessageLookupByLibrary.simpleMessage(
-            "Gönderiniz küresel zaman akışında görünecektir"),
-        "noteVisibilitySpecified":
-            MessageLookupByLibrary.simpleMessage("ÖZEL MEKTUP"),
-        "noteVisibilitySpecifiedText": MessageLookupByLibrary.simpleMessage(
-            "Yalnızca belirtilen kullanıcılara gönder"),
-        "notes": MessageLookupByLibrary.simpleMessage("kart"),
+            MessageLookupByLibrary.simpleMessage("仅发送至关注者"),
+        "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("首页"),
+        "noteVisibilityHomeText":
+            MessageLookupByLibrary.simpleMessage("仅发送至首页的时间线"),
+        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("公开"),
+        "noteVisibilityPublicText":
+            MessageLookupByLibrary.simpleMessage("您的帖子将出现在全局时间线上"),
+        "noteVisibilitySpecified": MessageLookupByLibrary.simpleMessage("私信"),
+        "noteVisibilitySpecifiedText":
+            MessageLookupByLibrary.simpleMessage("仅发送至指定用户"),
+        "notes": MessageLookupByLibrary.simpleMessage("帖子"),
         "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
-        "notification": MessageLookupByLibrary.simpleMessage("BİLDİRİMLER"),
-        "notifications": MessageLookupByLibrary.simpleMessage("BİLDİRİMLER"),
-        "notifyAll": MessageLookupByLibrary.simpleMessage("Tam"),
-        "notifyFilter": MessageLookupByLibrary.simpleMessage("tarama"),
-        "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
-            "İlgi talebiniz onaylanmıştır."),
-        "notifyFollowedYou":
-            MessageLookupByLibrary.simpleMessage("Yeni takipçileriniz var."),
-        "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
-            "Hepsini okundu olarak işaretle"),
-        "notifyMention":
-            MessageLookupByLibrary.simpleMessage("Benimkinden bahsetmişken"),
-        "notifyMessage": MessageLookupByLibrary.simpleMessage("ÖZEL MEKTUP"),
+        "notification": MessageLookupByLibrary.simpleMessage("通知"),
+        "notifications": MessageLookupByLibrary.simpleMessage("通知"),
+        "notifyAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "notifyFilter": MessageLookupByLibrary.simpleMessage("筛选"),
+        "notifyFollowedAccepted":
+            MessageLookupByLibrary.simpleMessage("你的关注请求被通过了"),
+        "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("你有新的关注者"),
+        "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全部标记为已读"),
+        "notifyMention": MessageLookupByLibrary.simpleMessage("提到我的"),
+        "notifyMessage": MessageLookupByLibrary.simpleMessage("私信"),
         "notifyNotSupport": m16,
-        "ok": MessageLookupByLibrary.simpleMessage("tanımlamak"),
-        "openInNewTab":
-            MessageLookupByLibrary.simpleMessage("Tarayıcı Ekranına Git"),
-        "overviews": MessageLookupByLibrary.simpleMessage("gözden geçirin"),
-        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage(
-            "Taleplerin kabul edilmesine ilişkin endişeler"),
-        "preview": MessageLookupByLibrary.simpleMessage("önizlemeler"),
-        "previewNote":
-            MessageLookupByLibrary.simpleMessage("Önizleme Gönderileri"),
-        "processing": MessageLookupByLibrary.simpleMessage("devam ediyor"),
-        "public": MessageLookupByLibrary.simpleMessage("Açıkça"),
-        "publish": MessageLookupByLibrary.simpleMessage("POST"),
-        "reNoteHint": MessageLookupByLibrary.simpleMessage(
-            "Bu yazıdan alıntı yapıyorum."),
-        "reNoteText": MessageLookupByLibrary.simpleMessage("Alıntı Mesaj"),
-        "reaction": MessageLookupByLibrary.simpleMessage("yanıt"),
-        "reactionAccepting": MessageLookupByLibrary.simpleMessage(
-            "Emoji Yanıtlarını Kabul Etme"),
-        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("Tam"),
+        "ok": MessageLookupByLibrary.simpleMessage("确定"),
+        "openInNewTab": MessageLookupByLibrary.simpleMessage("转到浏览器显示"),
+        "overviews": MessageLookupByLibrary.simpleMessage("概览"),
+        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage("关注请求批准中"),
+        "preview": MessageLookupByLibrary.simpleMessage("预览"),
+        "previewNote": MessageLookupByLibrary.simpleMessage("预览帖子"),
+        "processing": MessageLookupByLibrary.simpleMessage("处理中"),
+        "public": MessageLookupByLibrary.simpleMessage("公开"),
+        "publish": MessageLookupByLibrary.simpleMessage("发布"),
+        "reNoteHint": MessageLookupByLibrary.simpleMessage("引用这个帖子..."),
+        "reNoteText": MessageLookupByLibrary.simpleMessage("引用帖子"),
+        "reaction": MessageLookupByLibrary.simpleMessage("回应"),
+        "reactionAccepting": MessageLookupByLibrary.simpleMessage("接受表情回应"),
+        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("全部"),
         "reactionAcceptingLikeOnly":
-            MessageLookupByLibrary.simpleMessage("Sadece seviyor"),
+            MessageLookupByLibrary.simpleMessage("仅点赞"),
         "reactionAcceptingLikeOnlyRemote":
-            MessageLookupByLibrary.simpleMessage("Sadece Uzaktan Kudos"),
-        "reactionAcceptingNoneSensitive": MessageLookupByLibrary.simpleMessage(
-            "Yalnızca hassas olmayan içerik"),
+            MessageLookupByLibrary.simpleMessage("远程仅点赞"),
+        "reactionAcceptingNoneSensitive":
+            MessageLookupByLibrary.simpleMessage("仅限非敏感内容"),
         "reactionAcceptingNoneSensitiveOrLocal":
-            MessageLookupByLibrary.simpleMessage(
-                "Yalnızca hassas olmayan içerik (yalnızca uzaktan beğeniler)"),
-        "recipient":
-            MessageLookupByLibrary.simpleMessage("Kime: (e-posta başlığı)"),
-        "refresh": MessageLookupByLibrary.simpleMessage(
-            "yenileme (bilgisayar penceresi)"),
+            MessageLookupByLibrary.simpleMessage("仅限非敏感内容（远程仅点赞）"),
+        "recipient": MessageLookupByLibrary.simpleMessage("收件人"),
+        "refresh": MessageLookupByLibrary.simpleMessage("刷新"),
         "registration": MessageLookupByLibrary.simpleMessage("Registration"),
         "registrationClosed": MessageLookupByLibrary.simpleMessage("closed"),
         "registrationOpen": MessageLookupByLibrary.simpleMessage("open"),
-        "remote": MessageLookupByLibrary.simpleMessage("uzaktan"),
-        "rename": MessageLookupByLibrary.simpleMessage("yeniden adlandır"),
-        "renameFile":
-            MessageLookupByLibrary.simpleMessage("Dosyayı yeniden adlandır"),
-        "renameFolder": MessageLookupByLibrary.simpleMessage(
-            "Bir klasörü yeniden adlandırın"),
-        "replyNoteHint":
-            MessageLookupByLibrary.simpleMessage("Bu gönderiye cevap ver..."),
-        "replyNoteText":
-            MessageLookupByLibrary.simpleMessage("Bir gönderiye yanıt ver"),
-        "saveFailed":
-            MessageLookupByLibrary.simpleMessage("kurtarmak için başarısız"),
-        "saveImage": MessageLookupByLibrary.simpleMessage("Resmi Kaydet"),
-        "saveSuccess": MessageLookupByLibrary.simpleMessage("Başarılı Kaydet"),
-        "search": MessageLookupByLibrary.simpleMessage("bir şey aramak."),
-        "searchAll": MessageLookupByLibrary.simpleMessage("Tam"),
-        "searchHost":
-            MessageLookupByLibrary.simpleMessage("Alan adını belirtin"),
-        "searchLocal": MessageLookupByLibrary.simpleMessage("bu site"),
-        "searchRemote": MessageLookupByLibrary.simpleMessage("mesafe"),
+        "remote": MessageLookupByLibrary.simpleMessage("远程"),
+        "rename": MessageLookupByLibrary.simpleMessage("重命名"),
+        "renameFile": MessageLookupByLibrary.simpleMessage("重命名文件"),
+        "renameFolder": MessageLookupByLibrary.simpleMessage("重命名文件夹"),
+        "replyNoteHint": MessageLookupByLibrary.simpleMessage("回复这个帖子..."),
+        "replyNoteText": MessageLookupByLibrary.simpleMessage("回复帖子"),
+        "saveFailed": MessageLookupByLibrary.simpleMessage("保存失败"),
+        "saveImage": MessageLookupByLibrary.simpleMessage("保存图片"),
+        "saveSuccess": MessageLookupByLibrary.simpleMessage("保存成功"),
+        "search": MessageLookupByLibrary.simpleMessage("搜索"),
+        "searchAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "searchHost": MessageLookupByLibrary.simpleMessage("指定域名"),
+        "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
+        "searchRemote": MessageLookupByLibrary.simpleMessage("远程"),
         "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
         "secondsAgo": m17,
-        "selectHashtag": MessageLookupByLibrary.simpleMessage("Etiket Seçin"),
+        "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
         "selectServer":
             MessageLookupByLibrary.simpleMessage("Please Select Your Server"),
-        "selectUser": MessageLookupByLibrary.simpleMessage("Kullanıcı Seçin"),
-        "sensitiveClickShow":
-            MessageLookupByLibrary.simpleMessage("Göstermek için tıklayın"),
-        "sensitiveContent":
-            MessageLookupByLibrary.simpleMessage("Hassas içerik"),
-        "serverAddr": MessageLookupByLibrary.simpleMessage("sunucu adresi"),
+        "selectUser": MessageLookupByLibrary.simpleMessage("选择用户"),
+        "sensitiveClickShow": MessageLookupByLibrary.simpleMessage("点击显示"),
+        "sensitiveContent": MessageLookupByLibrary.simpleMessage("敏感内容"),
+        "serverAddr": MessageLookupByLibrary.simpleMessage("服务器地址"),
         "serverList": MessageLookupByLibrary.simpleMessage("List of Servers"),
-        "settings": MessageLookupByLibrary.simpleMessage("kurmak"),
-        "share": MessageLookupByLibrary.simpleMessage(
-            "(sevinçleri, faydaları, ayrıcalıkları vb.) başkalarıyla paylaşmak"),
-        "showConversation":
-            MessageLookupByLibrary.simpleMessage("Diyaloğu görüntüle"),
-        "somebodyNote": MessageLookupByLibrary.simpleMessage(" gönderiler"),
-        "timeline": MessageLookupByLibrary.simpleMessage("zaman çizelgesi"),
-        "timelineGlobal":
-            MessageLookupByLibrary.simpleMessage("güvenlik durumu"),
-        "timelineHome":
-            MessageLookupByLibrary.simpleMessage("şekil. başlangıç"),
-        "timelineHybrid": MessageLookupByLibrary.simpleMessage("sosyalleşme"),
-        "timelineLocal": MessageLookupByLibrary.simpleMessage("bu bölge"),
-        "translate": MessageLookupByLibrary.simpleMessage("işleme"),
-        "uncategorized":
-            MessageLookupByLibrary.simpleMessage("Kategorize edilmemiş"),
-        "unfollow": MessageLookupByLibrary.simpleMessage("Takibi bırak"),
-        "updatedDate":
-            MessageLookupByLibrary.simpleMessage("Güncelleme Tarihi"),
+        "settings": MessageLookupByLibrary.simpleMessage("设置"),
+        "share": MessageLookupByLibrary.simpleMessage("分享"),
+        "showConversation": MessageLookupByLibrary.simpleMessage("查看对话"),
+        "somebodyNote": MessageLookupByLibrary.simpleMessage(" 的帖子"),
+        "timeline": MessageLookupByLibrary.simpleMessage("时间线"),
+        "timelineGlobal": MessageLookupByLibrary.simpleMessage("全局"),
+        "timelineHome": MessageLookupByLibrary.simpleMessage("首页"),
+        "timelineHybrid": MessageLookupByLibrary.simpleMessage("社交"),
+        "timelineLocal": MessageLookupByLibrary.simpleMessage("本地"),
+        "translate": MessageLookupByLibrary.simpleMessage("翻译"),
+        "uncategorized": MessageLookupByLibrary.simpleMessage("未分类"),
+        "unfollow": MessageLookupByLibrary.simpleMessage("取消关注"),
+        "updatedDate": MessageLookupByLibrary.simpleMessage("更新日期"),
         "uploadFailed": m18,
-        "uploadFromUrl":
-            MessageLookupByLibrary.simpleMessage("Web sitesinden yükleme"),
-        "user": MessageLookupByLibrary.simpleMessage("kullanıcı"),
-        "userAll": MessageLookupByLibrary.simpleMessage("Tam"),
-        "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage(
-            "Bu kullanıcı henüz kendini tanıtmadı"),
-        "userFile": MessageLookupByLibrary.simpleMessage("ek (e-posta)"),
-        "userHot": MessageLookupByLibrary.simpleMessage("kullanıcı"),
-        "userNote": MessageLookupByLibrary.simpleMessage("kart"),
-        "userRegisterBy": MessageLookupByLibrary.simpleMessage("kayıtlı"),
-        "userWidgetUnSupport": MessageLookupByLibrary.simpleMessage(
-            "Widget listesi (tamamlanmamış)"),
-        "username": MessageLookupByLibrary.simpleMessage("kullanıcı kimliği"),
+        "uploadFromUrl": MessageLookupByLibrary.simpleMessage("从网址上传"),
+        "user": MessageLookupByLibrary.simpleMessage("用户"),
+        "userAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "userDescriptionIsNull":
+            MessageLookupByLibrary.simpleMessage("此用户尚无自我介绍"),
+        "userFile": MessageLookupByLibrary.simpleMessage("附件"),
+        "userHot": MessageLookupByLibrary.simpleMessage("用户"),
+        "userNote": MessageLookupByLibrary.simpleMessage("帖子"),
+        "userRegisterBy": MessageLookupByLibrary.simpleMessage("注册于"),
+        "userWidgetUnSupport":
+            MessageLookupByLibrary.simpleMessage("小部件列表(未完成)"),
+        "username": MessageLookupByLibrary.simpleMessage("用户名"),
         "usersCount": MessageLookupByLibrary.simpleMessage("Users Count"),
-        "video": MessageLookupByLibrary.simpleMessage("Video"),
-        "view": MessageLookupByLibrary.simpleMessage("kontrol et"),
-        "viewMore":
-            MessageLookupByLibrary.simpleMessage("Daha Fazla Görüntüle"),
-        "vote": MessageLookupByLibrary.simpleMessage("referandum"),
+        "video": MessageLookupByLibrary.simpleMessage("视频"),
+        "view": MessageLookupByLibrary.simpleMessage("查看"),
+        "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
+        "vote": MessageLookupByLibrary.simpleMessage("投票"),
         "voteAllCount": m19,
         "voteCount": m20,
-        "voteDueDate": MessageLookupByLibrary.simpleMessage("kesme tarihi"),
-        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
-            "Birden fazla oya izin verilir"),
-        "voteExpired":
-            MessageLookupByLibrary.simpleMessage("Oylama sona ermiştir."),
-        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("kalıcı olarak"),
+        "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
+        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
+        "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
+        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
         "voteOptionAtLeastTwo":
-            MessageLookupByLibrary.simpleMessage("Oy sayısı ikiden az olamaz"),
+            MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
         "voteOptionHint": m21,
         "voteOptionNullIndex": m22,
-        "voteResult": MessageLookupByLibrary.simpleMessage(
-            "Oylama sonuçları oluşturuldu"),
+        "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
         "voteWillExpired": m23,
         "yearsAgo": m24
       };

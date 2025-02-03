@@ -97,7 +97,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Add To Favorites"),
         "clipFavoriteList": MessageLookupByLibrary.simpleMessage("Favorites"),
         "clipRemove": MessageLookupByLibrary.simpleMessage("Remove Clip"),
+        "clipUpdate": MessageLookupByLibrary.simpleMessage("Update clip"),
         "clips": MessageLookupByLibrary.simpleMessage("Clips"),
+        "close": MessageLookupByLibrary.simpleMessage("关闭"),
         "confirmSelection": m0,
         "copyContent": MessageLookupByLibrary.simpleMessage("Copy Content"),
         "copyLink": MessageLookupByLibrary.simpleMessage("Copy link"),
@@ -178,6 +180,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "local": MessageLookupByLibrary.simpleMessage("Local"),
         "localUpload": MessageLookupByLibrary.simpleMessage("Local Upload"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
+        "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("Login failed"),
         "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
             "Login failed: App creation failed"),
