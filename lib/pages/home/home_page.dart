@@ -8,10 +8,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/logger.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/status/apis.dart';
+import 'package:moekey/status/global_snackbar.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/login/servers_select.dart';
+import 'package:moekey/widgets/mk_dialog.dart';
 
 import '../../generated/l10n.dart';
 import '../../main.dart';
@@ -19,6 +21,7 @@ import '../../status/misskey_api.dart';
 import '../../widgets/blur_widget.dart';
 import '../../widgets/hover_builder.dart';
 import '../../widgets/mk_image.dart';
+import '../../widgets/mk_info_dialog.dart';
 import '../../widgets/note_create_dialog/note_create_dialog.dart';
 import '../user_widgets/widgets_list/view.dart';
 
@@ -105,95 +108,120 @@ class HomePage extends HookConsumerWidget {
         //         child: const WidgetsListPage(),
         //       )
         //     : null,
-        body: Stack(
-          children: [
-            Row(
+        body: Consumer(
+          builder: (BuildContext context, WidgetRef ref, Widget? child) {
+            ref.listen(
+              globalSnackbarProvider,
+              (previous, next) {
+                if (next != null && previous != next) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return MkInfoDialog(
+                        info: next,
+                        onOk: () {
+                          ref.read(globalSnackbarProvider.notifier).hide();
+                        },
+                      );
+                    },
+                  );
+                }
+              },
+            );
+
+            return Stack(
               children: [
-                if (constraints.maxWidth >= 500)
-                  NavBar(
-                    width: constraints.maxWidth < 900 ? 80 : 250,
-                  ),
-                Expanded(
-                  child: MediaQuery(
-                    data: media.copyWith(
-                        padding: media.padding.copyWith(
-                            bottom: media.padding.bottom +
-                                (constraints.maxWidth > 500 || !isShowBottomNav
-                                    ? 16
-                                    : 100))),
-                    // child: Router(
-                    //   routerDelegate: router,
-                    //   backButtonDispatcher: RootBackButtonDispatcher(),
-                    // ),
-                    child: child,
-                  ),
-                ),
-                // if (constraints.maxWidth >= 1090) const WidgetsListPage()
-              ],
-            ),
-            if (constraints.maxWidth < 500)
-              AnimatedPositioned(
-                bottom: isShowBottomNav ? 0 : -86,
-                left: 0,
-                duration: const Duration(milliseconds: 150),
-                child: SizedBox(
-                  width: constraints.maxWidth,
-                  height: 86,
-                  child: BlurWidget(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          onPressed: _openDrawer,
-                          icon: const Icon(TablerIcons.menu_2),
-                          padding: const EdgeInsets.all(20),
-                          color: themes.fgColor,
-                          style: btnStyle,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            var logic =
-                                ref.read(homePageStateProvider.notifier);
-                            logic.changePage("timeline");
-                          },
-                          icon: const Icon(TablerIcons.home),
-                          padding: const EdgeInsets.all(20),
-                          color: themes.fgColor,
-                          style: btnStyle,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            var logic =
-                                ref.read(homePageStateProvider.notifier);
-                            logic.changePage("notifications");
-                          },
-                          icon: const Icon(TablerIcons.bell),
-                          padding: const EdgeInsets.all(20),
-                          color: themes.fgColor,
-                          style: btnStyle,
-                        ),
-                        IconButton(
-                          onPressed: _openEndDrawer,
-                          icon: const Icon(TablerIcons.apps),
-                          padding: const EdgeInsets.all(20),
-                          color: themes.fgColor,
-                          style: btnStyle,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            NoteCreateDialog.open(context: context);
-                          },
-                          icon: const Icon(TablerIcons.pencil),
-                          padding: const EdgeInsets.all(20),
-                          color: themes.fgColor,
-                          style: btnStyle,
-                        )
-                      ],
+                Row(
+                  children: [
+                    if (constraints.maxWidth >= 500)
+                      NavBar(
+                        width: constraints.maxWidth < 900 ? 80 : 250,
+                      ),
+                    Expanded(
+                      child: MediaQuery(
+                        data: media.copyWith(
+                            padding: media.padding.copyWith(
+                                bottom: media.padding.bottom +
+                                    (constraints.maxWidth > 500 ||
+                                            !isShowBottomNav
+                                        ? 16
+                                        : 100))),
+                        // child: Router(
+                        //   routerDelegate: router,
+                        //   backButtonDispatcher: RootBackButtonDispatcher(),
+                        // ),
+                        child: child ?? const SizedBox(),
+                      ),
                     ),
-                  ),
+                    // if (constraints.maxWidth >= 1090) const WidgetsListPage()
+                  ],
                 ),
-              )
-          ],
+                if (constraints.maxWidth < 500)
+                  AnimatedPositioned(
+                    bottom: isShowBottomNav ? 0 : -86,
+                    left: 0,
+                    duration: const Duration(milliseconds: 150),
+                    child: SizedBox(
+                      width: constraints.maxWidth,
+                      height: 86,
+                      child: BlurWidget(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IconButton(
+                              onPressed: _openDrawer,
+                              icon: const Icon(TablerIcons.menu_2),
+                              padding: const EdgeInsets.all(20),
+                              color: themes.fgColor,
+                              style: btnStyle,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                var logic =
+                                    ref.read(homePageStateProvider.notifier);
+                                logic.changePage("timeline");
+                              },
+                              icon: const Icon(TablerIcons.home),
+                              padding: const EdgeInsets.all(20),
+                              color: themes.fgColor,
+                              style: btnStyle,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                var logic =
+                                    ref.read(homePageStateProvider.notifier);
+                                logic.changePage("notifications");
+                              },
+                              icon: const Icon(TablerIcons.bell),
+                              padding: const EdgeInsets.all(20),
+                              color: themes.fgColor,
+                              style: btnStyle,
+                            ),
+                            IconButton(
+                              onPressed: _openEndDrawer,
+                              icon: const Icon(TablerIcons.apps),
+                              padding: const EdgeInsets.all(20),
+                              color: themes.fgColor,
+                              style: btnStyle,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                NoteCreateDialog.open(context: context);
+                              },
+                              icon: const Icon(TablerIcons.pencil),
+                              padding: const EdgeInsets.all(20),
+                              color: themes.fgColor,
+                              style: btnStyle,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+              ],
+            );
+          },
+          child: child,
         ),
       );
     });

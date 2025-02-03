@@ -61,7 +61,7 @@ class MyApp extends HookConsumerWidget {
     mediaQueryData = mediaQueryData.copyWith(textScaler: TextScaler.linear(1));
     // 获取 MediaQuery 的 platformBrightness
     var platformBrightness = MediaQuery.platformBrightnessOf(context);
-    var systemBrightness = ref.watch(systemBrightnessProvider);
+    ref.watch(systemBrightnessProvider);
     // 更新 Provider 的值
     Future.delayed(Duration.zero, () {
       ref

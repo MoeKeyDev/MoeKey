@@ -13,10 +13,12 @@ class MkInfoDialog extends HookConsumerWidget {
     super.key,
     required this.info,
     this.isError = false,
+    this.onOk,
   });
 
   final String info;
   final bool isError;
+  final Function? onOk;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,6 +52,9 @@ class MkInfoDialog extends HookConsumerWidget {
           ),
           FilledButton(
             onPressed: () {
+              if (onOk != null) {
+                onOk!();
+              }
               Navigator.of(context).pop();
             },
             style: ButtonStyle(

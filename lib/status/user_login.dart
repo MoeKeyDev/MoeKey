@@ -31,7 +31,8 @@ class ApiUserLogin extends _$ApiUserLogin {
   Future<LoginUser?> login() async {
     var host = ref.read(selectServerHostProvider);
 
-    var apis = MisskeyApis(instance: host, accessToken: "");
+    var apis =
+        MisskeyApis(instance: host, accessToken: "", onUnauthorized: null);
 
     var app = await apis.app.create();
     if (app == null) {

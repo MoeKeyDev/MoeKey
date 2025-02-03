@@ -2269,6 +2269,26 @@ class S {
       args: [],
     );
   }
+
+  /// `关闭`
+  String get close {
+    return Intl.message(
+      '关闭',
+      name: 'close',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `登录信息已经过期，请重新登录`
+  String get loginExpired {
+    return Intl.message(
+      '登录信息已经过期，请重新登录',
+      name: 'loginExpired',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -30,8 +30,8 @@ class UserFullModel with _$UserFullModel {
     @Default([]) List<dynamic> fields,
     List<AvatarDecoration>? avatarDecorations,
     String? ffVisibility,
-    String? followersVisibility,
-    String? followingVisibility,
+    FollowVisibility? followersVisibility,
+    FollowVisibility? followingVisibility,
     @Default([]) List<NoteModel> pinnedNotes,
     @Default([]) List<String> pinnedNotesIds,
     String? uri,
@@ -47,4 +47,13 @@ class UserFullModel with _$UserFullModel {
 
   factory UserFullModel.fromJson(Map<String, dynamic> json) =>
       _$UserFullModelFromJson(json);
+}
+
+enum FollowVisibility {
+  @JsonValue("followers")
+  FOLLOWERS,
+  @JsonValue("private")
+  PRIVATE,
+  @JsonValue("public")
+  PUBLIC
 }

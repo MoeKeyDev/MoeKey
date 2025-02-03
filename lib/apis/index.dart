@@ -14,8 +14,13 @@ class MisskeyApis {
   MisskeyApis({
     required this.instance,
     required this.accessToken,
+    required this.onUnauthorized,
   }) {
-    client = MisskeyApisHttpClient(host: instance, accessToken: accessToken);
+    client = MisskeyApisHttpClient(
+      host: instance,
+      accessToken: accessToken,
+      onUnauthorized: onUnauthorized,
+    );
     account = AccountService(client: client);
     app = AppService(client: client);
     auth = AuthService(client: client);
@@ -30,6 +35,7 @@ class MisskeyApis {
 
   String instance;
   String accessToken;
+  Function? onUnauthorized;
   late MisskeyApisHttpClient client;
   late AccountService account;
   late AppService app;
