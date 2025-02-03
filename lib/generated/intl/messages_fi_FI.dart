@@ -21,300 +21,379 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'fi_FI';
 
   static String m0(selectListLength, maxSelect) =>
-      "确定(${selectListLength}/${maxSelect})";
+      "${selectListLength}${maxSelect}Määritä ( / )";
 
-  static String m1(error) => "创建失败\n\n ${error}";
+  static String m1(error) => "\n\n ${error}Luominen epäonnistui";
 
-  static String m2(days) => "${days}天前";
+  static String m2(days) => "${days}päivää sitten";
 
-  static String m3(thing) => "要删掉「${thing}」吗？";
+  static String m3(thing) => "${thing}Haluatko poistaa \" \"?";
 
-  static String m4(name) => "要删除「${name}」文件吗？附加此文件的帖子也会被删除。";
+  static String m4(name) =>
+      "${name}Haluatko poistaa tiedoston \" \"? Viestit, joihin on liitetty tämä tiedosto, poistetaan myös.";
 
-  static String m5(name) => "要删除「${name}」文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。";
+  static String m5(name) =>
+      "${name}Haluatko poistaa kansion \" \"? Jos kansiossa on sisältöä, poista ensin kansion sisältö.";
 
   static String m6(day, hour, minute, second) =>
-      "${day}天${hour}小时${minute}分钟${second}秒";
+      "${day}${hour}${minute}${second}Päivät tunnit minuutit sekunnit";
 
-  static String m7(hour, minute, second) => "${hour}小时${minute}分钟${second}秒";
+  static String m7(hour, minute, second) =>
+      "${hour}${minute}${second}Tunnit Minuutit Sekunnit";
 
-  static String m8(minute, second) => "${minute}分钟${second}秒";
+  static String m8(minute, second) => "${minute}${second}Minuutit sekunnit";
 
-  static String m9(second) => "${second}秒";
+  static String m9(second) =>
+      "${second}kulman tai kaaren yksikkö, joka vastaa yhtä asteen kuudeskymmenesosaa.";
 
-  static String m10(error) => "发送帖子失败\n\n${error}";
+  static String m10(error) => "\n\n${error}Postin lähettäminen epäonnistui";
 
-  static String m11(hours) => "${hours}小时前";
+  static String m11(hours) => "${hours}tuntia sitten";
 
-  static String m12(server) => "正在登录${server}";
+  static String m12(server) => "${server}Tällä hetkellä kirjautuneena sisään";
 
-  static String m13(minutes) => "${minutes}分钟前";
+  static String m13(minutes) => "${minutes}minuuttia sitten";
 
-  static String m14(months) => "${months}个月前";
+  static String m14(months) => "${months}kuukautta sitten";
 
-  static String m15(language) => "从${language}翻译 \n";
+  static String m15(language) => "${language} \nKäännä from to";
 
-  static String m16(type) => "不支持的通知类型:${type}";
+  static String m16(type) => "${type}Ei tuettuja ilmoitustyyppejä:";
 
-  static String m17(seconds) => "${seconds}秒前";
+  static String m17(seconds) => "${seconds}sekuntia sitten";
 
-  static String m18(msg) => "上传失败\n ${msg}";
+  static String m18(msg) => "\n ${msg}Lataus epäonnistui";
 
-  static String m19(count) => "总票数 ${count}";
+  static String m19(count) => "${count}Ääniä yhteensä";
 
-  static String m20(count) => "${count}票";
+  static String m20(count) => "${count}lunnaita vastaan pidetty henkilö";
 
-  static String m21(index) => "选项${index}";
+  static String m21(index) => "${index}Vaihtoehdot";
 
-  static String m22(index) => "选项${index}不能为空";
+  static String m22(index) => "${index}Vaihtoehto ei voi olla tyhjä";
 
-  static String m23(datetime) => "${datetime}后截止";
+  static String m23(datetime) => "${datetime}valmistumisen jälkeinen määräaika";
 
-  static String m24(years) => "${years}年前";
+  static String m24(years) => "${years}...vuotta sitten";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "account": MessageLookupByLibrary.simpleMessage("账号"),
-        "add": MessageLookupByLibrary.simpleMessage("添加"),
-        "addAccount": MessageLookupByLibrary.simpleMessage("添加账号"),
-        "addFile": MessageLookupByLibrary.simpleMessage("添加文件"),
-        "addTitle": MessageLookupByLibrary.simpleMessage("添加标题"),
-        "all": MessageLookupByLibrary.simpleMessage("全部"),
-        "announcementActive": MessageLookupByLibrary.simpleMessage("现在的公告"),
-        "announcementExpired": MessageLookupByLibrary.simpleMessage("过去的公告"),
-        "announcements": MessageLookupByLibrary.simpleMessage("公告"),
-        "back": MessageLookupByLibrary.simpleMessage("返回"),
-        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
-        "cancelSensitive": MessageLookupByLibrary.simpleMessage("取消标记为敏感内容"),
-        "clip": MessageLookupByLibrary.simpleMessage("便签"),
-        "clipCancelFavoriteText":
-            MessageLookupByLibrary.simpleMessage("确定要取消收藏吗？"),
-        "clipCreate": MessageLookupByLibrary.simpleMessage("新建便签"),
-        "clipFavorite": MessageLookupByLibrary.simpleMessage("添加到收藏"),
-        "clipFavoriteList": MessageLookupByLibrary.simpleMessage("收藏"),
-        "clipRemove": MessageLookupByLibrary.simpleMessage("移除便签"),
+        "account": MessageLookupByLibrary.simpleMessage("käyttäjätunnus"),
+        "add": MessageLookupByLibrary.simpleMessage("lisätä"),
+        "addAccount": MessageLookupByLibrary.simpleMessage("Lisää tili"),
+        "addFile": MessageLookupByLibrary.simpleMessage("Lisää tiedosto"),
+        "addTitle": MessageLookupByLibrary.simpleMessage("Lisää otsikko"),
+        "all": MessageLookupByLibrary.simpleMessage("full"),
+        "announcementActive":
+            MessageLookupByLibrary.simpleMessage("Ilmoitus nyt"),
+        "announcementExpired":
+            MessageLookupByLibrary.simpleMessage("Aiemmat ilmoitukset"),
+        "announcements": MessageLookupByLibrary.simpleMessage("Tiedote"),
+        "back":
+            MessageLookupByLibrary.simpleMessage("tulla (tai mennä) takaisin"),
+        "cancel": MessageLookupByLibrary.simpleMessage("peruutukset"),
+        "cancelSensitive": MessageLookupByLibrary.simpleMessage(
+            "Arkaluonteisen sisällön lipun poistaminen"),
+        "clip": MessageLookupByLibrary.simpleMessage("muistio"),
+        "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
+            "Haluatko varmasti peruuttaa keräyksen?"),
+        "clipCreate":
+            MessageLookupByLibrary.simpleMessage("Uudet muistiinpanot"),
+        "clipFavorite":
+            MessageLookupByLibrary.simpleMessage("Lisää suosikkeihin"),
+        "clipFavoriteList":
+            MessageLookupByLibrary.simpleMessage("kirjanmerkki (Internet)"),
+        "clipRemove": MessageLookupByLibrary.simpleMessage(
+            "Poista tahmeat muistiinpanot"),
         "clipUpdate":
             MessageLookupByLibrary.simpleMessage("Päivitä muistiinpanot"),
-        "clips": MessageLookupByLibrary.simpleMessage("便签"),
+        "clips": MessageLookupByLibrary.simpleMessage("muistio"),
         "close": MessageLookupByLibrary.simpleMessage("关闭"),
         "confirmSelection": m0,
-        "copyContent": MessageLookupByLibrary.simpleMessage("复制内容"),
-        "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
-        "copyRSS": MessageLookupByLibrary.simpleMessage("复制RSS"),
-        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage("复制用户主页地址"),
-        "copyUsername": MessageLookupByLibrary.simpleMessage("复制用户名"),
-        "createFolder": MessageLookupByLibrary.simpleMessage("新建文件夹"),
-        "createNote": MessageLookupByLibrary.simpleMessage("发布新帖子"),
-        "createNoteFormFile": MessageLookupByLibrary.simpleMessage("从文件创建帖子"),
-        "createNoteHint": MessageLookupByLibrary.simpleMessage("发生了什么..."),
-        "createdDate": MessageLookupByLibrary.simpleMessage("创建日期"),
+        "copyContent": MessageLookupByLibrary.simpleMessage("Kopioi sisältö"),
+        "copyLink": MessageLookupByLibrary.simpleMessage("Kopioi linkki"),
+        "copyRSS": MessageLookupByLibrary.simpleMessage("Kopioi RSS"),
+        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage(
+            "Kopioi käyttäjän kotisivun osoite."),
+        "copyUsername":
+            MessageLookupByLibrary.simpleMessage("Kopioi käyttäjätunnus"),
+        "createFolder": MessageLookupByLibrary.simpleMessage("Uusi kansio"),
+        "createNote":
+            MessageLookupByLibrary.simpleMessage("Lähetä uusi viestiketju"),
+        "createNoteFormFile":
+            MessageLookupByLibrary.simpleMessage("Postin luominen tiedostosta"),
+        "createNoteHint":
+            MessageLookupByLibrary.simpleMessage("Mitä tapahtui..."),
+        "createdDate": MessageLookupByLibrary.simpleMessage("Luontipäivämäärä"),
         "creationFailedDialog": m1,
-        "cw": MessageLookupByLibrary.simpleMessage("隐藏内容"),
-        "day": MessageLookupByLibrary.simpleMessage("天"),
+        "cw": MessageLookupByLibrary.simpleMessage("piilotettu sisältö"),
+        "day": MessageLookupByLibrary.simpleMessage("päivä"),
         "daysAgo": m2,
-        "delete": MessageLookupByLibrary.simpleMessage("删除"),
+        "delete": MessageLookupByLibrary.simpleMessage("poistaminen"),
         "deleteConfirm": m3,
         "deleteFileConfirmation": m4,
         "deleteFolderConfirmation": m5,
-        "description": MessageLookupByLibrary.simpleMessage("描述"),
-        "done": MessageLookupByLibrary.simpleMessage("完成"),
-        "download": MessageLookupByLibrary.simpleMessage("下载"),
-        "drive": MessageLookupByLibrary.simpleMessage("网盘"),
+        "description": MessageLookupByLibrary.simpleMessage("kuvaukset"),
+        "done": MessageLookupByLibrary.simpleMessage("täyttää"),
+        "download": MessageLookupByLibrary.simpleMessage("lataaminen"),
+        "drive":
+            MessageLookupByLibrary.simpleMessage("pilvitiedostojen tallennus"),
         "durationDay": m6,
         "durationHour": m7,
         "durationMinute": m8,
         "durationSecond": m9,
-        "edit": MessageLookupByLibrary.simpleMessage("编辑"),
-        "emoji": MessageLookupByLibrary.simpleMessage("表情符号"),
-        "enterNewFileName": MessageLookupByLibrary.simpleMessage("请输入新文件名"),
-        "enterNewTitle": MessageLookupByLibrary.simpleMessage("请输入新标题"),
-        "enterUrl": MessageLookupByLibrary.simpleMessage("请输入URL"),
-        "exceptionContentNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
-        "exceptionCwNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
+        "edit": MessageLookupByLibrary.simpleMessage("kääntäjä"),
+        "emoji": MessageLookupByLibrary.simpleMessage("emoticon"),
+        "enterNewFileName":
+            MessageLookupByLibrary.simpleMessage("Anna uusi tiedostonimi"),
+        "enterNewTitle":
+            MessageLookupByLibrary.simpleMessage("Kirjoita uusi otsikko"),
+        "enterUrl": MessageLookupByLibrary.simpleMessage("Kirjoita URL-osoite"),
+        "exceptionContentNull":
+            MessageLookupByLibrary.simpleMessage("Sisältö ei voi olla tyhjä"),
+        "exceptionCwNull":
+            MessageLookupByLibrary.simpleMessage("Sisältö ei voi olla tyhjä"),
         "exceptionSendNote": m10,
-        "explore": MessageLookupByLibrary.simpleMessage("发现"),
-        "exploreHot": MessageLookupByLibrary.simpleMessage("热门"),
-        "exploreUserHot": MessageLookupByLibrary.simpleMessage("热门用户"),
-        "exploreUserLast": MessageLookupByLibrary.simpleMessage("最近登录的用户"),
-        "exploreUserPined": MessageLookupByLibrary.simpleMessage("置顶用户"),
-        "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿的用户"),
-        "exploreUsers": MessageLookupByLibrary.simpleMessage("用户"),
-        "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
+        "explore": MessageLookupByLibrary.simpleMessage("löytöjä"),
+        "exploreHot": MessageLookupByLibrary.simpleMessage("muodissa"),
+        "exploreUserHot":
+            MessageLookupByLibrary.simpleMessage("suosittu käyttäjä"),
+        "exploreUserLast": MessageLookupByLibrary.simpleMessage(
+            "Viimeksi kirjautuneet käyttäjät"),
+        "exploreUserPined":
+            MessageLookupByLibrary.simpleMessage("käyttäjä listan kärjessä"),
+        "exploreUserUpdated":
+            MessageLookupByLibrary.simpleMessage("Viimeaikaiset avustajat"),
+        "exploreUsers": MessageLookupByLibrary.simpleMessage("käyttäjä"),
+        "favorite":
+            MessageLookupByLibrary.simpleMessage("kirjanmerkki (Internet)"),
         "filter": MessageLookupByLibrary.simpleMessage("Filter"),
-        "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
-        "follow": MessageLookupByLibrary.simpleMessage("关注"),
-        "followed": MessageLookupByLibrary.simpleMessage("已关注"),
-        "followers": MessageLookupByLibrary.simpleMessage("关注者"),
-        "following": MessageLookupByLibrary.simpleMessage("关注中"),
-        "fromCloud": MessageLookupByLibrary.simpleMessage("从网盘中"),
+        "folderName": MessageLookupByLibrary.simpleMessage("Kansion nimi"),
+        "follow": MessageLookupByLibrary.simpleMessage("focus"),
+        "followed": MessageLookupByLibrary.simpleMessage("Seurattu"),
+        "followers": MessageLookupByLibrary.simpleMessage("watcher"),
+        "following": MessageLookupByLibrary.simpleMessage("Huolestunut"),
+        "fromCloud": MessageLookupByLibrary.simpleMessage("Netbookista"),
         "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
-        "hashtag": MessageLookupByLibrary.simpleMessage("话题标签"),
-        "hostnames": MessageLookupByLibrary.simpleMessage("域名"),
-        "hour": MessageLookupByLibrary.simpleMessage("小时"),
+        "hashtag": MessageLookupByLibrary.simpleMessage("hashtag"),
+        "hostnames": MessageLookupByLibrary.simpleMessage("verkkotunnus"),
+        "hour": MessageLookupByLibrary.simpleMessage("tuntia"),
         "hoursAgo": m11,
-        "image": MessageLookupByLibrary.simpleMessage("图片"),
-        "inputServer": MessageLookupByLibrary.simpleMessage("手动输入服务器"),
-        "insertDriverFile": MessageLookupByLibrary.simpleMessage("插入附件"),
-        "isFollowingYouNow": MessageLookupByLibrary.simpleMessage("正在关注你"),
-        "justNow": MessageLookupByLibrary.simpleMessage("刚刚"),
-        "keepOriginal": MessageLookupByLibrary.simpleMessage("保留原图"),
+        "image": MessageLookupByLibrary.simpleMessage("valokuva"),
+        "inputServer":
+            MessageLookupByLibrary.simpleMessage("Manuaalinen syöttöpalvelin"),
+        "insertDriverFile": MessageLookupByLibrary.simpleMessage(
+            "Lisävarusteiden asettaminen paikalleen"),
+        "isFollowingYouNow":
+            MessageLookupByLibrary.simpleMessage("Minä katson sinua."),
+        "justNow": MessageLookupByLibrary.simpleMessage("juuri äskettäin"),
+        "keepOriginal":
+            MessageLookupByLibrary.simpleMessage("Säilytä alkuperäinen kuva"),
         "loadingServers":
             MessageLookupByLibrary.simpleMessage("Server Loading"),
-        "local": MessageLookupByLibrary.simpleMessage("本地"),
-        "localUpload": MessageLookupByLibrary.simpleMessage("本地上传"),
-        "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "local": MessageLookupByLibrary.simpleMessage("tämä paikkakunta"),
+        "localUpload":
+            MessageLookupByLibrary.simpleMessage("paikallinen lataus"),
+        "login": MessageLookupByLibrary.simpleMessage("kirjaudu sisään"),
         "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
-        "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
-        "loginFailedWithAppCreate":
-            MessageLookupByLibrary.simpleMessage("登录失败: 应用创建失败"),
-        "loginFailedWithToken":
-            MessageLookupByLibrary.simpleMessage("登录失败: token获取失败"),
+        "loginFailed": MessageLookupByLibrary.simpleMessage(
+            "Kirjautumisen epäonnistuminen"),
+        "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
+            "Kirjautuminen epäonnistui: Sovelluksen luominen epäonnistui"),
+        "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
+            "Sisäänkirjautuminen epäonnistui: Tokenin hankinta epäonnistui"),
         "loginLoading": m12,
-        "loginSuccess": MessageLookupByLibrary.simpleMessage("登录成功"),
-        "manageAccount": MessageLookupByLibrary.simpleMessage("管理账号"),
-        "markAsSensitive": MessageLookupByLibrary.simpleMessage("标记为敏感内容"),
-        "mention": MessageLookupByLibrary.simpleMessage("提及"),
-        "minute": MessageLookupByLibrary.simpleMessage("分钟"),
+        "loginSuccess": MessageLookupByLibrary.simpleMessage(
+            "Sisäänkirjautuminen onnistui"),
+        "manageAccount": MessageLookupByLibrary.simpleMessage("Hallitse tiliä"),
+        "markAsSensitive": MessageLookupByLibrary.simpleMessage(
+            "Merkitse arkaluontoiseksi sisällöksi"),
+        "mention": MessageLookupByLibrary.simpleMessage("nostaa (aihe)"),
+        "minute": MessageLookupByLibrary.simpleMessage("minuuttia"),
         "minutesAgo": m13,
         "monthsAgo": m14,
-        "more": MessageLookupByLibrary.simpleMessage("更多"),
-        "myCLips": MessageLookupByLibrary.simpleMessage("我的便签"),
-        "name": MessageLookupByLibrary.simpleMessage("名称"),
-        "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
-        "next": MessageLookupByLibrary.simpleMessage("下一步"),
+        "more": MessageLookupByLibrary.simpleMessage("lisää"),
+        "myCLips": MessageLookupByLibrary.simpleMessage("Minun huomautukseni."),
+        "name":
+            MessageLookupByLibrary.simpleMessage("nimi (jonkin asian nimi)"),
+        "nameCannotBeEmpty":
+            MessageLookupByLibrary.simpleMessage("Nimi ei voi olla tyhjä"),
+        "next": MessageLookupByLibrary.simpleMessage("seuraava askel"),
         "noLists":
             MessageLookupByLibrary.simpleMessage("You don\'t have any lists"),
-        "notFindServer": MessageLookupByLibrary.simpleMessage("没有找到你所在的服务器？"),
-        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
-        "noteCwHide": MessageLookupByLibrary.simpleMessage("收起"),
-        "noteCwShow": MessageLookupByLibrary.simpleMessage("显示内容"),
+        "notFindServer":
+            MessageLookupByLibrary.simpleMessage("Etkö löytänyt palvelintasi?"),
+        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
+            "Kopioi linkki tälle sivustolle"),
+        "noteCwHide": MessageLookupByLibrary.simpleMessage("laittaa pois"),
+        "noteCwShow": MessageLookupByLibrary.simpleMessage("Näytä sisältö"),
         "noteFormLanguageTranslation": m15,
-        "noteLocalOnly": MessageLookupByLibrary.simpleMessage("不参与联合"),
-        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("转到所在服务器显示"),
-        "notePined": MessageLookupByLibrary.simpleMessage("已置顶的帖子"),
-        "noteQuote": MessageLookupByLibrary.simpleMessage("引用"),
-        "noteReNote": MessageLookupByLibrary.simpleMessage("转发"),
-        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("转发了"),
-        "noteTranslate": MessageLookupByLibrary.simpleMessage("翻译帖子"),
-        "noteVisibility": MessageLookupByLibrary.simpleMessage("可见性"),
-        "noteVisibilityFollowers": MessageLookupByLibrary.simpleMessage("关注者"),
+        "noteLocalOnly": MessageLookupByLibrary.simpleMessage(
+            "Osallistumattomuus yhteiseen"),
+        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage(
+            "Siirry isäntäpalvelimelle näyttämään"),
+        "notePined": MessageLookupByLibrary.simpleMessage("Top Posts"),
+        "noteQuote": MessageLookupByLibrary.simpleMessage("quote"),
+        "noteReNote": MessageLookupByLibrary.simpleMessage(
+            "edelleenlähetys (posti, tekstiviestit, datapaketit)"),
+        "noteReNoteByUser":
+            MessageLookupByLibrary.simpleMessage("Lähetetty eteenpäin."),
+        "noteTranslate":
+            MessageLookupByLibrary.simpleMessage("Virkojen käännös"),
+        "noteVisibility": MessageLookupByLibrary.simpleMessage("näkyvyys"),
+        "noteVisibilityFollowers":
+            MessageLookupByLibrary.simpleMessage("watcher"),
         "noteVisibilityFollowersText":
-            MessageLookupByLibrary.simpleMessage("仅发送至关注者"),
-        "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("首页"),
-        "noteVisibilityHomeText":
-            MessageLookupByLibrary.simpleMessage("仅发送至首页的时间线"),
-        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("公开"),
-        "noteVisibilityPublicText":
-            MessageLookupByLibrary.simpleMessage("您的帖子将出现在全局时间线上"),
-        "noteVisibilitySpecified": MessageLookupByLibrary.simpleMessage("私信"),
-        "noteVisibilitySpecifiedText":
-            MessageLookupByLibrary.simpleMessage("仅发送至指定用户"),
-        "notes": MessageLookupByLibrary.simpleMessage("帖子"),
+            MessageLookupByLibrary.simpleMessage("Lähetä vain seuraajille"),
+        "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("kuva alku"),
+        "noteVisibilityHomeText": MessageLookupByLibrary.simpleMessage(
+            "Aikajana lähetetään vain etusivulle"),
+        "noteVisibilityPublic":
+            MessageLookupByLibrary.simpleMessage("avoimesti"),
+        "noteVisibilityPublicText": MessageLookupByLibrary.simpleMessage(
+            "Postauksesi näkyy globaalilla aikajanalla"),
+        "noteVisibilitySpecified":
+            MessageLookupByLibrary.simpleMessage("yksityinen kirje"),
+        "noteVisibilitySpecifiedText": MessageLookupByLibrary.simpleMessage(
+            "Lähetä vain tietyille käyttäjille"),
+        "notes": MessageLookupByLibrary.simpleMessage("kortti"),
         "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
-        "notification": MessageLookupByLibrary.simpleMessage("通知"),
-        "notifications": MessageLookupByLibrary.simpleMessage("通知"),
-        "notifyAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "notifyFilter": MessageLookupByLibrary.simpleMessage("筛选"),
-        "notifyFollowedAccepted":
-            MessageLookupByLibrary.simpleMessage("你的关注请求被通过了"),
-        "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("你有新的关注者"),
-        "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全部标记为已读"),
-        "notifyMention": MessageLookupByLibrary.simpleMessage("提到我的"),
-        "notifyMessage": MessageLookupByLibrary.simpleMessage("私信"),
+        "notification": MessageLookupByLibrary.simpleMessage("ilmoitukset"),
+        "notifications": MessageLookupByLibrary.simpleMessage("ilmoitukset"),
+        "notifyAll": MessageLookupByLibrary.simpleMessage("full"),
+        "notifyFilter": MessageLookupByLibrary.simpleMessage("seulonta"),
+        "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
+            "Pyyntösi huomiosta on hyväksytty."),
+        "notifyFollowedYou":
+            MessageLookupByLibrary.simpleMessage("Sinulla on uusia seuraajia."),
+        "notifyMarkAllRead":
+            MessageLookupByLibrary.simpleMessage("Merkitse kaikki luetuiksi"),
+        "notifyMention":
+            MessageLookupByLibrary.simpleMessage("Puhuttaessa minun"),
+        "notifyMessage":
+            MessageLookupByLibrary.simpleMessage("yksityinen kirje"),
         "notifyNotSupport": m16,
-        "ok": MessageLookupByLibrary.simpleMessage("确定"),
-        "openInNewTab": MessageLookupByLibrary.simpleMessage("转到浏览器显示"),
-        "overviews": MessageLookupByLibrary.simpleMessage("概览"),
-        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage("关注请求批准中"),
-        "preview": MessageLookupByLibrary.simpleMessage("预览"),
-        "previewNote": MessageLookupByLibrary.simpleMessage("预览帖子"),
-        "processing": MessageLookupByLibrary.simpleMessage("处理中"),
-        "public": MessageLookupByLibrary.simpleMessage("公开"),
-        "publish": MessageLookupByLibrary.simpleMessage("发布"),
-        "reNoteHint": MessageLookupByLibrary.simpleMessage("引用这个帖子..."),
-        "reNoteText": MessageLookupByLibrary.simpleMessage("引用帖子"),
-        "reaction": MessageLookupByLibrary.simpleMessage("回应"),
-        "reactionAccepting": MessageLookupByLibrary.simpleMessage("接受表情回应"),
-        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "ok": MessageLookupByLibrary.simpleMessage("define"),
+        "openInNewTab":
+            MessageLookupByLibrary.simpleMessage("Siirry selaimen näyttöön"),
+        "overviews": MessageLookupByLibrary.simpleMessage("selata läpi"),
+        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage(
+            "Huoli pyyntöjen hyväksymisestä"),
+        "preview": MessageLookupByLibrary.simpleMessage("esikatselut"),
+        "previewNote":
+            MessageLookupByLibrary.simpleMessage("Esikatselu Viestit"),
+        "processing": MessageLookupByLibrary.simpleMessage("käynnissä"),
+        "public": MessageLookupByLibrary.simpleMessage("avoimesti"),
+        "publish": MessageLookupByLibrary.simpleMessage("post"),
+        "reNoteHint":
+            MessageLookupByLibrary.simpleMessage("Lainaan tätä viestiä..."),
+        "reNoteText": MessageLookupByLibrary.simpleMessage("Lainaa viestiä"),
+        "reaction": MessageLookupByLibrary.simpleMessage("vastaus"),
+        "reactionAccepting": MessageLookupByLibrary.simpleMessage(
+            "Emoji-vastausten hyväksyminen"),
+        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("full"),
         "reactionAcceptingLikeOnly":
-            MessageLookupByLibrary.simpleMessage("仅点赞"),
+            MessageLookupByLibrary.simpleMessage("Tykkää vain"),
         "reactionAcceptingLikeOnlyRemote":
-            MessageLookupByLibrary.simpleMessage("远程仅点赞"),
-        "reactionAcceptingNoneSensitive":
-            MessageLookupByLibrary.simpleMessage("仅限非敏感内容"),
+            MessageLookupByLibrary.simpleMessage("Vain kaukosäädin Kudos"),
+        "reactionAcceptingNoneSensitive": MessageLookupByLibrary.simpleMessage(
+            "Ainoastaan ei-herkkä sisältö"),
         "reactionAcceptingNoneSensitiveOrLocal":
-            MessageLookupByLibrary.simpleMessage("仅限非敏感内容（远程仅点赞）"),
-        "recipient": MessageLookupByLibrary.simpleMessage("收件人"),
-        "refresh": MessageLookupByLibrary.simpleMessage("刷新"),
+            MessageLookupByLibrary.simpleMessage(
+                "Vain ei-herkkä sisältö (vain etätykkäykset)"),
+        "recipient":
+            MessageLookupByLibrary.simpleMessage("To: (sähköpostin otsikko)"),
+        "refresh": MessageLookupByLibrary.simpleMessage(
+            "refresh (tietokoneen ikkuna)"),
         "registration": MessageLookupByLibrary.simpleMessage("Registration"),
         "registrationClosed": MessageLookupByLibrary.simpleMessage("closed"),
         "registrationOpen": MessageLookupByLibrary.simpleMessage("open"),
-        "remote": MessageLookupByLibrary.simpleMessage("远程"),
-        "rename": MessageLookupByLibrary.simpleMessage("重命名"),
-        "renameFile": MessageLookupByLibrary.simpleMessage("重命名文件"),
-        "renameFolder": MessageLookupByLibrary.simpleMessage("重命名文件夹"),
-        "replyNoteHint": MessageLookupByLibrary.simpleMessage("回复这个帖子..."),
-        "replyNoteText": MessageLookupByLibrary.simpleMessage("回复帖子"),
-        "saveFailed": MessageLookupByLibrary.simpleMessage("保存失败"),
-        "saveImage": MessageLookupByLibrary.simpleMessage("保存图片"),
-        "saveSuccess": MessageLookupByLibrary.simpleMessage("保存成功"),
-        "search": MessageLookupByLibrary.simpleMessage("搜索"),
-        "searchAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "searchHost": MessageLookupByLibrary.simpleMessage("指定域名"),
-        "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
-        "searchRemote": MessageLookupByLibrary.simpleMessage("远程"),
+        "remote": MessageLookupByLibrary.simpleMessage("etäisyys"),
+        "rename": MessageLookupByLibrary.simpleMessage("nimetä uudelleen"),
+        "renameFile":
+            MessageLookupByLibrary.simpleMessage("Nimeä tiedosto uudelleen"),
+        "renameFolder":
+            MessageLookupByLibrary.simpleMessage("Nimeä kansio uudelleen"),
+        "replyNoteHint":
+            MessageLookupByLibrary.simpleMessage("Vastaa tähän viestiin..."),
+        "replyNoteText":
+            MessageLookupByLibrary.simpleMessage("Vastaa viestiin"),
+        "saveFailed":
+            MessageLookupByLibrary.simpleMessage("ei onnistu säästämään"),
+        "saveImage": MessageLookupByLibrary.simpleMessage("Tallenna kuva"),
+        "saveSuccess":
+            MessageLookupByLibrary.simpleMessage("Tallenna onnistunut"),
+        "search": MessageLookupByLibrary.simpleMessage("etsiä mitä tahansa"),
+        "searchAll": MessageLookupByLibrary.simpleMessage("full"),
+        "searchHost":
+            MessageLookupByLibrary.simpleMessage("Määritä verkkotunnus"),
+        "searchLocal": MessageLookupByLibrary.simpleMessage("tämä sivusto"),
+        "searchRemote": MessageLookupByLibrary.simpleMessage("etänä"),
         "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
         "secondsAgo": m17,
-        "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
+        "selectHashtag": MessageLookupByLibrary.simpleMessage("Valitse Tag"),
         "selectServer":
             MessageLookupByLibrary.simpleMessage("Please Select Your Server"),
-        "selectUser": MessageLookupByLibrary.simpleMessage("选择用户"),
-        "sensitiveClickShow": MessageLookupByLibrary.simpleMessage("点击显示"),
-        "sensitiveContent": MessageLookupByLibrary.simpleMessage("敏感内容"),
-        "serverAddr": MessageLookupByLibrary.simpleMessage("服务器地址"),
+        "selectUser": MessageLookupByLibrary.simpleMessage("Valitse käyttäjä"),
+        "sensitiveClickShow":
+            MessageLookupByLibrary.simpleMessage("Klikkaa näyttääksesi"),
+        "sensitiveContent":
+            MessageLookupByLibrary.simpleMessage("Arkaluonteinen sisältö"),
+        "serverAddr": MessageLookupByLibrary.simpleMessage("palvelimen osoite"),
         "serverList": MessageLookupByLibrary.simpleMessage("List of Servers"),
-        "settings": MessageLookupByLibrary.simpleMessage("设置"),
-        "share": MessageLookupByLibrary.simpleMessage("分享"),
-        "showConversation": MessageLookupByLibrary.simpleMessage("查看对话"),
-        "somebodyNote": MessageLookupByLibrary.simpleMessage(" 的帖子"),
-        "timeline": MessageLookupByLibrary.simpleMessage("时间线"),
-        "timelineGlobal": MessageLookupByLibrary.simpleMessage("全局"),
-        "timelineHome": MessageLookupByLibrary.simpleMessage("首页"),
-        "timelineHybrid": MessageLookupByLibrary.simpleMessage("社交"),
-        "timelineLocal": MessageLookupByLibrary.simpleMessage("本地"),
-        "translate": MessageLookupByLibrary.simpleMessage("翻译"),
-        "uncategorized": MessageLookupByLibrary.simpleMessage("未分类"),
-        "unfollow": MessageLookupByLibrary.simpleMessage("取消关注"),
-        "updatedDate": MessageLookupByLibrary.simpleMessage("更新日期"),
+        "settings": MessageLookupByLibrary.simpleMessage("perustaminen"),
+        "share": MessageLookupByLibrary.simpleMessage(
+            "jakaa (ilot, edut, etuoikeudet jne.) muiden kanssa."),
+        "showConversation":
+            MessageLookupByLibrary.simpleMessage("Näytä vuoropuhelu"),
+        "somebodyNote": MessageLookupByLibrary.simpleMessage(" virat"),
+        "timeline": MessageLookupByLibrary.simpleMessage("Aikajana"),
+        "timelineGlobal":
+            MessageLookupByLibrary.simpleMessage("turvallisuustilanne"),
+        "timelineHome": MessageLookupByLibrary.simpleMessage("kuva alku"),
+        "timelineHybrid": MessageLookupByLibrary.simpleMessage("sosialisaatio"),
+        "timelineLocal":
+            MessageLookupByLibrary.simpleMessage("tämä paikkakunta"),
+        "translate": MessageLookupByLibrary.simpleMessage("renderointi"),
+        "uncategorized":
+            MessageLookupByLibrary.simpleMessage("Luokittelematon"),
+        "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),
+        "updatedDate":
+            MessageLookupByLibrary.simpleMessage("Päivityspäivämäärä"),
         "uploadFailed": m18,
-        "uploadFromUrl": MessageLookupByLibrary.simpleMessage("从网址上传"),
-        "user": MessageLookupByLibrary.simpleMessage("用户"),
-        "userAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "userDescriptionIsNull":
-            MessageLookupByLibrary.simpleMessage("此用户尚无自我介绍"),
-        "userFile": MessageLookupByLibrary.simpleMessage("附件"),
-        "userHot": MessageLookupByLibrary.simpleMessage("用户"),
-        "userNote": MessageLookupByLibrary.simpleMessage("帖子"),
-        "userRegisterBy": MessageLookupByLibrary.simpleMessage("注册于"),
-        "userWidgetUnSupport":
-            MessageLookupByLibrary.simpleMessage("小部件列表(未完成)"),
-        "username": MessageLookupByLibrary.simpleMessage("用户名"),
+        "uploadFromUrl":
+            MessageLookupByLibrary.simpleMessage("Lataus verkkosivulta"),
+        "user": MessageLookupByLibrary.simpleMessage("käyttäjä"),
+        "userAll": MessageLookupByLibrary.simpleMessage("full"),
+        "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage(
+            "Tämä käyttäjä ei ole vielä esitellyt itseään"),
+        "userFile":
+            MessageLookupByLibrary.simpleMessage("liitetiedosto (sähköposti)"),
+        "userHot": MessageLookupByLibrary.simpleMessage("käyttäjä"),
+        "userNote": MessageLookupByLibrary.simpleMessage("kortti"),
+        "userRegisterBy": MessageLookupByLibrary.simpleMessage("rekisteröity"),
+        "userWidgetUnSupport": MessageLookupByLibrary.simpleMessage(
+            "Luettelo widgeteistä (keskeneräinen)"),
+        "username": MessageLookupByLibrary.simpleMessage("käyttäjätunnus"),
         "usersCount": MessageLookupByLibrary.simpleMessage("Users Count"),
-        "video": MessageLookupByLibrary.simpleMessage("视频"),
-        "view": MessageLookupByLibrary.simpleMessage("查看"),
-        "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
-        "vote": MessageLookupByLibrary.simpleMessage("投票"),
+        "video": MessageLookupByLibrary.simpleMessage("video"),
+        "view": MessageLookupByLibrary.simpleMessage("tsekkaa"),
+        "viewMore": MessageLookupByLibrary.simpleMessage("Näytä lisää"),
+        "vote": MessageLookupByLibrary.simpleMessage("kansanäänestys"),
         "voteAllCount": m19,
         "voteCount": m20,
-        "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
-        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
-        "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
-        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
-        "voteOptionAtLeastTwo":
-            MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
+        "voteDueDate": MessageLookupByLibrary.simpleMessage("päättymispäivä"),
+        "voteEnableMultiChoice":
+            MessageLookupByLibrary.simpleMessage("Useita ääniä sallittu"),
+        "voteExpired":
+            MessageLookupByLibrary.simpleMessage("Äänestys on päättynyt."),
+        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("pysyvästi"),
+        "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
+            "Äänimäärä ei voi olla alle kaksi."),
         "voteOptionHint": m21,
         "voteOptionNullIndex": m22,
-        "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
+        "voteResult":
+            MessageLookupByLibrary.simpleMessage("Äänestystulokset on luotu"),
         "voteWillExpired": m23,
         "yearsAgo": m24
       };

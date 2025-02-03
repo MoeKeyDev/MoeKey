@@ -21,300 +21,380 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'de_DE';
 
   static String m0(selectListLength, maxSelect) =>
-      "确定(${selectListLength}/${maxSelect})";
+      "${selectListLength}${maxSelect}Ermitteln ( / )";
 
-  static String m1(error) => "创建失败\n\n ${error}";
+  static String m1(error) => "\n\n ${error}Erstellung fehlgeschlagen";
 
-  static String m2(days) => "${days}天前";
+  static String m2(days) => "${days}vor Tagen";
 
-  static String m3(thing) => "要删掉「${thing}」吗？";
+  static String m3(thing) => "${thing}Möchten Sie \" \" löschen?";
 
-  static String m4(name) => "要删除「${name}」文件吗？附加此文件的帖子也会被删除。";
+  static String m4(name) =>
+      "${name}Möchten Sie die Datei \" \" löschen? Beiträge, die diese Datei enthalten, werden ebenfalls gelöscht.";
 
-  static String m5(name) => "要删除「${name}」文件夹吗？ 如果文件夹中存在内容，请先删除文件夹中的内容。";
+  static String m5(name) =>
+      "${name}Möchten Sie den Ordner \" \" löschen? Wenn sich Inhalte in dem Ordner befinden, löschen Sie bitte zuerst den Inhalt des Ordners.";
 
   static String m6(day, hour, minute, second) =>
-      "${day}天${hour}小时${minute}分钟${second}秒";
+      "${day}${hour}${minute}${second}Tage Stunden Minuten Sekunden";
 
-  static String m7(hour, minute, second) => "${hour}小时${minute}分钟${second}秒";
+  static String m7(hour, minute, second) =>
+      "${hour}${minute}${second}Stunden, Minuten, Sekunden";
 
-  static String m8(minute, second) => "${minute}分钟${second}秒";
+  static String m8(minute, second) => "${minute}${second}Minuten Sekunden";
 
-  static String m9(second) => "${second}秒";
+  static String m9(second) =>
+      "${second}Einheit des Winkels oder Bogens, die einem Sechzigstel eines Grades entspricht";
 
-  static String m10(error) => "发送帖子失败\n\n${error}";
+  static String m10(error) => "\n\n${error}Postversand fehlgeschlagen";
 
-  static String m11(hours) => "${hours}小时前";
+  static String m11(hours) => "${hours}vor Stunden";
 
-  static String m12(server) => "正在登录${server}";
+  static String m12(server) => "${server}Derzeit eingeloggt";
 
-  static String m13(minutes) => "${minutes}分钟前";
+  static String m13(minutes) => "${minutes}Minuten zuvor";
 
-  static String m14(months) => "${months}个月前";
+  static String m14(months) => "${months}vor Monaten";
 
-  static String m15(language) => "从${language}翻译 \n";
+  static String m15(language) => "${language} \nÜbersetzen von nach";
 
-  static String m16(type) => "不支持的通知类型:${type}";
+  static String m16(type) => "${type}Nicht unterstützte Meldungstypen:";
 
-  static String m17(seconds) => "${seconds}秒前";
+  static String m17(seconds) => "${seconds}vor Sekunden";
 
-  static String m18(msg) => "上传失败\n ${msg}";
+  static String m18(msg) => "\n ${msg}Upload fehlgeschlagen";
 
-  static String m19(count) => "总票数 ${count}";
+  static String m19(count) => "${count}Stimmen insgesamt";
 
-  static String m20(count) => "${count}票";
+  static String m20(count) => "${count}Lösegeldforderung";
 
-  static String m21(index) => "选项${index}";
+  static String m21(index) => "${index}Optionen";
 
-  static String m22(index) => "选项${index}不能为空";
+  static String m22(index) => "${index}Die Option darf nicht leer sein";
 
-  static String m23(datetime) => "${datetime}后截止";
+  static String m23(datetime) => "${datetime}Nacherfüllungsfrist";
 
-  static String m24(years) => "${years}年前";
+  static String m24(years) => "${years}vor Jahren";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "account": MessageLookupByLibrary.simpleMessage("账号"),
-        "add": MessageLookupByLibrary.simpleMessage("添加"),
-        "addAccount": MessageLookupByLibrary.simpleMessage("添加账号"),
-        "addFile": MessageLookupByLibrary.simpleMessage("添加文件"),
-        "addTitle": MessageLookupByLibrary.simpleMessage("添加标题"),
-        "all": MessageLookupByLibrary.simpleMessage("全部"),
-        "announcementActive": MessageLookupByLibrary.simpleMessage("现在的公告"),
-        "announcementExpired": MessageLookupByLibrary.simpleMessage("过去的公告"),
-        "announcements": MessageLookupByLibrary.simpleMessage("公告"),
-        "back": MessageLookupByLibrary.simpleMessage("返回"),
-        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
-        "cancelSensitive": MessageLookupByLibrary.simpleMessage("取消标记为敏感内容"),
-        "clip": MessageLookupByLibrary.simpleMessage("便签"),
-        "clipCancelFavoriteText":
-            MessageLookupByLibrary.simpleMessage("确定要取消收藏吗？"),
-        "clipCreate": MessageLookupByLibrary.simpleMessage("新建便签"),
-        "clipFavorite": MessageLookupByLibrary.simpleMessage("添加到收藏"),
-        "clipFavoriteList": MessageLookupByLibrary.simpleMessage("收藏"),
-        "clipRemove": MessageLookupByLibrary.simpleMessage("移除便签"),
+        "account": MessageLookupByLibrary.simpleMessage("Nutzername"),
+        "add": MessageLookupByLibrary.simpleMessage("erhöhen."),
+        "addAccount": MessageLookupByLibrary.simpleMessage("Konto hinzufügen"),
+        "addFile": MessageLookupByLibrary.simpleMessage("Datei hinzufügen"),
+        "addTitle": MessageLookupByLibrary.simpleMessage("Titel hinzufügen"),
+        "all": MessageLookupByLibrary.simpleMessage("vollständig"),
+        "announcementActive":
+            MessageLookupByLibrary.simpleMessage("Jetzt ankündigen"),
+        "announcementExpired":
+            MessageLookupByLibrary.simpleMessage("Frühere Ankündigungen"),
+        "announcements": MessageLookupByLibrary.simpleMessage("Bulletin"),
+        "back":
+            MessageLookupByLibrary.simpleMessage("zurückkommen (oder gehen)"),
+        "cancel": MessageLookupByLibrary.simpleMessage("Stornierungen"),
+        "cancelSensitive": MessageLookupByLibrary.simpleMessage(
+            "Kennzeichnung sensibler Inhalte aufheben"),
+        "clip": MessageLookupByLibrary.simpleMessage("Memo"),
+        "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
+            "Sind Sie sicher, dass Sie die Sammlung abbrechen wollen?"),
+        "clipCreate": MessageLookupByLibrary.simpleMessage("Neue Haftnotizen"),
+        "clipFavorite":
+            MessageLookupByLibrary.simpleMessage("Zu Favoriten hinzufügen"),
+        "clipFavoriteList":
+            MessageLookupByLibrary.simpleMessage("Lesezeichen (Internet)"),
+        "clipRemove":
+            MessageLookupByLibrary.simpleMessage("Haftnotizen entfernen"),
         "clipUpdate":
             MessageLookupByLibrary.simpleMessage("Haftnotizen aktualisieren"),
-        "clips": MessageLookupByLibrary.simpleMessage("便签"),
+        "clips": MessageLookupByLibrary.simpleMessage("Memo"),
         "close": MessageLookupByLibrary.simpleMessage("关闭"),
         "confirmSelection": m0,
-        "copyContent": MessageLookupByLibrary.simpleMessage("复制内容"),
-        "copyLink": MessageLookupByLibrary.simpleMessage("复制链接"),
-        "copyRSS": MessageLookupByLibrary.simpleMessage("复制RSS"),
-        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage("复制用户主页地址"),
-        "copyUsername": MessageLookupByLibrary.simpleMessage("复制用户名"),
-        "createFolder": MessageLookupByLibrary.simpleMessage("新建文件夹"),
-        "createNote": MessageLookupByLibrary.simpleMessage("发布新帖子"),
-        "createNoteFormFile": MessageLookupByLibrary.simpleMessage("从文件创建帖子"),
-        "createNoteHint": MessageLookupByLibrary.simpleMessage("发生了什么..."),
-        "createdDate": MessageLookupByLibrary.simpleMessage("创建日期"),
+        "copyContent": MessageLookupByLibrary.simpleMessage("Inhalt kopieren"),
+        "copyLink": MessageLookupByLibrary.simpleMessage("Link kopieren"),
+        "copyRSS": MessageLookupByLibrary.simpleMessage("RSS kopieren"),
+        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage(
+            "Kopieren Sie die Adresse der Homepage des Benutzers"),
+        "copyUsername":
+            MessageLookupByLibrary.simpleMessage("Benutzername kopieren"),
+        "createFolder": MessageLookupByLibrary.simpleMessage("Neue Mappe"),
+        "createNote":
+            MessageLookupByLibrary.simpleMessage("Ein neues Thema erstellen"),
+        "createNoteFormFile": MessageLookupByLibrary.simpleMessage(
+            "Erstellen eines Beitrags aus einer Datei"),
+        "createNoteHint":
+            MessageLookupByLibrary.simpleMessage("Was geschah..."),
+        "createdDate":
+            MessageLookupByLibrary.simpleMessage("Datum der Erstellung"),
         "creationFailedDialog": m1,
-        "cw": MessageLookupByLibrary.simpleMessage("隐藏内容"),
-        "day": MessageLookupByLibrary.simpleMessage("天"),
+        "cw": MessageLookupByLibrary.simpleMessage("unsichtbarer Inhalt"),
+        "day": MessageLookupByLibrary.simpleMessage("Himmel"),
         "daysAgo": m2,
-        "delete": MessageLookupByLibrary.simpleMessage("删除"),
+        "delete": MessageLookupByLibrary.simpleMessage("entfernen"),
         "deleteConfirm": m3,
         "deleteFileConfirmation": m4,
         "deleteFolderConfirmation": m5,
-        "description": MessageLookupByLibrary.simpleMessage("描述"),
-        "done": MessageLookupByLibrary.simpleMessage("完成"),
-        "download": MessageLookupByLibrary.simpleMessage("下载"),
-        "drive": MessageLookupByLibrary.simpleMessage("网盘"),
+        "description": MessageLookupByLibrary.simpleMessage("Beschreibungen"),
+        "done": MessageLookupByLibrary.simpleMessage("erfüllen"),
+        "download": MessageLookupByLibrary.simpleMessage("Herunterladen von"),
+        "drive": MessageLookupByLibrary.simpleMessage("Cloud-Dateispeicher"),
         "durationDay": m6,
         "durationHour": m7,
         "durationMinute": m8,
         "durationSecond": m9,
-        "edit": MessageLookupByLibrary.simpleMessage("编辑"),
-        "emoji": MessageLookupByLibrary.simpleMessage("表情符号"),
-        "enterNewFileName": MessageLookupByLibrary.simpleMessage("请输入新文件名"),
-        "enterNewTitle": MessageLookupByLibrary.simpleMessage("请输入新标题"),
-        "enterUrl": MessageLookupByLibrary.simpleMessage("请输入URL"),
-        "exceptionContentNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
-        "exceptionCwNull": MessageLookupByLibrary.simpleMessage("内容不能为空"),
+        "edit": MessageLookupByLibrary.simpleMessage("Compiler"),
+        "emoji": MessageLookupByLibrary.simpleMessage("Emoticon"),
+        "enterNewFileName": MessageLookupByLibrary.simpleMessage(
+            "Bitte geben Sie einen neuen Dateinamen ein"),
+        "enterNewTitle": MessageLookupByLibrary.simpleMessage(
+            "Bitte geben Sie einen neuen Titel ein"),
+        "enterUrl":
+            MessageLookupByLibrary.simpleMessage("Bitte geben Sie die URL ein"),
+        "exceptionContentNull": MessageLookupByLibrary.simpleMessage(
+            "Der Inhalt darf nicht leer sein"),
+        "exceptionCwNull": MessageLookupByLibrary.simpleMessage(
+            "Der Inhalt darf nicht leer sein"),
         "exceptionSendNote": m10,
-        "explore": MessageLookupByLibrary.simpleMessage("发现"),
-        "exploreHot": MessageLookupByLibrary.simpleMessage("热门"),
-        "exploreUserHot": MessageLookupByLibrary.simpleMessage("热门用户"),
-        "exploreUserLast": MessageLookupByLibrary.simpleMessage("最近登录的用户"),
-        "exploreUserPined": MessageLookupByLibrary.simpleMessage("置顶用户"),
-        "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿的用户"),
-        "exploreUsers": MessageLookupByLibrary.simpleMessage("用户"),
-        "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
+        "explore": MessageLookupByLibrary.simpleMessage("Entdeckungen"),
+        "exploreHot": MessageLookupByLibrary.simpleMessage("en vogue"),
+        "exploreUserHot":
+            MessageLookupByLibrary.simpleMessage("beliebter Benutzer"),
+        "exploreUserLast": MessageLookupByLibrary.simpleMessage(
+            "Kürzlich eingeloggte Benutzer"),
+        "exploreUserPined": MessageLookupByLibrary.simpleMessage(
+            "Benutzer an der Spitze der Liste"),
+        "exploreUserUpdated":
+            MessageLookupByLibrary.simpleMessage("Neueste Beiträge"),
+        "exploreUsers": MessageLookupByLibrary.simpleMessage("Benutzer"),
+        "favorite":
+            MessageLookupByLibrary.simpleMessage("Lesezeichen (Internet)"),
         "filter": MessageLookupByLibrary.simpleMessage("Filter"),
-        "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
-        "follow": MessageLookupByLibrary.simpleMessage("关注"),
-        "followed": MessageLookupByLibrary.simpleMessage("已关注"),
-        "followers": MessageLookupByLibrary.simpleMessage("关注者"),
-        "following": MessageLookupByLibrary.simpleMessage("关注中"),
-        "fromCloud": MessageLookupByLibrary.simpleMessage("从网盘中"),
+        "folderName": MessageLookupByLibrary.simpleMessage("Name des Ordners"),
+        "follow": MessageLookupByLibrary.simpleMessage("Fokus"),
+        "followed": MessageLookupByLibrary.simpleMessage("Gefolgt von"),
+        "followers": MessageLookupByLibrary.simpleMessage("Beobachter"),
+        "following": MessageLookupByLibrary.simpleMessage("Besorgt"),
+        "fromCloud": MessageLookupByLibrary.simpleMessage("Vom Netbook aus"),
         "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
-        "hashtag": MessageLookupByLibrary.simpleMessage("话题标签"),
-        "hostnames": MessageLookupByLibrary.simpleMessage("域名"),
-        "hour": MessageLookupByLibrary.simpleMessage("小时"),
+        "hashtag": MessageLookupByLibrary.simpleMessage("Hashtag"),
+        "hostnames": MessageLookupByLibrary.simpleMessage("Domain-Name"),
+        "hour": MessageLookupByLibrary.simpleMessage("Stunden"),
         "hoursAgo": m11,
-        "image": MessageLookupByLibrary.simpleMessage("图片"),
-        "inputServer": MessageLookupByLibrary.simpleMessage("手动输入服务器"),
-        "insertDriverFile": MessageLookupByLibrary.simpleMessage("插入附件"),
-        "isFollowingYouNow": MessageLookupByLibrary.simpleMessage("正在关注你"),
-        "justNow": MessageLookupByLibrary.simpleMessage("刚刚"),
-        "keepOriginal": MessageLookupByLibrary.simpleMessage("保留原图"),
+        "image": MessageLookupByLibrary.simpleMessage("Foto"),
+        "inputServer":
+            MessageLookupByLibrary.simpleMessage("Manuelle Eingabe Server"),
+        "insertDriverFile":
+            MessageLookupByLibrary.simpleMessage("Einsetzen von Zubehör"),
+        "isFollowingYouNow":
+            MessageLookupByLibrary.simpleMessage("Ich beobachte dich."),
+        "justNow": MessageLookupByLibrary.simpleMessage("erst kürzlich"),
+        "keepOriginal": MessageLookupByLibrary.simpleMessage(
+            "Bewahren Sie das Originalbild"),
         "loadingServers":
             MessageLookupByLibrary.simpleMessage("Server Loading"),
-        "local": MessageLookupByLibrary.simpleMessage("本地"),
-        "localUpload": MessageLookupByLibrary.simpleMessage("本地上传"),
-        "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "local": MessageLookupByLibrary.simpleMessage("diese Ortschaft"),
+        "localUpload": MessageLookupByLibrary.simpleMessage("lokaler Upload"),
+        "login": MessageLookupByLibrary.simpleMessage("sich anmelden"),
         "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
-        "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
-        "loginFailedWithAppCreate":
-            MessageLookupByLibrary.simpleMessage("登录失败: 应用创建失败"),
-        "loginFailedWithToken":
-            MessageLookupByLibrary.simpleMessage("登录失败: token获取失败"),
+        "loginFailed":
+            MessageLookupByLibrary.simpleMessage("Anmeldung fehlgeschlagen"),
+        "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
+            "Anmeldung fehlgeschlagen: Erstellung der Anwendung fehlgeschlagen"),
+        "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
+            "Anmeldung fehlgeschlagen: Token-Erwerb fehlgeschlagen"),
         "loginLoading": m12,
-        "loginSuccess": MessageLookupByLibrary.simpleMessage("登录成功"),
-        "manageAccount": MessageLookupByLibrary.simpleMessage("管理账号"),
-        "markAsSensitive": MessageLookupByLibrary.simpleMessage("标记为敏感内容"),
-        "mention": MessageLookupByLibrary.simpleMessage("提及"),
-        "minute": MessageLookupByLibrary.simpleMessage("分钟"),
+        "loginSuccess":
+            MessageLookupByLibrary.simpleMessage("Anmeldung erfolgreich"),
+        "manageAccount":
+            MessageLookupByLibrary.simpleMessage("Konto verwalten"),
+        "markAsSensitive": MessageLookupByLibrary.simpleMessage(
+            "Als sensibler Inhalt kennzeichnen"),
+        "mention": MessageLookupByLibrary.simpleMessage("erheben (ein Thema)"),
+        "minute": MessageLookupByLibrary.simpleMessage("Minuten"),
         "minutesAgo": m13,
         "monthsAgo": m14,
-        "more": MessageLookupByLibrary.simpleMessage("更多"),
-        "myCLips": MessageLookupByLibrary.simpleMessage("我的便签"),
-        "name": MessageLookupByLibrary.simpleMessage("名称"),
-        "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
-        "next": MessageLookupByLibrary.simpleMessage("下一步"),
+        "more": MessageLookupByLibrary.simpleMessage("mehr"),
+        "myCLips": MessageLookupByLibrary.simpleMessage("Meine Anmerkung."),
+        "name": MessageLookupByLibrary.simpleMessage("Name (einer Sache)"),
+        "nameCannotBeEmpty":
+            MessageLookupByLibrary.simpleMessage("Name darf nicht leer sein"),
+        "next": MessageLookupByLibrary.simpleMessage("der nächste Schritt"),
         "noLists":
             MessageLookupByLibrary.simpleMessage("You don\'t have any lists"),
-        "notFindServer": MessageLookupByLibrary.simpleMessage("没有找到你所在的服务器？"),
-        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
-        "noteCwHide": MessageLookupByLibrary.simpleMessage("收起"),
-        "noteCwShow": MessageLookupByLibrary.simpleMessage("显示内容"),
+        "notFindServer": MessageLookupByLibrary.simpleMessage(
+            "Sie haben Ihren Server nicht gefunden?"),
+        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
+            "Kopieren Sie den Link zu dieser Website"),
+        "noteCwHide": MessageLookupByLibrary.simpleMessage("einlagern"),
+        "noteCwShow": MessageLookupByLibrary.simpleMessage("Inhalt anzeigen"),
         "noteFormLanguageTranslation": m15,
-        "noteLocalOnly": MessageLookupByLibrary.simpleMessage("不参与联合"),
-        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("转到所在服务器显示"),
-        "notePined": MessageLookupByLibrary.simpleMessage("已置顶的帖子"),
-        "noteQuote": MessageLookupByLibrary.simpleMessage("引用"),
-        "noteReNote": MessageLookupByLibrary.simpleMessage("转发"),
-        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("转发了"),
-        "noteTranslate": MessageLookupByLibrary.simpleMessage("翻译帖子"),
-        "noteVisibility": MessageLookupByLibrary.simpleMessage("可见性"),
-        "noteVisibilityFollowers": MessageLookupByLibrary.simpleMessage("关注者"),
+        "noteLocalOnly": MessageLookupByLibrary.simpleMessage(
+            "Nicht-Beteiligung an gemeinsamen"),
+        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage(
+            "Gehen Sie zum Hostserver, um Folgendes anzuzeigen"),
+        "notePined": MessageLookupByLibrary.simpleMessage("Top-Posten"),
+        "noteQuote": MessageLookupByLibrary.simpleMessage("Zitat"),
+        "noteReNote": MessageLookupByLibrary.simpleMessage(
+            "Weiterleitung (Post, SMS, Datenpakete)"),
+        "noteReNoteByUser":
+            MessageLookupByLibrary.simpleMessage("Weitergeleitet."),
+        "noteTranslate":
+            MessageLookupByLibrary.simpleMessage("Übersetzung von Beiträgen"),
+        "noteVisibility": MessageLookupByLibrary.simpleMessage("Sichtbarkeit"),
+        "noteVisibilityFollowers":
+            MessageLookupByLibrary.simpleMessage("Beobachter"),
         "noteVisibilityFollowersText":
-            MessageLookupByLibrary.simpleMessage("仅发送至关注者"),
-        "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("首页"),
-        "noteVisibilityHomeText":
-            MessageLookupByLibrary.simpleMessage("仅发送至首页的时间线"),
-        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("公开"),
-        "noteVisibilityPublicText":
-            MessageLookupByLibrary.simpleMessage("您的帖子将出现在全局时间线上"),
-        "noteVisibilitySpecified": MessageLookupByLibrary.simpleMessage("私信"),
-        "noteVisibilitySpecifiedText":
-            MessageLookupByLibrary.simpleMessage("仅发送至指定用户"),
-        "notes": MessageLookupByLibrary.simpleMessage("帖子"),
+            MessageLookupByLibrary.simpleMessage("Nur an Follower senden"),
+        "noteVisibilityHome":
+            MessageLookupByLibrary.simpleMessage("Abb. Anfang"),
+        "noteVisibilityHomeText": MessageLookupByLibrary.simpleMessage(
+            "Zeitleiste wird nur an die Startseite gesendet"),
+        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("offen"),
+        "noteVisibilityPublicText": MessageLookupByLibrary.simpleMessage(
+            "Ihr Beitrag wird in der globalen Zeitleiste erscheinen"),
+        "noteVisibilitySpecified":
+            MessageLookupByLibrary.simpleMessage("privater Brief"),
+        "noteVisibilitySpecifiedText": MessageLookupByLibrary.simpleMessage(
+            "Nur an bestimmte Benutzer senden"),
+        "notes": MessageLookupByLibrary.simpleMessage("Karte"),
         "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
-        "notification": MessageLookupByLibrary.simpleMessage("通知"),
-        "notifications": MessageLookupByLibrary.simpleMessage("通知"),
-        "notifyAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "notifyFilter": MessageLookupByLibrary.simpleMessage("筛选"),
-        "notifyFollowedAccepted":
-            MessageLookupByLibrary.simpleMessage("你的关注请求被通过了"),
-        "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("你有新的关注者"),
-        "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全部标记为已读"),
-        "notifyMention": MessageLookupByLibrary.simpleMessage("提到我的"),
-        "notifyMessage": MessageLookupByLibrary.simpleMessage("私信"),
+        "notification":
+            MessageLookupByLibrary.simpleMessage("Benachrichtigungen"),
+        "notifications":
+            MessageLookupByLibrary.simpleMessage("Benachrichtigungen"),
+        "notifyAll": MessageLookupByLibrary.simpleMessage("vollständig"),
+        "notifyFilter": MessageLookupByLibrary.simpleMessage("Screening"),
+        "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
+            "Ihr Antrag auf Aufmerksamkeit wurde genehmigt."),
+        "notifyFollowedYou":
+            MessageLookupByLibrary.simpleMessage("Sie haben neue Follower."),
+        "notifyMarkAllRead":
+            MessageLookupByLibrary.simpleMessage("Alle als gelesen markieren"),
+        "notifyMention": MessageLookupByLibrary.simpleMessage("Apropos mein"),
+        "notifyMessage": MessageLookupByLibrary.simpleMessage("privater Brief"),
         "notifyNotSupport": m16,
-        "ok": MessageLookupByLibrary.simpleMessage("确定"),
-        "openInNewTab": MessageLookupByLibrary.simpleMessage("转到浏览器显示"),
-        "overviews": MessageLookupByLibrary.simpleMessage("概览"),
-        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage("关注请求批准中"),
-        "preview": MessageLookupByLibrary.simpleMessage("预览"),
-        "previewNote": MessageLookupByLibrary.simpleMessage("预览帖子"),
-        "processing": MessageLookupByLibrary.simpleMessage("处理中"),
-        "public": MessageLookupByLibrary.simpleMessage("公开"),
-        "publish": MessageLookupByLibrary.simpleMessage("发布"),
-        "reNoteHint": MessageLookupByLibrary.simpleMessage("引用这个帖子..."),
-        "reNoteText": MessageLookupByLibrary.simpleMessage("引用帖子"),
-        "reaction": MessageLookupByLibrary.simpleMessage("回应"),
-        "reactionAccepting": MessageLookupByLibrary.simpleMessage("接受表情回应"),
-        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("全部"),
+        "ok": MessageLookupByLibrary.simpleMessage("definieren."),
+        "openInNewTab":
+            MessageLookupByLibrary.simpleMessage("Zum Browser Display gehen"),
+        "overviews": MessageLookupByLibrary.simpleMessage("durchblättern"),
+        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage(
+            "Besorgnis über die Erteilung von Aufträgen"),
+        "preview": MessageLookupByLibrary.simpleMessage("Vorschauen"),
+        "previewNote":
+            MessageLookupByLibrary.simpleMessage("Vorschau Beiträge"),
+        "processing": MessageLookupByLibrary.simpleMessage("in Arbeit"),
+        "public": MessageLookupByLibrary.simpleMessage("offen"),
+        "publish": MessageLookupByLibrary.simpleMessage("Beitrag"),
+        "reNoteHint": MessageLookupByLibrary.simpleMessage(
+            "Ich zitiere diesen Beitrag..."),
+        "reNoteText": MessageLookupByLibrary.simpleMessage("Zitat Post"),
+        "reaction": MessageLookupByLibrary.simpleMessage("Antwort"),
+        "reactionAccepting": MessageLookupByLibrary.simpleMessage(
+            "Akzeptieren von Emoji-Antworten"),
+        "reactionAcceptingAll":
+            MessageLookupByLibrary.simpleMessage("vollständig"),
         "reactionAcceptingLikeOnly":
-            MessageLookupByLibrary.simpleMessage("仅点赞"),
+            MessageLookupByLibrary.simpleMessage("Mag nur"),
         "reactionAcceptingLikeOnlyRemote":
-            MessageLookupByLibrary.simpleMessage("远程仅点赞"),
+            MessageLookupByLibrary.simpleMessage("Nur Remote Kudos"),
         "reactionAcceptingNoneSensitive":
-            MessageLookupByLibrary.simpleMessage("仅限非敏感内容"),
+            MessageLookupByLibrary.simpleMessage("Nur nicht-sensible Inhalte"),
         "reactionAcceptingNoneSensitiveOrLocal":
-            MessageLookupByLibrary.simpleMessage("仅限非敏感内容（远程仅点赞）"),
-        "recipient": MessageLookupByLibrary.simpleMessage("收件人"),
-        "refresh": MessageLookupByLibrary.simpleMessage("刷新"),
+            MessageLookupByLibrary.simpleMessage(
+                "Nur nicht-sensible Inhalte (nur Remote-Likes)"),
+        "recipient":
+            MessageLookupByLibrary.simpleMessage("An: (E-Mail-Kopfzeile)"),
+        "refresh": MessageLookupByLibrary.simpleMessage(
+            "Aktualisieren (Computerfenster)"),
         "registration": MessageLookupByLibrary.simpleMessage("Registration"),
         "registrationClosed": MessageLookupByLibrary.simpleMessage("closed"),
         "registrationOpen": MessageLookupByLibrary.simpleMessage("open"),
-        "remote": MessageLookupByLibrary.simpleMessage("远程"),
-        "rename": MessageLookupByLibrary.simpleMessage("重命名"),
-        "renameFile": MessageLookupByLibrary.simpleMessage("重命名文件"),
-        "renameFolder": MessageLookupByLibrary.simpleMessage("重命名文件夹"),
-        "replyNoteHint": MessageLookupByLibrary.simpleMessage("回复这个帖子..."),
-        "replyNoteText": MessageLookupByLibrary.simpleMessage("回复帖子"),
-        "saveFailed": MessageLookupByLibrary.simpleMessage("保存失败"),
-        "saveImage": MessageLookupByLibrary.simpleMessage("保存图片"),
-        "saveSuccess": MessageLookupByLibrary.simpleMessage("保存成功"),
-        "search": MessageLookupByLibrary.simpleMessage("搜索"),
-        "searchAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "searchHost": MessageLookupByLibrary.simpleMessage("指定域名"),
-        "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
-        "searchRemote": MessageLookupByLibrary.simpleMessage("远程"),
+        "remote": MessageLookupByLibrary.simpleMessage("per Fernzugriff"),
+        "rename": MessageLookupByLibrary.simpleMessage("umbenennen"),
+        "renameFile": MessageLookupByLibrary.simpleMessage("Datei umbenennen"),
+        "renameFolder":
+            MessageLookupByLibrary.simpleMessage("Einen Ordner umbenennen"),
+        "replyNoteHint": MessageLookupByLibrary.simpleMessage(
+            "Auf diesen Beitrag antworten..."),
+        "replyNoteText":
+            MessageLookupByLibrary.simpleMessage("Auf einen Beitrag antworten"),
+        "saveFailed": MessageLookupByLibrary.simpleMessage("nicht speichern"),
+        "saveImage": MessageLookupByLibrary.simpleMessage("Bild speichern"),
+        "saveSuccess":
+            MessageLookupByLibrary.simpleMessage("Erfolgreich speichern"),
+        "search":
+            MessageLookupByLibrary.simpleMessage("nach etw. Ausschau halten"),
+        "searchAll": MessageLookupByLibrary.simpleMessage("vollständig"),
+        "searchHost":
+            MessageLookupByLibrary.simpleMessage("Domänenname angeben"),
+        "searchLocal": MessageLookupByLibrary.simpleMessage("diese Seite"),
+        "searchRemote": MessageLookupByLibrary.simpleMessage("per Fernzugriff"),
         "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
         "secondsAgo": m17,
-        "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
+        "selectHashtag": MessageLookupByLibrary.simpleMessage("Tag auswählen"),
         "selectServer":
             MessageLookupByLibrary.simpleMessage("Please Select Your Server"),
-        "selectUser": MessageLookupByLibrary.simpleMessage("选择用户"),
-        "sensitiveClickShow": MessageLookupByLibrary.simpleMessage("点击显示"),
-        "sensitiveContent": MessageLookupByLibrary.simpleMessage("敏感内容"),
-        "serverAddr": MessageLookupByLibrary.simpleMessage("服务器地址"),
+        "selectUser":
+            MessageLookupByLibrary.simpleMessage("Benutzer auswählen"),
+        "sensitiveClickShow":
+            MessageLookupByLibrary.simpleMessage("Anklicken zum Anzeigen"),
+        "sensitiveContent":
+            MessageLookupByLibrary.simpleMessage("Sensibler Inhalt"),
+        "serverAddr": MessageLookupByLibrary.simpleMessage("Server-Adresse"),
         "serverList": MessageLookupByLibrary.simpleMessage("List of Servers"),
-        "settings": MessageLookupByLibrary.simpleMessage("设置"),
-        "share": MessageLookupByLibrary.simpleMessage("分享"),
-        "showConversation": MessageLookupByLibrary.simpleMessage("查看对话"),
-        "somebodyNote": MessageLookupByLibrary.simpleMessage(" 的帖子"),
-        "timeline": MessageLookupByLibrary.simpleMessage("时间线"),
-        "timelineGlobal": MessageLookupByLibrary.simpleMessage("全局"),
-        "timelineHome": MessageLookupByLibrary.simpleMessage("首页"),
-        "timelineHybrid": MessageLookupByLibrary.simpleMessage("社交"),
-        "timelineLocal": MessageLookupByLibrary.simpleMessage("本地"),
-        "translate": MessageLookupByLibrary.simpleMessage("翻译"),
-        "uncategorized": MessageLookupByLibrary.simpleMessage("未分类"),
-        "unfollow": MessageLookupByLibrary.simpleMessage("取消关注"),
-        "updatedDate": MessageLookupByLibrary.simpleMessage("更新日期"),
+        "settings": MessageLookupByLibrary.simpleMessage("aufstellen"),
+        "share": MessageLookupByLibrary.simpleMessage(
+            "(Freuden, Vorteile, Privilegien usw.) mit anderen zu teilen"),
+        "showConversation":
+            MessageLookupByLibrary.simpleMessage("Dialog anzeigen"),
+        "somebodyNote": MessageLookupByLibrary.simpleMessage(" Beiträge"),
+        "timeline": MessageLookupByLibrary.simpleMessage("Zeitleiste"),
+        "timelineGlobal":
+            MessageLookupByLibrary.simpleMessage("Sicherheitslage"),
+        "timelineHome": MessageLookupByLibrary.simpleMessage("Abb. Anfang"),
+        "timelineHybrid":
+            MessageLookupByLibrary.simpleMessage("Sozialisierung"),
+        "timelineLocal":
+            MessageLookupByLibrary.simpleMessage("diese Ortschaft"),
+        "translate": MessageLookupByLibrary.simpleMessage("Rendering"),
+        "uncategorized":
+            MessageLookupByLibrary.simpleMessage("Nicht kategorisiert"),
+        "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),
+        "updatedDate":
+            MessageLookupByLibrary.simpleMessage("Datum der Aktualisierung"),
         "uploadFailed": m18,
-        "uploadFromUrl": MessageLookupByLibrary.simpleMessage("从网址上传"),
-        "user": MessageLookupByLibrary.simpleMessage("用户"),
-        "userAll": MessageLookupByLibrary.simpleMessage("全部"),
-        "userDescriptionIsNull":
-            MessageLookupByLibrary.simpleMessage("此用户尚无自我介绍"),
-        "userFile": MessageLookupByLibrary.simpleMessage("附件"),
-        "userHot": MessageLookupByLibrary.simpleMessage("用户"),
-        "userNote": MessageLookupByLibrary.simpleMessage("帖子"),
-        "userRegisterBy": MessageLookupByLibrary.simpleMessage("注册于"),
-        "userWidgetUnSupport":
-            MessageLookupByLibrary.simpleMessage("小部件列表(未完成)"),
-        "username": MessageLookupByLibrary.simpleMessage("用户名"),
+        "uploadFromUrl":
+            MessageLookupByLibrary.simpleMessage("Hochladen von der Website"),
+        "user": MessageLookupByLibrary.simpleMessage("Benutzer"),
+        "userAll": MessageLookupByLibrary.simpleMessage("vollständig"),
+        "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage(
+            "Dieser Benutzer hat sich noch nicht vorgestellt"),
+        "userFile": MessageLookupByLibrary.simpleMessage("Anhang (E-Mail)"),
+        "userHot": MessageLookupByLibrary.simpleMessage("Benutzer"),
+        "userNote": MessageLookupByLibrary.simpleMessage("Karte"),
+        "userRegisterBy":
+            MessageLookupByLibrary.simpleMessage("eingetragen in"),
+        "userWidgetUnSupport": MessageLookupByLibrary.simpleMessage(
+            "Liste der Widgets (unvollendet)"),
+        "username": MessageLookupByLibrary.simpleMessage("Benutzer-ID"),
         "usersCount": MessageLookupByLibrary.simpleMessage("Users Count"),
-        "video": MessageLookupByLibrary.simpleMessage("视频"),
-        "view": MessageLookupByLibrary.simpleMessage("查看"),
-        "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
-        "vote": MessageLookupByLibrary.simpleMessage("投票"),
+        "video": MessageLookupByLibrary.simpleMessage("Video"),
+        "view": MessageLookupByLibrary.simpleMessage("auschecken"),
+        "viewMore": MessageLookupByLibrary.simpleMessage("Mehr sehen"),
+        "vote": MessageLookupByLibrary.simpleMessage("Referendum"),
         "voteAllCount": m19,
         "voteCount": m20,
-        "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
-        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
-        "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
-        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
-        "voteOptionAtLeastTwo":
-            MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
+        "voteDueDate": MessageLookupByLibrary.simpleMessage("Stichtag"),
+        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
+            "Mehrfache Abstimmungen erlaubt"),
+        "voteExpired": MessageLookupByLibrary.simpleMessage(
+            "Die Abstimmungen sind abgeschlossen."),
+        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("dauerhaft"),
+        "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
+            "Die Zahl der Stimmen darf nicht weniger als zwei betragen."),
         "voteOptionHint": m21,
         "voteOptionNullIndex": m22,
-        "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
+        "voteResult": MessageLookupByLibrary.simpleMessage(
+            "Die Abstimmungsergebnisse wurden erstellt"),
         "voteWillExpired": m23,
         "yearsAgo": m24
       };

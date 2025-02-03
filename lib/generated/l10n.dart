@@ -2280,10 +2280,10 @@ class S {
     );
   }
 
-  /// `登录信息已经过期，\r\n请重新登录账户`
+  /// `登录信息已经过期，请重新登录`
   String get loginExpired {
     return Intl.message(
-      '登录信息已经过期，\r\n请重新登录账户',
+      '登录信息已经过期，请重新登录',
       name: 'loginExpired',
       desc: '',
       args: [],
