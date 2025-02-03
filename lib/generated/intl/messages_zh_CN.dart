@@ -161,7 +161,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "local": MessageLookupByLibrary.simpleMessage("本地"),
         "localUpload": MessageLookupByLibrary.simpleMessage("本地上传"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
-        "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
+        "loginExpired":
+            MessageLookupByLibrary.simpleMessage("登录信息已经过期，\r\n请重新登录账户"),
         "loginFailed": MessageLookupByLibrary.simpleMessage("登录失败"),
         "loginFailedWithAppCreate":
             MessageLookupByLibrary.simpleMessage("登录失败: 应用创建失败"),

@@ -4,12 +4,23 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
+import '../../../status/me_detailed.dart';
+
 class SettingsProfile extends HookConsumerWidget {
   const SettingsProfile({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
+
+    var meDetail = ref.watch(currentMeDetailedProvider).valueOrNull;
+    if (meDetail == null) {
+      return const MkScaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return MkScaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -22,12 +33,18 @@ class SettingsProfile extends HookConsumerWidget {
             children: [
               MkFormItem(
                 label: "昵称",
-                child: const MkInput(),
+                child: MkInput(
+                  prefixIcon: const Icon(TablerIcons.user),
+                  value: meDetail.name,
+                ),
               ),
               MkFormItem(
                 label: "个人简介",
                 helperText: "你可以在个人简介中包含一些#标签。",
-                child: const MkSelect(),
+                child: MkInput(
+                  maxLines: 3,
+                  value: meDetail.description,
+                ),
               ),
               MkFormItem(
                 label: "位置",

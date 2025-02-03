@@ -52,7 +52,7 @@ class ClipCreateDialog extends HookConsumerWidget {
                   (clipId != null && clipData.value != null)) ...[
                 MkInput(
                     label: S.current.name,
-                    initialValue: state.name,
+                    value: state.name,
                     onChanged: (name) {
                       ref.read(provider.notifier).updateName(name);
                     }),
@@ -61,7 +61,7 @@ class ClipCreateDialog extends HookConsumerWidget {
                 ),
                 MkInput(
                   label: S.current.description,
-                  initialValue: state.description,
+                  value: state.description,
                   maxLines: 6,
                   onChanged: (description) {
                     ref.read(provider.notifier).updateDescription(description);

@@ -472,7 +472,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                     child: MkInput(
                       key: key,
                       hintText: S.current.voteOptionHint(index + 1),
-                      initialValue: item,
+                      value: item,
                       onChanged: (value) {
                         ref
                             .read(

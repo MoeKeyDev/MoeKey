@@ -56,7 +56,7 @@ class NotesSearchPanel extends HookConsumerWidget {
           children: [
             MkInput(
               prefixIcon: const Icon(TablerIcons.search),
-              initialValue: status.searchValue,
+              value: status.searchValue,
               onChanged: ref
                   .read(notesSearchStatusProvider.notifier)
                   .updateSearchValue,
@@ -98,7 +98,7 @@ class NotesSearchPanel extends HookConsumerWidget {
             if (status.serverType == 3) ...[
               const SizedBox(height: 16),
               MkInput(
-                initialValue: status.hostValue,
+                value: status.hostValue,
                 prefixIcon: const Icon(TablerIcons.server),
                 onChanged: ref
                     .read(notesSearchStatusProvider.notifier)

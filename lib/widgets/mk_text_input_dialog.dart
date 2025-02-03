@@ -51,7 +51,7 @@ class MkTextInputDialog extends HookConsumerWidget {
             onChanged: (value) {
               text.value = value;
             },
-            initialValue: text.value,
+            value: text.value,
           ),
           const SizedBox(
             height: 16,

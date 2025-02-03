@@ -1,3 +1,4 @@
+import 'package:moekey/apis/models/me_detailed.dart';
 import 'package:moekey/apis/models/notification.dart';
 import 'package:moekey/apis/models/user_lite.dart';
 import 'package:moekey/apis/services/services.dart';
@@ -5,10 +6,10 @@ import 'package:moekey/apis/services/services.dart';
 class AccountService extends MisskeyApiServices {
   AccountService({required super.client});
 
-  Future<UserLiteModel?> i() async {
+  Future<MeDetailed?> i() async {
     var data = await client.post("/i");
     if (data != null) {
-      return UserLiteModel.fromJson(data);
+      return MeDetailed.fromJson(data);
     }
     return null;
   }

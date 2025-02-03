@@ -23,14 +23,14 @@ inputDecoration(ThemeColorModel themes, String? hintText,
       suffixIcon: suffixIcon);
 }
 
-class MkInput extends ConsumerWidget {
+class MkInput extends ConsumerStatefulWidget {
   const MkInput({
     super.key,
     this.label,
     this.hintText,
     this.prefixIcon,
     this.onChanged,
-    this.initialValue,
+    this.value,
     this.maxLines,
   });
 
@@ -38,11 +38,43 @@ class MkInput extends ConsumerWidget {
   final String? hintText;
   final Icon? prefixIcon;
   final void Function(String)? onChanged;
-  final String? initialValue;
+  final String? value;
   final int? maxLines;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MkInput> createState() => _MkInputState();
+}
+
+class _MkInputState extends ConsumerState<MkInput> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value);
+    _controller.addListener(() {
+      if (widget.onChanged != null && _controller.text != widget.value) {
+        widget.onChanged!(_controller.text);
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(MkInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      _controller.text = widget.value ?? "";
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var themes = ref.watch(themeColorsProvider);
     return Material(
       color: themes.panelColor,
@@ -51,9 +83,9 @@ class MkInput extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (label != null) ...[
+          if (widget.label != null) ...[
             Text(
-              label!,
+              widget.label!,
               style: const TextStyle(fontSize: 13),
             ),
             const SizedBox(
@@ -61,18 +93,17 @@ class MkInput extends ConsumerWidget {
             ),
           ],
           TextFormField(
+            controller: _controller,
             decoration: inputDecoration(
               themes,
-              hintText,
-              prefixIcon: prefixIcon,
+              widget.hintText,
+              prefixIcon: widget.prefixIcon,
             ),
             cursorWidth: 1,
             style: const TextStyle(fontSize: 14),
             cursorColor: themes.fgColor,
-            maxLines: maxLines ?? 1,
+            maxLines: widget.maxLines ?? 1,
             textAlignVertical: TextAlignVertical.center,
-            onChanged: onChanged,
-            initialValue: initialValue,
           )
         ],
       ),

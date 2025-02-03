@@ -537,6 +537,12 @@ class UserAvatarButton extends ConsumerWidget {
               ContextMenuItem(
                 icon: TablerIcons.users,
                 label: S.current.manageAccount,
+                onTap: () {
+                  Timer(const Duration(milliseconds: 150), () {
+                    context.goNamed("settingsAccountManager");
+                  });
+                  return false;
+                },
               ),
             ];
           },

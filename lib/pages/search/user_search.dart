@@ -79,7 +79,7 @@ class UserSearchPanel extends HookConsumerWidget {
           children: [
             MkInput(
               prefixIcon: const Icon(TablerIcons.search),
-              initialValue: status.searchValue,
+              value: status.searchValue,
               onChanged:
                   ref.read(userSearchStatusProvider.notifier).updateSearchValue,
             ),

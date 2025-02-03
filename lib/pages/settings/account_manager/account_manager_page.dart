@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/login_user.dart';
 import 'package:moekey/router/router.dart';
+import 'package:moekey/status/me_detailed.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 

@@ -52,12 +52,20 @@ class MisskeyApisHttpClient {
     auth = true,
     Options? options,
   }) async {
-    return (await client.get(path,
-            queryParameters: {
-              if (auth) "i": accessToken,
-              ...?data,
-            },
-            options: options))
-        .data;
+    try {
+      return (await client.get(path,
+              queryParameters: {
+                if (auth) "i": accessToken,
+                ...?data,
+              },
+              options: options))
+          .data;
+    } on DioException catch (e) {
+      // 401
+      if (e.response?.statusCode == 401) {
+        onUnauthorized?.call();
+      }
+      rethrow;
+    }
   }
 }
