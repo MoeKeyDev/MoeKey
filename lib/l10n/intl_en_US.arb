@@ -140,6 +140,7 @@
   "noteTranslate": "Translate Post",
   "clip": "Clips",
   "clipCreate": "Create new clip",
+  "clipUpdate": "Update clip",
   "view": "View",
   "sensitiveContent": "Sensitive",
   "image": "Picture",
@@ -219,5 +220,7 @@
   "copyUserHomeLink": "Copy User Home Address",
   "pendingFollowRequest": "Follow request pending",
   "processing": "Processing",
-  "overviews": "Overview"
+  "overviews": "Overview",
+  "close": "关闭",
+  "loginExpired": "登录信息已经过期，请重新登录"
 }

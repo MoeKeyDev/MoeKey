@@ -140,6 +140,7 @@
   "noteTranslate": "ノートを翻訳する",
   "clip": "クリップ",
   "clipCreate": "新しいクリップを作成",
+  "clipUpdate": "ノートの更新",
   "view": "表示",
   "sensitiveContent": "閲覧注意",
   "image": "写真",
@@ -219,5 +220,7 @@
   "copyUserHomeLink": "ユーザーホームの URL をコピー",
   "pendingFollowRequest": "フォローリクエスト承認中",
   "processing": "処理中",
-  "overviews": "概要"
+  "overviews": "概要",
+  "close": "关闭",
+  "loginExpired": "登录信息已经过期，请重新登录"
 }

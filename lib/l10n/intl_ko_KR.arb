@@ -140,6 +140,7 @@
   "noteTranslate": "노트 번역",
   "clip": "클립",
   "clipCreate": "새 클립 만들기",
+  "clipUpdate": "스티커 메모 업데이트",
   "view": "조회",
   "sensitiveContent": "민감한 내용",
   "image": "사진",
@@ -219,5 +220,7 @@
   "copyUserHomeLink": "사용자 홈 링크 복사",
   "pendingFollowRequest": "팔로우 승인 대기중",
   "processing": "처리 중",
-  "overviews": "요약"
+  "overviews": "요약",
+  "close": "关闭",
+  "loginExpired": "登录信息已经过期，请重新登录"
 }
