@@ -220,5 +220,7 @@
   "copyUserHomeLink": "复制用户主页地址",
   "pendingFollowRequest": "关注请求批准中",
   "processing": "处理中",
-  "overviews": "概览"
+  "overviews": "概览",
+  "close": "关闭",
+  "loginExpired": "登录信息已经过期，请重新登录"
 }
