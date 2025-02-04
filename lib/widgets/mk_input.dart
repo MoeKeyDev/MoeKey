@@ -32,6 +32,9 @@ class MkInput extends ConsumerStatefulWidget {
     this.onChanged,
     this.value,
     this.maxLines,
+    this.keyboardType,
+    this.maxLength,
+    this.minLines,
   });
 
   final String? label;
@@ -40,6 +43,9 @@ class MkInput extends ConsumerStatefulWidget {
   final void Function(String)? onChanged;
   final String? value;
   final int? maxLines;
+  final TextInputType? keyboardType;
+  final int? maxLength;
+  final int? minLines;
 
   @override
   ConsumerState<MkInput> createState() => _MkInputState();
@@ -102,7 +108,10 @@ class _MkInputState extends ConsumerState<MkInput> {
             cursorWidth: 1,
             style: const TextStyle(fontSize: 14),
             cursorColor: themes.fgColor,
-            maxLines: widget.maxLines ?? 1,
+            maxLines: widget.maxLines,
+            minLines: widget.minLines,
+            keyboardType: widget.keyboardType,
+            maxLength: widget.maxLength,
             textAlignVertical: TextAlignVertical.center,
           )
         ],

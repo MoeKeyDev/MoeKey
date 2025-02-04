@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/widgets/mk_card.dart';
+import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
@@ -31,6 +33,7 @@ class SettingsProfile extends HookConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _ProfileMemberCard(),
               MkFormItem(
                 label: "昵称",
                 child: MkInput(
@@ -42,8 +45,8 @@ class SettingsProfile extends HookConsumerWidget {
                 label: "个人简介",
                 helperText: "你可以在个人简介中包含一些#标签。",
                 child: MkInput(
-                  maxLines: 3,
                   value: meDetail.description,
+                  minLines: 3,
                 ),
               ),
               MkFormItem(
@@ -92,6 +95,78 @@ class MkFormItem extends HookConsumerWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class _ProfileMemberCard extends HookConsumerWidget {
+  const _ProfileMemberCard({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var meDetail = ref.watch(currentMeDetailedProvider).valueOrNull;
+    return SizedBox(
+      height: 216,
+      child: MkCard(
+        padding: EdgeInsets.zero,
+        child: SizedBox(
+          height: 130,
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: [
+                  if (meDetail?.bannerUrl != null)
+                    MkImage(
+                      meDetail!.bannerUrl!,
+                      fit: BoxFit.cover,
+                      blurHash: meDetail.bannerBlurhash,
+                      width: double.infinity,
+                      height: 130,
+                    )
+                  else
+                    Container(
+                      color: const Color.fromARGB(40, 0, 0, 0),
+                      height: 130,
+                    ),
+                ][0],
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: FilledButton(
+                  onPressed: () {},
+                  child: const Text(
+                    "修改横幅",
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 16,
+                left: 0,
+                right: 0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 16,
+                  children: [
+                    MkImage(
+                      meDetail?.avatarUrl ?? "",
+                      width: 72,
+                      height: 72,
+                      shape: BoxShape.circle,
+                      fit: BoxFit.cover,
+                    ),
+                    FilledButton(onPressed: () {}, child: Text("修改头像")),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

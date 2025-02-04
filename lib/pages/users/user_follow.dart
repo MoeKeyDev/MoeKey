@@ -111,11 +111,14 @@ class UserFollow extends _$UserFollow {
     return MkLoadMoreListModel();
   }
 
-  Future<List<UserFullModel>> follow({String? untilId, String? sinceId}) async {
+  String? untilId;
+
+  Future<List<UserFullModel>> follow() async {
     var api = ref.read(misskeyApisProvider);
     var list = await api.user
-        .follow(userId: userId, type: type, untilId: untilId, sinceId: sinceId);
+        .follow(userId: userId, type: type, untilId: untilId, limit: 20);
     if (list.isEmpty) return [];
+    untilId = list.last.id;
     return List<UserFullModel>.from(list.map(
       (e) => e.followee ?? e.follower!,
     ));
@@ -128,17 +131,12 @@ class UserFollow extends _$UserFollow {
     if (!(state.value?.hasMore ?? true)) return;
     loading = true;
     try {
-      String? untilId;
-      if (state.valueOrNull?.list.isNotEmpty ?? false) {
-        untilId = state.valueOrNull?.list.last.id;
-      }
       List<UserFullModel> notesList;
-
-      notesList = await follow(untilId: untilId);
+      notesList = await follow();
 
       var model = MkLoadMoreListModel<UserFullModel>();
       model.list = (state.valueOrNull?.list ?? []) + notesList;
-      if (notesList.isEmpty) {
+      if (notesList.isEmpty || notesList.length < 20) {
         model.hasMore = false;
       }
       state = AsyncData(model);

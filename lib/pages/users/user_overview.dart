@@ -4,6 +4,8 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/login_user.dart';
+import 'package:moekey/apis/models/note.dart';
+import 'package:moekey/apis/models/notification.dart';
 import 'package:moekey/apis/models/user_full.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
@@ -202,8 +204,8 @@ class _UserFollowsCount extends StatelessWidget {
             ],
           ),
           if (userData.followingVisibility == null ||
-              userData.followingVisibility == "public" ||
-              (userData.followingVisibility == "followers" &&
+              userData.followingVisibility == FollowVisibility.PUBLIC ||
+              (userData.followingVisibility == FollowVisibility.FOLLOWERS &&
                   userData.isFollowing))
             GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -232,8 +234,8 @@ class _UserFollowsCount extends StatelessWidget {
               ),
             ),
           if (userData.followersVisibility == null ||
-              userData.followersVisibility == "public" ||
-              (userData.followersVisibility == "followers" &&
+              userData.followersVisibility == FollowVisibility.PUBLIC ||
+              (userData.followersVisibility == FollowVisibility.FOLLOWERS &&
                   userData.isFollowing))
             GestureDetector(
               onTap: () {

@@ -292,14 +292,14 @@ class NavBar extends HookConsumerWidget {
                       NavbarItem(
                         icon: TablerIcons.settings,
                         label: S.current.settings,
-                        id: "settingsAccountManager",
+                        id: "settingProfile",
                         currentId: currentId ?? '',
                         onSelect: () {
                           if (onSelect != null) {
                             onSelect!();
                           }
 
-                          context.goNamed("settingsAccountManager");
+                          context.goNamed("settingProfile");
                         },
                       )
                     else

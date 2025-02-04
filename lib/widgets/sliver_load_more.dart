@@ -42,6 +42,10 @@ class _SliverLoadMoreState extends State<SliverLoadMore> {
           // 当加载完成之后回退状态
           currentState = _LoadMoreStatus.done;
           // isTriggered = false;
+          // 判断加载动画是否还在显示，如果还在显示，就继续加载
+          if (context.mounted) {
+            // 获取当前的滚动控制器
+          }
         });
         break;
       case _LoadMoreStatus.loading:
@@ -60,7 +64,6 @@ class _SliverLoadMoreState extends State<SliverLoadMore> {
     return SliverLayoutBuilder(
       builder: (context, constraints) {
         // 没有更多了
-
         if (!(widget.hasMore ?? true)) {
           return const SliverToBoxAdapter(
             child: SizedBox(
@@ -68,18 +71,23 @@ class _SliverLoadMoreState extends State<SliverLoadMore> {
             ),
           );
         }
+
         // 更新状态
         Future(() {
           handleNextState(constraints.remainingPaintExtent);
         });
 
         // 显示当前状态
-        return const SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: LoadingCircularProgress(),
-            ),
+        return SliverToBoxAdapter(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(
+                  child: LoadingCircularProgress(),
+                ),
+              );
+            },
           ),
         );
       },
