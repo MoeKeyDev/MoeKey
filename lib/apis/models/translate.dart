@@ -6,7 +6,7 @@ part 'translate.freezed.dart';
 part 'translate.g.dart';
 
 @unfreezed
-class NoteTranslate with _$NoteTranslate {
+abstract class NoteTranslate with _$NoteTranslate {
   factory NoteTranslate({
     required String sourceLang,
     required String text,

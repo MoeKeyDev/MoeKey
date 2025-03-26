@@ -6,7 +6,7 @@ part 'auth.freezed.dart';
 part 'auth.g.dart';
 
 @freezed
-class SessionGenerateModel with _$SessionGenerateModel {
+abstract class SessionGenerateModel with _$SessionGenerateModel {
   const factory SessionGenerateModel({
     required String token,
     required String url,

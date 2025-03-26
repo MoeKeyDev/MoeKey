@@ -9,7 +9,7 @@ part 'me_detailed.freezed.dart';
 part 'me_detailed.g.dart';
 
 @freezed
-class MeDetailed with _$MeDetailed {
+abstract class MeDetailed with _$MeDetailed {
   const factory MeDetailed({
     required String? avatarBlurhash,
     required List<AvatarDecoration> avatarDecorations,

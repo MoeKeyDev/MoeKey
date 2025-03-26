@@ -6,7 +6,7 @@ part 'announcement.freezed.dart';
 part 'announcement.g.dart';
 
 @unfreezed
-class Announcement with _$Announcement {
+abstract class Announcement with _$Announcement {
   factory Announcement({
     double? closeDuration,
     required DateTime createdAt,

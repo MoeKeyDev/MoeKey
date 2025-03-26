@@ -6,7 +6,7 @@ part 'app.freezed.dart';
 part 'app.g.dart';
 
 @freezed
-class AppModel with _$AppModel {
+abstract class AppModel with _$AppModel {
   const factory AppModel({
     String? callbackUrl,
     required String id,

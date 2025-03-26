@@ -6,7 +6,7 @@ part 'user_lite.freezed.dart';
 part 'user_lite.g.dart';
 
 @freezed
-class UserLiteModel with _$UserLiteModel {
+abstract class UserLiteModel with _$UserLiteModel {
   const factory UserLiteModel({
     required String? avatarBlurhash,
     required List<AvatarDecoration> avatarDecorations,
@@ -37,7 +37,7 @@ extension UserLiteModelExtension on UserLiteModel {
 }
 
 @freezed
-class AvatarDecoration with _$AvatarDecoration {
+abstract class AvatarDecoration with _$AvatarDecoration {
   const factory AvatarDecoration({
     @Default(0) double angle,
     @Default(false) bool flipH,
@@ -52,7 +52,7 @@ class AvatarDecoration with _$AvatarDecoration {
 }
 
 @freezed
-class BadgeRole with _$BadgeRole {
+abstract class BadgeRole with _$BadgeRole {
   const factory BadgeRole({
     required double displayOrder,
     required String? iconUrl,
@@ -64,7 +64,7 @@ class BadgeRole with _$BadgeRole {
 }
 
 @freezed
-class Instance with _$Instance {
+abstract class Instance with _$Instance {
   const factory Instance({
     required String? faviconUrl,
     required String? iconUrl,

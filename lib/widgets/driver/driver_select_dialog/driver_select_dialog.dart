@@ -15,10 +15,15 @@ import '../../mk_switch.dart';
 import '../driver_list.dart';
 
 class DriverSelectContextMenu extends HookConsumerWidget {
-  const DriverSelectContextMenu(
-      {super.key, required this.builder, required this.id});
+  const DriverSelectContextMenu({
+    super.key,
+    required this.builder,
+    required this.id,
+    this.maxSelect = 16,
+  });
 
   final String id;
+  final int maxSelect;
   final Widget Function(BuildContext context, void Function() open) builder;
 
   @override
@@ -26,7 +31,7 @@ class DriverSelectContextMenu extends HookConsumerWidget {
     var isOriginal = useState(false);
     return ContextMenuBuilder(
       mode: const [],
-      maskColor: Colors.black.withOpacity(0.4),
+      maskColor: Colors.black.withAlpha(102),
       alignmentChild: true,
       menu: ContextMenuCard(
         initialChildSize: 0.6,
@@ -112,7 +117,7 @@ class DriverSelectContextMenu extends HookConsumerWidget {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return DriverSelectDialog(id: id);
+                        return DriverSelectDialog(id: id, maxSelect: maxSelect);
                       },
                     );
                   },
@@ -155,9 +160,14 @@ class DriverSelectContextMenu extends HookConsumerWidget {
 }
 
 class DriverSelectDialog extends HookConsumerWidget {
-  const DriverSelectDialog({super.key, required this.id});
+  const DriverSelectDialog({
+    super.key,
+    required this.id,
+    this.maxSelect = 16,
+  });
 
   final String id;
+  final int maxSelect;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -196,7 +206,11 @@ class DriverSelectDialog extends HookConsumerWidget {
                         child: MkCard(
                           padding: const EdgeInsets.all(0),
                           borderRadius: borderRadius,
-                          child: DriverList(selectModel: true, id: id),
+                          child: DriverList(
+                            selectModel: true,
+                            id: id,
+                            maxSelect: maxSelect,
+                          ),
                         ),
                       ),
                     ),

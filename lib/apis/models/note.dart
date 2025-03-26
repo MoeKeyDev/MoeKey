@@ -18,7 +18,7 @@ class MkLoadMoreListModel<T> {
 class NoteListModel extends MkLoadMoreListModel<NoteModel> {}
 
 @unfreezed
-class NoteModel with _$NoteModel {
+abstract class NoteModel with _$NoteModel {
   factory NoteModel({
     required String id,
     @Default(0) int clippedCount,
@@ -67,7 +67,7 @@ extension NoteModelExtension on NoteModel {
 }
 
 @freezed
-class NotePollModelChoices with _$NotePollModelChoices {
+abstract class NotePollModelChoices with _$NotePollModelChoices {
   const factory NotePollModelChoices({
     required int votes,
     required String text,
@@ -79,7 +79,7 @@ class NotePollModelChoices with _$NotePollModelChoices {
 }
 
 @freezed
-class NotePollModel with _$NotePollModel {
+abstract class NotePollModel with _$NotePollModel {
   const factory NotePollModel({
     required bool multiple,
     required List<NotePollModelChoices> choices,
@@ -159,7 +159,7 @@ enum NoteVisibility {
 }
 
 @freezed
-class LinkPreview with _$LinkPreview {
+abstract class LinkPreview with _$LinkPreview {
   const factory LinkPreview({
     String? description,
     String? icon,

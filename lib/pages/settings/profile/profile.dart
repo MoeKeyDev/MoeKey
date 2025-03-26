@@ -7,6 +7,7 @@ import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
 import '../../../status/me_detailed.dart';
+import '../../../widgets/driver/driver_select_dialog/driver_select_dialog.dart';
 
 class SettingsProfile extends HookConsumerWidget {
   const SettingsProfile({super.key});
@@ -136,12 +137,21 @@ class _ProfileMemberCard extends HookConsumerWidget {
               Positioned(
                 right: 10,
                 top: 10,
-                child: FilledButton(
-                  onPressed: () {},
-                  child: const Text(
-                    "修改横幅",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                  ),
+                child: DriverSelectContextMenu(
+                  builder: (context, open) {
+                    return FilledButton(
+                      onPressed: () {
+                        open();
+                      },
+                      child: const Text(
+                        "修改横幅",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 13),
+                      ),
+                    );
+                  },
+                  id: '',
+                  maxSelect: 1,
                 ),
               ),
               Positioned(

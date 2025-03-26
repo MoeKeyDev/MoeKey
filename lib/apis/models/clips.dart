@@ -7,7 +7,7 @@ part 'clips.freezed.dart';
 part 'clips.g.dart';
 
 @freezed
-class ClipsModel with _$ClipsModel {
+abstract class ClipsModel with _$ClipsModel {
   const factory ClipsModel({
     required DateTime createdAt,
     String? description,

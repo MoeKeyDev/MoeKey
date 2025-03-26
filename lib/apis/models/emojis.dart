@@ -6,7 +6,7 @@ part 'emojis.freezed.dart';
 part 'emojis.g.dart';
 
 @freezed
-class EmojiSimple with _$EmojiSimple {
+abstract class EmojiSimple with _$EmojiSimple {
   const factory EmojiSimple({
     required List<String> aliases,
     String? category,

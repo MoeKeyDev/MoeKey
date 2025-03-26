@@ -7,7 +7,7 @@ part 'user_full.freezed.dart';
 part 'user_full.g.dart';
 
 @unfreezed
-class UserFullModel with _$UserFullModel {
+abstract class UserFullModel with _$UserFullModel {
   factory UserFullModel({
     String? avatarBlurhash,
     String? avatarUrl,
