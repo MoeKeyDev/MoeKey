@@ -6,6 +6,7 @@ import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
+import '../../../apis/models/drive.dart';
 import '../../../status/me_detailed.dart';
 import '../../../widgets/driver/driver_select_dialog/driver_select_dialog.dart';
 
@@ -150,8 +151,8 @@ class _ProfileMemberCard extends HookConsumerWidget {
                       ),
                     );
                   },
-                  id: '',
                   maxSelect: 1,
+                  selectCallback: (List<DriveFileModel> files) {},
                 ),
               ),
               Positioned(

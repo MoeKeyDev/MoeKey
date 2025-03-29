@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/drive.dart';
 import 'package:moekey/widgets/context_menu.dart';
-import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:moekey/widgets/driver/upload_file_dialog.dart';
 
 import '../../../generated/l10n.dart';
-import '../../../logger.dart';
 import '../../mk_card.dart';
 import '../../mk_switch.dart';
 import '../driver_list.dart';
@@ -18,13 +17,13 @@ class DriverSelectContextMenu extends HookConsumerWidget {
   const DriverSelectContextMenu({
     super.key,
     required this.builder,
-    required this.id,
-    this.maxSelect = 16,
+    this.maxSelect,
+    required this.selectCallback,
   });
 
-  final String id;
-  final int maxSelect;
+  final int? maxSelect;
   final Widget Function(BuildContext context, void Function() open) builder;
+  final Function(List<DriveFileModel> files) selectCallback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -69,11 +68,12 @@ class DriverSelectContextMenu extends HookConsumerWidget {
                               child: FittedBox(
                                 fit: BoxFit.fill,
                                 child: MkSwitch(
-                                    value: isOriginal1.value,
-                                    onChanged: (value) {
-                                      isOriginal1.value = value;
-                                      // setIsOriginal(value);
-                                    }),
+                                  value: isOriginal1.value,
+                                  onChanged: (value) {
+                                    isOriginal1.value = value;
+                                    // setIsOriginal(value);
+                                  },
+                                ),
                               ),
                             ),
                           ],
@@ -90,18 +90,13 @@ class DriverSelectContextMenu extends HookConsumerWidget {
               label: S.current.localUpload,
               icon: TablerIcons.upload,
               onTap: () {
-                logger.d("本地上传");
                 DriverUploadFileDialog.showUploadDialog(
                         context: context,
                         isOriginal: isOriginal.value,
                         ref: ref)
                     .then(
                   (value) {
-                    for (var item in value) {
-                      ref
-                          .read(driverSelectDialogStateProvider(id).notifier)
-                          .add(item.id, item);
-                    }
+                    selectCallback(value);
                   },
                 );
                 return false;
@@ -117,9 +112,13 @@ class DriverSelectContextMenu extends HookConsumerWidget {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return DriverSelectDialog(id: id, maxSelect: maxSelect);
+                        return DriverSelectDialog(maxSelect: maxSelect);
                       },
-                    );
+                    ).then((value) {
+                      if (value != null) {
+                        selectCallback(value);
+                      }
+                    });
                   },
                 );
                 return false;
@@ -162,12 +161,10 @@ class DriverSelectContextMenu extends HookConsumerWidget {
 class DriverSelectDialog extends HookConsumerWidget {
   const DriverSelectDialog({
     super.key,
-    required this.id,
-    this.maxSelect = 16,
+    this.maxSelect,
   });
 
-  final String id;
-  final int maxSelect;
+  final int? maxSelect;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -208,7 +205,6 @@ class DriverSelectDialog extends HookConsumerWidget {
                           borderRadius: borderRadius,
                           child: DriverList(
                             selectModel: true,
-                            id: id,
                             maxSelect: maxSelect,
                           ),
                         ),

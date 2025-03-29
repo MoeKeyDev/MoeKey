@@ -49,19 +49,6 @@ class NoteCreateDialog extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
 
-    useEffect(() {
-      Future(() {
-        var notifier = ref.read(ref
-            .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
-            .getDriverSelectDialogStateProvider()
-            .notifier);
-        notifier.clear();
-        for (var element in files ?? <DriveFileModel>[]) {
-          notifier.add(element.id, element);
-        }
-      });
-      return null;
-    }, const []);
     return LayoutBuilder(
       builder: (context, constraints) {
         var isFullscreen = constraints.maxWidth < 580;
@@ -127,9 +114,6 @@ class NoteCreateDialog extends HookConsumerWidget {
     return HookConsumer(
       builder: (context, ref, child) {
         MetaDetailedModel? data = ref.watch(instanceMetaProvider).valueOrNull;
-        var driverMap = ref.watch(ref
-            .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
-            .getDriverSelectDialogStateProvider());
         var form = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
         var contentController =
             useTextEditingController(text: form.text ?? initText);
@@ -238,7 +222,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                         buildTextField(data, fullscreen, contentController)
                       else
                         buildPreview(data),
-                      if (driverMap.isNotEmpty) ...[
+                      if (form.files.isNotEmpty) ...[
                         buildDriverList(),
                         const SizedBox(
                           height: 8,
@@ -356,7 +340,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      color: themes.mentionColor.withOpacity(0.1)),
+                      color: themes.mentionColor.withAlpha(25)),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -376,7 +360,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                         Text(
                           "@${data[key]["host"]}",
                           style: TextStyle(
-                              color: themes.mentionColor.withOpacity(0.7)),
+                            color: themes.mentionColor.withAlpha(178),
+                          ),
                         ),
                       const SizedBox(width: 2),
                       MouseRegion(
@@ -770,15 +755,13 @@ class NoteCreateDialog extends HookConsumerWidget {
     return HookConsumer(
       builder: (context, ref, child) {
         var themes = ref.watch(themeColorsProvider);
-        var driverMap = ref.watch(ref
-            .watch(noteCreateDialogStateProvider(noteId, noteType).notifier)
-            .getDriverSelectDialogStateProvider());
-        var driverList = driverMap;
+        var provider = noteCreateDialogStateProvider(noteId, noteType);
+        var form = ref.watch(provider);
         return Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
-            for (var item in driverList.values)
+            for (var (index, item) in form.files.indexed)
               SizedBox(
                 width: 80,
                 height: 80,
@@ -801,20 +784,13 @@ class NoteCreateDialog extends HookConsumerWidget {
                         cursor: SystemMouseCursors.click,
                         child: GestureDetector(
                           onTap: () {
-                            ref
-                                .read(ref
-                                    .watch(noteCreateDialogStateProvider(
-                                            noteId, noteType)
-                                        .notifier)
-                                    .getDriverSelectDialogStateProvider()
-                                    .notifier)
-                                .remove(item.id);
+                            ref.read(provider.notifier).removeFile(index);
                           },
                           child: Container(
                             width: 20,
                             height: 20,
                             decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.4),
+                                color: Colors.black.withAlpha(100),
                                 borderRadius: const BorderRadius.all(
                                     Radius.circular(15))),
                             child: const Center(
@@ -856,10 +832,12 @@ class NoteCreateDialog extends HookConsumerWidget {
                     tooltip: S.current.insertDriverFile,
                     icon: TablerIcons.photo_plus);
               },
-              id: ref
-                  .watch(
-                      noteCreateDialogStateProvider(noteId, noteType).notifier)
-                  .getDriverSelectId(),
+              selectCallback: (List<DriveFileModel> files) {
+                ref
+                    .read(noteCreateDialogStateProvider(noteId, noteType)
+                        .notifier)
+                    .addFileList(files);
+              },
             ),
             const SizedBox(
               width: 4,
@@ -1099,7 +1077,7 @@ class NoteCreateDialog extends HookConsumerWidget {
         child: SizedBox(
           width: 32,
           child: ContextMenuBuilder(
-            maskColor: Colors.black.withOpacity(0.5),
+            maskColor: Colors.black.withAlpha(128),
             menu: ContextMenuCard(
               width: 250,
               menuListBuilder: () {
@@ -1270,7 +1248,7 @@ class NoteCreateDialog extends HookConsumerWidget {
         child: SizedBox(
           width: 32,
           child: ContextMenuBuilder(
-              maskColor: Colors.black.withOpacity(0.5),
+              maskColor: Colors.black.withAlpha(128),
               menu: ContextMenuCard(
                 width: 250,
                 widgetBuilder: ({required onHidden, required bool large}) {
@@ -1404,9 +1382,8 @@ class NoteCreateDialog extends HookConsumerWidget {
                 },
                 behavior: HitTestBehavior.opaque,
                 child: Container(
-                  color: isHover
-                      ? Colors.black.withOpacity(0.05)
-                      : Colors.transparent,
+                  color:
+                      isHover ? Colors.black.withAlpha(12) : Colors.transparent,
                   padding: EdgeInsets.symmetric(
                       horizontal: large ? 20 : 14, vertical: large ? 16 : 8),
                   child: Row(

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../apis/models/drive.dart';
 import '../../apis/models/note.dart';
 import '../../generated/l10n.dart';
 import '../../logger.dart';
@@ -23,6 +24,7 @@ class NoteCreateDialogStateModel {
   bool localOnly = false; // 禁用联合
   NoteReactionAcceptance? reactionAcceptance; // 表情回应限制
   List fileIds = [];
+  List<DriveFileModel> files = []; // 附件
   String? replyId; // 回复
   String? renoteId; // 转发/引用
   String? channelId; // 频道id
@@ -238,8 +240,21 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     return "$type::$noteId";
   }
 
-  DriverSelectDialogStateProvider getDriverSelectDialogStateProvider() {
-    return driverSelectDialogStateProvider(getDriverSelectId());
+  addFile(DriveFileModel file) {
+    state.files.add(file);
+    ref.notifyListeners();
+  }
+
+  addFileList(List<DriveFileModel> files) {
+    state.files.addAll(files);
+    ref.notifyListeners();
+  }
+
+  removeFile(int index) {
+    if (state.files.length > index) {
+      state.files.removeAt(index);
+      ref.notifyListeners();
+    }
   }
 
   bool sendLoading = false;
@@ -250,8 +265,10 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     try {
       var http = await ref.read(httpProvider.future);
       var user = ref.read(currentLoginUserProvider);
-      var imageSelect = ref.read(getDriverSelectDialogStateProvider());
-      state.fileIds = imageSelect.keys.toList();
+      state.fileIds = [];
+      for (var item in state.files) {
+        state.fileIds.add(item.id);
+      }
 
       // 参数验证
       if (state.text != null && state.text!.isEmpty) {

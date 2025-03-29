@@ -9,7 +9,7 @@ class DrivePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return const Scaffold(
-      body: DriverList(id: ''),
+      body: DriverList(),
     );
   }
 }
