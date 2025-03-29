@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/settings/member_info_state.dart';
@@ -41,23 +42,58 @@ class SettingsProfile extends HookConsumerWidget {
                 label: "昵称",
                 child: MkInput(
                   prefixIcon: const Icon(TablerIcons.user),
-                  value: meDetail.user.name,
+                  value: meDetail.originalUser.name,
+                  onChanged: (value) {
+                    ref
+                        .read(memberInfoStateProvider.notifier)
+                        .updateUser(meDetail.user.copyWith(name: value));
+                  },
                 ),
               ),
+              if (meDetail.user.name != meDetail.originalUser.name)
+                SaveButton(
+                  data: {
+                    "name": meDetail.originalUser.name,
+                  },
+                ),
               MkFormItem(
                 label: "个人简介",
                 helperText: "你可以在个人简介中包含一些#标签。",
                 child: MkInput(
-                  value: meDetail.user.description,
+                  value: meDetail.originalUser.description,
                   minLines: 3,
+                  onChanged: (value) {
+                    ref
+                        .read(memberInfoStateProvider.notifier)
+                        .updateUser(meDetail.user.copyWith(description: value));
+                  },
                 ),
               ),
+              if (meDetail.user.description !=
+                  meDetail.originalUser.description)
+                SaveButton(
+                  data: {
+                    "description": meDetail.user.description,
+                  },
+                ),
               MkFormItem(
                 label: "位置",
-                child: const MkInput(
+                child: MkInput(
                   prefixIcon: Icon(TablerIcons.map_pin),
+                  value: meDetail.originalUser.location,
+                  onChanged: (value) {
+                    ref
+                        .read(memberInfoStateProvider.notifier)
+                        .updateUser(meDetail.user.copyWith(location: value));
+                  },
                 ),
               ),
+              if (meDetail.user.location != meDetail.originalUser.location)
+                SaveButton(
+                  data: {
+                    "location": meDetail.user.location,
+                  },
+                ),
             ],
           ),
         ),
@@ -202,6 +238,39 @@ class _ProfileMemberCard extends HookConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class SaveButton extends HookConsumerWidget {
+  const SaveButton({super.key, required this.data});
+
+  final Map<String, dynamic> data;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var isLoading = useState(false);
+    return FilledButton(
+      onPressed: isLoading.value
+          ? null
+          : () async {
+              isLoading.value = true;
+              try {
+                await ref
+                    .read(memberInfoStateProvider.notifier)
+                    .updateApi(data);
+              } catch (e) {
+                if (!context.mounted) return;
+                // Handle error
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("保存失败: $e"),
+                  ),
+                );
+              }
+              isLoading.value = false;
+            },
+      child: Text("保存"),
     );
   }
 }
