@@ -26,4 +26,12 @@ class AccountService extends MisskeyApiServices {
     return List<NotificationModel>.from(
         res.map((e) => NotificationModel.fromJson(e)));
   }
+
+  // i/update
+  Future<MeDetailed> update({
+    Map<String, dynamic>? data,
+  }) async {
+    var res = await client.post("/i/update", data: data);
+    return MeDetailed.fromJson(res);
+  }
 }

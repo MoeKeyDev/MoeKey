@@ -155,7 +155,6 @@ class DriverList extends HookConsumerWidget {
           if (name.value.isNotEmpty) {
             ref.read(driverUploaderProvider.notifier).createFolder(name.value);
           }
-
           Navigator.of(context).pop();
         }
 
@@ -351,6 +350,12 @@ class DriverList extends HookConsumerWidget {
                   notifier.add(id, driverModel);
                   isSelect.value = true;
                 }
+              }
+            },
+            onDoubleTap: () {
+              if (driverModel is DriveFileModel) {
+                ref.read(driverSelectDialogStateProvider.notifier).clear();
+                Navigator.of(context).pop([driverModel]);
               }
             },
             child: DriveImageThumbnail(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/pages/settings/member_info_state.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_input.dart';
@@ -17,7 +18,7 @@ class SettingsProfile extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
 
-    var meDetail = ref.watch(currentMeDetailedProvider).valueOrNull;
+    var meDetail = ref.watch(memberInfoStateProvider).valueOrNull;
     if (meDetail == null) {
       return const MkScaffold(
         body: Center(
@@ -40,14 +41,14 @@ class SettingsProfile extends HookConsumerWidget {
                 label: "昵称",
                 child: MkInput(
                   prefixIcon: const Icon(TablerIcons.user),
-                  value: meDetail.name,
+                  value: meDetail.user.name,
                 ),
               ),
               MkFormItem(
                 label: "个人简介",
                 helperText: "你可以在个人简介中包含一些#标签。",
                 child: MkInput(
-                  value: meDetail.description,
+                  value: meDetail.user.description,
                   minLines: 3,
                 ),
               ),
@@ -106,7 +107,7 @@ class _ProfileMemberCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var meDetail = ref.watch(currentMeDetailedProvider).valueOrNull;
+    var meDetail = ref.watch(memberInfoStateProvider).valueOrNull;
     return SizedBox(
       height: 216,
       child: MkCard(
@@ -120,11 +121,11 @@ class _ProfileMemberCard extends HookConsumerWidget {
                 left: 0,
                 right: 0,
                 child: [
-                  if (meDetail?.bannerUrl != null)
+                  if (meDetail!.user.bannerUrl != null)
                     MkImage(
-                      meDetail!.bannerUrl!,
+                      meDetail.user.bannerUrl!,
                       fit: BoxFit.cover,
-                      blurHash: meDetail.bannerBlurhash,
+                      blurHash: meDetail.user.bannerBlurhash,
                       width: double.infinity,
                       height: 130,
                     )
@@ -152,7 +153,13 @@ class _ProfileMemberCard extends HookConsumerWidget {
                     );
                   },
                   maxSelect: 1,
-                  selectCallback: (List<DriveFileModel> files) {},
+                  selectCallback: (List<DriveFileModel> files) {
+                    if (files.isNotEmpty) {
+                      ref
+                          .read(memberInfoStateProvider.notifier)
+                          .setBanner(files.first.id);
+                    }
+                  },
                 ),
               ),
               Positioned(
@@ -164,13 +171,30 @@ class _ProfileMemberCard extends HookConsumerWidget {
                   spacing: 16,
                   children: [
                     MkImage(
-                      meDetail?.avatarUrl ?? "",
+                      meDetail.user.avatarUrl ?? "",
                       width: 72,
                       height: 72,
                       shape: BoxShape.circle,
                       fit: BoxFit.cover,
                     ),
-                    FilledButton(onPressed: () {}, child: Text("修改头像")),
+                    DriverSelectContextMenu(
+                      builder: (context, open) {
+                        return FilledButton(
+                          onPressed: () {
+                            open();
+                          },
+                          child: Text("修改头像"),
+                        );
+                      },
+                      maxSelect: 1,
+                      selectCallback: (List<DriveFileModel> files) {
+                        if (files.isNotEmpty) {
+                          ref
+                              .read(memberInfoStateProvider.notifier)
+                              .setAvatar(files.first.id);
+                        }
+                      },
+                    ),
                   ],
                 ),
               )
