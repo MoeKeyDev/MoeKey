@@ -94,6 +94,95 @@ class SettingsProfile extends HookConsumerWidget {
                     "location": meDetail.user.location,
                   },
                 ),
+              MkFormItem(
+                label: "生日",
+                child: InkWell(
+                  onTap: () async {
+                    DateTime? initialDate;
+                    try {
+                      if (meDetail.user.birthday != null &&
+                          meDetail.user.birthday!.isNotEmpty) {
+                        initialDate = DateTime.parse(meDetail.user.birthday!);
+                      }
+                    } catch (e) {
+                      // Ignore parse error, use default initial date
+                    }
+                    final DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: initialDate ?? DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (picked != null) {
+                      // Format date as YYYY-MM-DD
+                      String formattedDate =
+                          "${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                      ref.read(memberInfoStateProvider.notifier).updateUser(
+                          meDetail.user.copyWith(birthday: formattedDate));
+                    }
+                  },
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(TablerIcons.calendar),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        // Also set enabled border color
+                        borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .outline
+                                .withOpacity(0.6)),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 10), // Adjust padding
+                    ),
+                    child: Text(
+                      meDetail.user.birthday?.isNotEmpty == true
+                          ? meDetail.user.birthday!
+                          : '选择日期', // Show placeholder if empty
+                      style: TextStyle(
+                        color: meDetail.user.birthday?.isNotEmpty == true
+                            ? null
+                            : Theme.of(context).hintColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              if (meDetail.user.birthday !=
+                  meDetail
+                      .originalUser.birthday) // Assuming birthday field exists
+                SaveButton(
+                  data: {
+                    "birthday": meDetail
+                        .user.birthday, // Assuming birthday field exists
+                  },
+                ),
+              MkFormItem(
+                label: "语言",
+                child: MkInput(
+                  prefixIcon: Icon(TablerIcons.language),
+                  value: meDetail
+                      .originalUser.lang, // Use 'lang' instead of 'language'
+                  onChanged: (value) {
+                    ref.read(memberInfoStateProvider.notifier).updateUser(
+                        meDetail.user.copyWith(
+                            lang: value)); // Use 'lang' instead of 'language'
+                  },
+                ),
+              ),
+              if (meDetail.user.lang !=
+                  meDetail
+                      .originalUser.lang) // Use 'lang' instead of 'language'
+                SaveButton(
+                  data: {
+                    "lang":
+                        meDetail.user.lang, // Use 'lang' instead of 'language'
+                  },
+                ),
             ],
           ),
         ),
