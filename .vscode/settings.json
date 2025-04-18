@@ -1,3 +1,6 @@
 {
-    "cmake.sourceDirectory": "/home/chendoxiu/桌面/Projects/MoeKey/linux"
+    "files.exclude": {
+        "**/*.freezed.dart": true,
+        "**/*.g.dart": true
+      }
 }
