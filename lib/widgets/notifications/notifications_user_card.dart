@@ -30,7 +30,7 @@ class NotificationsUserCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var themes = ref.watch(themeColorsProvider);
+    ref.watch(themeColorsProvider);
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
     return LayoutBuilder(builder: (context, constraints) {
       var isSmall = constraints.maxWidth < 400;

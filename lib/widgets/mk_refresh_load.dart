@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/status/apis.dart';
 import 'package:moekey/widgets/sliver_load_more.dart';
 
 import 'loading_weight.dart';
@@ -131,7 +130,6 @@ class MkRefreshLoadList<T> extends StatelessWidget {
 
 class _Empty extends ConsumerWidget {
   const _Empty({
-    super.key,
     required this.height,
     this.onTap,
   });
@@ -141,9 +139,9 @@ class _Empty extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var infoUrl = ref.watch(instanceMetaProvider.select(
-      (value) => value.valueOrNull?.infoImageUrl,
-    ));
+    // var infoUrl = ref.watch(instanceMetaProvider.select(
+    //   (value) => value.valueOrNull?.infoImageUrl,
+    // ));
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(

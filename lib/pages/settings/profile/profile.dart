@@ -9,7 +9,6 @@ import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
 import '../../../apis/models/drive.dart';
-import '../../../status/me_detailed.dart';
 import '../../../widgets/driver/driver_select_dialog/driver_select_dialog.dart';
 
 class SettingsProfile extends HookConsumerWidget {
@@ -228,7 +227,7 @@ class MkFormItem extends HookConsumerWidget {
 }
 
 class _ProfileMemberCard extends HookConsumerWidget {
-  const _ProfileMemberCard({super.key});
+  const _ProfileMemberCard();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

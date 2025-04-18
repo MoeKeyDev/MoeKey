@@ -5,7 +5,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/logger.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/global_snackbar.dart';
@@ -13,7 +12,6 @@ import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/login/servers_select.dart';
-import 'package:moekey/widgets/mk_dialog.dart';
 
 import '../../generated/l10n.dart';
 import '../../main.dart';
@@ -23,7 +21,6 @@ import '../../widgets/hover_builder.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/mk_info_dialog.dart';
 import '../../widgets/note_create_dialog/note_create_dialog.dart';
-import '../user_widgets/widgets_list/view.dart';
 
 void updateUserInfo(WidgetRef ref) {
   Future.delayed(
@@ -61,6 +58,7 @@ class HomePage extends HookConsumerWidget {
     _scaffoldKey.currentState!.closeDrawer();
   }
 
+  // ignore: unused_element
   void _closeEndDrawer() {
     _scaffoldKey.currentState!.closeEndDrawer();
   }
@@ -70,7 +68,7 @@ class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-    var currentId = GoRouter.of(context).state?.name;
+    var currentId = GoRouter.of(context).state.name;
     var user = ref.read(currentLoginUserProvider);
     var isShowBottomNav = [
       "timeline",
@@ -242,7 +240,7 @@ class NavBar extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var state = ref.watch(homePageStateProvider);
-    var currentId = GoRouter.of(context).state?.name;
+    var currentId = GoRouter.of(context).state.name;
     var isWide = WindowSize.of(context)!.isWide;
     return AnimatedContainer(
       width: width,
@@ -459,7 +457,7 @@ class UserAvatarButton extends ConsumerWidget {
                   );
                 },
                 onTap: () {
-                  var logic = ref.read(homePageStateProvider.notifier);
+                  ref.read(homePageStateProvider.notifier);
                   if (onSelect != null) {
                     onSelect!();
                   }

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:chinese_font_library/chinese_font_library.dart';
 import 'package:flutter/material.dart';
 import 'package:moekey/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

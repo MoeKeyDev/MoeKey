@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/login_user.dart';
 import 'package:moekey/router/router.dart';
-import 'package:moekey/status/me_detailed.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 
@@ -117,7 +114,6 @@ class AccountManagerPage extends HookConsumerWidget {
 
 class _UserItem extends StatelessWidget {
   const _UserItem({
-    super.key,
     required this.item,
     required this.user,
     required this.theme,

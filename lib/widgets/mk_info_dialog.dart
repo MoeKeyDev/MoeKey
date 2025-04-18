@@ -3,7 +3,6 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../generated/l10n.dart';
-import '../main.dart';
 import '../status/themes.dart';
 import 'mk_dialog.dart';
 import 'mk_modal.dart';

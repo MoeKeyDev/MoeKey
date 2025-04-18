@@ -226,7 +226,6 @@ class ImagePreviewPage extends HookConsumerWidget {
 
 class _Image extends StatefulWidget {
   const _Image({
-    super.key,
     required this.heroKey,
     required this.initGestureConfigHandler,
     required this.onDoubleTap,

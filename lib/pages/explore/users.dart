@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -59,7 +56,6 @@ class ExploreUsersPage extends HookConsumerWidget {
 
 class _UsersTitle extends HookConsumerWidget {
   const _UsersTitle({
-    super.key,
     required this.title,
     required this.icon,
   });
@@ -163,7 +159,6 @@ class ExploreUsersLocal extends HookConsumerWidget {
 
 class _UserExplore extends HookConsumerWidget {
   const _UserExplore({
-    super.key,
     required this.maxCrossAxisExtent,
     this.origins,
     this.sorts,
@@ -226,7 +221,7 @@ class _UserExplore extends HookConsumerWidget {
 class _UserPinGrid extends HookConsumerWidget {
   final double maxCrossAxisExtent;
 
-  const _UserPinGrid({super.key, required this.maxCrossAxisExtent});
+  const _UserPinGrid({required this.maxCrossAxisExtent});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -267,14 +262,14 @@ class _UserPinGrid extends HookConsumerWidget {
 }
 
 @riverpod
-Future<List<UserFullModel>> pinnedUsers(PinnedUsersRef ref) async {
+Future<List<UserFullModel>> pinnedUsers(Ref ref) async {
   var apis = ref.watch(misskeyApisProvider);
   return apis.user.pinnedUsers();
 }
 
 @riverpod
 Future<List<UserFullModel>> exploreUsers(
-  ExploreUsersRef ref, {
+  Ref ref, {
   String? origins,
   String? sorts,
   String? states,
