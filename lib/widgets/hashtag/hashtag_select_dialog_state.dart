@@ -1,10 +1,7 @@
 import 'dart:async';
 
-import 'package:moekey/status/dio.dart';
 import 'package:moekey/status/misskey_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../status/server.dart';
 
 part 'hashtag_select_dialog_state.g.dart';
 

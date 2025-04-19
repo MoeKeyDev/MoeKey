@@ -20,7 +20,7 @@ class HomePageState extends _$HomePageState {
     for (var element in state.navItemList) {
       if (element["id"] != null) {
         if (id == element["id"]) {
-          var currPath = ref.read(routerProvider).state?.name;
+          var currPath = ref.read(routerProvider).state.name;
           if (element['id'] == currPath) {
             if (element.containsKey("onTop")) {
               element["onTop"](

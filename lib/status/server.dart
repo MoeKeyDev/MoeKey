@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -62,7 +61,7 @@ class CurrentLoginUser extends _$CurrentLoginUser {
   LoginUser? build() {
     try {
       var userList = ref.watch(loginUserListProvider);
-      var preference = getPreferencesDatabase();
+      // var preference = getPreferencesDatabase();
       var userid = Preferences.get("currentLoginUser", defaultValue: "");
       if (!userList.containsKey(userid)) {
         return null;

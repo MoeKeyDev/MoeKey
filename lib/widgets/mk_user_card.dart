@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
@@ -131,7 +130,7 @@ class MkUserCard extends HookConsumerWidget {
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
-                              text: "@${user.username ?? ""}",
+                              text: "@${user.username}",
                               style: textStyle.copyWith(
                                 fontSize: 11,
                               )),

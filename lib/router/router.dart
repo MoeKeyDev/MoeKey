@@ -6,13 +6,8 @@ import 'package:moekey/pages/hashtag/hashtag_page.dart';
 import 'package:moekey/pages/login/login_page.dart';
 import 'package:moekey/pages/notes/note_page.dart';
 import 'package:moekey/pages/notifications/notifications_page.dart';
-import 'package:moekey/pages/settings/settings_page.dart';
-import 'package:moekey/pages/settings/test/test_page.dart';
-import 'package:moekey/pages/settings/two_panel_layout.dart';
-import 'package:moekey/pages/test/test.dart';
 import 'package:moekey/pages/users/user_page.dart';
 import 'package:moekey/status/mk_tabbar_refresh_scroll_state.dart';
-import 'package:moekey/widgets/loading_weight.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
@@ -42,12 +37,12 @@ GoRouter router(Ref ref) {
     ),
     ShellRoute(
       builder: (context, status, child) => PopScope(
-          canPop: GoRouter.of(context).state?.name == "timeline",
+          canPop: GoRouter.of(context).state.name == "timeline",
           onPopInvokedWithResult: (bool didPop, Object? result) async {
             if (didPop) {
               return;
             }
-            logger.d(GoRouter.of(context).state?.name);
+            logger.d(GoRouter.of(context).state.name);
             // if (status.name != "timeline") {
             context.goNamed('timeline');
             // }

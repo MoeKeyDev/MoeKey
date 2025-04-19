@@ -98,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "Érzékeny tartalmak megjelölésének törlése",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("memo"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "Biztos, hogy le akarja mondani a gyűjtést?",

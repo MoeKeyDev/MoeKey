@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:chinese_font_library/chinese_font_library.dart';
 import 'package:flutter/material.dart';
 import 'package:moekey/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -41,6 +40,7 @@ class ThemeColorModel {
   Color errorColor = const Color.fromARGB(255, 236, 55, 109);
   Color windowHeaderColor = const Color.fromARGB(216, 255, 255, 255);
   Color modalBgColor = const Color.fromARGB(76, 0, 0, 0);
+  Color folderHeaderBg = const Color.fromARGB(15, 0, 0, 0);
 }
 
 @Riverpod(keepAlive: true)

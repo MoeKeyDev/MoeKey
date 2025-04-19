@@ -82,6 +82,7 @@ dependencies:
   freezed: ^3.0.4
   freezed_annotation: ^3.0.0
   json_annotation: ^4.9.0
+  date_picker_plus: ^4.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

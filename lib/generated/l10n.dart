@@ -1459,6 +1459,11 @@ class S {
       args: [],
     );
   }
+
+  /// `清除`
+  String get clear {
+    return Intl.message('清除', name: 'clear', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

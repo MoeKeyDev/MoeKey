@@ -2,12 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:moekey/pages/settings/two_panel_layout.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:moekey/widgets/mk_header.dart';
-import 'package:moekey/widgets/mk_scaffold.dart';
 
-import '../../logger.dart';
 import '../../main.dart';
 
 var settingList = [
@@ -41,7 +37,7 @@ class SettingBodyWide extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
-    var currentId = GoRouter.of(context).state?.name;
+    var currentId = GoRouter.of(context).state.name;
     return Row(
       children: [
         SizedBox(width: 32),
@@ -80,7 +76,7 @@ class SettingBodyNarrow extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
-    var currentId = GoRouter.of(context).state?.name;
+    var currentId = GoRouter.of(context).state.name;
     var isWide = WindowSize.of(context)!.isWide;
     if (isWide) {
       return SizedBox();
@@ -113,13 +109,12 @@ class SettingBodyNarrow extends HookConsumerWidget {
 }
 
 class _SettingsMenuLabel extends ConsumerWidget {
-  const _SettingsMenuLabel({super.key, required this.label});
+  const _SettingsMenuLabel({required this.label});
 
   final String label;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var theme = ref.watch(themeColorsProvider);
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: 8,
@@ -134,7 +129,6 @@ class _SettingsMenuLabel extends ConsumerWidget {
 
 class _SettingsMenuItem extends ConsumerWidget {
   const _SettingsMenuItem({
-    super.key,
     required this.label,
     required this.icon,
     required this.routerId,

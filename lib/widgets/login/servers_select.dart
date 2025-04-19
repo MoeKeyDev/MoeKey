@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:html/parser.dart';
-import 'package:moekey/router/router.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/login/servers_select_state.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
 
 import '../../generated/l10n.dart';
-import '../../main.dart';
 import '../../status/server.dart';
 import '../../status/themes.dart';
 import '../mk_input.dart';
@@ -122,7 +119,7 @@ class ServersSelectCard extends HookConsumerWidget {
                   },
                   separatorBuilder: (context, index) =>
                       Divider(color: themes.dividerColor, height: 0.5),
-                  itemCount: filterList.length ?? 0),
+                  itemCount: filterList.length),
             ))
           ],
         ));

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
@@ -136,9 +135,7 @@ class NoteCard extends ConsumerWidget {
 }
 
 class _NotePined extends StatelessWidget {
-  const _NotePined({
-    super.key,
-  });
+  const _NotePined();
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +281,6 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
 
 class _TimeLineNoteCardAvatar extends StatelessWidget {
   const _TimeLineNoteCardAvatar({
-    super.key,
     required this.data,
   });
 
@@ -314,8 +310,7 @@ class _TimeLineNoteCardAvatar extends StatelessWidget {
 
 class _NoteCardContent extends HookConsumerWidget {
   const _NoteCardContent(
-      {super.key,
-      required this.data,
+      {required this.data,
       required this.fontsize,
       required this.isShowUrlPreview,
       required this.links,
@@ -392,7 +387,6 @@ class _NoteCardContent extends HookConsumerWidget {
 
 class _TimeLineNoteCardContent extends StatelessWidget {
   const _TimeLineNoteCardContent({
-    super.key,
     required this.data,
     required this.isHiddenCw,
     required this.themes,
@@ -502,7 +496,7 @@ class NoteCardTranslate extends HookConsumerWidget {
                       data.noteTranslate!.sourceLang),
                   style: const TextStyle(fontWeight: FontWeight.bold))
             ],
-            text: data.noteTranslate!.text ?? "",
+            text: data.noteTranslate?.text ?? "",
           ),
       ][0],
     );
@@ -511,7 +505,6 @@ class NoteCardTranslate extends HookConsumerWidget {
 
 class _NoteCardContentCw extends HookConsumerWidget {
   const _NoteCardContentCw({
-    super.key,
     required this.data,
     required this.isHiddenCw,
     required this.themes,
@@ -560,7 +553,6 @@ class _NoteCardContentCw extends HookConsumerWidget {
 
 class _NoteCardContentUerHeader extends StatelessWidget {
   const _NoteCardContentUerHeader({
-    super.key,
     required this.data,
     required this.fontsize,
     required this.themes,
@@ -778,7 +770,7 @@ class ReNoteUserInfo extends HookConsumerWidget {
                   fontSize: fontsize,
                   color: themes.reNoteColor),
               child: MFMText(
-                text: data.user.name ?? data.user.username ?? "",
+                text: data.user.name ?? data.user.username,
                 after: [
                   TextSpan(
                       text: S.current.noteReNoteByUser,
@@ -830,7 +822,7 @@ class UserNameRichText extends HookConsumerWidget {
         child: MFMText(
           text: data.name ?? data.username,
           after: [
-            TextSpan(text: "@${data.username ?? ""}", style: textStyle),
+            TextSpan(text: "@${data.username}", style: textStyle),
             TextSpan(
               text: data.host != null ? "@${data.host}" : "",
               style: textStyle.copyWith(color: themes.fgColor.withAlpha(128)),
@@ -838,13 +830,13 @@ class UserNameRichText extends HookConsumerWidget {
             const TextSpan(
               text: "  ",
             ),
-            for (var badge in data.badgeRoles ?? [])
+            for (var badge in data.badgeRoles)
               if (badge.iconUrl != null)
                 WidgetSpan(
                     child: Tooltip(
                       message: badge.name,
                       child: MkImage(
-                        badge.iconUrl,
+                        badge.iconUrl ?? '',
                         height: 16,
                       ),
                     ),

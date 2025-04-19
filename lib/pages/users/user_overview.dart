@@ -4,8 +4,6 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/login_user.dart';
-import 'package:moekey/apis/models/note.dart';
-import 'package:moekey/apis/models/notification.dart';
 import 'package:moekey/apis/models/user_full.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
@@ -182,7 +180,6 @@ class UserHomeCard extends HookConsumerWidget {
 
 class _UserFollowsCount extends StatelessWidget {
   const _UserFollowsCount({
-    super.key,
     required this.userData,
   });
 
@@ -270,7 +267,6 @@ class _UserFollowsCount extends StatelessWidget {
 
 class _UserFields extends StatelessWidget {
   const _UserFields({
-    super.key,
     required this.userData,
   });
 
@@ -319,7 +315,6 @@ class _UserFields extends StatelessWidget {
 
 class _UserRegisterTime extends StatelessWidget {
   const _UserRegisterTime({
-    super.key,
     required this.themes,
     required this.userData,
   });
@@ -366,7 +361,6 @@ class _UserRegisterTime extends StatelessWidget {
 
 class _UserDescriptionSmall extends StatelessWidget {
   const _UserDescriptionSmall({
-    super.key,
     required this.userData,
   });
 
@@ -400,7 +394,6 @@ class _UserDescriptionSmall extends StatelessWidget {
 
 class _UserDescription extends StatelessWidget {
   const _UserDescription({
-    super.key,
     required this.userData,
   });
 
@@ -440,7 +433,6 @@ class _UserDescription extends StatelessWidget {
 
 class _UserNames extends StatelessWidget {
   const _UserNames({
-    super.key,
     required this.userData,
   });
 
@@ -520,7 +512,6 @@ class _UserNames extends StatelessWidget {
 
 class _UserBanner extends StatelessWidget {
   const _UserBanner({
-    super.key,
     required this.isSmall,
     required this.userData,
     required this.themes,
@@ -814,7 +805,6 @@ class _UserBanner extends StatelessWidget {
 
 class _UserFollowButton extends HookConsumerWidget {
   const _UserFollowButton({
-    super.key,
     required this.userProvider,
     required this.userData,
     required this.themes,

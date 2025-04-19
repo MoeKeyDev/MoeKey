@@ -1,6 +1,5 @@
 import 'package:moekey/apis/models/me_detailed.dart';
 import 'package:moekey/apis/models/notification.dart';
-import 'package:moekey/apis/models/user_lite.dart';
 import 'package:moekey/apis/services/services.dart';
 
 class AccountService extends MisskeyApiServices {

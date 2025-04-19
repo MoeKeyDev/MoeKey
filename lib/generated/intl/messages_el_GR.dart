@@ -98,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "Αποσυνδέστε την επισήμανση ευαίσθητου περιεχομένου",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("σημείωμα"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "Σίγουρα θέλετε να ακυρώσετε τη συλλογή;",

@@ -94,6 +94,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "Arkaluonteisen sisällön lipun poistaminen",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("muistio"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "Haluatko varmasti peruuttaa keräyksen?",

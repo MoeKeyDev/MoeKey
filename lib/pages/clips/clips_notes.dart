@@ -200,7 +200,7 @@ class ClipsNotes extends HookConsumerWidget {
 }
 
 class _ClipContentCard extends HookConsumerWidget {
-  const _ClipContentCard({super.key, required this.clipId});
+  const _ClipContentCard({required this.clipId});
 
   final String clipId;
 

@@ -96,6 +96,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "Nie oflaguj wrażliwych treści",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("notatka"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "Na pewno chcesz anulować kolekcję?",

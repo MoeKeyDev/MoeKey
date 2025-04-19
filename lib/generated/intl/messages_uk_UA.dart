@@ -98,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "Зняття прапорця як чутливого вмісту",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("записка"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "Впевнені, що хочете скасувати збір?",
