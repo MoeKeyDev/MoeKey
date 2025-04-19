@@ -90,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "Cancel Mark as NSFW",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("Clips"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "Really remove from favorites?",

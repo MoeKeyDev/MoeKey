@@ -96,6 +96,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "Afflagning som følsomt indhold",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("Notat"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "Er du sikker på, at du vil annullere indsamlingen?",

@@ -5,11 +5,172 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/settings/member_info_state.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
+import 'package:moekey/widgets/mk_date_picker.dart';
 import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
+import 'package:moekey/widgets/mk_select.dart';
+import 'package:moekey/constants/languages.dart';
 
 import '../../../apis/models/drive.dart';
 import '../../../widgets/driver/driver_select_dialog/driver_select_dialog.dart';
+
+// 可编辑文本字段 Widget
+class _EditableTextField extends HookConsumerWidget {
+  const _EditableTextField({
+    required this.label,
+    required this.value,
+    required this.originalValue,
+    required this.onChanged,
+    required this.saveKey,
+    this.prefixIcon,
+    this.minLines,
+    this.helperText,
+  });
+
+  final String label;
+  final String? value;
+  final String? originalValue;
+  final ValueChanged<String> onChanged;
+  final String saveKey;
+  final Icon? prefixIcon; // Changed type from Widget? to Icon?
+  final int? minLines;
+  final String? helperText;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Normalize empty strings to null for comparison
+    final String? normalizedValue =
+        (value == null || value!.isEmpty) ? null : value;
+    final String? normalizedOriginalValue =
+        (originalValue == null || originalValue!.isEmpty)
+            ? null
+            : originalValue;
+    final bool isModified = normalizedValue != normalizedOriginalValue;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      // spacing: 8, // Use SizedBox for spacing if needed, or rely on parent Column spacing
+      children: [
+        MkFormItem(
+          label: label,
+          helperText: helperText,
+          child: MkInput(
+            prefixIcon: prefixIcon,
+            value: value,
+            minLines: minLines,
+            onChanged: onChanged,
+          ),
+        ),
+        if (isModified)
+          Padding(
+            padding: const EdgeInsets.only(
+                top: 8.0), // Add some space before the button
+            child: _SaveButton(
+              data: {saveKey: value},
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// 可编辑日期字段 Widget
+class _EditableDateField extends HookConsumerWidget {
+  const _EditableDateField({
+    required this.label,
+    required this.value, // DateTime?
+    required this.originalValue, // DateTime?
+    required this.onChanged, // ValueChanged<DateTime?>
+    required this.saveKey,
+    this.prefixIcon,
+  });
+
+  final String label;
+  final DateTime? value;
+  final DateTime? originalValue;
+  final ValueChanged<DateTime?> onChanged;
+  final String saveKey;
+  final Icon? prefixIcon;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool isModified = value != originalValue;
+
+    // 将 DateTime? 转换为 YYYY-MM-DD 格式的 String? 以便保存
+    String? valueString;
+    if (value != null) {
+      valueString =
+          "${value!.year.toString().padLeft(4, '0')}-${value!.month.toString().padLeft(2, '0')}-${value!.day.toString().padLeft(2, '0')}";
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        MkDatePicker(
+          label: label,
+          value: value,
+          prefixIcon: prefixIcon,
+          onChanged: onChanged,
+          initialDate: value,
+        ),
+        if (isModified)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: _SaveButton(
+              data: {saveKey: valueString}, // 保存格式化后的字符串
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _EditableSelectField<T> extends HookConsumerWidget {
+  const _EditableSelectField({
+    this.prefixIcon,
+    required this.label,
+    required this.value,
+    required this.originalValue,
+    required this.onChanged,
+    required this.saveKey,
+    required this.items,
+  });
+
+  final String label;
+  final String? value;
+  final String? originalValue;
+  final ValueChanged<String> onChanged;
+  final String saveKey;
+  final Icon? prefixIcon;
+  final List<MkSelectItem<T>> items;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        MkFormItem(
+          label: label,
+          child: MkSelect(
+            prefixIcon: prefixIcon,
+            value: value,
+            items: items,
+            onChanged: (v) {
+              if (v != null) {
+                onChanged(v.toString());
+              }
+            },
+          ),
+        ),
+        if (value != originalValue)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: _SaveButton(
+              data: {saveKey: value},
+            ),
+          ),
+      ],
+    );
+  }
+}
 
 class SettingsProfile extends HookConsumerWidget {
   const SettingsProfile({super.key});
@@ -17,7 +178,6 @@ class SettingsProfile extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
-
     var meDetail = ref.watch(memberInfoStateProvider).valueOrNull;
     if (meDetail == null) {
       return const MkScaffold(
@@ -26,6 +186,23 @@ class SettingsProfile extends HookConsumerWidget {
         ),
       );
     }
+
+    // 解析生日字符串为 DateTime?
+    DateTime? currentBirthday;
+    DateTime? originalBirthday;
+    try {
+      if (meDetail.user.birthday != null &&
+          meDetail.user.birthday!.isNotEmpty) {
+        currentBirthday = DateTime.tryParse(meDetail.user.birthday!);
+      }
+      if (meDetail.originalUser.birthday != null &&
+          meDetail.originalUser.birthday!.isNotEmpty) {
+        originalBirthday = DateTime.tryParse(meDetail.originalUser.birthday!);
+      }
+    } catch (e) {
+      // Handle potential parse errors if needed
+    }
+
     return MkScaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -36,152 +213,96 @@ class SettingsProfile extends HookConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ProfileMemberCard(),
-              MkFormItem(
+              const _ProfileMemberCard(),
+              _EditableTextField(
                 label: "昵称",
-                child: MkInput(
-                  prefixIcon: const Icon(TablerIcons.user),
-                  value: meDetail.originalUser.name,
-                  onChanged: (value) {
-                    ref
-                        .read(memberInfoStateProvider.notifier)
-                        .updateUser(meDetail.user.copyWith(name: value));
-                  },
-                ),
+                value: meDetail.user.name,
+                originalValue: meDetail.originalUser.name,
+                prefixIcon: const Icon(TablerIcons.user),
+                saveKey: "name",
+                onChanged: (value) {
+                  ref
+                      .read(memberInfoStateProvider.notifier)
+                      .updateUser(meDetail.user.copyWith(name: value));
+                },
               ),
-              if (meDetail.user.name != meDetail.originalUser.name)
-                SaveButton(
-                  data: {
-                    "name": meDetail.originalUser.name,
-                  },
-                ),
-              MkFormItem(
+              _EditableTextField(
                 label: "个人简介",
                 helperText: "你可以在个人简介中包含一些#标签。",
-                child: MkInput(
-                  value: meDetail.originalUser.description,
-                  minLines: 3,
-                  onChanged: (value) {
-                    ref
-                        .read(memberInfoStateProvider.notifier)
-                        .updateUser(meDetail.user.copyWith(description: value));
-                  },
-                ),
+                value: meDetail.user.description,
+                originalValue: meDetail.originalUser.description,
+                minLines: 3,
+                saveKey: "description",
+                onChanged: (value) {
+                  ref
+                      .read(memberInfoStateProvider.notifier)
+                      .updateUser(meDetail.user.copyWith(description: value));
+                },
               ),
-              if (meDetail.user.description !=
-                  meDetail.originalUser.description)
-                SaveButton(
-                  data: {
-                    "description": meDetail.user.description,
-                  },
-                ),
-              MkFormItem(
+              _EditableTextField(
                 label: "位置",
-                child: MkInput(
-                  prefixIcon: Icon(TablerIcons.map_pin),
-                  value: meDetail.originalUser.location,
-                  onChanged: (value) {
-                    ref
-                        .read(memberInfoStateProvider.notifier)
-                        .updateUser(meDetail.user.copyWith(location: value));
-                  },
-                ),
+                value: meDetail.user.location,
+                originalValue: meDetail.originalUser.location,
+                prefixIcon: const Icon(TablerIcons.map_pin),
+                saveKey: "location",
+                onChanged: (value) {
+                  ref
+                      .read(memberInfoStateProvider.notifier)
+                      .updateUser(meDetail.user.copyWith(location: value));
+                },
               ),
-              if (meDetail.user.location != meDetail.originalUser.location)
-                SaveButton(
-                  data: {
-                    "location": meDetail.user.location,
-                  },
-                ),
-              MkFormItem(
+              // 使用新的 _EditableBirthdayField 组件
+              _EditableDateField(
                 label: "生日",
-                child: InkWell(
-                  onTap: () async {
-                    DateTime? initialDate;
-                    try {
-                      if (meDetail.user.birthday != null &&
-                          meDetail.user.birthday!.isNotEmpty) {
-                        initialDate = DateTime.parse(meDetail.user.birthday!);
-                      }
-                    } catch (e) {
-                      // Ignore parse error, use default initial date
-                    }
-                    final DateTime? picked = await showDatePicker(
-                      context: context,
-                      initialDate: initialDate ?? DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now(),
-                    );
-                    if (picked != null) {
-                      // Format date as YYYY-MM-DD
-                      String formattedDate =
-                          "${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
-                      ref.read(memberInfoStateProvider.notifier).updateUser(
-                          meDetail.user.copyWith(birthday: formattedDate));
-                    }
-                  },
-                  child: InputDecorator(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(TablerIcons.calendar),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.outline),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        // Also set enabled border color
-                        borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .outline
-                                .withOpacity(0.6)),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 10), // Adjust padding
-                    ),
-                    child: Text(
-                      meDetail.user.birthday?.isNotEmpty == true
-                          ? meDetail.user.birthday!
-                          : '选择日期', // Show placeholder if empty
-                      style: TextStyle(
-                        color: meDetail.user.birthday?.isNotEmpty == true
-                            ? null
-                            : Theme.of(context).hintColor,
-                      ),
-                    ),
-                  ),
-                ),
+                value: currentBirthday,
+                originalValue: originalBirthday,
+                prefixIcon: const Icon(TablerIcons.cake),
+                saveKey: "birthday",
+                onChanged: (date) {
+                  String? dateString;
+                  if (date != null) {
+                    // Format date back to YYYY-MM-DD string or keep null
+                    dateString =
+                        "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                  }
+                  ref
+                      .read(memberInfoStateProvider.notifier)
+                      .updateUser(meDetail.user.copyWith(birthday: dateString));
+                },
               ),
-              if (meDetail.user.birthday !=
-                  meDetail
-                      .originalUser.birthday) // Assuming birthday field exists
-                SaveButton(
-                  data: {
-                    "birthday": meDetail
-                        .user.birthday, // Assuming birthday field exists
-                  },
-                ),
-              MkFormItem(
+              _EditableSelectField(
                 label: "语言",
-                child: MkInput(
-                  prefixIcon: Icon(TablerIcons.language),
-                  value: meDetail
-                      .originalUser.lang, // Use 'lang' instead of 'language'
-                  onChanged: (value) {
-                    ref.read(memberInfoStateProvider.notifier).updateUser(
-                        meDetail.user.copyWith(
-                            lang: value)); // Use 'lang' instead of 'language'
-                  },
-                ),
+                value: meDetail.user.lang,
+                originalValue: meDetail.originalUser.lang,
+                prefixIcon: const Icon(TablerIcons.language),
+                saveKey: "lang",
+                onChanged: (value) {
+                  ref
+                      .read(memberInfoStateProvider.notifier)
+                      .updateUser(meDetail.user.copyWith(lang: value));
+                },
+                items: langmap.entries.map((entry) {
+                  final String code = entry.key;
+                  final String nativeName = entry.value['nativeName'] ?? code;
+                  return MkSelectItem<String>(
+                    label: nativeName,
+                    value: code,
+                  );
+                }).toList()
+                  ..sort((a, b) =>
+                      a.label.compareTo(b.label)), // Sort by native name
               ),
-              if (meDetail.user.lang !=
-                  meDetail
-                      .originalUser.lang) // Use 'lang' instead of 'language'
-                SaveButton(
-                  data: {
-                    "lang":
-                        meDetail.user.lang, // Use 'lang' instead of 'language'
-                  },
-                ),
+              _EditableTextField(
+                label: "被关注时的消息",
+                value: meDetail.user.followedMessage,
+                originalValue: meDetail.originalUser.followedMessage,
+                helperText: "可以设置被关注时向对方显示的短消息。\n需要批准才能关注的情况下，消息是在请求被批准后显示。",
+                saveKey: "followedMessage",
+                onChanged: (value) {
+                  ref.read(memberInfoStateProvider.notifier).updateUser(
+                      meDetail.user.copyWith(followedMessage: value));
+                },
+              ),
             ],
           ),
         ),
@@ -190,7 +311,8 @@ class SettingsProfile extends HookConsumerWidget {
   }
 }
 
-class MkFormItem extends HookConsumerWidget {
+class MkFormItem extends StatelessWidget {
+  // Changed to StatelessWidget as it has no state
   const MkFormItem({
     super.key,
     required this.label,
@@ -203,24 +325,28 @@ class MkFormItem extends HookConsumerWidget {
   final String? helperText;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    // Removed WidgetRef ref
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
+      // spacing: 8, // Use SizedBox for spacing if needed
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12), // Use const
         ),
+        const SizedBox(height: 8), // Add spacing manually
         child,
-        if (helperText != null)
+        if (helperText != null) ...[
+          const SizedBox(height: 8), // Add spacing manually
           Opacity(
             opacity: 0.75,
             child: Text(
               helperText!,
-              style: TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 12), // Use const
             ),
           ),
+        ]
       ],
     );
   }
@@ -232,6 +358,7 @@ class _ProfileMemberCard extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var meDetail = ref.watch(memberInfoStateProvider).valueOrNull;
+    if (meDetail == null) return const SizedBox.shrink();
     return SizedBox(
       height: 216,
       child: MkCard(
@@ -245,7 +372,8 @@ class _ProfileMemberCard extends HookConsumerWidget {
                 left: 0,
                 right: 0,
                 child: [
-                  if (meDetail!.user.bannerUrl != null)
+                  // This array access seems unusual, but kept as original
+                  if (meDetail.user.bannerUrl != null)
                     MkImage(
                       meDetail.user.bannerUrl!,
                       fit: BoxFit.cover,
@@ -266,9 +394,7 @@ class _ProfileMemberCard extends HookConsumerWidget {
                 child: DriverSelectContextMenu(
                   builder: (context, open) {
                     return FilledButton(
-                      onPressed: () {
-                        open();
-                      },
+                      onPressed: open,
                       child: const Text(
                         "修改横幅",
                         style: TextStyle(
@@ -292,7 +418,8 @@ class _ProfileMemberCard extends HookConsumerWidget {
                 right: 0,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 16,
+                  spacing:
+                      16, // Column doesn't have spacing, use SizedBox if needed
                   children: [
                     MkImage(
                       meDetail.user.avatarUrl ?? "",
@@ -301,13 +428,12 @@ class _ProfileMemberCard extends HookConsumerWidget {
                       shape: BoxShape.circle,
                       fit: BoxFit.cover,
                     ),
+                    const SizedBox(height: 16), // Added SizedBox for spacing
                     DriverSelectContextMenu(
                       builder: (context, open) {
                         return FilledButton(
-                          onPressed: () {
-                            open();
-                          },
-                          child: Text("修改头像"),
+                          onPressed: open,
+                          child: const Text("修改头像"), // Use const
                         );
                       },
                       maxSelect: 1,
@@ -330,8 +456,8 @@ class _ProfileMemberCard extends HookConsumerWidget {
   }
 }
 
-class SaveButton extends HookConsumerWidget {
-  const SaveButton({super.key, required this.data});
+class _SaveButton extends HookConsumerWidget {
+  const _SaveButton({required this.data});
 
   final Map<String, dynamic> data;
 
@@ -349,16 +475,23 @@ class SaveButton extends HookConsumerWidget {
                     .updateApi(data);
               } catch (e) {
                 if (!context.mounted) return;
-                // Handle error
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text("保存失败: $e"),
                   ),
                 );
+              } finally {
+                // Use finally to ensure isLoading is always reset
+                isLoading.value = false;
               }
-              isLoading.value = false;
             },
-      child: Text("保存"),
+      child: isLoading.value
+          ? const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Text("保存"), // Use const
     );
   }
 }

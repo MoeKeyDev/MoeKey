@@ -95,6 +95,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "إلغاء وضع علامة كالمحتوى الحساس",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("ملف"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "هل تريد بالتأكيد إلغاء المفضلة؟",

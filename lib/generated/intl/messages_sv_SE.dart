@@ -96,6 +96,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelSensitive": MessageLookupByLibrary.simpleMessage(
       "Avflagga känsligt innehåll",
     ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("memo"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "Är du säker på att du vill avbryta insamlingen?",

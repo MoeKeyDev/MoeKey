@@ -88,6 +88,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "back": MessageLookupByLibrary.simpleMessage("戻る"),
     "cancel": MessageLookupByLibrary.simpleMessage("取り消し"),
     "cancelSensitive": MessageLookupByLibrary.simpleMessage("閲覧注意を解除する"),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("クリップ"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "お気に入り解除しますか？",

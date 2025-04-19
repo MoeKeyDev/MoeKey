@@ -86,6 +86,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "back": MessageLookupByLibrary.simpleMessage("返回"),
     "cancel": MessageLookupByLibrary.simpleMessage("取消"),
     "cancelSensitive": MessageLookupByLibrary.simpleMessage("取消標記為敏感內容"),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
     "clip": MessageLookupByLibrary.simpleMessage("便簽"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage("確定要取消收藏嗎？"),
     "clipCreate": MessageLookupByLibrary.simpleMessage("新建便簽"),

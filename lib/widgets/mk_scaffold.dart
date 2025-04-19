@@ -14,7 +14,10 @@ class MkScaffold extends ConsumerWidget {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     // logger.d(mediaQueryData);
     var topPaddingHeight = mediaQueryData.padding.top;
-    var body = this.body;
+    // 嵌套的 Scaffold 来保证
+    Widget body = Scaffold(
+      body: this.body,
+    );
     var themes = ref.watch(themeColorsProvider);
     return LayoutBuilder(
       builder: (context, constraints) {

@@ -41,6 +41,12 @@ class MemberInfoState extends _$MemberInfoState {
 
   Future<void> updateApi(Map<String, dynamic> data) async {
     var api = ref.watch(misskeyApisProvider);
+    // 如果字段的value是空字符串，则设置为null
+    data.forEach((key, value) {
+      if (value == "") {
+        data[key] = null;
+      }
+    });
     var res = await api.account.update(data: data);
     state = AsyncData(MemberInfoStateModel(res, res));
   }
