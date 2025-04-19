@@ -1,176 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/pages/settings/member_info_state.dart';
 import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_image.dart';
-import 'package:moekey/widgets/mk_date_picker.dart';
-import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 import 'package:moekey/widgets/mk_select.dart';
 import 'package:moekey/constants/languages.dart';
+import 'package:moekey/widgets/settings/fields.dart';
 
 import '../../../apis/models/drive.dart';
 import '../../../widgets/driver/driver_select_dialog/driver_select_dialog.dart';
-
-// 可编辑文本字段 Widget
-class _EditableTextField extends HookConsumerWidget {
-  const _EditableTextField({
-    required this.label,
-    required this.value,
-    required this.originalValue,
-    required this.onChanged,
-    required this.saveKey,
-    this.prefixIcon,
-    this.minLines,
-    this.helperText,
-  });
-
-  final String label;
-  final String? value;
-  final String? originalValue;
-  final ValueChanged<String> onChanged;
-  final String saveKey;
-  final Icon? prefixIcon; // Changed type from Widget? to Icon?
-  final int? minLines;
-  final String? helperText;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Normalize empty strings to null for comparison
-    final String? normalizedValue =
-        (value == null || value!.isEmpty) ? null : value;
-    final String? normalizedOriginalValue =
-        (originalValue == null || originalValue!.isEmpty)
-            ? null
-            : originalValue;
-    final bool isModified = normalizedValue != normalizedOriginalValue;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      // spacing: 8, // Use SizedBox for spacing if needed, or rely on parent Column spacing
-      children: [
-        MkFormItem(
-          label: label,
-          helperText: helperText,
-          child: MkInput(
-            prefixIcon: prefixIcon,
-            value: value,
-            minLines: minLines,
-            onChanged: onChanged,
-          ),
-        ),
-        if (isModified)
-          Padding(
-            padding: const EdgeInsets.only(
-                top: 8.0), // Add some space before the button
-            child: _SaveButton(
-              data: {saveKey: value},
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-// 可编辑日期字段 Widget
-class _EditableDateField extends HookConsumerWidget {
-  const _EditableDateField({
-    required this.label,
-    required this.value, // DateTime?
-    required this.originalValue, // DateTime?
-    required this.onChanged, // ValueChanged<DateTime?>
-    required this.saveKey,
-    this.prefixIcon,
-  });
-
-  final String label;
-  final DateTime? value;
-  final DateTime? originalValue;
-  final ValueChanged<DateTime?> onChanged;
-  final String saveKey;
-  final Icon? prefixIcon;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool isModified = value != originalValue;
-
-    // 将 DateTime? 转换为 YYYY-MM-DD 格式的 String? 以便保存
-    String? valueString;
-    if (value != null) {
-      valueString =
-          "${value!.year.toString().padLeft(4, '0')}-${value!.month.toString().padLeft(2, '0')}-${value!.day.toString().padLeft(2, '0')}";
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        MkDatePicker(
-          label: label,
-          value: value,
-          prefixIcon: prefixIcon,
-          onChanged: onChanged,
-          initialDate: value,
-        ),
-        if (isModified)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: _SaveButton(
-              data: {saveKey: valueString}, // 保存格式化后的字符串
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _EditableSelectField<T> extends HookConsumerWidget {
-  const _EditableSelectField({
-    this.prefixIcon,
-    required this.label,
-    required this.value,
-    required this.originalValue,
-    required this.onChanged,
-    required this.saveKey,
-    required this.items,
-  });
-
-  final String label;
-  final String? value;
-  final String? originalValue;
-  final ValueChanged<String> onChanged;
-  final String saveKey;
-  final Icon? prefixIcon;
-  final List<MkSelectItem<T>> items;
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        MkFormItem(
-          label: label,
-          child: MkSelect(
-            prefixIcon: prefixIcon,
-            value: value,
-            items: items,
-            onChanged: (v) {
-              if (v != null) {
-                onChanged(v.toString());
-              }
-            },
-          ),
-        ),
-        if (value != originalValue)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: _SaveButton(
-              data: {saveKey: value},
-            ),
-          ),
-      ],
-    );
-  }
-}
 
 class SettingsProfile extends HookConsumerWidget {
   const SettingsProfile({super.key});
@@ -214,7 +54,7 @@ class SettingsProfile extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _ProfileMemberCard(),
-              _EditableTextField(
+              MkSettingEditableTextField(
                 label: "昵称",
                 value: meDetail.user.name,
                 originalValue: meDetail.originalUser.name,
@@ -226,7 +66,7 @@ class SettingsProfile extends HookConsumerWidget {
                       .updateUser(meDetail.user.copyWith(name: value));
                 },
               ),
-              _EditableTextField(
+              MkSettingEditableTextField(
                 label: "个人简介",
                 helperText: "你可以在个人简介中包含一些#标签。",
                 value: meDetail.user.description,
@@ -239,7 +79,7 @@ class SettingsProfile extends HookConsumerWidget {
                       .updateUser(meDetail.user.copyWith(description: value));
                 },
               ),
-              _EditableTextField(
+              MkSettingEditableTextField(
                 label: "位置",
                 value: meDetail.user.location,
                 originalValue: meDetail.originalUser.location,
@@ -252,7 +92,7 @@ class SettingsProfile extends HookConsumerWidget {
                 },
               ),
               // 使用新的 _EditableBirthdayField 组件
-              _EditableDateField(
+              MkSettingEditableDateField(
                 label: "生日",
                 value: currentBirthday,
                 originalValue: originalBirthday,
@@ -270,7 +110,7 @@ class SettingsProfile extends HookConsumerWidget {
                       .updateUser(meDetail.user.copyWith(birthday: dateString));
                 },
               ),
-              _EditableSelectField(
+              MkSettingEditableSelectField(
                 label: "语言",
                 value: meDetail.user.lang,
                 originalValue: meDetail.originalUser.lang,
@@ -292,7 +132,7 @@ class SettingsProfile extends HookConsumerWidget {
                   ..sort((a, b) =>
                       a.label.compareTo(b.label)), // Sort by native name
               ),
-              _EditableTextField(
+              MkSettingEditableTextField(
                 label: "被关注时的消息",
                 value: meDetail.user.followedMessage,
                 originalValue: meDetail.originalUser.followedMessage,
@@ -307,47 +147,6 @@ class SettingsProfile extends HookConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class MkFormItem extends StatelessWidget {
-  // Changed to StatelessWidget as it has no state
-  const MkFormItem({
-    super.key,
-    required this.label,
-    required this.child,
-    this.helperText,
-  });
-
-  final String label;
-  final Widget child;
-  final String? helperText;
-
-  @override
-  Widget build(BuildContext context) {
-    // Removed WidgetRef ref
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      // spacing: 8, // Use SizedBox for spacing if needed
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12), // Use const
-        ),
-        const SizedBox(height: 8), // Add spacing manually
-        child,
-        if (helperText != null) ...[
-          const SizedBox(height: 8), // Add spacing manually
-          Opacity(
-            opacity: 0.75,
-            child: Text(
-              helperText!,
-              style: const TextStyle(fontSize: 12), // Use const
-            ),
-          ),
-        ]
-      ],
     );
   }
 }
@@ -452,46 +251,6 @@ class _ProfileMemberCard extends HookConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _SaveButton extends HookConsumerWidget {
-  const _SaveButton({required this.data});
-
-  final Map<String, dynamic> data;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var isLoading = useState(false);
-    return FilledButton(
-      onPressed: isLoading.value
-          ? null
-          : () async {
-              isLoading.value = true;
-              try {
-                await ref
-                    .read(memberInfoStateProvider.notifier)
-                    .updateApi(data);
-              } catch (e) {
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("保存失败: $e"),
-                  ),
-                );
-              } finally {
-                // Use finally to ensure isLoading is always reset
-                isLoading.value = false;
-              }
-            },
-      child: isLoading.value
-          ? const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Text("保存"), // Use const
     );
   }
 }
