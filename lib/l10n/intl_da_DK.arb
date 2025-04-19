@@ -222,5 +222,6 @@
   "processing": "i gang",
   "overviews": "skimme igennem",
   "close": "关闭",
-  "loginExpired": "登录信息已经过期，请重新登录"
+  "loginExpired": "登录信息已经过期，请重新登录",
+  "clear": "Clear"
 }
