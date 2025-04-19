@@ -8,6 +8,7 @@ import 'package:moekey/widgets/mk_scaffold.dart';
 import 'package:moekey/widgets/mk_select.dart';
 import 'package:moekey/constants/languages.dart';
 import 'package:moekey/widgets/settings/fields.dart';
+import 'package:moekey/widgets/settings/folder.dart';
 
 import '../../../apis/models/drive.dart';
 import '../../../widgets/driver/driver_select_dialog/driver_select_dialog.dart';
@@ -142,6 +143,11 @@ class SettingsProfile extends HookConsumerWidget {
                   ref.read(memberInfoStateProvider.notifier).updateUser(
                       meDetail.user.copyWith(followedMessage: value));
                 },
+              ),
+              MkFolder(
+                title: "更多附加信息",
+                icon: TablerIcons.list,
+                child: Column(),
               ),
             ],
           ),
