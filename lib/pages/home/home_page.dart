@@ -353,36 +353,40 @@ class ServerIconAndBanner extends ConsumerWidget {
 
         var extend = constraints.maxWidth >= 250;
         if (extend) {
+          Widget child = Stack(
+            alignment: Alignment.center,
+            children: [
+              if (meta?.bannerUrl?.isNotEmpty == true)
+                MkImage(
+                  meta!.bannerUrl!,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              SizedBox(
+                width: 38,
+                height: 38,
+                child: icon,
+              )
+            ],
+          );
+          if (meta?.bannerUrl?.isNotEmpty == true) {
+            child = ShaderMask(
+              shaderCallback: (rect) {
+                return const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.black, Colors.transparent],
+                        stops: [0, 0.9])
+                    .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+              },
+              blendMode: BlendMode.dstIn,
+              child: child,
+            );
+          }
           return SizedBox(
               width: double.infinity,
               height: 82 + mediaPadding.top,
-              child: ShaderMask(
-                shaderCallback: (rect) {
-                  return const LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.black, Colors.transparent],
-                          stops: [0, 0.9])
-                      .createShader(
-                          Rect.fromLTRB(0, 0, rect.width, rect.height));
-                },
-                blendMode: BlendMode.dstIn,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    MkImage(
-                      meta?.bannerUrl ?? "",
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                    SizedBox(
-                      width: 38,
-                      height: 38,
-                      child: icon,
-                    )
-                  ],
-                ),
-              ));
+              child: child);
         }
         var top = 10 + mediaPadding.top;
         if (top < 20) {

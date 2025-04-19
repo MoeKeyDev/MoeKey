@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:moekey/status/apis.dart';
 
 import '../../database/init_database.dart';
 import '../../status/server.dart';
@@ -47,6 +48,10 @@ Future initApp(BuildContext context, WidgetRef ref) async {
   ref.read(moekeyMainChannelProvider);
   if (user != null) {
     if (context.mounted) {
+      await ref.read(instanceMetaProvider.future);
+      if (!context.mounted) {
+        return null;
+      }
       context.replace("/timeline");
       return null;
     }
