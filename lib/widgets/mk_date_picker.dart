@@ -199,7 +199,8 @@ class _MkDatePickerState extends ConsumerState<MkDatePicker> {
               // Prevent keyboard from appearing
               child: TextFormField(
                 controller: _controller,
-                readOnly: true, // Make text field read-only
+                readOnly: true,
+                // Make text field read-only
                 decoration: inputDecoration(
                   themes,
                   widget.hintText,

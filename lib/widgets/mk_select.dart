@@ -107,7 +107,8 @@ class MkSelect<T> extends ConsumerWidget {
             style: effectiveStyle,
             decoration: inputDecoration(
               themes,
-              null, // Hint text is handled by DropdownButtonFormField's hint property
+              null,
+              // Hint text is handled by DropdownButtonFormField's hint property
               prefixIcon: prefixIcon,
             ).copyWith(
               fillColor: themes.panelColor, // Set background color

@@ -11,12 +11,14 @@ class MfmSpinCode extends StatefulWidget {
       this.speed,
       this.left = false,
       this.alternate = false});
+
   final Widget child;
   final bool x;
   final bool y;
   final Duration? speed;
   final bool left;
   final bool alternate;
+
   @override
   State<MfmSpinCode> createState() => _SpinCodeState();
 }
@@ -25,6 +27,7 @@ class _SpinCodeState extends State<MfmSpinCode>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animate;
+
   @override
   void initState() {
     super.initState();

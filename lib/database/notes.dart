@@ -7,6 +7,7 @@ class NotesDatabase {
   /// 服务器地址
   String server;
   LazyBox? _box;
+
   NotesDatabase({required this.server});
 
   Future<LazyBox> _getDatabase() async {

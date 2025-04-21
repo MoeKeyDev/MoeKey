@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 
 class HoverBuilder extends StatefulWidget {
   const HoverBuilder({super.key, required this.builder, this.onHover});
+
   final Widget Function(BuildContext context, bool isHover) builder;
   final void Function(bool isHover)? onHover;
+
   @override
   State<HoverBuilder> createState() => _HoverBuilderState();
 }
 
 class _HoverBuilderState extends State<HoverBuilder> {
   var isHover = false;
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(

@@ -30,7 +30,7 @@ class TimelineListView extends StatefulWidget {
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
-  })  : separatorBuilder = null;
+  }) : separatorBuilder = null;
 
   /// See [ListView.separated]
   const TimelineListView.separated({
@@ -52,7 +52,7 @@ class TimelineListView extends StatefulWidget {
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
-  })  : itemExtent = null;
+  }) : itemExtent = null;
 
   /// See: [ScrollView.scrollDirection]
   final Axis scrollDirection;
