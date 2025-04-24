@@ -4,9 +4,7 @@ name: 正式发布Flutter应用
 #  push:
 
 on:
-  push:
-    tags:
-      - "*"
+  workflow_dispatch:
 jobs:
   pre-build:
     name: 预构建
