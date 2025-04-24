@@ -214,11 +214,31 @@ jobs:
       - name: 运行代码生成器
         run: dart run build_runner build
 
-      - name: 编译IPA (不签名)
-        run: flutter build ipa --release --no-codesign
+      - name: 准备iOS构建 (不签名)
+        run: flutter build ios --release --no-codesign
 
-      - name: 上传IPA到工作流程
+      - name: 创建 .xcarchive (不签名)
+        run: |
+          cd ios
+          xcodebuild archive \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath ../build/ios/archive/Runner.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            EXPANDED_CODE_SIGN_IDENTITY=""
+
+      - name: 导出未签名的 IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/ios/archive/Runner.xcarchive \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist ios/ExportOptions.plist
+
+      - name: 上传未签名的 IPA 到工作流程
         uses: actions/upload-artifact@v4
         with:
-          name: build-ios-unsigned
+          name: build-ios-unsigned-ipa
           path: build/ios/ipa/*.ipa
