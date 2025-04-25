@@ -208,13 +208,23 @@ jobs:
         run: dart run build_runner build
 
       - name: 编译iOS
-        run: flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+        run: flutter build ios --release --no-codesign
+      
+      - name: Copy Runner.app
+        run: |
+          mkdir Payload
+          cp -R build/ios/iphoneos/Runner.app Payload
 
-      - name: 上传ipa到工作流程
+      - name: Create IPA (Unsigned)
+        run: |
+          zip -r MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.ipa Payload
+
+      - name: 上传到工作流程
         uses: actions/upload-artifact@v4
         with:
           name: build-ios
-          path: build/ios/ipa/*.ipa # Flutter 默认的 ipa 输出路径
+          path: |
+            MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.ipa
 
   release:
     name: 上传包
