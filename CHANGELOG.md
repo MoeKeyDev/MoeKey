@@ -1,4 +1,9 @@
 # Changelog
+# 0.9.0
+- Add ios ipa releases
+- Add User profile
+
+
 ## 0.8.7
 - Update Flutter dependencies version
 - Enable Impeller support
