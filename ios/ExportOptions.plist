@@ -4,12 +4,6 @@
 <dict>
     <key>method</key>
     <string>ad-hoc</string>
-    <key>signingStyle</key>
-    <string>manual</string>
-    <key>signingCertificate</key>
-    <string></string>
-    <key>provisioningProfiles</key>
-    <dict/>
     <key>compileBitcode</key>
     <false/>
 </dict>
