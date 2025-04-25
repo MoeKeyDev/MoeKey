@@ -217,28 +217,17 @@ jobs:
       - name: 准备iOS构建 (不签名)
         run: flutter build ios --release --no-codesign
 
-      - name: 创建 .xcarchive (不签名)
+      - name: 复制构建的文件
         run: |
-          cd ios
-          xcodebuild archive \
-            -workspace Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -archivePath ../build/ios/archive/Runner.xcarchive \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            EXPANDED_CODE_SIGN_IDENTITY=""
-
-      - name: 导出未签名的 IPA
+          mkdir -p $GITHUB_WORKSPACE/build/ios
+          cp -r build/ios/iphoneos/Runner.app $GITHUB_WORKSPACE/build/ios/MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.app
+      - name: 压缩创建IPA
         run: |
-          xcodebuild -exportArchive \
-            -archivePath build/ios/archive/Runner.xcarchive \
-            -exportPath build/ios/ipa \
-            -exportOptionsPlist ios/ExportOptions.plist
-
-      - name: 上传未签名的 IPA 到工作流程
+          cd $GITHUB_WORKSPACE/build/ios
+          zip -r MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.ipa MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.app
+      - name: 上传到工作流程
         uses: actions/upload-artifact@v4
         with:
-          name: build-ios-unsigned-ipa
-          path: build/ios/ipa/*.ipa
+          name: build-ios
+          path: |
+            MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.ipa
