@@ -9,7 +9,7 @@ part 'notification.g.dart';
 
 ///Notification
 @freezed
-class NotificationModel with _$NotificationModel {
+abstract class NotificationModel with _$NotificationModel {
   const factory NotificationModel({
     required DateTime createdAt,
     required String id,
@@ -218,7 +218,7 @@ enum ExportedEntity {
 ///
 ///RoleLite
 @freezed
-class Role with _$Role {
+abstract class Role with _$Role {
   const factory Role({
     required String? color,
     required String description,
@@ -259,7 +259,7 @@ class Role with _$Role {
 ///
 ///RoleCondFormulaFollowersOrFollowingOrNotes
 @freezed
-class RoleCondFormulaValue with _$RoleCondFormulaValue {
+abstract class RoleCondFormulaValue with _$RoleCondFormulaValue {
   const factory RoleCondFormulaValue({
     required String id,
     required RoleCondFormulaValueType type,
@@ -315,7 +315,7 @@ enum RoleCondFormulaValueType {
 }
 
 @freezed
-class Policy with _$Policy {
+abstract class Policy with _$Policy {
   const factory Policy({
     int? priority,
     bool? useDefault,
@@ -372,7 +372,7 @@ enum NotificationType {
 }
 
 @freezed
-class NoteReaction with _$NoteReaction {
+abstract class NoteReaction with _$NoteReaction {
   const factory NoteReaction({
     required String reaction,
     required UserLiteModel user,

@@ -11,7 +11,6 @@ import 'package:path/path.dart';
 import '../../apis/models/drive.dart';
 import '../../generated/l10n.dart';
 import '../../logger.dart';
-import '../../main.dart';
 import '../mk_dialog.dart';
 import 'drive.dart';
 

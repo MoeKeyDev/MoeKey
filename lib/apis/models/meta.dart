@@ -11,7 +11,7 @@ part 'meta.g.dart';
 ///
 ///MetaDetailedOnly
 @freezed
-class MetaDetailedModel with _$MetaDetailedModel {
+abstract class MetaDetailedModel with _$MetaDetailedModel {
   const factory MetaDetailedModel({
     @Default([]) List<Ad> ads,
     required String? backgroundImageUrl,
@@ -76,7 +76,7 @@ class MetaDetailedModel with _$MetaDetailedModel {
 }
 
 @freezed
-class Ad with _$Ad {
+abstract class Ad with _$Ad {
   const factory Ad({
     required int dayOfWeek,
     required String id,
@@ -90,7 +90,7 @@ class Ad with _$Ad {
 }
 
 @freezed
-class Features with _$Features {
+abstract class Features with _$Features {
   const factory Features({
     required bool emailRequiredForSignup,
     required bool globalTimeline,
@@ -117,7 +117,7 @@ enum NoteSearchableScope {
 
 ///RolePolicies
 @freezed
-class RolePolicies with _$RolePolicies {
+abstract class RolePolicies with _$RolePolicies {
   const factory RolePolicies({
     required bool alwaysMarkNsfw,
     required int antennaLimit,

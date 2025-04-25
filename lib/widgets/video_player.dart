@@ -79,7 +79,9 @@ Future<void> exitNativeFullscreen() async {
 
 class VideoPlayerComponent extends HookConsumerWidget {
   const VideoPlayerComponent({super.key, required this.url});
+
   final String url;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var controller = ref.watch(videoPlayerStateProvider(url: url));

@@ -7,7 +7,7 @@ part 'login_user.freezed.dart';
 part 'login_user.g.dart';
 
 @freezed
-class LoginUser with _$LoginUser {
+abstract class LoginUser with _$LoginUser {
   const factory LoginUser({
     required String serverUrl,
     required String token,

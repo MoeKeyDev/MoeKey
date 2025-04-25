@@ -180,7 +180,6 @@ class UserHomeCard extends HookConsumerWidget {
 
 class _UserFollowsCount extends StatelessWidget {
   const _UserFollowsCount({
-    super.key,
     required this.userData,
   });
 
@@ -202,8 +201,8 @@ class _UserFollowsCount extends StatelessWidget {
             ],
           ),
           if (userData.followingVisibility == null ||
-              userData.followingVisibility == "public" ||
-              (userData.followingVisibility == "followers" &&
+              userData.followingVisibility == FollowVisibility.PUBLIC ||
+              (userData.followingVisibility == FollowVisibility.FOLLOWERS &&
                   userData.isFollowing))
             GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -232,8 +231,8 @@ class _UserFollowsCount extends StatelessWidget {
               ),
             ),
           if (userData.followersVisibility == null ||
-              userData.followersVisibility == "public" ||
-              (userData.followersVisibility == "followers" &&
+              userData.followersVisibility == FollowVisibility.PUBLIC ||
+              (userData.followersVisibility == FollowVisibility.FOLLOWERS &&
                   userData.isFollowing))
             GestureDetector(
               onTap: () {
@@ -268,7 +267,6 @@ class _UserFollowsCount extends StatelessWidget {
 
 class _UserFields extends StatelessWidget {
   const _UserFields({
-    super.key,
     required this.userData,
   });
 
@@ -317,7 +315,6 @@ class _UserFields extends StatelessWidget {
 
 class _UserRegisterTime extends StatelessWidget {
   const _UserRegisterTime({
-    super.key,
     required this.themes,
     required this.userData,
   });
@@ -364,7 +361,6 @@ class _UserRegisterTime extends StatelessWidget {
 
 class _UserDescriptionSmall extends StatelessWidget {
   const _UserDescriptionSmall({
-    super.key,
     required this.userData,
   });
 
@@ -398,7 +394,6 @@ class _UserDescriptionSmall extends StatelessWidget {
 
 class _UserDescription extends StatelessWidget {
   const _UserDescription({
-    super.key,
     required this.userData,
   });
 
@@ -438,7 +433,6 @@ class _UserDescription extends StatelessWidget {
 
 class _UserNames extends StatelessWidget {
   const _UserNames({
-    super.key,
     required this.userData,
   });
 
@@ -518,7 +512,6 @@ class _UserNames extends StatelessWidget {
 
 class _UserBanner extends StatelessWidget {
   const _UserBanner({
-    super.key,
     required this.isSmall,
     required this.userData,
     required this.themes,
@@ -812,7 +805,6 @@ class _UserBanner extends StatelessWidget {
 
 class _UserFollowButton extends HookConsumerWidget {
   const _UserFollowButton({
-    super.key,
     required this.userProvider,
     required this.userData,
     required this.themes,

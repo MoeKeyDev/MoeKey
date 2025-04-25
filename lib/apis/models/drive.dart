@@ -5,38 +5,42 @@ part 'drive.freezed.dart';
 
 part 'drive.g.dart';
 
-class DriveModel {}
+class DriveModel {
+  DriveModel(
+    this.id,
+    this.name,
+    this.createdAt,
+  );
 
-extension DriveModelExtension on DriveModel {
-  String get id => (this as dynamic).id;
-
-  String get name => (this as dynamic).name;
-
-  String get createdAt => (this as dynamic).createdAt;
+  final String id;
+  final String name;
+  final String createdAt;
 }
 
 @freezed
-class DriveFileModel extends DriveModel with _$DriveFileModel {
-  factory DriveFileModel({
+abstract class DriveFileModel extends DriveModel with _$DriveFileModel {
+  DriveFileModel._(super.id, super.name, super.createdAt);
+
+  factory DriveFileModel(
+    String id,
+    String name,
+    String createdAt,
     String? blurhash,
-    required String type,
-    required String url,
-    required int size,
-    required bool isSensitive,
+    String type,
+    String url,
+    int size,
+    bool isSensitive,
     String? comment,
     Properties? properties,
     String? thumbnailUrl,
-    required String id,
-    required String name,
-    required String createdAt,
-  }) = _DriveFileModel;
+  ) = _DriveFileModel;
 
   factory DriveFileModel.fromJson(Map<String, dynamic> map) =>
       _$DriveFileModelFromJson(map);
 }
 
 @freezed
-class Properties with _$Properties {
+abstract class Properties with _$Properties {
   const factory Properties({
     String? avgColor,
     double? height,
@@ -49,13 +53,15 @@ class Properties with _$Properties {
 }
 
 @freezed
-class DriverFolderModel extends DriveModel with _$DriverFolderModel {
-  const factory DriverFolderModel({
-    required String id,
+abstract class DriverFolderModel extends DriveModel with _$DriverFolderModel {
+  DriverFolderModel._(super.id, super.name, super.createdAt);
+
+  factory DriverFolderModel(
+    String id,
     String? parentId,
-    required String name,
-    required String createdAt,
-  }) = _DriverFolderModel;
+    String name,
+    String createdAt,
+  ) = _DriverFolderModel;
 
   factory DriverFolderModel.fromJson(Map<String, dynamic> map) =>
       _$DriverFolderModelFromJson(map);

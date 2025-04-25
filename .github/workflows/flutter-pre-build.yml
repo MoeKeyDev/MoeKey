@@ -193,3 +193,43 @@ jobs:
           name: build-macos
           path: |
             MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.zip
+
+  build-ios:
+    name: 编译iOS
+    runs-on: macos-latest
+    needs: [ pre-build ]
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 设置Flutter环境
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: 安装依赖项
+        run: flutter pub get
+
+      - name: 运行代码生成器
+        run: dart run build_runner build
+
+      - name: 编译iOS
+        run: flutter build ios --release --no-codesign
+      
+      - name: Copy Runner.app
+        run: |
+          mkdir Payload
+          cp -R build/ios/iphoneos/Runner.app Payload
+          
+      - name: Create IPA (Unsigned)
+        run: |
+          cd Payload
+          zip -r MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.ipa .
+          mv MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.ipa $GITHUB_WORKSPACE
+
+      - name: 上传到工作流程
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ios
+          path: |
+            MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-iOS-release.ipa

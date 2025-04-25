@@ -4,9 +4,7 @@ name: 正式发布Flutter应用
 #  push:
 
 on:
-  push:
-    tags:
-      - "*"
+  workflow_dispatch:
 jobs:
   pre-build:
     name: 预构建
@@ -190,9 +188,37 @@ jobs:
           path: |
             MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-macOS-universal-release.zip
 
+  build-ios:
+    name: 编译iOS
+    runs-on: macos-latest
+    needs: [ pre-build ]
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 设置Flutter环境
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: 安装依赖项
+        run: flutter pub get
+
+      - name: 运行代码生成器
+        run: dart run build_runner build
+
+      - name: 编译iOS
+        run: flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+
+      - name: 上传ipa到工作流程
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ios
+          path: build/ios/ipa/*.ipa # Flutter 默认的 ipa 输出路径
+
   release:
     name: 上传包
-    needs: [ build-apk, build-linux, build-windows, build-macos, pre-build ]
+    needs: [ build-apk, build-linux, build-windows, build-macos, build-ios, pre-build ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -219,6 +245,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-macos
+          path: artifact
+
+      - name: 下载iOS
+        uses: actions/download-artifact@v4
+        with:
+          name: build-ios
           path: artifact
 
       - name: 创建releases

@@ -78,331 +78,393 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "account": MessageLookupByLibrary.simpleMessage("όνομα χρήστη"),
-        "add": MessageLookupByLibrary.simpleMessage("αύξηση"),
-        "addAccount":
-            MessageLookupByLibrary.simpleMessage("Προσθήκη λογαριασμού"),
-        "addFile": MessageLookupByLibrary.simpleMessage("Προσθήκη αρχείου"),
-        "addTitle": MessageLookupByLibrary.simpleMessage("Προσθήκη τίτλου"),
-        "all": MessageLookupByLibrary.simpleMessage("πλήρες"),
-        "announcementActive":
-            MessageLookupByLibrary.simpleMessage("Ανακοίνωση τώρα"),
-        "announcementExpired":
-            MessageLookupByLibrary.simpleMessage("Προηγούμενες ανακοινώσεις"),
-        "announcements": MessageLookupByLibrary.simpleMessage("Δελτίο"),
-        "back": MessageLookupByLibrary.simpleMessage(
-            "να επιστρέψετε (ή να επιστρέψετε)"),
-        "cancel": MessageLookupByLibrary.simpleMessage("ακυρώσεις"),
-        "cancelSensitive": MessageLookupByLibrary.simpleMessage(
-            "Αποσυνδέστε την επισήμανση ευαίσθητου περιεχομένου"),
-        "clip": MessageLookupByLibrary.simpleMessage("σημείωμα"),
-        "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
-            "Σίγουρα θέλετε να ακυρώσετε τη συλλογή;"),
-        "clipCreate": MessageLookupByLibrary.simpleMessage(
-            "Νέες αυτοκόλλητες σημειώσεις"),
-        "clipFavorite":
-            MessageLookupByLibrary.simpleMessage("Προσθήκη στα αγαπημένα"),
-        "clipFavoriteList":
-            MessageLookupByLibrary.simpleMessage("σελιδοδείκτης (Internet)"),
-        "clipRemove": MessageLookupByLibrary.simpleMessage(
-            "Αφαίρεση αυτοκόλλητων σημειώσεων"),
-        "clipUpdate": MessageLookupByLibrary.simpleMessage(
-            "Ενημέρωση αυτοκόλλητων σημειώσεων"),
-        "clips": MessageLookupByLibrary.simpleMessage("σημείωμα"),
-        "close": MessageLookupByLibrary.simpleMessage("关闭"),
-        "confirmSelection": m0,
-        "copyContent":
-            MessageLookupByLibrary.simpleMessage("Αντιγραφή περιεχομένου"),
-        "copyLink": MessageLookupByLibrary.simpleMessage("Αντιγραφή συνδέσμου"),
-        "copyRSS": MessageLookupByLibrary.simpleMessage("Αντιγραφή RSS"),
-        "copyUserHomeLink": MessageLookupByLibrary.simpleMessage(
-            "Αντιγράψτε τη διεύθυνση της αρχικής σελίδας του χρήστη"),
-        "copyUsername":
-            MessageLookupByLibrary.simpleMessage("Αντιγραφή ονόματος χρήστη"),
-        "createFolder": MessageLookupByLibrary.simpleMessage("Νέος φάκελος"),
-        "createNote":
-            MessageLookupByLibrary.simpleMessage("Δημοσιεύστε ένα νέο νήμα"),
-        "createNoteFormFile": MessageLookupByLibrary.simpleMessage(
-            "Δημιουργία μιας ανάρτησης από ένα αρχείο"),
-        "createNoteHint": MessageLookupByLibrary.simpleMessage("Τι συνέβη..."),
-        "createdDate":
-            MessageLookupByLibrary.simpleMessage("Ημερομηνία δημιουργίας"),
-        "creationFailedDialog": m1,
-        "cw": MessageLookupByLibrary.simpleMessage("κρυφό περιεχόμενο"),
-        "day": MessageLookupByLibrary.simpleMessage("ημέρα"),
-        "daysAgo": m2,
-        "delete": MessageLookupByLibrary.simpleMessage("αφαίρεση του"),
-        "deleteConfirm": m3,
-        "deleteFileConfirmation": m4,
-        "deleteFolderConfirmation": m5,
-        "description": MessageLookupByLibrary.simpleMessage("περιγραφές"),
-        "done": MessageLookupByLibrary.simpleMessage("πληρούν"),
-        "download": MessageLookupByLibrary.simpleMessage("Λήψη"),
-        "drive": MessageLookupByLibrary.simpleMessage(
-            "αποθήκευση αρχείων στο σύννεφο"),
-        "durationDay": m6,
-        "durationHour": m7,
-        "durationMinute": m8,
-        "durationSecond": m9,
-        "edit": MessageLookupByLibrary.simpleMessage("μεταγλωττιστής"),
-        "emoji": MessageLookupByLibrary.simpleMessage("emoticon"),
-        "enterNewFileName": MessageLookupByLibrary.simpleMessage(
-            "Παρακαλώ εισάγετε ένα νέο όνομα αρχείου"),
-        "enterNewTitle": MessageLookupByLibrary.simpleMessage(
-            "Παρακαλώ εισάγετε έναν νέο τίτλο"),
-        "enterUrl":
-            MessageLookupByLibrary.simpleMessage("Παρακαλώ εισάγετε το URL"),
-        "exceptionContentNull": MessageLookupByLibrary.simpleMessage(
-            "Το περιεχόμενο δεν μπορεί να είναι κενό"),
-        "exceptionCwNull": MessageLookupByLibrary.simpleMessage(
-            "Το περιεχόμενο δεν μπορεί να είναι κενό"),
-        "exceptionSendNote": m10,
-        "explore": MessageLookupByLibrary.simpleMessage("ανακαλύψεις"),
-        "exploreHot": MessageLookupByLibrary.simpleMessage("στη μόδα"),
-        "exploreUserHot":
-            MessageLookupByLibrary.simpleMessage("δημοφιλής χρήστης"),
-        "exploreUserLast": MessageLookupByLibrary.simpleMessage(
-            "Πρόσφατα συνδεδεμένοι χρήστες"),
-        "exploreUserPined": MessageLookupByLibrary.simpleMessage(
-            "χρήστης στην κορυφή της λίστας"),
-        "exploreUserUpdated":
-            MessageLookupByLibrary.simpleMessage("Πρόσφατοι συνεισφέροντες"),
-        "exploreUsers": MessageLookupByLibrary.simpleMessage("χρήστης"),
-        "favorite":
-            MessageLookupByLibrary.simpleMessage("σελιδοδείκτης (Internet)"),
-        "filter": MessageLookupByLibrary.simpleMessage("Filter"),
-        "folderName": MessageLookupByLibrary.simpleMessage("Όνομα φακέλου"),
-        "follow": MessageLookupByLibrary.simpleMessage("εστίαση"),
-        "followed": MessageLookupByLibrary.simpleMessage("Ακολούθησε το"),
-        "followers": MessageLookupByLibrary.simpleMessage("παρατηρητής"),
-        "following": MessageLookupByLibrary.simpleMessage("Ανήσυχο"),
-        "fromCloud": MessageLookupByLibrary.simpleMessage("Από το netbook"),
-        "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
-        "hashtag": MessageLookupByLibrary.simpleMessage("hashtag"),
-        "hostnames": MessageLookupByLibrary.simpleMessage("όνομα τομέα"),
-        "hour": MessageLookupByLibrary.simpleMessage("ώρες"),
-        "hoursAgo": m11,
-        "image": MessageLookupByLibrary.simpleMessage("φωτογραφία"),
-        "inputServer": MessageLookupByLibrary.simpleMessage(
-            "Χειροκίνητος διακομιστής εισόδου"),
-        "insertDriverFile":
-            MessageLookupByLibrary.simpleMessage("Τοποθέτηση εξαρτημάτων"),
-        "isFollowingYouNow":
-            MessageLookupByLibrary.simpleMessage("Σε παρακολουθώ."),
-        "justNow": MessageLookupByLibrary.simpleMessage("μόλις πρόσφατα"),
-        "keepOriginal": MessageLookupByLibrary.simpleMessage(
-            "Διατήρηση της αρχικής εικόνας"),
-        "loadingServers":
-            MessageLookupByLibrary.simpleMessage("Server Loading"),
-        "local": MessageLookupByLibrary.simpleMessage("αυτή η τοποθεσία"),
-        "localUpload": MessageLookupByLibrary.simpleMessage("τοπικό ανέβασμα"),
-        "login": MessageLookupByLibrary.simpleMessage("εγγραφή"),
-        "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
-        "loginFailed":
-            MessageLookupByLibrary.simpleMessage("Αποτυχία σύνδεσης"),
-        "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
-            "Αποτυχία σύνδεσης: Αποτυχία δημιουργίας εφαρμογής"),
-        "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
-            "Αποτυχία σύνδεσης: η απόκτηση του κουπονιού απέτυχε"),
-        "loginLoading": m12,
-        "loginSuccess":
-            MessageLookupByLibrary.simpleMessage("Επιτυχής σύνδεση"),
-        "manageAccount":
-            MessageLookupByLibrary.simpleMessage("Διαχείριση λογαριασμού"),
-        "markAsSensitive": MessageLookupByLibrary.simpleMessage(
-            "Σημειώστε ως ευαίσθητο περιεχόμενο"),
-        "mention": MessageLookupByLibrary.simpleMessage("εγείρει (ένα θέμα)"),
-        "minute": MessageLookupByLibrary.simpleMessage("λεπτά"),
-        "minutesAgo": m13,
-        "monthsAgo": m14,
-        "more": MessageLookupByLibrary.simpleMessage("περισσότερα"),
-        "myCLips": MessageLookupByLibrary.simpleMessage("Η σημείωσή μου."),
-        "name": MessageLookupByLibrary.simpleMessage("όνομα (ενός πράγματος)"),
-        "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
-            "Το όνομα δεν μπορεί να είναι κενό"),
-        "next": MessageLookupByLibrary.simpleMessage("το επόμενο βήμα"),
-        "noLists":
-            MessageLookupByLibrary.simpleMessage("You don\'t have any lists"),
-        "notFindServer": MessageLookupByLibrary.simpleMessage(
-            "Δεν βρήκατε τον διακομιστή σας;"),
-        "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
-            "Αντιγράψτε τον σύνδεσμο σε αυτόν τον ιστότοπο"),
-        "noteCwHide": MessageLookupByLibrary.simpleMessage("να τακτοποιήσω"),
-        "noteCwShow":
-            MessageLookupByLibrary.simpleMessage("Εμφάνιση περιεχομένου"),
-        "noteFormLanguageTranslation": m15,
-        "noteLocalOnly":
-            MessageLookupByLibrary.simpleMessage("Μη συμμετοχή σε κοινή"),
-        "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage(
-            "Μεταβείτε στον κεντρικό διακομιστή για να εμφανίσετε"),
-        "notePined": MessageLookupByLibrary.simpleMessage("Κορυφαίες θέσεις"),
-        "noteQuote": MessageLookupByLibrary.simpleMessage("απόσπασμα"),
-        "noteReNote": MessageLookupByLibrary.simpleMessage(
-            "προώθηση (αλληλογραφία, SMS, πακέτα δεδομένων)"),
-        "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("Προωθείται."),
-        "noteTranslate":
-            MessageLookupByLibrary.simpleMessage("Μετάφραση των αναρτήσεων"),
-        "noteVisibility": MessageLookupByLibrary.simpleMessage("ορατότητα"),
-        "noteVisibilityFollowers":
-            MessageLookupByLibrary.simpleMessage("παρατηρητής"),
-        "noteVisibilityFollowersText":
-            MessageLookupByLibrary.simpleMessage("Στείλτε μόνο σε οπαδούς"),
-        "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("εικ. αρχή"),
-        "noteVisibilityHomeText": MessageLookupByLibrary.simpleMessage(
-            "Χρονολόγιο που αποστέλλεται μόνο στην αρχική σελίδα"),
-        "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("ανοιχτά"),
-        "noteVisibilityPublicText": MessageLookupByLibrary.simpleMessage(
-            "Η ανάρτησή σας θα εμφανιστεί στο παγκόσμιο χρονολόγιο"),
-        "noteVisibilitySpecified":
-            MessageLookupByLibrary.simpleMessage("ιδιωτική επιστολή"),
-        "noteVisibilitySpecifiedText": MessageLookupByLibrary.simpleMessage(
-            "Αποστολή μόνο σε συγκεκριμένους χρήστες"),
-        "notes": MessageLookupByLibrary.simpleMessage("κάρτα"),
-        "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
-        "notification": MessageLookupByLibrary.simpleMessage("ειδοποιήσεις"),
-        "notifications": MessageLookupByLibrary.simpleMessage("ειδοποιήσεις"),
-        "notifyAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
-        "notifyFilter": MessageLookupByLibrary.simpleMessage("διαλογή"),
-        "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
-            "Το αίτημά σας για προσοχή έχει εγκριθεί."),
-        "notifyFollowedYou":
-            MessageLookupByLibrary.simpleMessage("Έχετε νέους οπαδούς."),
-        "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
-            "Σημειώστε τα όλα ως αναγνωσμένα"),
-        "notifyMention":
-            MessageLookupByLibrary.simpleMessage("Μιλώντας για το"),
-        "notifyMessage":
-            MessageLookupByLibrary.simpleMessage("ιδιωτική επιστολή"),
-        "notifyNotSupport": m16,
-        "ok": MessageLookupByLibrary.simpleMessage("define"),
-        "openInNewTab": MessageLookupByLibrary.simpleMessage(
-            "Μεταβείτε στην οθόνη του προγράμματος περιήγησης"),
-        "overviews": MessageLookupByLibrary.simpleMessage("ξεφυλλίζω"),
-        "pendingFollowRequest": MessageLookupByLibrary.simpleMessage(
-            "Ανησυχίες σχετικά με την ικανοποίηση των αιτήσεων"),
-        "preview": MessageLookupByLibrary.simpleMessage("προεπισκοπήσεις"),
-        "previewNote":
-            MessageLookupByLibrary.simpleMessage("Δημοσιεύσεις προεπισκόπησης"),
-        "processing": MessageLookupByLibrary.simpleMessage("σε εξέλιξη"),
-        "public": MessageLookupByLibrary.simpleMessage("ανοιχτά"),
-        "publish": MessageLookupByLibrary.simpleMessage("μετά"),
-        "reNoteHint": MessageLookupByLibrary.simpleMessage(
-            "Παραθέτοντας αυτή τη θέση..."),
-        "reNoteText": MessageLookupByLibrary.simpleMessage("Quote Post"),
-        "reaction": MessageLookupByLibrary.simpleMessage("απάντηση"),
-        "reactionAccepting":
-            MessageLookupByLibrary.simpleMessage("Αποδοχή απαντήσεων Emoji"),
-        "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
-        "reactionAcceptingLikeOnly":
-            MessageLookupByLibrary.simpleMessage("Μου αρέσει μόνο"),
-        "reactionAcceptingLikeOnlyRemote":
-            MessageLookupByLibrary.simpleMessage("Μόνο απομακρυσμένα Kudos"),
-        "reactionAcceptingNoneSensitive": MessageLookupByLibrary.simpleMessage(
-            "Μόνο μη ευαίσθητο περιεχόμενο"),
-        "reactionAcceptingNoneSensitiveOrLocal":
-            MessageLookupByLibrary.simpleMessage(
-                "Μόνο μη ευαίσθητο περιεχόμενο (μόνο απομακρυσμένες συμπάθειες)"),
-        "recipient": MessageLookupByLibrary.simpleMessage(
-            "Προς: (επικεφαλίδα ηλεκτρονικού ταχυδρομείου)"),
-        "refresh": MessageLookupByLibrary.simpleMessage(
-            "ανανέωση (παράθυρο υπολογιστή)"),
-        "registration": MessageLookupByLibrary.simpleMessage("Registration"),
-        "registrationClosed": MessageLookupByLibrary.simpleMessage("closed"),
-        "registrationOpen": MessageLookupByLibrary.simpleMessage("open"),
-        "remote": MessageLookupByLibrary.simpleMessage("εξ αποστάσεως"),
-        "rename": MessageLookupByLibrary.simpleMessage("μετονομασία"),
-        "renameFile":
-            MessageLookupByLibrary.simpleMessage("Μετονομασία αρχείου"),
-        "renameFolder":
-            MessageLookupByLibrary.simpleMessage("Μετονομασία φακέλου"),
-        "replyNoteHint":
-            MessageLookupByLibrary.simpleMessage("Απάντηση σε αυτή τη θέση..."),
-        "replyNoteText":
-            MessageLookupByLibrary.simpleMessage("Απάντηση σε μια ανάρτηση"),
-        "saveFailed":
-            MessageLookupByLibrary.simpleMessage("αποτυγχάνει να σώσει"),
-        "saveImage": MessageLookupByLibrary.simpleMessage("Αποθήκευση εικόνας"),
-        "saveSuccess":
-            MessageLookupByLibrary.simpleMessage("Αποθήκευση επιτυχημένων"),
-        "search": MessageLookupByLibrary.simpleMessage("ψάχνω για κάτι."),
-        "searchAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
-        "searchHost":
-            MessageLookupByLibrary.simpleMessage("Καθορίστε το όνομα τομέα"),
-        "searchLocal":
-            MessageLookupByLibrary.simpleMessage("αυτός ο ιστότοπος"),
-        "searchRemote": MessageLookupByLibrary.simpleMessage("εξ αποστάσεως"),
-        "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-        "secondsAgo": m17,
-        "selectHashtag":
-            MessageLookupByLibrary.simpleMessage("Επιλέξτε ετικέτα"),
-        "selectServer":
-            MessageLookupByLibrary.simpleMessage("Please Select Your Server"),
-        "selectUser": MessageLookupByLibrary.simpleMessage("Επιλέξτε χρήστη"),
-        "sensitiveClickShow": MessageLookupByLibrary.simpleMessage(
-            "Κάντε κλικ για να εμφανιστεί"),
-        "sensitiveContent":
-            MessageLookupByLibrary.simpleMessage("Ευαίσθητο περιεχόμενο"),
-        "serverAddr":
-            MessageLookupByLibrary.simpleMessage("διεύθυνση διακομιστή"),
-        "serverList": MessageLookupByLibrary.simpleMessage("List of Servers"),
-        "settings": MessageLookupByLibrary.simpleMessage("δημιουργία"),
-        "share": MessageLookupByLibrary.simpleMessage(
-            "να μοιράζεστε (χαρές, οφέλη, προνόμια κ.λπ.) με άλλους"),
-        "showConversation":
-            MessageLookupByLibrary.simpleMessage("Προβολή διαλόγου"),
-        "somebodyNote": MessageLookupByLibrary.simpleMessage(" θέσεις"),
-        "timeline": MessageLookupByLibrary.simpleMessage("χρονοδιάγραμμα"),
-        "timelineGlobal":
-            MessageLookupByLibrary.simpleMessage("κατάσταση ασφαλείας"),
-        "timelineHome": MessageLookupByLibrary.simpleMessage("εικ. αρχή"),
-        "timelineHybrid":
-            MessageLookupByLibrary.simpleMessage("κοινωνικοποίηση"),
-        "timelineLocal":
-            MessageLookupByLibrary.simpleMessage("αυτή η τοποθεσία"),
-        "translate": MessageLookupByLibrary.simpleMessage("rendering"),
-        "uncategorized":
-            MessageLookupByLibrary.simpleMessage("Μη κατηγοριοποιημένο"),
-        "unfollow": MessageLookupByLibrary.simpleMessage("Ακολουθήστε το"),
-        "updatedDate":
-            MessageLookupByLibrary.simpleMessage("Ημερομηνία ενημέρωσης"),
-        "uploadFailed": m18,
-        "uploadFromUrl":
-            MessageLookupByLibrary.simpleMessage("Ανέβασμα από την ιστοσελίδα"),
-        "user": MessageLookupByLibrary.simpleMessage("χρήστης"),
-        "userAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
-        "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage(
-            "Αυτός ο χρήστης δεν έχει ακόμη συστηθεί"),
-        "userFile": MessageLookupByLibrary.simpleMessage("συνημμένο (email)"),
-        "userHot": MessageLookupByLibrary.simpleMessage("χρήστης"),
-        "userNote": MessageLookupByLibrary.simpleMessage("κάρτα"),
-        "userRegisterBy":
-            MessageLookupByLibrary.simpleMessage("εγγεγραμμένος στο"),
-        "userWidgetUnSupport":
-            MessageLookupByLibrary.simpleMessage("Λίστα widgets (ημιτελής)"),
-        "username":
-            MessageLookupByLibrary.simpleMessage("αναγνωριστικό χρήστη"),
-        "usersCount": MessageLookupByLibrary.simpleMessage("Users Count"),
-        "video": MessageLookupByLibrary.simpleMessage("βίντεο"),
-        "view": MessageLookupByLibrary.simpleMessage("ελέγξτε"),
-        "viewMore":
-            MessageLookupByLibrary.simpleMessage("Προβολή περισσότερων"),
-        "vote": MessageLookupByLibrary.simpleMessage("δημοψήφισμα"),
-        "voteAllCount": m19,
-        "voteCount": m20,
-        "voteDueDate":
-            MessageLookupByLibrary.simpleMessage("ημερομηνία αποκοπής"),
-        "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
-            "Επιτρέπονται πολλαπλές ψήφοι"),
-        "voteExpired":
-            MessageLookupByLibrary.simpleMessage("Η ψηφοφορία ολοκληρώθηκε."),
-        "voteNoDueDate": MessageLookupByLibrary.simpleMessage("μόνιμα"),
-        "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
-            "Ο αριθμός των ψήφων δεν μπορεί να είναι μικρότερος από δύο"),
-        "voteOptionHint": m21,
-        "voteOptionNullIndex": m22,
-        "voteResult": MessageLookupByLibrary.simpleMessage(
-            "Τα αποτελέσματα της ψηφοφορίας έχουν δημιουργηθεί"),
-        "voteWillExpired": m23,
-        "yearsAgo": m24
-      };
+    "account": MessageLookupByLibrary.simpleMessage("όνομα χρήστη"),
+    "add": MessageLookupByLibrary.simpleMessage("αύξηση"),
+    "addAccount": MessageLookupByLibrary.simpleMessage("Προσθήκη λογαριασμού"),
+    "addFile": MessageLookupByLibrary.simpleMessage("Προσθήκη αρχείου"),
+    "addTitle": MessageLookupByLibrary.simpleMessage("Προσθήκη τίτλου"),
+    "all": MessageLookupByLibrary.simpleMessage("πλήρες"),
+    "announcementActive": MessageLookupByLibrary.simpleMessage(
+      "Ανακοίνωση τώρα",
+    ),
+    "announcementExpired": MessageLookupByLibrary.simpleMessage(
+      "Προηγούμενες ανακοινώσεις",
+    ),
+    "announcements": MessageLookupByLibrary.simpleMessage("Δελτίο"),
+    "back": MessageLookupByLibrary.simpleMessage(
+      "να επιστρέψετε (ή να επιστρέψετε)",
+    ),
+    "cancel": MessageLookupByLibrary.simpleMessage("ακυρώσεις"),
+    "cancelSensitive": MessageLookupByLibrary.simpleMessage(
+      "Αποσυνδέστε την επισήμανση ευαίσθητου περιεχομένου",
+    ),
+    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
+    "clip": MessageLookupByLibrary.simpleMessage("σημείωμα"),
+    "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
+      "Σίγουρα θέλετε να ακυρώσετε τη συλλογή;",
+    ),
+    "clipCreate": MessageLookupByLibrary.simpleMessage(
+      "Νέες αυτοκόλλητες σημειώσεις",
+    ),
+    "clipFavorite": MessageLookupByLibrary.simpleMessage(
+      "Προσθήκη στα αγαπημένα",
+    ),
+    "clipFavoriteList": MessageLookupByLibrary.simpleMessage(
+      "σελιδοδείκτης (Internet)",
+    ),
+    "clipRemove": MessageLookupByLibrary.simpleMessage(
+      "Αφαίρεση αυτοκόλλητων σημειώσεων",
+    ),
+    "clipUpdate": MessageLookupByLibrary.simpleMessage(
+      "Ενημέρωση αυτοκόλλητων σημειώσεων",
+    ),
+    "clips": MessageLookupByLibrary.simpleMessage("σημείωμα"),
+    "close": MessageLookupByLibrary.simpleMessage("关闭"),
+    "confirmSelection": m0,
+    "copyContent": MessageLookupByLibrary.simpleMessage(
+      "Αντιγραφή περιεχομένου",
+    ),
+    "copyLink": MessageLookupByLibrary.simpleMessage("Αντιγραφή συνδέσμου"),
+    "copyRSS": MessageLookupByLibrary.simpleMessage("Αντιγραφή RSS"),
+    "copyUserHomeLink": MessageLookupByLibrary.simpleMessage(
+      "Αντιγράψτε τη διεύθυνση της αρχικής σελίδας του χρήστη",
+    ),
+    "copyUsername": MessageLookupByLibrary.simpleMessage(
+      "Αντιγραφή ονόματος χρήστη",
+    ),
+    "createFolder": MessageLookupByLibrary.simpleMessage("Νέος φάκελος"),
+    "createNote": MessageLookupByLibrary.simpleMessage(
+      "Δημοσιεύστε ένα νέο νήμα",
+    ),
+    "createNoteFormFile": MessageLookupByLibrary.simpleMessage(
+      "Δημιουργία μιας ανάρτησης από ένα αρχείο",
+    ),
+    "createNoteHint": MessageLookupByLibrary.simpleMessage("Τι συνέβη..."),
+    "createdDate": MessageLookupByLibrary.simpleMessage(
+      "Ημερομηνία δημιουργίας",
+    ),
+    "creationFailedDialog": m1,
+    "cw": MessageLookupByLibrary.simpleMessage("κρυφό περιεχόμενο"),
+    "day": MessageLookupByLibrary.simpleMessage("ημέρα"),
+    "daysAgo": m2,
+    "delete": MessageLookupByLibrary.simpleMessage("αφαίρεση του"),
+    "deleteConfirm": m3,
+    "deleteFileConfirmation": m4,
+    "deleteFolderConfirmation": m5,
+    "description": MessageLookupByLibrary.simpleMessage("περιγραφές"),
+    "done": MessageLookupByLibrary.simpleMessage("πληρούν"),
+    "download": MessageLookupByLibrary.simpleMessage("Λήψη"),
+    "drive": MessageLookupByLibrary.simpleMessage(
+      "αποθήκευση αρχείων στο σύννεφο",
+    ),
+    "durationDay": m6,
+    "durationHour": m7,
+    "durationMinute": m8,
+    "durationSecond": m9,
+    "edit": MessageLookupByLibrary.simpleMessage("μεταγλωττιστής"),
+    "emoji": MessageLookupByLibrary.simpleMessage("emoticon"),
+    "enterNewFileName": MessageLookupByLibrary.simpleMessage(
+      "Παρακαλώ εισάγετε ένα νέο όνομα αρχείου",
+    ),
+    "enterNewTitle": MessageLookupByLibrary.simpleMessage(
+      "Παρακαλώ εισάγετε έναν νέο τίτλο",
+    ),
+    "enterUrl": MessageLookupByLibrary.simpleMessage(
+      "Παρακαλώ εισάγετε το URL",
+    ),
+    "exceptionContentNull": MessageLookupByLibrary.simpleMessage(
+      "Το περιεχόμενο δεν μπορεί να είναι κενό",
+    ),
+    "exceptionCwNull": MessageLookupByLibrary.simpleMessage(
+      "Το περιεχόμενο δεν μπορεί να είναι κενό",
+    ),
+    "exceptionSendNote": m10,
+    "explore": MessageLookupByLibrary.simpleMessage("ανακαλύψεις"),
+    "exploreHot": MessageLookupByLibrary.simpleMessage("στη μόδα"),
+    "exploreUserHot": MessageLookupByLibrary.simpleMessage("δημοφιλής χρήστης"),
+    "exploreUserLast": MessageLookupByLibrary.simpleMessage(
+      "Πρόσφατα συνδεδεμένοι χρήστες",
+    ),
+    "exploreUserPined": MessageLookupByLibrary.simpleMessage(
+      "χρήστης στην κορυφή της λίστας",
+    ),
+    "exploreUserUpdated": MessageLookupByLibrary.simpleMessage(
+      "Πρόσφατοι συνεισφέροντες",
+    ),
+    "exploreUsers": MessageLookupByLibrary.simpleMessage("χρήστης"),
+    "favorite": MessageLookupByLibrary.simpleMessage(
+      "σελιδοδείκτης (Internet)",
+    ),
+    "filter": MessageLookupByLibrary.simpleMessage("Filter"),
+    "folderName": MessageLookupByLibrary.simpleMessage("Όνομα φακέλου"),
+    "follow": MessageLookupByLibrary.simpleMessage("εστίαση"),
+    "followed": MessageLookupByLibrary.simpleMessage("Ακολούθησε το"),
+    "followers": MessageLookupByLibrary.simpleMessage("παρατηρητής"),
+    "following": MessageLookupByLibrary.simpleMessage("Ανήσυχο"),
+    "fromCloud": MessageLookupByLibrary.simpleMessage("Από το netbook"),
+    "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
+    "hashtag": MessageLookupByLibrary.simpleMessage("hashtag"),
+    "hostnames": MessageLookupByLibrary.simpleMessage("όνομα τομέα"),
+    "hour": MessageLookupByLibrary.simpleMessage("ώρες"),
+    "hoursAgo": m11,
+    "image": MessageLookupByLibrary.simpleMessage("φωτογραφία"),
+    "inputServer": MessageLookupByLibrary.simpleMessage(
+      "Χειροκίνητος διακομιστής εισόδου",
+    ),
+    "insertDriverFile": MessageLookupByLibrary.simpleMessage(
+      "Τοποθέτηση εξαρτημάτων",
+    ),
+    "isFollowingYouNow": MessageLookupByLibrary.simpleMessage(
+      "Σε παρακολουθώ.",
+    ),
+    "justNow": MessageLookupByLibrary.simpleMessage("μόλις πρόσφατα"),
+    "keepOriginal": MessageLookupByLibrary.simpleMessage(
+      "Διατήρηση της αρχικής εικόνας",
+    ),
+    "loadingServers": MessageLookupByLibrary.simpleMessage("Server Loading"),
+    "local": MessageLookupByLibrary.simpleMessage("αυτή η τοποθεσία"),
+    "localUpload": MessageLookupByLibrary.simpleMessage("τοπικό ανέβασμα"),
+    "login": MessageLookupByLibrary.simpleMessage("εγγραφή"),
+    "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
+    "loginFailed": MessageLookupByLibrary.simpleMessage("Αποτυχία σύνδεσης"),
+    "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
+      "Αποτυχία σύνδεσης: Αποτυχία δημιουργίας εφαρμογής",
+    ),
+    "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
+      "Αποτυχία σύνδεσης: η απόκτηση του κουπονιού απέτυχε",
+    ),
+    "loginLoading": m12,
+    "loginSuccess": MessageLookupByLibrary.simpleMessage("Επιτυχής σύνδεση"),
+    "manageAccount": MessageLookupByLibrary.simpleMessage(
+      "Διαχείριση λογαριασμού",
+    ),
+    "markAsSensitive": MessageLookupByLibrary.simpleMessage(
+      "Σημειώστε ως ευαίσθητο περιεχόμενο",
+    ),
+    "mention": MessageLookupByLibrary.simpleMessage("εγείρει (ένα θέμα)"),
+    "minute": MessageLookupByLibrary.simpleMessage("λεπτά"),
+    "minutesAgo": m13,
+    "monthsAgo": m14,
+    "more": MessageLookupByLibrary.simpleMessage("περισσότερα"),
+    "myCLips": MessageLookupByLibrary.simpleMessage("Η σημείωσή μου."),
+    "name": MessageLookupByLibrary.simpleMessage("όνομα (ενός πράγματος)"),
+    "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
+      "Το όνομα δεν μπορεί να είναι κενό",
+    ),
+    "next": MessageLookupByLibrary.simpleMessage("το επόμενο βήμα"),
+    "noLists": MessageLookupByLibrary.simpleMessage(
+      "You don\'t have any lists",
+    ),
+    "notFindServer": MessageLookupByLibrary.simpleMessage(
+      "Δεν βρήκατε τον διακομιστή σας;",
+    ),
+    "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
+      "Αντιγράψτε τον σύνδεσμο σε αυτόν τον ιστότοπο",
+    ),
+    "noteCwHide": MessageLookupByLibrary.simpleMessage("να τακτοποιήσω"),
+    "noteCwShow": MessageLookupByLibrary.simpleMessage("Εμφάνιση περιεχομένου"),
+    "noteFormLanguageTranslation": m15,
+    "noteLocalOnly": MessageLookupByLibrary.simpleMessage(
+      "Μη συμμετοχή σε κοινή",
+    ),
+    "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage(
+      "Μεταβείτε στον κεντρικό διακομιστή για να εμφανίσετε",
+    ),
+    "notePined": MessageLookupByLibrary.simpleMessage("Κορυφαίες θέσεις"),
+    "noteQuote": MessageLookupByLibrary.simpleMessage("απόσπασμα"),
+    "noteReNote": MessageLookupByLibrary.simpleMessage(
+      "προώθηση (αλληλογραφία, SMS, πακέτα δεδομένων)",
+    ),
+    "noteReNoteByUser": MessageLookupByLibrary.simpleMessage("Προωθείται."),
+    "noteTranslate": MessageLookupByLibrary.simpleMessage(
+      "Μετάφραση των αναρτήσεων",
+    ),
+    "noteVisibility": MessageLookupByLibrary.simpleMessage("ορατότητα"),
+    "noteVisibilityFollowers": MessageLookupByLibrary.simpleMessage(
+      "παρατηρητής",
+    ),
+    "noteVisibilityFollowersText": MessageLookupByLibrary.simpleMessage(
+      "Στείλτε μόνο σε οπαδούς",
+    ),
+    "noteVisibilityHome": MessageLookupByLibrary.simpleMessage("εικ. αρχή"),
+    "noteVisibilityHomeText": MessageLookupByLibrary.simpleMessage(
+      "Χρονολόγιο που αποστέλλεται μόνο στην αρχική σελίδα",
+    ),
+    "noteVisibilityPublic": MessageLookupByLibrary.simpleMessage("ανοιχτά"),
+    "noteVisibilityPublicText": MessageLookupByLibrary.simpleMessage(
+      "Η ανάρτησή σας θα εμφανιστεί στο παγκόσμιο χρονολόγιο",
+    ),
+    "noteVisibilitySpecified": MessageLookupByLibrary.simpleMessage(
+      "ιδιωτική επιστολή",
+    ),
+    "noteVisibilitySpecifiedText": MessageLookupByLibrary.simpleMessage(
+      "Αποστολή μόνο σε συγκεκριμένους χρήστες",
+    ),
+    "notes": MessageLookupByLibrary.simpleMessage("κάρτα"),
+    "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
+    "notification": MessageLookupByLibrary.simpleMessage("ειδοποιήσεις"),
+    "notifications": MessageLookupByLibrary.simpleMessage("ειδοποιήσεις"),
+    "notifyAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
+    "notifyFilter": MessageLookupByLibrary.simpleMessage("διαλογή"),
+    "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
+      "Το αίτημά σας για προσοχή έχει εγκριθεί.",
+    ),
+    "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
+      "Έχετε νέους οπαδούς.",
+    ),
+    "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
+      "Σημειώστε τα όλα ως αναγνωσμένα",
+    ),
+    "notifyMention": MessageLookupByLibrary.simpleMessage("Μιλώντας για το"),
+    "notifyMessage": MessageLookupByLibrary.simpleMessage("ιδιωτική επιστολή"),
+    "notifyNotSupport": m16,
+    "ok": MessageLookupByLibrary.simpleMessage("define"),
+    "openInNewTab": MessageLookupByLibrary.simpleMessage(
+      "Μεταβείτε στην οθόνη του προγράμματος περιήγησης",
+    ),
+    "overviews": MessageLookupByLibrary.simpleMessage("ξεφυλλίζω"),
+    "pendingFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Ανησυχίες σχετικά με την ικανοποίηση των αιτήσεων",
+    ),
+    "preview": MessageLookupByLibrary.simpleMessage("προεπισκοπήσεις"),
+    "previewNote": MessageLookupByLibrary.simpleMessage(
+      "Δημοσιεύσεις προεπισκόπησης",
+    ),
+    "processing": MessageLookupByLibrary.simpleMessage("σε εξέλιξη"),
+    "public": MessageLookupByLibrary.simpleMessage("ανοιχτά"),
+    "publish": MessageLookupByLibrary.simpleMessage("μετά"),
+    "reNoteHint": MessageLookupByLibrary.simpleMessage(
+      "Παραθέτοντας αυτή τη θέση...",
+    ),
+    "reNoteText": MessageLookupByLibrary.simpleMessage("Quote Post"),
+    "reaction": MessageLookupByLibrary.simpleMessage("απάντηση"),
+    "reactionAccepting": MessageLookupByLibrary.simpleMessage(
+      "Αποδοχή απαντήσεων Emoji",
+    ),
+    "reactionAcceptingAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
+    "reactionAcceptingLikeOnly": MessageLookupByLibrary.simpleMessage(
+      "Μου αρέσει μόνο",
+    ),
+    "reactionAcceptingLikeOnlyRemote": MessageLookupByLibrary.simpleMessage(
+      "Μόνο απομακρυσμένα Kudos",
+    ),
+    "reactionAcceptingNoneSensitive": MessageLookupByLibrary.simpleMessage(
+      "Μόνο μη ευαίσθητο περιεχόμενο",
+    ),
+    "reactionAcceptingNoneSensitiveOrLocal":
+        MessageLookupByLibrary.simpleMessage(
+          "Μόνο μη ευαίσθητο περιεχόμενο (μόνο απομακρυσμένες συμπάθειες)",
+        ),
+    "recipient": MessageLookupByLibrary.simpleMessage(
+      "Προς: (επικεφαλίδα ηλεκτρονικού ταχυδρομείου)",
+    ),
+    "refresh": MessageLookupByLibrary.simpleMessage(
+      "ανανέωση (παράθυρο υπολογιστή)",
+    ),
+    "registration": MessageLookupByLibrary.simpleMessage("Registration"),
+    "registrationClosed": MessageLookupByLibrary.simpleMessage("closed"),
+    "registrationOpen": MessageLookupByLibrary.simpleMessage("open"),
+    "remote": MessageLookupByLibrary.simpleMessage("εξ αποστάσεως"),
+    "rename": MessageLookupByLibrary.simpleMessage("μετονομασία"),
+    "renameFile": MessageLookupByLibrary.simpleMessage("Μετονομασία αρχείου"),
+    "renameFolder": MessageLookupByLibrary.simpleMessage("Μετονομασία φακέλου"),
+    "replyNoteHint": MessageLookupByLibrary.simpleMessage(
+      "Απάντηση σε αυτή τη θέση...",
+    ),
+    "replyNoteText": MessageLookupByLibrary.simpleMessage(
+      "Απάντηση σε μια ανάρτηση",
+    ),
+    "saveFailed": MessageLookupByLibrary.simpleMessage("αποτυγχάνει να σώσει"),
+    "saveImage": MessageLookupByLibrary.simpleMessage("Αποθήκευση εικόνας"),
+    "saveSuccess": MessageLookupByLibrary.simpleMessage(
+      "Αποθήκευση επιτυχημένων",
+    ),
+    "search": MessageLookupByLibrary.simpleMessage("ψάχνω για κάτι."),
+    "searchAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
+    "searchHost": MessageLookupByLibrary.simpleMessage(
+      "Καθορίστε το όνομα τομέα",
+    ),
+    "searchLocal": MessageLookupByLibrary.simpleMessage("αυτός ο ιστότοπος"),
+    "searchRemote": MessageLookupByLibrary.simpleMessage("εξ αποστάσεως"),
+    "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
+    "secondsAgo": m17,
+    "selectHashtag": MessageLookupByLibrary.simpleMessage("Επιλέξτε ετικέτα"),
+    "selectServer": MessageLookupByLibrary.simpleMessage(
+      "Please Select Your Server",
+    ),
+    "selectUser": MessageLookupByLibrary.simpleMessage("Επιλέξτε χρήστη"),
+    "sensitiveClickShow": MessageLookupByLibrary.simpleMessage(
+      "Κάντε κλικ για να εμφανιστεί",
+    ),
+    "sensitiveContent": MessageLookupByLibrary.simpleMessage(
+      "Ευαίσθητο περιεχόμενο",
+    ),
+    "serverAddr": MessageLookupByLibrary.simpleMessage("διεύθυνση διακομιστή"),
+    "serverList": MessageLookupByLibrary.simpleMessage("List of Servers"),
+    "settings": MessageLookupByLibrary.simpleMessage("δημιουργία"),
+    "share": MessageLookupByLibrary.simpleMessage(
+      "να μοιράζεστε (χαρές, οφέλη, προνόμια κ.λπ.) με άλλους",
+    ),
+    "showConversation": MessageLookupByLibrary.simpleMessage(
+      "Προβολή διαλόγου",
+    ),
+    "somebodyNote": MessageLookupByLibrary.simpleMessage(" θέσεις"),
+    "timeline": MessageLookupByLibrary.simpleMessage("χρονοδιάγραμμα"),
+    "timelineGlobal": MessageLookupByLibrary.simpleMessage(
+      "κατάσταση ασφαλείας",
+    ),
+    "timelineHome": MessageLookupByLibrary.simpleMessage("εικ. αρχή"),
+    "timelineHybrid": MessageLookupByLibrary.simpleMessage("κοινωνικοποίηση"),
+    "timelineLocal": MessageLookupByLibrary.simpleMessage("αυτή η τοποθεσία"),
+    "translate": MessageLookupByLibrary.simpleMessage("rendering"),
+    "uncategorized": MessageLookupByLibrary.simpleMessage(
+      "Μη κατηγοριοποιημένο",
+    ),
+    "unfollow": MessageLookupByLibrary.simpleMessage("Ακολουθήστε το"),
+    "updatedDate": MessageLookupByLibrary.simpleMessage(
+      "Ημερομηνία ενημέρωσης",
+    ),
+    "uploadFailed": m18,
+    "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
+      "Ανέβασμα από την ιστοσελίδα",
+    ),
+    "user": MessageLookupByLibrary.simpleMessage("χρήστης"),
+    "userAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
+    "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage(
+      "Αυτός ο χρήστης δεν έχει ακόμη συστηθεί",
+    ),
+    "userFile": MessageLookupByLibrary.simpleMessage("συνημμένο (email)"),
+    "userHot": MessageLookupByLibrary.simpleMessage("χρήστης"),
+    "userNote": MessageLookupByLibrary.simpleMessage("κάρτα"),
+    "userRegisterBy": MessageLookupByLibrary.simpleMessage("εγγεγραμμένος στο"),
+    "userWidgetUnSupport": MessageLookupByLibrary.simpleMessage(
+      "Λίστα widgets (ημιτελής)",
+    ),
+    "username": MessageLookupByLibrary.simpleMessage("αναγνωριστικό χρήστη"),
+    "usersCount": MessageLookupByLibrary.simpleMessage("Users Count"),
+    "video": MessageLookupByLibrary.simpleMessage("βίντεο"),
+    "view": MessageLookupByLibrary.simpleMessage("ελέγξτε"),
+    "viewMore": MessageLookupByLibrary.simpleMessage("Προβολή περισσότερων"),
+    "vote": MessageLookupByLibrary.simpleMessage("δημοψήφισμα"),
+    "voteAllCount": m19,
+    "voteCount": m20,
+    "voteDueDate": MessageLookupByLibrary.simpleMessage("ημερομηνία αποκοπής"),
+    "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
+      "Επιτρέπονται πολλαπλές ψήφοι",
+    ),
+    "voteExpired": MessageLookupByLibrary.simpleMessage(
+      "Η ψηφοφορία ολοκληρώθηκε.",
+    ),
+    "voteNoDueDate": MessageLookupByLibrary.simpleMessage("μόνιμα"),
+    "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
+      "Ο αριθμός των ψήφων δεν μπορεί να είναι μικρότερος από δύο",
+    ),
+    "voteOptionHint": m21,
+    "voteOptionNullIndex": m22,
+    "voteResult": MessageLookupByLibrary.simpleMessage(
+      "Τα αποτελέσματα της ψηφοφορίας έχουν δημιουργηθεί",
+    ),
+    "voteWillExpired": m23,
+    "yearsAgo": m24,
+  };
 }

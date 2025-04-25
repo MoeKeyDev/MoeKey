@@ -32,6 +32,9 @@ class MkInput extends ConsumerStatefulWidget {
     this.onChanged,
     this.value,
     this.maxLines,
+    this.keyboardType,
+    this.maxLength,
+    this.minLines,
   });
 
   final String? label;
@@ -40,6 +43,9 @@ class MkInput extends ConsumerStatefulWidget {
   final void Function(String)? onChanged;
   final String? value;
   final int? maxLines;
+  final TextInputType? keyboardType;
+  final int? maxLength;
+  final int? minLines;
 
   @override
   ConsumerState<MkInput> createState() => _MkInputState();
@@ -102,45 +108,14 @@ class _MkInputState extends ConsumerState<MkInput> {
             cursorWidth: 1,
             style: const TextStyle(fontSize: 14),
             cursorColor: themes.fgColor,
-            maxLines: widget.maxLines ?? 1,
+            maxLines: widget.maxLines,
+            minLines: widget.minLines,
+            keyboardType: widget.keyboardType,
+            maxLength: widget.maxLength,
             textAlignVertical: TextAlignVertical.center,
           )
         ],
       ),
-    );
-  }
-}
-
-class MkSelect extends HookConsumerWidget {
-  const MkSelect({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var themes = ref.watch(themeColorsProvider);
-    return Material(
-      color: themes.panelColor,
-      child: FormField(builder: (FormFieldState state) {
-        return DropdownButtonFormField(
-          decoration: inputDecoration(themes, "请选择"),
-          style: TextStyle(fontSize: 14, color: themes.fgColor),
-          dropdownColor: themes.panelColor,
-          focusColor: themes.panelColor,
-          isExpanded: true,
-          items: const [
-            DropdownMenuItem(
-              child: Text("选项1"),
-              value: "1",
-            ),
-            DropdownMenuItem(
-              child: Text("选项2"),
-              value: "2",
-            ),
-          ],
-          onChanged: (value) {
-            state.didChange(value);
-          },
-        );
-      }),
     );
   }
 }

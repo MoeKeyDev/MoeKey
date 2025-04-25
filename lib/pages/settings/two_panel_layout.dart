@@ -23,7 +23,7 @@ class SettingsTwoPanelLayout extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var isWide = WindowSize.of(context)!.isWide;
     var themes = ref.watch(themeColorsProvider);
-    var currentId = GoRouter.of(context).state?.name;
+    var currentId = GoRouter.of(context).state.name;
     return LayoutBuilder(
       builder: (context, constraints) {
         return MkScaffold(

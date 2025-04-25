@@ -34,7 +34,6 @@ class EmojiList extends HookConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         int colCount = ((constraints.maxWidth - 16) / 52).truncate();
-        var margin = 4.0;
         return Stack(
           children: [
             TabBar(
@@ -190,7 +189,7 @@ class EmojiList extends HookConsumerWidget {
 }
 
 class _EmojiTile extends StatelessWidget {
-  const _EmojiTile({super.key, required this.item, required this.onInsert});
+  const _EmojiTile({required this.item, required this.onInsert});
 
   final EmojiSimple item;
   final void Function(Map data) onInsert;

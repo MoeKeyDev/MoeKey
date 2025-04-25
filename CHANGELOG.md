@@ -1,4 +1,7 @@
 # Changelog
+## 0.8.7
+- Update Flutter dependencies version
+- Enable Impeller support
 
 ## 0.8.5
 

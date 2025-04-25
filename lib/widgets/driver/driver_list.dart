@@ -24,15 +24,10 @@ import 'driver_select_dialog/driver_select_dialog_state.dart';
 import 'upload_file_dialog.dart';
 
 class DriverList extends HookConsumerWidget {
-  const DriverList(
-      {super.key,
-      this.selectModel = false,
-      this.maxSelect = 16,
-      required this.id});
+  const DriverList({super.key, this.selectModel = false, this.maxSelect});
 
   final bool selectModel;
-  final int maxSelect;
-  final String id;
+  final int? maxSelect;
 
   ContextMenuCard getContextMenu(BuildContext context, ThemeColorModel themes,
       WidgetRef ref, bool isOriginal, void Function(bool value) setIsOriginal) {
@@ -160,7 +155,6 @@ class DriverList extends HookConsumerWidget {
           if (name.value.isNotEmpty) {
             ref.read(driverUploaderProvider.notifier).createFolder(name.value);
           }
-
           Navigator.of(context).pop();
         }
 
@@ -337,24 +331,31 @@ class DriverList extends HookConsumerWidget {
   HookConsumer buildDriverListItem(DriveModel driverModel) {
     return HookConsumer(
       builder: (context, ref, child) {
-        var selectList = ref.watch(driverSelectDialogStateProvider(this.id));
+        var selectList = ref.watch(driverSelectDialogStateProvider);
         var id = driverModel.id;
         var isSelect = useState(selectList.containsKey(id));
         if (selectModel) {
           return GestureDetector(
             onTap: () {
               // if (selectList.length >= maxSelect) return;
-              var notifier =
-                  ref.read(driverSelectDialogStateProvider(this.id).notifier);
+              var notifier = ref.read(driverSelectDialogStateProvider.notifier);
               if (driverModel is DriveFileModel) {
                 if (isSelect.value) {
                   notifier.remove(id);
                   isSelect.value = false;
                 } else {
-                  if (selectList.length >= maxSelect) return;
+                  if (maxSelect != null && selectList.length >= maxSelect!) {
+                    return;
+                  }
                   notifier.add(id, driverModel);
                   isSelect.value = true;
                 }
+              }
+            },
+            onDoubleTap: () {
+              if (driverModel is DriveFileModel) {
+                ref.read(driverSelectDialogStateProvider.notifier).clear();
+                Navigator.of(context).pop([driverModel]);
               }
             },
             child: DriveImageThumbnail(
@@ -363,8 +364,8 @@ class DriverList extends HookConsumerWidget {
               isSelect: isSelect.value,
               onRemove: () {
                 if (isSelect.value) {
-                  var notifier = ref
-                      .read(driverSelectDialogStateProvider(this.id).notifier);
+                  var notifier =
+                      ref.read(driverSelectDialogStateProvider.notifier);
                   notifier.remove(id);
                   isSelect.value = false;
                 }
@@ -388,85 +389,93 @@ class DriverList extends HookConsumerWidget {
       AsyncValue<List<dynamic>> data,
       BuildContext context,
       ValueNotifier<bool> isOriginal) {
-    return HookConsumer(builder: (context, ref, child) {
-      var selectList = ref.watch(driverSelectDialogStateProvider(id));
-      return Row(
-        children: [
-          const SizedBox(
-            width: 16,
-          ),
-          Icon(
-            TablerIcons.cloud,
-            size: 16,
-            color: themes.fgColor,
-          ),
-          const SizedBox(
-            width: 4,
-          ),
-          for (var (index, item) in path.indexed) ...[
-            if (index != 0) ...[
-              const Icon(
-                TablerIcons.chevron_right,
-                size: 16,
-              ),
+    return HookConsumer(
+      builder: (context, ref, child) {
+        var selectList = ref.watch(driverSelectDialogStateProvider);
+        return Row(
+          children: [
+            const SizedBox(
+              width: 16,
+            ),
+            Icon(
+              TablerIcons.cloud,
+              size: 16,
+              color: themes.fgColor,
+            ),
+            const SizedBox(
+              width: 4,
+            ),
+            for (var (index, item) in path.indexed) ...[
+              if (index != 0) ...[
+                const Icon(
+                  TablerIcons.chevron_right,
+                  size: 16,
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+              ],
+              HoverBuilder(builder: (context, isHover) {
+                return GestureDetector(
+                  onTap: () {
+                    if (index == path.length - 1) return;
+                    ref.read(drivePathProvider.notifier).backAt(index: index);
+                  },
+                  child: Text(
+                    item["name"],
+                    style: TextStyle(
+                        decoration: index != path.length - 1 && isHover
+                            ? TextDecoration.underline
+                            : null,
+                        fontWeight:
+                            index == path.length - 1 ? FontWeight.bold : null),
+                  ),
+                );
+              }),
               const SizedBox(
                 width: 4,
               ),
             ],
-            HoverBuilder(builder: (context, isHover) {
-              return GestureDetector(
-                onTap: () {
-                  if (index == path.length - 1) return;
-                  ref.read(drivePathProvider.notifier).backAt(index: index);
+            const Spacer(),
+            if (selectModel)
+              TextButton(
+                onPressed: () {
+                  var selectListCopy = selectList.values.toList();
+                  ref.read(driverSelectDialogStateProvider.notifier).clear();
+                  Navigator.of(context).pop(selectListCopy);
                 },
                 child: Text(
-                  item["name"],
-                  style: TextStyle(
-                      decoration: index != path.length - 1 && isHover
-                          ? TextDecoration.underline
-                          : null,
-                      fontWeight:
-                          index == path.length - 1 ? FontWeight.bold : null),
+                  maxSelect != null
+                      ? S.current
+                          .confirmSelection(selectList.length, maxSelect!)
+                      : S.current.ok,
                 ),
-              );
-            }),
+              ),
+            if (data.isLoading)
+              const LoadingCircularProgress(
+                size: 18,
+                strokeWidth: 3,
+              )
+            else
+              ContextMenuBuilder(
+                  menu: getContextMenu(context, themes, ref, isOriginal.value,
+                      (value) {
+                    isOriginal.value = value;
+                  }),
+                  mode: const [
+                    ContextMenuMode.onTap,
+                    ContextMenuMode.onSecondaryTap
+                  ],
+                  child: const Icon(
+                    TablerIcons.dots,
+                    size: 18,
+                  )),
             const SizedBox(
-              width: 4,
+              width: 16,
             ),
           ],
-          const Spacer(),
-          if (selectModel)
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                  S.current.confirmSelection(selectList.length, maxSelect)),
-            ),
-          if (data.isLoading)
-            const LoadingCircularProgress(
-              size: 18,
-              strokeWidth: 3,
-            )
-          else
-            ContextMenuBuilder(
-                menu: getContextMenu(context, themes, ref, isOriginal.value,
-                    (value) {
-                  isOriginal.value = value;
-                }),
-                mode: const [
-                  ContextMenuMode.onTap,
-                  ContextMenuMode.onSecondaryTap
-                ],
-                child: const Icon(
-                  TablerIcons.dots,
-                  size: 18,
-                )),
-          const SizedBox(
-            width: 16,
-          ),
-        ],
-      );
-    });
+        );
+      },
+    );
   }
 }

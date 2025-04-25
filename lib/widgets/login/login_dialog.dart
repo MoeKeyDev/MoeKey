@@ -23,7 +23,7 @@ class LoginDialog extends HookConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: switch (user) {
-          AsyncData(:final valueOrNull) => [
+          AsyncData() => [
               // logger.d(valueOrNull)
               Builder(
                 builder: (context) {
