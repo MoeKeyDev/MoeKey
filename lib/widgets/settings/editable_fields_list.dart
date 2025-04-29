@@ -99,20 +99,25 @@ class EditableFieldsList extends HookConsumerWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center, // 垂直居中
                   children: [
-                    const SizedBox(width: 8), // 添加间距
                     // 拖拽图标
                     MouseRegion(
                       cursor: SystemMouseCursors.move,
                       child: ReorderableDragStartListener(
                         index: index,
-                        child: const Icon(
-                          TablerIcons.menu,
-                          size: 18,
+                        child: GestureDetector(
+                          // 使用 GestureDetector 包裹
+                          behavior: HitTestBehavior.opaque, // 使 padding 区域可命中
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                left: 8, right: 16, top: 8, bottom: 8),
+                            child: const Icon(
+                              TablerIcons.menu,
+                              size: 18,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16), // 添加间距
-
                     // 输入框部分
                     Expanded(
                       child: LayoutBuilder(

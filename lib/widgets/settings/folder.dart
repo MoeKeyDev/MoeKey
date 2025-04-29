@@ -66,8 +66,8 @@ class MkFolder extends HookConsumerWidget {
                     ),
                     Icon(
                       expanded.value
-                          ? TablerIcons.chevron_up
-                          : TablerIcons.chevron_down,
+                          ? TablerIcons.chevron_down
+                          : TablerIcons.chevron_up,
                       size: 18,
                       color: themes.fgColor,
                     ),

@@ -134,19 +134,8 @@ class SettingsProfile extends HookConsumerWidget {
                   ..sort((a, b) =>
                       a.label.compareTo(b.label)), // Sort by native name
               ),
-              MkSettingEditableTextField(
-                label: "被关注时的消息",
-                value: meDetail.user.followedMessage,
-                originalValue: meDetail.originalUser.followedMessage,
-                helperText: "可以设置被关注时向对方显示的短消息。\n需要批准才能关注的情况下，消息是在请求被批准后显示。",
-                saveKey: "followedMessage",
-                onChanged: (value) {
-                  ref.read(memberInfoStateProvider.notifier).updateUser(
-                      meDetail.user.copyWith(followedMessage: value));
-                },
-              ),
               MkFolder(
-                title: "更多附加信息",
+                title: "编辑附加信息",
                 icon: TablerIcons.list,
                 child: Builder(builder: (context) {
                   // 从 List<dynamic> 转换为 List<Field>
@@ -184,6 +173,17 @@ class SettingsProfile extends HookConsumerWidget {
                     },
                   );
                 }),
+              ),
+              MkSettingEditableTextField(
+                label: "被关注时的消息",
+                value: meDetail.user.followedMessage,
+                originalValue: meDetail.originalUser.followedMessage,
+                helperText: "可以设置被关注时向对方显示的短消息。\n需要批准才能关注的情况下，消息是在请求被批准后显示。",
+                saveKey: "followedMessage",
+                onChanged: (value) {
+                  ref.read(memberInfoStateProvider.notifier).updateUser(
+                      meDetail.user.copyWith(followedMessage: value));
+                },
               ),
             ],
           ),
