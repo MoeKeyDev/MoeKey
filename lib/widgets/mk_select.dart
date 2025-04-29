@@ -116,8 +116,7 @@ class MkSelect<T> extends ConsumerWidget {
             ),
             icon: icon,
             iconDisabledColor: iconDisabledColor,
-            iconEnabledColor:
-                iconEnabledColor ?? themes.fgColor.withOpacity(0.6),
+            iconEnabledColor: iconEnabledColor ?? themes.fgColor.withAlpha(153),
             iconSize: iconSize,
             isDense: isDense,
             isExpanded: isExpanded,

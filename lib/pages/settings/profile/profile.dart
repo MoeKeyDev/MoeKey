@@ -7,6 +7,7 @@ import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_scaffold.dart';
 import 'package:moekey/widgets/mk_select.dart';
 import 'package:moekey/constants/languages.dart';
+import 'package:moekey/widgets/settings/editable_fields_list.dart'; // 导入新组件
 import 'package:moekey/widgets/settings/fields.dart';
 import 'package:moekey/widgets/settings/folder.dart';
 
@@ -147,7 +148,42 @@ class SettingsProfile extends HookConsumerWidget {
               MkFolder(
                 title: "更多附加信息",
                 icon: TablerIcons.list,
-                child: Column(),
+                child: Builder(builder: (context) {
+                  // 从 List<dynamic> 转换为 List<Field>
+                  final initialFields =
+                      (meDetail.user.fields as List<dynamic>? ?? [])
+                          .map((item) {
+                    if (item is Map) {
+                      return Field(
+                        name: item['name']?.toString() ?? '',
+                        value: item['value']?.toString() ?? '',
+                      );
+                    }
+                    return Field(name: '', value: '');
+                  }).toList();
+
+                  return EditableFieldsList(
+                    initialFields: initialFields,
+                    onSave: (newFields) async {
+                      // 将回调标记为 async
+                      // 从 List<Field> 转换回 List<Map<String, String>>
+                      final fieldsForApi = newFields
+                          .map((f) => {'name': f.name, 'value': f.value})
+                          .toList();
+
+                      // 更新本地状态
+                      ref.read(memberInfoStateProvider.notifier).updateUser(
+                            meDetail.user.copyWith(fields: fieldsForApi),
+                          );
+                      // 更新 API 并 await
+                      await ref
+                          .read(memberInfoStateProvider.notifier)
+                          .updateApi({
+                        "fields": fieldsForApi,
+                      });
+                    },
+                  );
+                }),
               ),
             ],
           ),
@@ -233,7 +269,6 @@ class _ProfileMemberCard extends HookConsumerWidget {
                       shape: BoxShape.circle,
                       fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: 16), // Added SizedBox for spacing
                     DriverSelectContextMenu(
                       builder: (context, open) {
                         return FilledButton(
