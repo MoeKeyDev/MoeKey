@@ -1,5 +1,5 @@
 {
-  "selectServer": "من فضلك اختر الخادم",
+  "selectServer": "يرجى اختيار الخادم",
   "serverList": "قائمة الخوادم",
   "notesCount": "عدد المشاركات",
   "usersCount": "عدد المستخدمين",
@@ -221,7 +221,7 @@
   "pendingFollowRequest": "طلب المتابعة في انتظار الموافقة",
   "processing": "يعالج حالياً",
   "overviews": "نظرة عامة",
-  "close": "关闭",
+  "close": "إغلاق",
   "loginExpired": "登录信息已经过期，请重新登录",
   "clear": "Clear"
 }
