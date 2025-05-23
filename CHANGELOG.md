@@ -1,4 +1,7 @@
 # Changelog
+# 0.9.1
+- update flutter 3.32
+
 # 0.9.0
 - Add ios ipa releases
 - Add User profile
