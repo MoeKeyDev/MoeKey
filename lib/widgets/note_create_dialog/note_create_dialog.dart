@@ -248,7 +248,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 )
               else
                 SizedBox(
-                  height: keyboardHeight,
+                  height: keyboardHeight + MediaQuery.of(context).viewPadding.bottom,
                 )
             ],
           ),

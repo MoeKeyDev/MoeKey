@@ -161,61 +161,66 @@ class HomePage extends HookConsumerWidget {
                     duration: const Duration(milliseconds: 150),
                     child: SizedBox(
                       width: constraints.maxWidth,
-                      height: 86,
+                      height: 86 + media.viewPadding.bottom,
                       child: BlurWidget(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconButton(
-                              onPressed: _openDrawer,
-                              icon: const Icon(TablerIcons.menu_2),
-                              padding: const EdgeInsets.all(20),
-                              color: themes.fgColor,
-                              style: btnStyle,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                var logic =
-                                    ref.read(homePageStateProvider.notifier);
-                                logic.changePage("timeline");
-                              },
-                              icon: const Icon(TablerIcons.home),
-                              padding: const EdgeInsets.all(20),
-                              color: themes.fgColor,
-                              style: btnStyle,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                var logic =
-                                    ref.read(homePageStateProvider.notifier);
-                                logic.changePage("notifications");
-                              },
-                              icon: const Icon(TablerIcons.bell),
-                              padding: const EdgeInsets.all(20),
-                              color: themes.fgColor,
-                              style: btnStyle,
-                            ),
-                            IconButton(
-                              onPressed: _openEndDrawer,
-                              icon: const Icon(TablerIcons.apps),
-                              padding: const EdgeInsets.all(20),
-                              color: themes.fgColor,
-                              style: btnStyle,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                NoteCreateDialog.open(context: context);
-                              },
-                              icon: const Icon(TablerIcons.pencil),
-                              padding: const EdgeInsets.all(20),
-                              color: themes.fgColor,
-                              style: btnStyle,
-                            )
-                          ],
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            bottom: media.viewPadding.bottom,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                onPressed: _openDrawer,
+                                icon: const Icon(TablerIcons.menu_2),
+                                padding: const EdgeInsets.all(20),
+                                color: themes.fgColor,
+                                style: btnStyle,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  var logic =
+                                      ref.read(homePageStateProvider.notifier);
+                                  logic.changePage("timeline");
+                                },
+                                icon: const Icon(TablerIcons.home),
+                                padding: const EdgeInsets.all(20),
+                                color: themes.fgColor,
+                                style: btnStyle,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  var logic =
+                                      ref.read(homePageStateProvider.notifier);
+                                  logic.changePage("notifications");
+                                },
+                                icon: const Icon(TablerIcons.bell),
+                                padding: const EdgeInsets.all(20),
+                                color: themes.fgColor,
+                                style: btnStyle,
+                              ),
+                              IconButton(
+                                onPressed: _openEndDrawer,
+                                icon: const Icon(TablerIcons.apps),
+                                padding: const EdgeInsets.all(20),
+                                color: themes.fgColor,
+                                style: btnStyle,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  NoteCreateDialog.open(context: context);
+                                },
+                                icon: const Icon(TablerIcons.pencil),
+                                padding: const EdgeInsets.all(20),
+                                color: themes.fgColor,
+                                style: btnStyle,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  )
+                  ),
               ],
             );
           },
@@ -324,6 +329,7 @@ class NavBar extends HookConsumerWidget {
           const SizedBox(height: 20),
           UserAvatarButton(onSelect: onSelect),
           const SizedBox(height: 20),
+          SizedBox(height: MediaQuery.of(context).viewPadding.bottom),
         ],
       ),
     );
