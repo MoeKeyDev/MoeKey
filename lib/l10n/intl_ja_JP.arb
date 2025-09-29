@@ -1,10 +1,10 @@
 {
   "selectServer": "サーバーを選択してください",
   "serverList": "サーバーリスト",
-  "notesCount": "投稿数",
-  "usersCount": "ユーザ数",
-  "registration": "新規登録受付方式",
-  "registrationOpen": "開く",
+  "notesCount": "ノート数",
+  "usersCount": "ユーザー数",
+  "registration": "新規登録",
+  "registrationOpen": "開放",
   "registrationClosed": "招待のみ",
   "searchServers": "サーバー名またはドメイン名で検索",
   "loadingServers": "サーバーの読込み中",
@@ -221,7 +221,7 @@
   "pendingFollowRequest": "フォローリクエスト承認中",
   "processing": "処理中",
   "overviews": "概要",
-  "close": "关闭",
+  "close": "閉じる",
   "loginExpired": "登录信息已经过期，请重新登录",
   "clear": "Clear"
 }
