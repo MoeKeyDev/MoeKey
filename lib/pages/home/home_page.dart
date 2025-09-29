@@ -167,55 +167,61 @@ class HomePage extends HookConsumerWidget {
                           padding: EdgeInsets.only(
                             bottom: media.viewPadding.bottom,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              IconButton(
-                                onPressed: _openDrawer,
-                                icon: const Icon(TablerIcons.menu_2),
-                                padding: const EdgeInsets.all(20),
-                                color: themes.fgColor,
-                                style: btnStyle,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  var logic =
-                                      ref.read(homePageStateProvider.notifier);
-                                  logic.changePage("timeline");
-                                },
-                                icon: const Icon(TablerIcons.home),
-                                padding: const EdgeInsets.all(20),
-                                color: themes.fgColor,
-                                style: btnStyle,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  var logic =
-                                      ref.read(homePageStateProvider.notifier);
-                                  logic.changePage("notifications");
-                                },
-                                icon: const Icon(TablerIcons.bell),
-                                padding: const EdgeInsets.all(20),
-                                color: themes.fgColor,
-                                style: btnStyle,
-                              ),
-                              IconButton(
-                                onPressed: _openEndDrawer,
-                                icon: const Icon(TablerIcons.apps),
-                                padding: const EdgeInsets.all(20),
-                                color: themes.fgColor,
-                                style: btnStyle,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  NoteCreateDialog.open(context: context);
-                                },
-                                icon: const Icon(TablerIcons.pencil),
-                                padding: const EdgeInsets.all(20),
-                                color: themes.fgColor,
-                                style: btnStyle,
-                              )
-                            ],
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: media.viewPadding.left,
+                              right: media.viewPadding.right,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                  onPressed: _openDrawer,
+                                  icon: const Icon(TablerIcons.menu_2),
+                                  padding: const EdgeInsets.all(20),
+                                  color: themes.fgColor,
+                                  style: btnStyle,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    var logic = ref
+                                        .read(homePageStateProvider.notifier);
+                                    logic.changePage("timeline");
+                                  },
+                                  icon: const Icon(TablerIcons.home),
+                                  padding: const EdgeInsets.all(20),
+                                  color: themes.fgColor,
+                                  style: btnStyle,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    var logic = ref
+                                        .read(homePageStateProvider.notifier);
+                                    logic.changePage("notifications");
+                                  },
+                                  icon: const Icon(TablerIcons.bell),
+                                  padding: const EdgeInsets.all(20),
+                                  color: themes.fgColor,
+                                  style: btnStyle,
+                                ),
+                                IconButton(
+                                  onPressed: _openEndDrawer,
+                                  icon: const Icon(TablerIcons.apps),
+                                  padding: const EdgeInsets.all(20),
+                                  color: themes.fgColor,
+                                  style: btnStyle,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    NoteCreateDialog.open(context: context);
+                                  },
+                                  icon: const Icon(TablerIcons.pencil),
+                                  padding: const EdgeInsets.all(20),
+                                  color: themes.fgColor,
+                                  style: btnStyle,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -253,84 +259,88 @@ class NavBar extends HookConsumerWidget {
       height: double.infinity,
       duration: const Duration(milliseconds: 150),
       curve: Curves.easeInOut,
-      child: Column(
-        children: [
-          const ServerIconAndBanner(),
-          Expanded(child: SingleChildScrollView(
-            child: Builder(builder: (context) {
-              var list = <Widget>[];
-              for (var element in state.navItemList) {
-                if (element["line"] == null) {
-                  list.add(NavbarItem(
-                    icon: element["icon"],
-                    label: element["label"],
-                    id: element["id"] ?? '',
-                    currentId: currentId ?? '',
-                    onSelect: () {
-                      if (onSelect != null) {
-                        onSelect!();
-                      }
-                    },
-                  ));
-                } else {
-                  list.add(Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 1,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(color: themes.dividerColor),
+      child: Padding(
+        padding: EdgeInsetsGeometry.only(
+            left: MediaQuery.of(context).viewPadding.left),
+        child: Column(
+          children: [
+            const ServerIconAndBanner(),
+            Expanded(child: SingleChildScrollView(
+              child: Builder(builder: (context) {
+                var list = <Widget>[];
+                for (var element in state.navItemList) {
+                  if (element["line"] == null) {
+                    list.add(NavbarItem(
+                      icon: element["icon"],
+                      label: element["label"],
+                      id: element["id"] ?? '',
+                      currentId: currentId ?? '',
+                      onSelect: () {
+                        if (onSelect != null) {
+                          onSelect!();
+                        }
+                      },
+                    ));
+                  } else {
+                    list.add(Padding(
+                      padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 1,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(color: themes.dividerColor),
+                        ),
                       ),
-                    ),
-                  ));
+                    ));
+                  }
                 }
-              }
 
-              return SizedBox(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    ...list,
-                    if (isWide)
-                      NavbarItem(
-                        icon: TablerIcons.settings,
-                        label: S.current.settings,
-                        id: "settingProfile",
-                        currentId: currentId ?? '',
-                        onSelect: () {
-                          if (onSelect != null) {
-                            onSelect!();
-                          }
+                return SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      ...list,
+                      if (isWide)
+                        NavbarItem(
+                          icon: TablerIcons.settings,
+                          label: S.current.settings,
+                          id: "settingProfile",
+                          currentId: currentId ?? '',
+                          onSelect: () {
+                            if (onSelect != null) {
+                              onSelect!();
+                            }
 
-                          context.goNamed("settingProfile");
-                        },
-                      )
-                    else
-                      NavbarItem(
-                        icon: TablerIcons.settings,
-                        label: S.current.settings,
-                        id: "settings",
-                        currentId: currentId ?? '',
-                        onSelect: () {
-                          if (onSelect != null) {
-                            onSelect!();
-                          }
+                            context.goNamed("settingProfile");
+                          },
+                        )
+                      else
+                        NavbarItem(
+                          icon: TablerIcons.settings,
+                          label: S.current.settings,
+                          id: "settings",
+                          currentId: currentId ?? '',
+                          onSelect: () {
+                            if (onSelect != null) {
+                              onSelect!();
+                            }
 
-                          context.goNamed("settings");
-                        },
-                      ),
-                  ],
-                ),
-              );
-            }),
-          )),
-          const SizedBox(height: 20),
-          const CreateBottom(),
-          const SizedBox(height: 20),
-          UserAvatarButton(onSelect: onSelect),
-          const SizedBox(height: 20),
-          SizedBox(height: MediaQuery.of(context).viewPadding.bottom),
-        ],
+                            context.goNamed("settings");
+                          },
+                        ),
+                    ],
+                  ),
+                );
+              }),
+            )),
+            const SizedBox(height: 20),
+            const CreateBottom(),
+            const SizedBox(height: 20),
+            UserAvatarButton(onSelect: onSelect),
+            const SizedBox(height: 20),
+            SizedBox(height: MediaQuery.of(context).viewPadding.bottom),
+          ],
+        ),
       ),
     );
   }
