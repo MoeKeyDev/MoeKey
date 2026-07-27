@@ -23,11 +23,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m0(selectListLength, maxSelect) =>
       "はい(${selectListLength}/${maxSelect})";
 
-  static String m1(error) => "作成の失敗\n\n ${error}";
+  static String m1(error) => "作成に失敗しました\n\n ${error}";
 
   static String m2(days) => "${days}日前";
 
-  static String m3(thing) => "削除したい「${thing}」を削除してもよろしいですか？";
+  static String m3(thing) => "「${thing}」を削除してもよろしいですか？";
 
   static String m4(name) =>
       "ファイル「${name}」を削除しますか？このファイルを使用した全てのコンテンツからも削除されます。";
@@ -56,23 +56,27 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(language) => "${language}からの翻訳";
 
-  static String m16(type) => "サポートされていない通知タイプ：${type}。";
+  static String m16(type) => "サポートされていない通知タイプ:${type}";
 
-  static String m17(seconds) => "${seconds} 秒前";
+  static String m17(count) => "${count}件のリアクション";
 
-  static String m18(msg) => "\n ${msg} のアップロードに失敗しました";
+  static String m18(count) => "${count}件のリノート";
 
-  static String m19(count) => "総得票数${count}";
+  static String m19(seconds) => "${seconds} 秒前";
 
-  static String m20(count) => "${count}票";
+  static String m20(msg) => "アップロードに失敗しました\n ${msg}";
 
-  static String m21(index) => "${index} オプション";
+  static String m21(count) => "総得票数${count}";
 
-  static String m22(index) => "${index}は必須項目です";
+  static String m22(count) => "${count}票";
 
-  static String m23(datetime) => "${datetime}以内に締め切り";
+  static String m23(index) => "${index} オプション";
 
-  static String m24(years) => "${years}年前";
+  static String m24(index) => "${index}は必須項目です";
+
+  static String m25(datetime) => "${datetime}以内に締め切り";
+
+  static String m26(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -88,7 +92,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "back": MessageLookupByLibrary.simpleMessage("戻る"),
     "cancel": MessageLookupByLibrary.simpleMessage("取り消し"),
     "cancelSensitive": MessageLookupByLibrary.simpleMessage("閲覧注意を解除する"),
-    "clear": MessageLookupByLibrary.simpleMessage("Clear"),
+    "clear": MessageLookupByLibrary.simpleMessage("クリア"),
     "clip": MessageLookupByLibrary.simpleMessage("クリップ"),
     "clipCancelFavoriteText": MessageLookupByLibrary.simpleMessage(
       "お気に入り解除しますか？",
@@ -99,7 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "clipRemove": MessageLookupByLibrary.simpleMessage("クリップ解除"),
     "clipUpdate": MessageLookupByLibrary.simpleMessage("ノートの更新"),
     "clips": MessageLookupByLibrary.simpleMessage("クリップ"),
-    "close": MessageLookupByLibrary.simpleMessage("关闭"),
+    "close": MessageLookupByLibrary.simpleMessage("閉じる"),
     "confirmSelection": m0,
     "copyContent": MessageLookupByLibrary.simpleMessage("内容をコピー"),
     "copyLink": MessageLookupByLibrary.simpleMessage("リンクをコピー"),
@@ -109,9 +113,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "copyUsername": MessageLookupByLibrary.simpleMessage("ユーザー名をコピー"),
     "createFolder": MessageLookupByLibrary.simpleMessage("新しいフォルダー"),
-    "createNote": MessageLookupByLibrary.simpleMessage("新しい投稿を投稿"),
+    "createNote": MessageLookupByLibrary.simpleMessage("新しいノートを投稿"),
     "createNoteFormFile": MessageLookupByLibrary.simpleMessage("ファイルから投稿を作成"),
-    "createNoteHint": MessageLookupByLibrary.simpleMessage("何が起こってる..."),
+    "createNoteHint": MessageLookupByLibrary.simpleMessage("何かありましたか？"),
     "createdDate": MessageLookupByLibrary.simpleMessage("作成日"),
     "creationFailedDialog": m1,
     "cw": MessageLookupByLibrary.simpleMessage("内容を隠す"),
@@ -130,12 +134,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "durationMinute": m8,
     "durationSecond": m9,
     "edit": MessageLookupByLibrary.simpleMessage("編集"),
-    "emoji": MessageLookupByLibrary.simpleMessage("エモーティコン"),
+    "emoji": MessageLookupByLibrary.simpleMessage("絵文字"),
     "enterNewFileName": MessageLookupByLibrary.simpleMessage(
       "新しいファイル名を入力してください",
     ),
     "enterNewTitle": MessageLookupByLibrary.simpleMessage("新しいタイトルを入力してください"),
-    "enterUrl": MessageLookupByLibrary.simpleMessage("URLを入力してくださ"),
+    "enterUrl": MessageLookupByLibrary.simpleMessage("URLを入力してください"),
     "exceptionContentNull": MessageLookupByLibrary.simpleMessage(
       "このフィールドが必要です",
     ),
@@ -148,6 +152,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "exploreUserPined": MessageLookupByLibrary.simpleMessage("ピン留めユーザー"),
     "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿したユーザー"),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("ユーザー"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("アンテナ"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage("ブロック"),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("クリップ"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage("カスタム絵文字"),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("お気に入り"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("フォロー"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage("ミュート"),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("ノート"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("リスト"),
     "favorite": MessageLookupByLibrary.simpleMessage("お気に入り"),
     "filter": MessageLookupByLibrary.simpleMessage("フィルタ"),
     "folderName": MessageLookupByLibrary.simpleMessage("フォルダ名"),
@@ -156,7 +169,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "followers": MessageLookupByLibrary.simpleMessage("フォロワー"),
     "following": MessageLookupByLibrary.simpleMessage("フォロー中"),
     "fromCloud": MessageLookupByLibrary.simpleMessage("ドライブから"),
-    "gotIt": MessageLookupByLibrary.simpleMessage("Got it!"),
+    "gotIt": MessageLookupByLibrary.simpleMessage("わかった"),
     "hashtag": MessageLookupByLibrary.simpleMessage("ハッシュタグ"),
     "hostnames": MessageLookupByLibrary.simpleMessage("ホスト名"),
     "hour": MessageLookupByLibrary.simpleMessage("時"),
@@ -171,16 +184,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "local": MessageLookupByLibrary.simpleMessage("ローカル"),
     "localUpload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "login": MessageLookupByLibrary.simpleMessage("ログイン"),
-    "loginExpired": MessageLookupByLibrary.simpleMessage("登录信息已经过期，请重新登录"),
-    "loginFailed": MessageLookupByLibrary.simpleMessage("ログインに失敗しました。"),
+    "loginExpired": MessageLookupByLibrary.simpleMessage(
+      "ログイン情報が有効ではありません。再度ログインしてください。",
+    ),
+    "loginFailed": MessageLookupByLibrary.simpleMessage("ログインに失敗しました"),
     "loginFailedWithAppCreate": MessageLookupByLibrary.simpleMessage(
       "ログイン失敗: アプリケーションの作成に失敗しました",
     ),
     "loginFailedWithToken": MessageLookupByLibrary.simpleMessage(
-      "ログイン失敗: トークン取得失敗",
+      "ログイン失敗: トークン取得に失敗しました。",
     ),
     "loginLoading": m12,
-    "loginSuccess": MessageLookupByLibrary.simpleMessage("ログイン成功"),
+    "loginSuccess": MessageLookupByLibrary.simpleMessage("ログインに成功しました"),
     "manageAccount": MessageLookupByLibrary.simpleMessage("アカウントを管理"),
     "markAsSensitive": MessageLookupByLibrary.simpleMessage("閲覧注意にする"),
     "mention": MessageLookupByLibrary.simpleMessage("メンション"),
@@ -192,9 +207,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("名前"),
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名前は空欄にできません"),
     "next": MessageLookupByLibrary.simpleMessage("次へ"),
-    "noLists": MessageLookupByLibrary.simpleMessage(
-      "You don\'t have any lists",
-    ),
+    "noLists": MessageLookupByLibrary.simpleMessage("リストがありません"),
     "notFindServer": MessageLookupByLibrary.simpleMessage("サーバーが見つかりませんか？"),
     "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
       "このウェブサイトのリンクをコピーする",
@@ -227,20 +240,78 @@ class MessageLookup extends MessageLookupByLibrary {
       "指定したユーザーにのみ公開",
     ),
     "notes": MessageLookupByLibrary.simpleMessage("ノート"),
-    "notesCount": MessageLookupByLibrary.simpleMessage("投稿数"),
-    "notification": MessageLookupByLibrary.simpleMessage("お知らせ"),
-    "notifications": MessageLookupByLibrary.simpleMessage("お知らせ"),
+    "notesCount": MessageLookupByLibrary.simpleMessage("ノート数"),
+    "notification": MessageLookupByLibrary.simpleMessage("通知"),
+    "notifications": MessageLookupByLibrary.simpleMessage("通知"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("承認"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage("フォローリクエストを承認しました"),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "実績を獲得しました",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "操作に失敗しました。もう一度お試しください",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("すべて"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage("アプリ通知"),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "チャットルームへの招待は未対応です",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "新しいアクセストークンが作成されました",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "心当たりがない場合は、Webクライアントですぐにトークンを無効化してください",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "エクスポートが完了しました",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("フィルター"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "フォローリクエストが承認されました",
     ),
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("フォローされました"),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("ログインを検出しました"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "あなたのアカウントにログインがありました",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全て既読にする"),
-    "notifyMention": MessageLookupByLibrary.simpleMessage("私に言及する"),
-    "notifyMessage": MessageLookupByLibrary.simpleMessage("特定"),
+    "notifyMention": MessageLookupByLibrary.simpleMessage("メンション"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage(
+      "ノートであなたに言及しました",
+    ),
+    "notifyMessage": MessageLookupByLibrary.simpleMessage("指名"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("新しいノートを投稿しました"),
     "notifyNotSupport": m16,
-    "ok": MessageLookupByLibrary.simpleMessage("はい"),
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("アンケートが終了しました"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("あなたのノートを引用しました"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("あなたのノートにリアクションしました"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "フォローをリクエストしました",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("拒否"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("フォローリクエストを拒否しました"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("あなたのノートをリノートしました"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage(
+      "あなたのノートに返信しました",
+    ),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage("ロールが付与されました"),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "予約ノートの投稿に失敗しました",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage("予約していたノートを投稿できませんでした"),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "予約ノートを投稿しました",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("予約していたノートが投稿されました"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("テスト通知"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "通知はこのように表示されます",
+    ),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage("ブラウザで表示"),
     "overviews": MessageLookupByLibrary.simpleMessage("概要"),
     "pendingFollowRequest": MessageLookupByLibrary.simpleMessage(
@@ -265,15 +336,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "reactionAcceptingNoneSensitiveOrLocal":
         MessageLookupByLibrary.simpleMessage("非センシティブのみ (リモートはいいねのみ)"),
-    "recipient": MessageLookupByLibrary.simpleMessage("受信者"),
+    "recipient": MessageLookupByLibrary.simpleMessage("宛先"),
     "refresh": MessageLookupByLibrary.simpleMessage("更新"),
-    "registration": MessageLookupByLibrary.simpleMessage("新規登録受付方式"),
+    "registration": MessageLookupByLibrary.simpleMessage("新規登録"),
     "registrationClosed": MessageLookupByLibrary.simpleMessage("招待のみ"),
-    "registrationOpen": MessageLookupByLibrary.simpleMessage("開く"),
+    "registrationOpen": MessageLookupByLibrary.simpleMessage("開放"),
     "remote": MessageLookupByLibrary.simpleMessage("オンライン"),
     "rename": MessageLookupByLibrary.simpleMessage("名前を変更"),
     "renameFile": MessageLookupByLibrary.simpleMessage("ファイル名を変更"),
-    "renameFolder": MessageLookupByLibrary.simpleMessage("フォルダ名の変更"),
+    "renameFolder": MessageLookupByLibrary.simpleMessage("フォルダ名を変更"),
     "replyNoteHint": MessageLookupByLibrary.simpleMessage("このノートに返信..."),
     "replyNoteText": MessageLookupByLibrary.simpleMessage("返信"),
     "saveFailed": MessageLookupByLibrary.simpleMessage("保存に失敗しました"),
@@ -285,7 +356,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("ローカルタイムライン"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("リモート"),
     "searchServers": MessageLookupByLibrary.simpleMessage("サーバー名またはドメイン名で検索"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("タグを選択"),
     "selectServer": MessageLookupByLibrary.simpleMessage("サーバーを選択してください"),
     "selectUser": MessageLookupByLibrary.simpleMessage("ユーザーを選択"),
@@ -306,8 +377,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("未分類"),
     "unfollow": MessageLookupByLibrary.simpleMessage("フォロー解除"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("更新日"),
-    "uploadFailed": m18,
-    "uploadFromUrl": MessageLookupByLibrary.simpleMessage("URLアップロード"),
+    "uploadFailed": m20,
+    "uploadFromUrl": MessageLookupByLibrary.simpleMessage("URLからアップロード"),
     "user": MessageLookupByLibrary.simpleMessage("ユーザー"),
     "userAll": MessageLookupByLibrary.simpleMessage("すべて"),
     "userDescriptionIsNull": MessageLookupByLibrary.simpleMessage("自己紹介はありません"),
@@ -319,13 +390,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "ウィジェットリスト（未完了）",
     ),
     "username": MessageLookupByLibrary.simpleMessage("ユーザー名"),
-    "usersCount": MessageLookupByLibrary.simpleMessage("ユーザ数"),
+    "usersCount": MessageLookupByLibrary.simpleMessage("ユーザー数"),
     "video": MessageLookupByLibrary.simpleMessage("動画"),
     "view": MessageLookupByLibrary.simpleMessage("表示"),
     "viewMore": MessageLookupByLibrary.simpleMessage("詳細"),
     "vote": MessageLookupByLibrary.simpleMessage("投票"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("期限"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("複数の投票を許可する"),
     "voteExpired": MessageLookupByLibrary.simpleMessage("投票は終了しました。"),
@@ -333,10 +404,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "投票数は2つ未満にすることはできません。",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage("投票結果が生成されました"),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

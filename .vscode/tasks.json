@@ -4,7 +4,7 @@
         {
             "label": "Generate Intl",
             "type": "shell",
-            "command": "flutter pub global run intl_utils:generate",
+            "command": "dart run intl_utils:generate",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "always",

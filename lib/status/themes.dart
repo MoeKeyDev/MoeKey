@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moekey/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -50,7 +50,7 @@ class ThemeColors extends _$ThemeColors {
     return ThemeColorModel();
   }
 
-  updateThemes(MetaDetailedModel metas, Brightness brightness) {
+  void updateThemes(MetaDetailedModel metas, Brightness brightness) {
     var model = ThemeColorModel();
     if (metas.defaultLightTheme != null && metas.defaultDarkTheme != null) {
       try {
@@ -72,52 +72,54 @@ class ThemeColors extends _$ThemeColors {
 
         model.accentLightenColor =
             getThemesColor(themes["accentLighten"] ?? "", themes) ??
-                model.accentLightenColor;
+            model.accentLightenColor;
         model.accentedBgColor =
             getThemesColor(themes["accentedBg"] ?? "", themes) ??
-                model.accentedBgColor;
+            model.accentedBgColor;
         model.panelColor =
             getThemesColor(themes["panel"] ?? "", themes) ?? model.panelColor;
         model.navBgColor =
             getThemesColor(themes["navBg"] ?? "", themes) ?? model.navBgColor;
         model.headerColor =
             getThemesColor(themes["header"] ?? "", themes) ?? model.headerColor;
-        model.dividerColor = getThemesColor(themes["divider"] ?? "", themes) ??
+        model.dividerColor =
+            getThemesColor(themes["divider"] ?? "", themes) ??
             model.dividerColor;
         model.buttonGradateAColor =
             getThemesColor(themes["buttonGradateA"] ?? "", themes) ??
-                model.buttonGradateAColor;
+            model.buttonGradateAColor;
         model.buttonGradateBColor =
             getThemesColor(themes["buttonGradateB"] ?? "", themes) ??
-                model.buttonGradateBColor;
+            model.buttonGradateBColor;
         model.fgOnAccentColor =
             getThemesColor(themes["fgOnAccent"] ?? "", themes) ??
-                model.fgOnAccentColor;
+            model.fgOnAccentColor;
         model.reNoteColor =
             getThemesColor(themes["reNote"] ?? "", themes) ?? model.reNoteColor;
 
         model.buttonBgColor =
             getThemesColor(themes["buttonBg"] ?? "", themes) ??
-                model.buttonBgColor;
+            model.buttonBgColor;
         model.buttonHoverBgColor =
             getThemesColor(themes["buttonHover"] ?? "", themes) ??
-                model.buttonHoverBgColor;
-        model.mentionColor = getThemesColor(themes["mention"] ?? "", themes) ??
+            model.buttonHoverBgColor;
+        model.mentionColor =
+            getThemesColor(themes["mention"] ?? "", themes) ??
             model.mentionColor;
         model.shadowColor =
             getThemesColor(themes["shadow"] ?? "", themes) ?? model.shadowColor;
         model.switchOffBgColor =
             getThemesColor(themes["switchOffBg"] ?? "", themes) ??
-                model.switchOffBgColor;
+            model.switchOffBgColor;
         model.switchOffFgColor =
             getThemesColor(themes["switchOffFg"] ?? "", themes) ??
-                model.switchOffFgColor;
+            model.switchOffFgColor;
         model.switchOnBgColor =
             getThemesColor(themes["switchOnBg"] ?? "", themes) ??
-                model.switchOnBgColor;
+            model.switchOnBgColor;
         model.switchOnFgColor =
             getThemesColor(themes["switchOnFg"] ?? "", themes) ??
-                model.switchOnFgColor;
+            model.switchOnFgColor;
         // Color shadowColor = const Color.fromARGB(25, 0, 0, 0);
         // Color switchOffBgColor = const Color.fromARGB(25, 0, 0, 0);
         // Color switchOffFgColor = const Color.fromARGB(255, 255, 255, 255);
@@ -143,7 +145,7 @@ class SystemBrightness extends _$SystemBrightness {
     return Brightness.light;
   }
 
-  updateBrightness(Brightness brightness) {
+  void updateBrightness(Brightness brightness) {
     if (state == brightness) return;
     state = brightness;
     ref.notifyListeners();
@@ -177,21 +179,15 @@ class Themes extends _$Themes {
       canvasColor: colors.bgColor,
       cardColor: colors.panelColor,
       useMaterial3: true,
-      fontFamily: Platform.isWindows ? "微软雅黑" : null,
+      fontFamily: !kIsWeb && defaultTargetPlatform == TargetPlatform.windows
+          ? "微软雅黑"
+          : null,
       // fontFamilyFallback: [...SystemChineseFont.fontFamilyFallback],
       textTheme: TextTheme(
-        bodyMedium: TextStyle(
-          color: colors.fgColor,
-        ),
-        bodyLarge: TextStyle(
-          color: colors.fgColor,
-        ),
-        titleMedium: TextStyle(
-          color: colors.fgColor,
-        ),
-        displayMedium: TextStyle(
-          color: colors.fgColor,
-        ),
+        bodyMedium: TextStyle(color: colors.fgColor),
+        bodyLarge: TextStyle(color: colors.fgColor),
+        titleMedium: TextStyle(color: colors.fgColor),
+        displayMedium: TextStyle(color: colors.fgColor),
       ),
       scaffoldBackgroundColor: colors.bgColor,
       hintColor: colors.fgColor,

@@ -60,21 +60,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "${type}Meddelandetyper som inte stöds:";
 
-  static String m17(seconds) => "${seconds}sekunder sedan";
+  static String m17(count) => "${count} reactions";
 
-  static String m18(msg) => "\n ${msg}Uppladdningen misslyckades";
+  static String m18(count) => "${count} renotes";
 
-  static String m19(count) => "${count}Totalt antal röster";
+  static String m19(seconds) => "${seconds}sekunder sedan";
 
-  static String m20(count) => "${count}person som hålls kvar för lösensumma";
+  static String m20(msg) => "\n ${msg}Uppladdningen misslyckades";
 
-  static String m21(index) => "${index}Alternativ";
+  static String m21(count) => "${count}Totalt antal röster";
 
-  static String m22(index) => "${index}Alternativet kan inte vara tomt";
+  static String m22(count) => "${count}person som hålls kvar för lösensumma";
 
-  static String m23(datetime) => "${datetime}tidsfrist efter slutförandet";
+  static String m23(index) => "${index}Alternativ";
 
-  static String m24(years) => "${years}...år sedan";
+  static String m24(index) => "${index}Alternativet kan inte vara tomt";
+
+  static String m25(datetime) => "${datetime}tidsfrist efter slutförandet";
+
+  static String m26(years) => "${years}...år sedan";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -176,6 +180,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Senaste bidragsgivarna",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("användare"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("Antenner"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Blockerade användare",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Klipp"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Anpassa emoji",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Favoriter"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("Följer"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage(
+      "Tystade användare",
+    ),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Noter"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("Listor"),
     "favorite": MessageLookupByLibrary.simpleMessage("bokmärke (Internet)"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Mappens namn"),
@@ -288,7 +307,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("meddelanden"),
     "notifications": MessageLookupByLibrary.simpleMessage("meddelanden"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Tillåt"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Follow request accepted",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Achievement earned",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("full"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage("App notification"),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "New access token created",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "If this was not you, revoke the token from the web client immediately",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "Export completed",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("screening"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "Din begäran om uppmärksamhet har godkänts.",
@@ -296,12 +338,51 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "Du har nya följare.",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Login detected"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Your account was just signed in to",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "Markera alla som lästa",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage("På tal om min"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("Nämn"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("privat brev"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Posted a new note"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("Poll ended"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Citat"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("Reaktioner"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Requested to follow you",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Neka"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("Neka"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("Omnotera"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage(
+      "Replied to your note",
+    ),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage(
+      "A role was assigned to you",
+    ),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note failed",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Your scheduled note could not be posted",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note posted",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Your scheduled note was posted"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test notification"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Notifications will be displayed like this",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("definiera"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "Gå till webbläsarens display",
@@ -365,7 +446,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("denna webbplats"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("på distans"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("Välj tagg"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
@@ -396,7 +477,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "updatedDate": MessageLookupByLibrary.simpleMessage(
       "Datum för uppdatering",
     ),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
       "Ladda upp från webbplatsen",
     ),
@@ -418,8 +499,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("checka ut"),
     "viewMore": MessageLookupByLibrary.simpleMessage("Visa mer"),
     "vote": MessageLookupByLibrary.simpleMessage("folkomröstning"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("brytdatum"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Flera röster tillåtna",
@@ -431,12 +512,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "Antalet röster får inte understiga två",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Röstningsresultat har genererats",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

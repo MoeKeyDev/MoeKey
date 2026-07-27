@@ -60,21 +60,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "${type}Ei tuettuja ilmoitustyyppejä:";
 
-  static String m17(seconds) => "${seconds}sekuntia sitten";
+  static String m17(count) => "${count} reactions";
 
-  static String m18(msg) => "\n ${msg}Lataus epäonnistui";
+  static String m18(count) => "${count} renotes";
 
-  static String m19(count) => "${count}Ääniä yhteensä";
+  static String m19(seconds) => "${seconds}sekuntia sitten";
 
-  static String m20(count) => "${count}lunnaita vastaan pidetty henkilö";
+  static String m20(msg) => "\n ${msg}Lataus epäonnistui";
 
-  static String m21(index) => "${index}Vaihtoehdot";
+  static String m21(count) => "${count}Ääniä yhteensä";
 
-  static String m22(index) => "${index}Vaihtoehto ei voi olla tyhjä";
+  static String m22(count) => "${count}lunnaita vastaan pidetty henkilö";
 
-  static String m23(datetime) => "${datetime}valmistumisen jälkeinen määräaika";
+  static String m23(index) => "${index}Vaihtoehdot";
 
-  static String m24(years) => "${years}...vuotta sitten";
+  static String m24(index) => "${index}Vaihtoehto ei voi olla tyhjä";
+
+  static String m25(datetime) => "${datetime}valmistumisen jälkeinen määräaika";
+
+  static String m26(years) => "${years}...vuotta sitten";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -174,6 +178,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Viimeaikaiset avustajat",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("käyttäjä"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("Antennas"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Blocked users",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Clips"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Custom emoji",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Favorites"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("Following"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage("Muted users"),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Notes"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("User lists"),
     "favorite": MessageLookupByLibrary.simpleMessage("kirjanmerkki (Internet)"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Kansion nimi"),
@@ -284,7 +301,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("ilmoitukset"),
     "notifications": MessageLookupByLibrary.simpleMessage("ilmoitukset"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Accept"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Follow request accepted",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Achievement earned",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("full"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage("App notification"),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "New access token created",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "If this was not you, revoke the token from the web client immediately",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "Export completed",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("seulonta"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "Pyyntösi huomiosta on hyväksytty.",
@@ -292,12 +332,57 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "Sinulla on uusia seuraajia.",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Login detected"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Your account was just signed in to",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "Merkitse kaikki luetuiksi",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage("Puhuttaessa minun"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage(
+      "Mentioned you in a note",
+    ),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("yksityinen kirje"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Posted a new note"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("Poll ended"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Quoted your note"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage(
+      "Reacted to your note",
+    ),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Requested to follow you",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Reject"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage(
+      "Follow request rejected",
+    ),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("Renoted your note"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage(
+      "Replied to your note",
+    ),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage(
+      "A role was assigned to you",
+    ),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note failed",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Your scheduled note could not be posted",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note posted",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Your scheduled note was posted"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test notification"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Notifications will be displayed like this",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("define"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "Siirry selaimen näyttöön",
@@ -363,7 +448,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("tämä sivusto"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("etänä"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("Valitse Tag"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
@@ -396,7 +481,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("Luokittelematon"),
     "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("Päivityspäivämäärä"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
       "Lataus verkkosivulta",
     ),
@@ -420,8 +505,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("tsekkaa"),
     "viewMore": MessageLookupByLibrary.simpleMessage("Näytä lisää"),
     "vote": MessageLookupByLibrary.simpleMessage("kansanäänestys"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("päättymispäivä"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Useita ääniä sallittu",
@@ -433,12 +518,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "Äänimäärä ei voi olla alle kaksi.",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Äänestystulokset on luotu",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

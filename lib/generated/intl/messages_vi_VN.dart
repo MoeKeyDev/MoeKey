@@ -56,21 +56,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "不支持的通知类型:${type}";
 
-  static String m17(seconds) => "${seconds}秒前";
+  static String m17(count) => "${count} reactions";
 
-  static String m18(msg) => "上传失败\n ${msg}";
+  static String m18(count) => "${count} renotes";
 
-  static String m19(count) => "总票数 ${count}";
+  static String m19(seconds) => "${seconds}秒前";
 
-  static String m20(count) => "${count}票";
+  static String m20(msg) => "上传失败\n ${msg}";
 
-  static String m21(index) => "选项${index}";
+  static String m21(count) => "总票数 ${count}";
 
-  static String m22(index) => "选项${index}不能为空";
+  static String m22(count) => "${count}票";
 
-  static String m23(datetime) => "${datetime}后截止";
+  static String m23(index) => "选项${index}";
 
-  static String m24(years) => "${years}年前";
+  static String m24(index) => "选项${index}不能为空";
+
+  static String m25(datetime) => "${datetime}后截止";
+
+  static String m26(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -138,6 +142,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "exploreUserPined": MessageLookupByLibrary.simpleMessage("置顶用户"),
     "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿的用户"),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("用户"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage(
+      "Trạm phát sóng",
+    ),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Người đã chặn",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Lưu bài viết"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Tùy chỉnh emoji",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Lượt thích"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage(
+      "Đang theo dõi",
+    ),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage("Người đã ẩn"),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Bài Viết"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("Danh sách"),
     "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
@@ -218,16 +239,78 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("通知"),
     "notifications": MessageLookupByLibrary.simpleMessage("通知"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Đồng ý"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Yêu cầu theo dõi của bạn đã được chấp nhận",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Hoàn thành Achievement",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("全部"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage("Từ app liên kết"),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "New access token created",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "If this was not you, revoke the token from the web client immediately",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "Export completed",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("筛选"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "你的关注请求被通过了",
     ),
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("你有新的关注者"),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Login detected"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Your account was just signed in to",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全部标记为已读"),
     "notifyMention": MessageLookupByLibrary.simpleMessage("提到我的"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("Nhắc đến"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("私信"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Posted a new note"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage(
+      "Cuộc bình chọn đã kết thúc",
+    ),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Trích dẫn"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("Biểu cảm"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Bạn vừa có một yêu cầu theo dõi",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Từ chối"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("Từ chối"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("Đăng lại"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage("Lượt trả lời"),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage(
+      "A role was assigned to you",
+    ),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note failed",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Your scheduled note could not be posted",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note posted",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Your scheduled note was posted"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test notification"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Notifications will be displayed like this",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("确定"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage("转到浏览器显示"),
     "overviews": MessageLookupByLibrary.simpleMessage("概览"),
@@ -271,7 +354,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("远程"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
@@ -294,7 +377,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("未分类"),
     "unfollow": MessageLookupByLibrary.simpleMessage("取消关注"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("更新日期"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage("从网址上传"),
     "user": MessageLookupByLibrary.simpleMessage("用户"),
     "userAll": MessageLookupByLibrary.simpleMessage("全部"),
@@ -310,17 +393,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("查看"),
     "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
     "vote": MessageLookupByLibrary.simpleMessage("投票"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
     "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
     "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

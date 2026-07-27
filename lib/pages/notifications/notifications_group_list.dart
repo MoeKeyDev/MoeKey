@@ -1,355 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/note.dart';
+import 'package:moekey/status/misskey_api.dart';
 import 'package:moekey/status/notifications.dart';
+import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
-import 'package:moekey/widgets/mk_card.dart';
 import 'package:moekey/widgets/mk_refresh_load.dart';
 import 'package:moekey/widgets/notifications/notifications_user_card.dart';
 
 import '../../apis/models/notification.dart';
-import '../../apis/models/user_lite.dart';
 import '../../generated/l10n.dart';
+import '../../utils/achievement_title.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/mk_image.dart';
-import '../../widgets/notes/note_card.dart';
 import '../../widgets/reactions.dart';
 
+enum _FollowRequestAction { idle, loading, accepted, rejected }
+
 class NotificationsGroupList extends HookConsumerWidget {
-  NotificationsGroupList({super.key});
-
-  static openUser(BuildContext context, String userId) {
-    // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-    //   path: "user/$userId",
-    //   page: () {
-    //     return UserPage(userId: userId);
-    //   },
-    // ));
-    context.push("/user/$userId");
-  }
-
-  static openNote(BuildContext context, NoteModel note) {
-    // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-    //   path: "user/${note.id}",
-    //   page: () {
-    //     return NotesPage(
-    //       noteId: note.id,
-    //       previewNote: note,
-    //     );
-    //   },
-    // ));
-    context.push("/notes/${note.id}");
-  }
-
-  final Map<
-      NotificationType,
-      Widget Function(NotificationModel data, BorderRadius borderRadius,
-          ThemeColorModel themes)> widgetList = {
-    NotificationType.FOLLOW: (data, borderRadius, themes) =>
-        NotificationsUserCard(
-          data: data,
-          borderRadius: borderRadius,
-          content: Text(S.current.notifyFollowedYou),
-          avatarBadge: Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color.fromARGB(255, 54, 174, 210),
-              boxShadow: [
-                BoxShadow(color: themes.panelColor, spreadRadius: 3),
-              ],
-            ),
-            child: const Icon(
-              TablerIcons.plus,
-              size: 15,
-              color: Colors.white,
-            ),
-          ),
-          onTap: (context) {
-            openUser(context, data.user!.id);
-          },
-        ),
-    NotificationType.FOLLOW_REQUEST_ACCEPTED: (data, borderRadius, themes) =>
-        NotificationsUserCard(
-          data: data,
-          borderRadius: borderRadius,
-          content: Text(S.current.notifyFollowedAccepted),
-          avatarBadge: Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color.fromARGB(255, 54, 174, 210),
-              boxShadow: [
-                BoxShadow(color: themes.panelColor, spreadRadius: 3),
-              ],
-            ),
-            child: const Icon(
-              TablerIcons.check,
-              size: 15,
-              color: Colors.white,
-            ),
-          ),
-          onTap: (context) {
-            openUser(context, data.user!.id);
-          },
-        ),
-    NotificationType.REACTION: (data, borderRadius, themes) =>
-        NotificationsUserCard(
-          data: data,
-          borderRadius: borderRadius,
-          content: MFMText(
-            text: "${data.note?.cw ?? ""}${data.note?.text ?? ""}"
-                .replaceAll('\n', ' '),
-            bigEmojiCode: false,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            currentServerHost: data.note?.user.host,
-          ),
-          avatarBadge: Container(
-            decoration:
-                BoxDecoration(color: themes.panelColor, shape: BoxShape.circle),
-            padding: const EdgeInsets.all(3),
-            child: SizedBox(
-              width: 20,
-              height: 20,
-              child: ReactionsIcon(
-                  emojiCode: data.reaction!, emojis: data.note?.reactionEmojis),
-            ),
-          ),
-          onTap: (context) {
-            openNote(context, data.note!);
-          },
-        ),
-    NotificationType.REACTION_GROUPED: (data, borderRadius, themes) =>
-        NotificationsUserCard(
-          data: data,
-          borderRadius: borderRadius,
-          content: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (var item in data.reactions ?? [])
-                Builder(builder: (context) {
-                  return GestureDetector(
-                    child: SizedBox(
-                      width: 38,
-                      height: 38,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          MkImage(
-                            item.user.avatarUrl ?? "",
-                            shape: BoxShape.circle,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                          Positioned(
-                            bottom: -2,
-                            right: -2,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: themes.panelColor,
-                                  shape: BoxShape.circle),
-                              padding: const EdgeInsets.all(3),
-                              child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: ReactionsIcon(
-                                    emojiCode: item.reaction,
-                                    emojis: data.note?.reactionEmojis),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    onTap: () {
-                      if (item?.user?.id != null) {
-                        openUser(context, item.user.id);
-                      }
-                    },
-                  );
-                }),
-            ],
-          ),
-          name: MFMText(
-            text: ((data.note?.cw ?? "") + (data.note?.text ?? ""))
-                .replaceAll('\n', ' '),
-            bigEmojiCode: false,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            currentServerHost: data.note?.user.host,
-          ),
-          avatar: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 233, 154, 11),
-                shape: BoxShape.circle),
-            child: const Icon(
-              TablerIcons.plus,
-              size: 28,
-              color: Colors.white,
-            ),
-          ),
-          onTap: (context) {
-            openNote(context, data.note!);
-          },
-        ),
-    NotificationType.REPLY: (data, borderRadius, themes) => NoteCard(
-          data: data.note!,
-          borderRadius: borderRadius,
-        ),
-    NotificationType.RENOTE: (data, borderRadius, themes) =>
-        NotificationsUserCard(
-          data: data,
-          borderRadius: borderRadius,
-          content: MFMText(
-            text: data.note?.renote?.text ?? "",
-            bigEmojiCode: false,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            currentServerHost: data.note?.user.host,
-          ),
-          avatarBadge: Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color.fromARGB(255, 54, 210, 152),
-              boxShadow: [
-                BoxShadow(color: themes.panelColor, spreadRadius: 3),
-              ],
-            ),
-            child: const Icon(
-              TablerIcons.repeat,
-              size: 15,
-              color: Colors.white,
-            ),
-          ),
-          onTap: (context) {
-            openNote(context, data.note!);
-          },
-        ),
-    NotificationType.RENOTE_GROUPED: (data, borderRadius, themes) =>
-        NotificationsUserCard(
-          data: data,
-          borderRadius: borderRadius,
-          content: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (UserLiteModel item in data.users ?? [])
-                Builder(builder: (context) {
-                  return GestureDetector(
-                    child: SizedBox(
-                      width: 38,
-                      height: 38,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          MkImage(
-                            item.avatarUrl ?? "",
-                            shape: BoxShape.circle,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                        ],
-                      ),
-                    ),
-                    onTap: () {
-                      openUser(context, item.id);
-                    },
-                  );
-                }),
-            ],
-          ),
-          name: MFMText(
-            text: ((data.note?.renote?.cw ?? "") +
-                    (data.note?.renote?.text ?? ""))
-                .replaceAll('\n', ' '),
-            bigEmojiCode: false,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            currentServerHost: data.note?.user.host,
-          ),
-          avatar: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 54, 210, 152),
-                shape: BoxShape.circle),
-            child: const Icon(
-              TablerIcons.repeat,
-              size: 28,
-              color: Colors.white,
-            ),
-          ),
-          onTap: (context) {
-            openNote(context, data.note!);
-          },
-        ),
-    NotificationType.QUOTE: (data, borderRadius, themes) => NoteCard(
-          data: data.note!,
-          borderRadius: borderRadius,
-        ),
-    NotificationType.MENTION: (data, borderRadius, themes) => NoteCard(
-          data: data.note!,
-          borderRadius: borderRadius,
-        ),
-    NotificationType.NOTE: (data, borderRadius, themes) => NoteCard(
-          data: data.note!,
-          borderRadius: borderRadius,
-        ),
-    NotificationType.POLL_ENDED: (data, borderRadius, themes) =>
-        NotificationsUserCard(
-          data: data,
-          borderRadius: borderRadius,
-          content: MFMText(
-            text: "${data.note?.text}(${S.current.vote})",
-            bigEmojiCode: false,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            currentServerHost: data.note?.user.host,
-          ),
-          name: Text(S.current.voteResult),
-          avatarBadge: Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color.fromARGB(255, 54, 210, 152),
-              boxShadow: [
-                BoxShadow(color: themes.panelColor, spreadRadius: 3),
-              ],
-            ),
-            child: const Icon(
-              TablerIcons.chart_arrows,
-              size: 15,
-              color: Colors.white,
-            ),
-          ),
-          onTap: (context) {
-            openNote(context, data.note!);
-          },
-        ),
-    // "reaction:grouped": (data, borderRadius, themes) {}
-  };
+  const NotificationsGroupList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var themes = ref.watch(themeColorsProvider);
-    var data = ref.watch(notificationsProvider);
-    var list = data.valueOrNull?.list ?? [];
+    final themes = ref.watch(themeColorsProvider);
+    final data = ref.watch(notificationsProvider);
+    final list = data.valueOrNull?.list ?? [];
     return LayoutBuilder(
       builder: (context, constraints) {
-        var padding =
-            EdgeInsets.symmetric(horizontal: getPaddingForNote(constraints));
+        final padding = EdgeInsets.symmetric(
+          horizontal: getPaddingForNote(constraints),
+        );
         return MkRefreshLoadList(
           onLoad: () => ref.read(notificationsProvider.notifier).loadMore(),
           onRefresh: () => ref.refresh(notificationsProvider.future),
@@ -358,51 +42,597 @@ class NotificationsGroupList extends HookConsumerWidget {
             SliverList.separated(
               itemCount: list.length,
               itemBuilder: (context, index) {
-                // return Text("$index");
-                BorderRadius borderRadius;
-                if (index == 0) {
-                  borderRadius = const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12));
-                } else {
-                  borderRadius = const BorderRadius.all(Radius.zero);
-                }
-                var type = list[index].type;
-                if (widgetList[type] != null) {
-                  return Padding(
-                      padding: padding,
-                      child:
-                          widgetList[type]!(list[index], borderRadius, themes));
-                }
+                final borderRadius = index == 0
+                    ? const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      )
+                    : BorderRadius.zero;
                 return Padding(
                   padding: padding,
-                  child: MkCard(
-                    shadow: false,
+                  child: NotificationItemCard(
+                    data: list[index],
                     borderRadius: borderRadius,
-                    child: Text(S.current.notifyNotSupport(list[index].type)),
                   ),
                 );
-                // return SizedBox();
               },
-              separatorBuilder: (BuildContext context, int index) {
+              separatorBuilder: (context, index) {
                 return Padding(
                   padding: padding,
                   child: SizedBox(
                     width: double.infinity,
                     height: 1,
                     child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: themes.dividerColor,
-                      ),
+                      decoration: BoxDecoration(color: themes.dividerColor),
                     ),
                   ),
                 );
               },
-            )
+            ),
           ],
           empty: list.isEmpty,
         );
       },
     );
+  }
+}
+
+class NotificationItemCard extends HookConsumerWidget {
+  const NotificationItemCard({
+    super.key,
+    required this.data,
+    required this.borderRadius,
+    this.navigationEnabled = true,
+  });
+
+  final NotificationModel data;
+  final BorderRadius borderRadius;
+  final bool navigationEnabled;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themes = ref.watch(themeColorsProvider);
+    final currentUser = ref.watch(currentLoginUserProvider)?.userInfo;
+    final followRequestAction = useState(_FollowRequestAction.idle);
+
+    Widget currentUserAvatar(IconData fallbackIcon) {
+      if (currentUser?.avatarUrl != null) {
+        return MkImage(
+          currentUser!.avatarUrl!,
+          blurHash: currentUser.avatarBlurhash,
+          shape: BoxShape.circle,
+          width: double.infinity,
+          height: double.infinity,
+        );
+      }
+      return _iconAvatar(fallbackIcon, themes.accentColor);
+    }
+
+    NotificationsUserCard card({
+      required Widget content,
+      Widget? name,
+      Widget? avatar,
+      Widget? badge,
+      Widget? footer,
+      void Function(BuildContext context)? onTap,
+    }) {
+      return NotificationsUserCard(
+        data: data,
+        borderRadius: borderRadius,
+        content: content,
+        name: name,
+        avatar: avatar,
+        avatarBadge: badge,
+        footer: footer,
+        onTap: onTap,
+      );
+    }
+
+    void openUser(BuildContext context) {
+      if (!navigationEnabled) {
+        return;
+      }
+      final userId = data.user?.id ?? data.userId;
+      if (userId != null) {
+        context.push('/user/$userId');
+      }
+    }
+
+    void openNote(BuildContext context) {
+      if (!navigationEnabled) {
+        return;
+      }
+      if (data.note != null) {
+        context.push('/notes/${data.note!.id}');
+      }
+    }
+
+    Future<void> respondToFollowRequest(bool accept) async {
+      final userId = data.user?.id ?? data.userId;
+      if (userId == null ||
+          followRequestAction.value == _FollowRequestAction.loading) {
+        return;
+      }
+      followRequestAction.value = _FollowRequestAction.loading;
+      try {
+        final following = ref.read(misskeyApisProvider).following;
+        if (accept) {
+          await following.requestsAccept(userId: userId);
+        } else {
+          await following.requestsReject(userId: userId);
+        }
+        followRequestAction.value = accept
+            ? _FollowRequestAction.accepted
+            : _FollowRequestAction.rejected;
+      } catch (_) {
+        followRequestAction.value = _FollowRequestAction.idle;
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(S.current.notifyActionFailed)));
+        }
+      }
+    }
+
+    Widget labelledContent(String label, {String? summary}) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label),
+          if (summary != null && summary.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            MFMText(
+              text: summary,
+              bigEmojiCode: false,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              currentServerHost: data.note?.user.host,
+            ),
+          ],
+        ],
+      );
+    }
+
+    switch (data.notificationType) {
+      case NotificationType.note:
+        return card(
+          content: labelledContent(
+            S.current.notifyNewNote,
+            summary: _noteSummary(data.note),
+          ),
+          onTap: openNote,
+        );
+      case NotificationType.follow:
+        return card(
+          content: Text(S.current.notifyFollowedYou),
+          badge: _iconBadge(themes, TablerIcons.plus, themes.accentColor),
+          onTap: openUser,
+        );
+      case NotificationType.mention:
+        return card(
+          content: labelledContent(
+            S.current.notifyMentionedYou,
+            summary: _noteSummary(data.note),
+          ),
+          badge: _iconBadge(themes, TablerIcons.at, themes.mentionColor),
+          onTap: openNote,
+        );
+      case NotificationType.reply:
+        return card(
+          content: labelledContent(
+            S.current.notifyRepliedToYou,
+            summary: _noteSummary(data.note),
+          ),
+          badge: _iconBadge(
+            themes,
+            TablerIcons.arrow_back_up,
+            themes.accentColor,
+          ),
+          onTap: openNote,
+        );
+      case NotificationType.renote:
+        return card(
+          content: labelledContent(
+            S.current.notifyRenoted,
+            summary: _noteSummary(data.note?.renote),
+          ),
+          badge: _iconBadge(themes, TablerIcons.repeat, themes.reNoteColor),
+          onTap: openNote,
+        );
+      case NotificationType.quote:
+        return card(
+          content: labelledContent(
+            S.current.notifyQuoted,
+            summary: _noteSummary(data.note),
+          ),
+          badge: _iconBadge(themes, TablerIcons.quote, themes.accentColor),
+          onTap: openNote,
+        );
+      case NotificationType.reaction:
+        return card(
+          content: labelledContent(
+            S.current.notifyReacted,
+            summary: _noteSummary(data.note),
+          ),
+          badge: _reactionBadge(themes),
+          onTap: openNote,
+        );
+      case NotificationType.pollEnded:
+        return card(
+          name: Text(S.current.notifyPollEnded),
+          content: labelledContent(
+            S.current.voteResult,
+            summary: _noteSummary(data.note),
+          ),
+          badge: _iconBadge(
+            themes,
+            TablerIcons.chart_arrows,
+            themes.successColor,
+          ),
+          onTap: openNote,
+        );
+      case NotificationType.scheduledNotePosted:
+        return card(
+          name: Text(S.current.notifyScheduledNotePosted),
+          content: labelledContent(
+            S.current.notifyScheduledNotePostedDescription,
+            summary: _noteSummary(data.note),
+          ),
+          avatar: currentUserAvatar(TablerIcons.send),
+          badge: _iconBadge(themes, TablerIcons.send, themes.successColor),
+          onTap: openNote,
+        );
+      case NotificationType.scheduledNotePostFailed:
+        return card(
+          name: Text(S.current.notifyScheduledNotePostFailed),
+          content: labelledContent(
+            S.current.notifyScheduledNotePostFailedDescription,
+            summary: _draftSummary(data.noteDraft),
+          ),
+          avatar: currentUserAvatar(TablerIcons.alert_triangle),
+          badge: _iconBadge(
+            themes,
+            TablerIcons.alert_triangle,
+            themes.errorColor,
+          ),
+        );
+      case NotificationType.receiveFollowRequest:
+        return card(
+          content: Text(S.current.notifyReceiveFollowRequest),
+          badge: _iconBadge(themes, TablerIcons.clock, themes.accentColor),
+          footer: _followRequestFooter(
+            themes,
+            followRequestAction.value,
+            respondToFollowRequest,
+          ),
+          onTap: openUser,
+        );
+      case NotificationType.followRequestAccepted:
+        return card(
+          content: labelledContent(
+            S.current.notifyFollowedAccepted,
+            summary: data.message,
+          ),
+          badge: _iconBadge(themes, TablerIcons.check, themes.successColor),
+          onTap: openUser,
+        );
+      case NotificationType.roleAssigned:
+        return card(
+          name: Text(S.current.notifyRoleAssigned),
+          content: Text(data.role?.name ?? S.current.notifyRoleAssigned),
+          avatar: currentUserAvatar(TablerIcons.badges),
+          badge: data.role?.iconUrl != null
+              ? _imageBadge(themes, data.role!.iconUrl!)
+              : _iconBadge(themes, TablerIcons.badges, themes.accentColor),
+        );
+      case NotificationType.chatRoomInvitationReceived:
+        return card(
+          name: Text(S.current.notifyChatRoomInvitationUnsupported),
+          content: Text(S.current.notifyNotSupport(data.type)),
+          avatar: _iconAvatar(TablerIcons.messages, themes.accentColor),
+          badge: _iconBadge(themes, TablerIcons.messages, themes.warnColor),
+        );
+      case NotificationType.achievementEarned:
+        return card(
+          name: Text(S.current.notifyAchievementEarned),
+          content: Text(achievementTitle(context, data.achievement)),
+          avatar: currentUserAvatar(TablerIcons.medal),
+          badge: _iconBadge(themes, TablerIcons.medal, themes.warnColor),
+        );
+      case NotificationType.exportCompleted:
+        return card(
+          name: Text(S.current.notifyExportCompleted),
+          content: Text(_exportedEntityName(data.exportedEntity)),
+          avatar: currentUserAvatar(TablerIcons.archive),
+          badge: _iconBadge(themes, TablerIcons.archive, themes.successColor),
+        );
+      case NotificationType.login:
+        return card(
+          name: Text(S.current.notifyLogin),
+          content: Text(S.current.notifyLoginDescription),
+          avatar: currentUserAvatar(TablerIcons.login_2),
+          badge: _iconBadge(themes, TablerIcons.login_2, themes.accentColor),
+        );
+      case NotificationType.createToken:
+        return card(
+          name: Text(S.current.notifyCreateToken),
+          content: Text(S.current.notifyCreateTokenDescription),
+          avatar: currentUserAvatar(TablerIcons.key),
+          badge: _iconBadge(themes, TablerIcons.key, themes.warnColor),
+        );
+      case NotificationType.app:
+        return card(
+          name: Text(
+            data.header?.trim().isNotEmpty == true
+                ? data.header!
+                : S.current.notifyApp,
+          ),
+          content: MFMText(text: data.body ?? '', bigEmojiCode: false),
+          avatar: data.icon != null
+              ? MkImage(
+                  data.icon!,
+                  shape: BoxShape.circle,
+                  width: double.infinity,
+                  height: double.infinity,
+                )
+              : _iconAvatar(TablerIcons.apps, themes.accentColor),
+        );
+      case NotificationType.test:
+        return card(
+          name: Text(S.current.notifyTest),
+          content: Text(S.current.notifyTestDescription),
+          avatar: currentUserAvatar(TablerIcons.bell),
+          badge: _iconBadge(themes, TablerIcons.bell, themes.accentColor),
+        );
+      case NotificationType.reactionGrouped:
+        final isLikeOnly =
+            data.note?.reactionAcceptance == NoteReactionAcceptance.likeOnly;
+        return card(
+          name: Text(
+            S.current.notifyReactionGrouped(data.reactions?.length ?? 0),
+          ),
+          content: _reactionUsers(context, themes),
+          avatar: _iconAvatar(
+            isLikeOnly ? TablerIcons.heart : TablerIcons.plus,
+            themes.warnColor,
+          ),
+          onTap: openNote,
+        );
+      case NotificationType.renoteGrouped:
+        return card(
+          name: Text(S.current.notifyRenoteGrouped(data.users?.length ?? 0)),
+          content: _renoteUsers(context),
+          avatar: _iconAvatar(TablerIcons.repeat, themes.reNoteColor),
+          onTap: openNote,
+        );
+      case NotificationType.unknown:
+        return card(
+          name: Text(S.current.notifyNotSupport(data.type)),
+          content: Text(data.type),
+          avatar: _iconAvatar(TablerIcons.help, themes.warnColor),
+        );
+    }
+  }
+
+  Widget _reactionBadge(ThemeColorModel themes) {
+    if (data.reaction == null) {
+      return _iconBadge(themes, TablerIcons.help, themes.warnColor);
+    }
+    return Container(
+      decoration: BoxDecoration(
+        color: themes.panelColor,
+        shape: BoxShape.circle,
+        boxShadow: [BoxShadow(color: themes.panelColor, spreadRadius: 3)],
+      ),
+      padding: const EdgeInsets.all(3),
+      child: SizedBox(
+        width: 20,
+        height: 20,
+        child: ReactionsIcon(
+          emojiCode: data.reaction!,
+          emojis: data.note?.reactionEmojis,
+        ),
+      ),
+    );
+  }
+
+  Widget _reactionUsers(BuildContext context, ThemeColorModel themes) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final item in data.reactions ?? const <NoteReaction>[])
+          GestureDetector(
+            onTap: () => context.push('/user/${item.user.id}'),
+            child: SizedBox(
+              width: 38,
+              height: 38,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  MkImage(
+                    item.user.avatarUrl ?? '',
+                    blurHash: item.user.avatarBlurhash,
+                    shape: BoxShape.circle,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                  Positioned(
+                    right: -2,
+                    bottom: -2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: themes.panelColor,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(3),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: ReactionsIcon(
+                          emojiCode: item.reaction,
+                          emojis: data.note?.reactionEmojis,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _renoteUsers(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final user in data.users ?? const [])
+          GestureDetector(
+            onTap: () => context.push('/user/${user.id}'),
+            child: MkImage(
+              user.avatarUrl ?? '',
+              blurHash: user.avatarBlurhash,
+              shape: BoxShape.circle,
+              width: 38,
+              height: 38,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+Widget _followRequestFooter(
+  ThemeColorModel themes,
+  _FollowRequestAction action,
+  Future<void> Function(bool accept) respond,
+) {
+  if (action == _FollowRequestAction.accepted) {
+    return Text(S.current.notifyAccepted);
+  }
+  if (action == _FollowRequestAction.rejected) {
+    return Text(S.current.notifyRejected);
+  }
+  final loading = action == _FollowRequestAction.loading;
+  return Row(
+    children: [
+      FilledButton.icon(
+        onPressed: loading ? null : () => respond(true),
+        icon: const Icon(TablerIcons.check, size: 16),
+        label: Text(S.current.notifyAccept),
+        style: FilledButton.styleFrom(
+          backgroundColor: themes.successColor,
+          foregroundColor: themes.fgOnAccentColor,
+        ),
+      ),
+      const SizedBox(width: 8),
+      FilledButton.icon(
+        onPressed: loading ? null : () => respond(false),
+        icon: const Icon(TablerIcons.x, size: 16),
+        label: Text(S.current.notifyReject),
+        style: FilledButton.styleFrom(
+          backgroundColor: themes.errorColor,
+          foregroundColor: themes.fgOnAccentColor,
+        ),
+      ),
+      if (loading) ...[
+        const SizedBox(width: 12),
+        const SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      ],
+    ],
+  );
+}
+
+Widget _iconBadge(ThemeColorModel themes, IconData icon, Color color) {
+  return Container(
+    width: 22,
+    height: 22,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: color,
+      boxShadow: [BoxShadow(color: themes.panelColor, spreadRadius: 3)],
+    ),
+    child: Icon(icon, size: 15, color: themes.fgOnAccentColor),
+  );
+}
+
+Widget _imageBadge(ThemeColorModel themes, String url) {
+  return Container(
+    width: 22,
+    height: 22,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: themes.panelColor,
+      boxShadow: [BoxShadow(color: themes.panelColor, spreadRadius: 3)],
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: MkImage(url, shape: BoxShape.circle),
+  );
+}
+
+Widget _iconAvatar(IconData icon, Color color) {
+  return Container(
+    width: double.infinity,
+    height: double.infinity,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    child: const SizedBox(),
+  ).withCenteredIcon(icon);
+}
+
+extension on Widget {
+  Widget withCenteredIcon(IconData icon) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        this,
+        Icon(icon, size: 28, color: Colors.white),
+      ],
+    );
+  }
+}
+
+String _noteSummary(NoteModel? note) {
+  if (note == null) {
+    return '';
+  }
+  return '${note.cw ?? ''}${note.text ?? ''}'.replaceAll('\n', ' ').trim();
+}
+
+String _draftSummary(NotificationNoteDraft? draft) {
+  if (draft == null) {
+    return '';
+  }
+  return '${draft.cw ?? ''}${draft.text ?? ''}'.replaceAll('\n', ' ').trim();
+}
+
+String _exportedEntityName(String? value) {
+  switch (value) {
+    case 'antenna':
+      return S.current.exportEntityAntenna;
+    case 'blocking':
+      return S.current.exportEntityBlocking;
+    case 'clip':
+      return S.current.exportEntityClip;
+    case 'customEmoji':
+      return S.current.exportEntityCustomEmoji;
+    case 'favorite':
+      return S.current.exportEntityFavorite;
+    case 'following':
+      return S.current.exportEntityFollowing;
+    case 'muting':
+      return S.current.exportEntityMuting;
+    case 'note':
+      return S.current.exportEntityNote;
+    case 'userList':
+      return S.current.exportEntityUserList;
+    default:
+      return value ?? '-';
   }
 }

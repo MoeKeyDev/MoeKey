@@ -60,21 +60,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "${type}Непідтримувані типи сповіщень:";
 
-  static String m17(seconds) => "${seconds}кілька секунд тому.";
+  static String m17(count) => "${count} reactions";
 
-  static String m18(msg) => "\n ${msg}Не вдалося завантажити";
+  static String m18(count) => "${count} renotes";
 
-  static String m19(count) => "${count}Загальна кількість голосів";
+  static String m19(seconds) => "${seconds}кілька секунд тому.";
 
-  static String m20(count) => "${count}людина, яку утримують заради викупу";
+  static String m20(msg) => "\n ${msg}Не вдалося завантажити";
 
-  static String m21(index) => "${index}Параметри";
+  static String m21(count) => "${count}Загальна кількість голосів";
 
-  static String m22(index) => "${index}Опція не може бути порожньою";
+  static String m22(count) => "${count}людина, яку утримують заради викупу";
 
-  static String m23(datetime) => "${datetime}кінцевий термін після завершення";
+  static String m23(index) => "${index}Параметри";
 
-  static String m24(years) => "${years}...багато років тому.";
+  static String m24(index) => "${index}Опція не може бути порожньою";
+
+  static String m25(datetime) => "${datetime}кінцевий термін після завершення";
+
+  static String m26(years) => "${years}...багато років тому.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -182,6 +186,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Нещодавні дописувачі",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("користувач"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("Антени"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Заблоковані користувачі",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Добірки"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Кастомні емоджі",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Обране"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("Підписки"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage(
+      "Заглушені користувачі",
+    ),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Записи"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("Списки"),
     "favorite": MessageLookupByLibrary.simpleMessage("закладка (Інтернет)"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Ім\'я папки"),
@@ -296,7 +315,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("сповіщення"),
     "notifications": MessageLookupByLibrary.simpleMessage("сповіщення"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Прийняти"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Запит на підписку прийнято",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Досягнення відкрито",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("повний"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage(
+      "Сповіщення від додатків",
+    ),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "New access token created",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "If this was not you, revoke the token from the web client immediately",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "Export completed",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("скринінг"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "Ваш запит на увагу схвалено.",
@@ -304,12 +348,49 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "У вас з\'явилися нові підписники.",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Login detected"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Your account was just signed in to",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "Позначте все як прочитане",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage("Говорячи про мою"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("Згадка"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("приватний лист"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Posted a new note"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("Poll ended"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Цитування"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("Реакції"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Ви отримали запит на підписку",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Відхилити"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("Відхилити"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("Поширення"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage("Відповіді"),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage(
+      "A role was assigned to you",
+    ),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note failed",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Your scheduled note could not be posted",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note posted",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Your scheduled note was posted"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test notification"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Notifications will be displayed like this",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("визначити"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "Перейдіть до Відображення в браузері",
@@ -373,7 +454,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("цей сайт"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("віддалено"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("Виберіть тег"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
@@ -406,7 +487,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("Без категорії"),
     "unfollow": MessageLookupByLibrary.simpleMessage("Скасувати відповідь"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("Дата оновлення"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
       "Завантажити з веб-сайту",
     ),
@@ -432,8 +513,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("перевірте."),
     "viewMore": MessageLookupByLibrary.simpleMessage("Переглянути більше"),
     "vote": MessageLookupByLibrary.simpleMessage("референдум"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("дата закінчення"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Допускається багаторазове голосування",
@@ -443,12 +524,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "Кількість голосів не може бути менше двох",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Підбито підсумки голосування",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

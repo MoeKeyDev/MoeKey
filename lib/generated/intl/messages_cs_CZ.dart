@@ -60,21 +60,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "${type}Nepodporované typy oznámení:";
 
-  static String m17(seconds) => "${seconds}před několika sekundami";
+  static String m17(count) => "${count} reactions";
 
-  static String m18(msg) => "\n ${msg}Odeslání se nezdařilo";
+  static String m18(count) => "${count} renotes";
 
-  static String m19(count) => "${count}Celkový počet hlasů";
+  static String m19(seconds) => "${seconds}před několika sekundami";
 
-  static String m20(count) => "${count}osoba držená za výkupné";
+  static String m20(msg) => "\n ${msg}Odeslání se nezdařilo";
 
-  static String m21(index) => "${index}Možnosti";
+  static String m21(count) => "${count}Celkový počet hlasů";
 
-  static String m22(index) => "${index}Tato možnost nesmí být prázdná";
+  static String m22(count) => "${count}osoba držená za výkupné";
 
-  static String m23(datetime) => "${datetime}lhůta po dokončení";
+  static String m23(index) => "${index}Možnosti";
 
-  static String m24(years) => "${years}...před lety";
+  static String m24(index) => "${index}Tato možnost nesmí být prázdná";
+
+  static String m25(datetime) => "${datetime}lhůta po dokončení";
+
+  static String m26(years) => "${years}...před lety";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -182,6 +186,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Nedávní přispěvatelé",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("uživatel"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("Antény"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Blokovaní uživatelé",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Oříznout"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Vlastní emoji",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Oblíbené"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("Sledovaní"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage(
+      "Zltumení uživatelé",
+    ),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Poznámky"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("Seznamy"),
     "favorite": MessageLookupByLibrary.simpleMessage("záložka (Internet)"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Název složky"),
@@ -282,7 +301,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("oznámení"),
     "notifications": MessageLookupByLibrary.simpleMessage("oznámení"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Souhlasím"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Vaše žádost o sledování byla přijata",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Úspěch odemčen",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("kompletní"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage(
+      "Oznámení z propojených aplikací",
+    ),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "New access token created",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "If this was not you, revoke the token from the web client immediately",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "Export completed",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("screening"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "Vaše žádost o pozornost byla schválena.",
@@ -290,14 +334,53 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "Máte nové příznivce.",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Login detected"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Your account was just signed in to",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "Označit vše jako přečtené",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage(
       "Když už mluvíme o mém",
     ),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("Zmínění"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("soukromý dopis"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Posted a new note"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage(
+      "Výsledky ankety jsou k dispozici",
+    ),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Citovat"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("Reakce"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Obdrželi jste žádost o sledování",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Odmítnout"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("Odmítnout"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("Přeposlat"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage("Odpovědi"),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage(
+      "A role was assigned to you",
+    ),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note failed",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Your scheduled note could not be posted",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note posted",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Your scheduled note was posted"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test notification"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Notifications will be displayed like this",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("definovat"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "Přejít na zobrazení prohlížeče",
@@ -361,7 +444,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("tato stránka"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("na dálku"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("Vybrat značku"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
@@ -390,7 +473,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("Nekategorizované"),
     "unfollow": MessageLookupByLibrary.simpleMessage("Zrušit sledování"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("Datum aktualizace"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
       "Nahrávání z webové stránky",
     ),
@@ -412,8 +495,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("podívejte se"),
     "viewMore": MessageLookupByLibrary.simpleMessage("Zobrazit více"),
     "vote": MessageLookupByLibrary.simpleMessage("referendum"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("datum uzávěrky"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Povoleno více hlasů",
@@ -425,12 +508,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "Počet hlasů nesmí být menší než dva",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Byly vygenerovány výsledky hlasování",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

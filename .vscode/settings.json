@@ -8,7 +8,7 @@
             {
                 "match": "\\.arb$",
                 "isAsync": true,
-                "cmd": "flutter pub global run intl_utils:generate"
+                "cmd": "dart run intl_utils:generate"
             }
         ]
     }

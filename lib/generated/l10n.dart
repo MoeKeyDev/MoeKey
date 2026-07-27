@@ -28,10 +28,9 @@ class S {
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -1275,6 +1274,311 @@ class S {
     return Intl.message(
       '你的关注请求被通过了',
       name: 'notifyFollowedAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `发布了新帖子`
+  String get notifyNewNote {
+    return Intl.message('发布了新帖子', name: 'notifyNewNote', desc: '', args: []);
+  }
+
+  /// `在帖子中提到了你`
+  String get notifyMentionedYou {
+    return Intl.message(
+      '在帖子中提到了你',
+      name: 'notifyMentionedYou',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `回复了你的帖子`
+  String get notifyRepliedToYou {
+    return Intl.message(
+      '回复了你的帖子',
+      name: 'notifyRepliedToYou',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `转发了你的帖子`
+  String get notifyRenoted {
+    return Intl.message('转发了你的帖子', name: 'notifyRenoted', desc: '', args: []);
+  }
+
+  /// `引用了你的帖子`
+  String get notifyQuoted {
+    return Intl.message('引用了你的帖子', name: 'notifyQuoted', desc: '', args: []);
+  }
+
+  /// `回应了你的帖子`
+  String get notifyReacted {
+    return Intl.message('回应了你的帖子', name: 'notifyReacted', desc: '', args: []);
+  }
+
+  /// `投票已结束`
+  String get notifyPollEnded {
+    return Intl.message('投票已结束', name: 'notifyPollEnded', desc: '', args: []);
+  }
+
+  /// `定时帖子发布成功`
+  String get notifyScheduledNotePosted {
+    return Intl.message(
+      '定时帖子发布成功',
+      name: 'notifyScheduledNotePosted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `预定的帖子已经发布`
+  String get notifyScheduledNotePostedDescription {
+    return Intl.message(
+      '预定的帖子已经发布',
+      name: 'notifyScheduledNotePostedDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `定时帖子发布失败`
+  String get notifyScheduledNotePostFailed {
+    return Intl.message(
+      '定时帖子发布失败',
+      name: 'notifyScheduledNotePostFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `预定的帖子未能发布`
+  String get notifyScheduledNotePostFailedDescription {
+    return Intl.message(
+      '预定的帖子未能发布',
+      name: 'notifyScheduledNotePostFailedDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `请求关注你`
+  String get notifyReceiveFollowRequest {
+    return Intl.message(
+      '请求关注你',
+      name: 'notifyReceiveFollowRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `你被授予了一个角色`
+  String get notifyRoleAssigned {
+    return Intl.message(
+      '你被授予了一个角色',
+      name: 'notifyRoleAssigned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `暂不支持聊天室邀请`
+  String get notifyChatRoomInvitationUnsupported {
+    return Intl.message(
+      '暂不支持聊天室邀请',
+      name: 'notifyChatRoomInvitationUnsupported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `获得了新成就`
+  String get notifyAchievementEarned {
+    return Intl.message(
+      '获得了新成就',
+      name: 'notifyAchievementEarned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `导出完成`
+  String get notifyExportCompleted {
+    return Intl.message(
+      '导出完成',
+      name: 'notifyExportCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `检测到一次登录`
+  String get notifyLogin {
+    return Intl.message('检测到一次登录', name: 'notifyLogin', desc: '', args: []);
+  }
+
+  /// `你的账户刚刚发生了一次登录`
+  String get notifyLoginDescription {
+    return Intl.message(
+      '你的账户刚刚发生了一次登录',
+      name: 'notifyLoginDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `创建了新的访问令牌`
+  String get notifyCreateToken {
+    return Intl.message(
+      '创建了新的访问令牌',
+      name: 'notifyCreateToken',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `如果这不是你本人的操作，请立即在网页版中撤销该令牌`
+  String get notifyCreateTokenDescription {
+    return Intl.message(
+      '如果这不是你本人的操作，请立即在网页版中撤销该令牌',
+      name: 'notifyCreateTokenDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `应用通知`
+  String get notifyApp {
+    return Intl.message('应用通知', name: 'notifyApp', desc: '', args: []);
+  }
+
+  /// `测试通知`
+  String get notifyTest {
+    return Intl.message('测试通知', name: 'notifyTest', desc: '', args: []);
+  }
+
+  /// `通知将以这种方式显示`
+  String get notifyTestDescription {
+    return Intl.message(
+      '通知将以这种方式显示',
+      name: 'notifyTestDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} 个回应`
+  String notifyReactionGrouped(Object count) {
+    return Intl.message(
+      '$count 个回应',
+      name: 'notifyReactionGrouped',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} 次转发`
+  String notifyRenoteGrouped(Object count) {
+    return Intl.message(
+      '$count 次转发',
+      name: 'notifyRenoteGrouped',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `接受`
+  String get notifyAccept {
+    return Intl.message('接受', name: 'notifyAccept', desc: '', args: []);
+  }
+
+  /// `拒绝`
+  String get notifyReject {
+    return Intl.message('拒绝', name: 'notifyReject', desc: '', args: []);
+  }
+
+  /// `已接受关注请求`
+  String get notifyAccepted {
+    return Intl.message('已接受关注请求', name: 'notifyAccepted', desc: '', args: []);
+  }
+
+  /// `已拒绝关注请求`
+  String get notifyRejected {
+    return Intl.message('已拒绝关注请求', name: 'notifyRejected', desc: '', args: []);
+  }
+
+  /// `操作失败，请稍后重试`
+  String get notifyActionFailed {
+    return Intl.message(
+      '操作失败，请稍后重试',
+      name: 'notifyActionFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `天线`
+  String get exportEntityAntenna {
+    return Intl.message('天线', name: 'exportEntityAntenna', desc: '', args: []);
+  }
+
+  /// `屏蔽用户`
+  String get exportEntityBlocking {
+    return Intl.message(
+      '屏蔽用户',
+      name: 'exportEntityBlocking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `便签`
+  String get exportEntityClip {
+    return Intl.message('便签', name: 'exportEntityClip', desc: '', args: []);
+  }
+
+  /// `自定义表情`
+  String get exportEntityCustomEmoji {
+    return Intl.message(
+      '自定义表情',
+      name: 'exportEntityCustomEmoji',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `收藏`
+  String get exportEntityFavorite {
+    return Intl.message('收藏', name: 'exportEntityFavorite', desc: '', args: []);
+  }
+
+  /// `关注`
+  String get exportEntityFollowing {
+    return Intl.message(
+      '关注',
+      name: 'exportEntityFollowing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `静音用户`
+  String get exportEntityMuting {
+    return Intl.message('静音用户', name: 'exportEntityMuting', desc: '', args: []);
+  }
+
+  /// `帖子`
+  String get exportEntityNote {
+    return Intl.message('帖子', name: 'exportEntityNote', desc: '', args: []);
+  }
+
+  /// `用户列表`
+  String get exportEntityUserList {
+    return Intl.message(
+      '用户列表',
+      name: 'exportEntityUserList',
       desc: '',
       args: [],
     );

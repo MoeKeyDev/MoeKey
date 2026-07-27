@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HoverBuilder extends StatefulWidget {
@@ -17,6 +16,10 @@ class _HoverBuilderState extends State<HoverBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS);
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (event) {
@@ -35,7 +38,7 @@ class _HoverBuilderState extends State<HoverBuilder> {
           widget.onHover!(false);
         }
       },
-      child: Platform.isAndroid || Platform.isIOS
+      child: isMobile
           ? Listener(
               onPointerDown: (event) {
                 setState(() {

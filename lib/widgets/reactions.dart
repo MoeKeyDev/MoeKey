@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 
 import '../status/misskey_api.dart';
@@ -24,13 +23,14 @@ String? parseString(String input) {
 }
 
 class ReactionsListComponent extends HookConsumerWidget {
-  const ReactionsListComponent(
-      {super.key,
-      this.emojis,
-      required this.reactionsList,
-      required this.id,
-      this.disableReactions = false,
-      this.myReaction});
+  const ReactionsListComponent({
+    super.key,
+    this.emojis,
+    required this.reactionsList,
+    required this.id,
+    this.disableReactions = false,
+    this.myReaction,
+  });
 
   final Map? emojis;
   final Map<String, int> reactionsList;
@@ -44,32 +44,27 @@ class ReactionsListComponent extends HookConsumerWidget {
     var siteEmoji = ref.watch(apiEmojisProvider);
     var list = <Widget>[];
     // 倒序排序
-    for (var item in reactionsList.entries.toList()
-      ..sort(
-        (a, b) {
+    for (var item
+        in reactionsList.entries.toList()..sort((a, b) {
           return b.value.compareTo(a.value);
-        },
-      )) {
+        })) {
       var code = parseString(item.key);
       var isOutSite = false;
       if (code != null && siteEmoji.valueOrNull?[code] == null) {
         isOutSite = true;
       }
       var container = ReactionButton(
-          item: item,
-          disableReactions: disableReactions,
-          isOutSite: isOutSite,
-          myReaction: myReaction,
-          id: id,
-          themes: themes,
-          emojis: emojis);
+        item: item,
+        disableReactions: disableReactions,
+        isOutSite: isOutSite,
+        myReaction: myReaction,
+        id: id,
+        themes: themes,
+        emojis: emojis,
+      );
       list.add(container);
     }
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: list,
-    );
+    return Wrap(spacing: 6, runSpacing: 6, children: list);
   }
 }
 
@@ -96,67 +91,62 @@ class ReactionButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return HoverBuilder(
-        key: ValueKey(item.key),
-        builder: (context, isHover) {
-          isHover = isHover && !disableReactions;
-          return GestureDetector(
-            onTap: disableReactions
-                ? null
-                : () {
-                    if (isOutSite) return;
+      key: ValueKey(item.key),
+      builder: (context, isHover) {
+        isHover = isHover && !disableReactions;
+        return GestureDetector(
+          onTap: disableReactions
+              ? null
+              : () {
+                  if (isOutSite) return;
 
-                    if (item.key != myReaction) {
+                  if (item.key != myReaction) {
+                    ref
+                        .read(misskeyApisProvider)
+                        .notes
+                        .createReactions(noteId: id, reaction: item.key);
+                  } else {
+                    if (myReaction != null) {
                       ref
                           .read(misskeyApisProvider)
                           .notes
-                          .createReactions(noteId: id, reaction: item.key);
-                    } else {
-                      if (myReaction != null) {
-                        ref
-                            .read(misskeyApisProvider)
-                            .notes
-                            .deleteReactions(noteId: id);
-                      }
+                          .deleteReactions(noteId: id);
                     }
-                  },
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                  color: isOutSite
-                      ? themes.fgColor.withOpacity(0.05)
-                      : themes.fgColor.withOpacity(isHover ? 0.25 : 0.1),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(4),
-                  ),
-                  border: Border.all(
-                      color: item.key == myReaction && !disableReactions
-                          ? themes.accentedBgColor.withOpacity(0.7)
-                          : Colors.transparent,
-                      width: 1)),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ReactionsIcon(emojiCode: item.key, emojis: emojis),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(item.value.toString())
-                ],
+                  }
+                },
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: isOutSite
+                  ? themes.fgColor.withValues(alpha: 0.05)
+                  : themes.fgColor.withValues(alpha: isHover ? 0.25 : 0.1),
+              borderRadius: const BorderRadius.all(Radius.circular(4)),
+              border: Border.all(
+                color: item.key == myReaction && !disableReactions
+                    ? themes.accentedBgColor.withValues(alpha: 0.7)
+                    : Colors.transparent,
+                width: 1,
               ),
             ),
-          );
-        });
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ReactionsIcon(emojiCode: item.key, emojis: emojis),
+                const SizedBox(width: 4),
+                Text(item.value.toString()),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 
 class ReactionsIcon extends HookConsumerWidget {
-  const ReactionsIcon({
-    super.key,
-    required this.emojiCode,
-    this.emojis,
-  });
+  const ReactionsIcon({super.key, required this.emojiCode, this.emojis});
 
   final String emojiCode;
   final Map? emojis;
@@ -164,7 +154,6 @@ class ReactionsIcon extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var emoji = ref.watch(apiEmojisProvider);
-    getApplicationDocumentsDirectory();
     var code = parseString(emojiCode);
     if (code != null) {
       String url = "";
@@ -175,18 +164,11 @@ class ReactionsIcon extends HookConsumerWidget {
         url = emojis?[code];
       }
       if (url != "") {
-        return SizedBox(
-          height: 28,
-          child: MkImage(url, height: 28),
-        );
+        return SizedBox(height: 28, child: MkImage(url, height: 28));
       } else {
         return Text(code);
       }
     }
-    return Twemoji(
-      emoji: emojiCode,
-      height: 28,
-      width: 28,
-    );
+    return Twemoji(emoji: emojiCode, height: 28, width: 28);
   }
 }

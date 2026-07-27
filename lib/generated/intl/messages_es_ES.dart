@@ -60,21 +60,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "${type}Tipos de notificación no compatibles:";
 
-  static String m17(seconds) => "${seconds}hace unos segundos";
+  static String m17(count) => "${count} usuarios han reaccionado";
 
-  static String m18(msg) => "\n ${msg}Error de carga";
+  static String m18(count) => "${count} usuarios han renotado";
 
-  static String m19(count) => "${count}Total de votos";
+  static String m19(seconds) => "${seconds}hace unos segundos";
 
-  static String m20(count) => "${count}persona secuestrada";
+  static String m20(msg) => "\n ${msg}Error de carga";
 
-  static String m21(index) => "${index}Opciones";
+  static String m21(count) => "${count}Total de votos";
 
-  static String m22(index) => "${index}La opción no puede estar vacía";
+  static String m22(count) => "${count}persona secuestrada";
 
-  static String m23(datetime) => "${datetime}plazo posterior a la finalización";
+  static String m23(index) => "${index}Opciones";
 
-  static String m24(years) => "${years}...hace años";
+  static String m24(index) => "${index}La opción no puede estar vacía";
+
+  static String m25(datetime) => "${datetime}plazo posterior a la finalización";
+
+  static String m26(years) => "${years}...hace años";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -180,6 +184,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Colaboradores recientes",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("usuario"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("Antenas"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Usuarios bloqueados",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Clip"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Emojis personalizados",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Favoritos"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("Siguiendo"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage(
+      "Usuarios silenciados",
+    ),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Notas"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("Lista"),
     "favorite": MessageLookupByLibrary.simpleMessage("Marcador (Internet)"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Nombre de la carpeta"),
@@ -296,7 +315,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("notificaciones"),
     "notifications": MessageLookupByLibrary.simpleMessage("notificaciones"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Aceptar"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Tu solicitud de seguimiento fue aceptada",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Logro desbloqueado",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("completo"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage(
+      "Notificaciones desde aplicaciones",
+    ),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "Token de acceso creado",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "Si no tienes ni idea, elimina el token de acceso a través de \"API\".",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "La exportación se ha completado",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("cribado"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "Su solicitud de atención ha sido aprobada.",
@@ -304,12 +348,55 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "Tienes nuevos seguidores.",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage(
+      "Alguien ha iniciado sesión",
+    ),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Alguien ha iniciado sesión",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "Marcar todo como leído",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage("Hablando de mi"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("Menciones"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("carta privada"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Nueva nota"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage(
+      "Estan disponibles los resultados de la encuesta",
+    ),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Citar"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("Reacción"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Has mandado una solicitud de seguimiento",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Rechazar"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("Rechazar"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("Renotas"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage("Respuestas"),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage("Rol asignado"),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Ha fallado la publicación de una nota programada",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Ha fallado la publicación de una nota programada",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Una nota programada ha sido publicada",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Una nota programada ha sido publicada",
+        ),
+    "notifyTest": MessageLookupByLibrary.simpleMessage(
+      "Notificación de prueba",
+    ),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Las notificaciones tendrán este aspecto",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("defina"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "Ir a Visualización del navegador",
@@ -375,7 +462,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("este sitio"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("a distancia"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage(
       "Seleccionar etiqueta",
     ),
@@ -412,7 +499,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "updatedDate": MessageLookupByLibrary.simpleMessage(
       "Fecha de actualización",
     ),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
       "Cargar desde el sitio web",
     ),
@@ -436,8 +523,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("comprobar"),
     "viewMore": MessageLookupByLibrary.simpleMessage("Ver más"),
     "vote": MessageLookupByLibrary.simpleMessage("referéndum"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("fecha límite"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Votos múltiples permitidos",
@@ -449,12 +536,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "El número de votos no puede ser inferior a dos",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Se han generado los resultados de las votaciones",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

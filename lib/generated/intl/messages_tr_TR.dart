@@ -60,21 +60,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "${type}Desteklenmeyen bildirim türleri:";
 
-  static String m17(seconds) => "${seconds}saniye önce";
+  static String m17(count) => "${count} kullanıcı tepki gösterdi";
 
-  static String m18(msg) => "\n ${msg}Yükleme başarısız";
+  static String m18(count) => "${count} kullanıcıdan gelen hatırlatma";
 
-  static String m19(count) => "${count}Toplam oy sayısı";
+  static String m19(seconds) => "${seconds}saniye önce";
 
-  static String m20(count) => "${count}fidye için tutulan kişi";
+  static String m20(msg) => "\n ${msg}Yükleme başarısız";
 
-  static String m21(index) => "${index}Seçenekler";
+  static String m21(count) => "${count}Toplam oy sayısı";
 
-  static String m22(index) => "${index}Seçenek boş olamaz";
+  static String m22(count) => "${count}fidye için tutulan kişi";
 
-  static String m23(datetime) => "${datetime}kapanış sonrası tarih";
+  static String m23(index) => "${index}Seçenekler";
 
-  static String m24(years) => "${years}yıllar önce";
+  static String m24(index) => "${index}Seçenek boş olamaz";
+
+  static String m25(datetime) => "${datetime}kapanış sonrası tarih";
+
+  static String m26(years) => "${years}yıllar önce";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -174,6 +178,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Son Katkıda Bulunanlar",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("kullanıcı"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("Antenler"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Engellenen kullanıcılar",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Klipler"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Özel Emoji",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Favoriler"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("Takip"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage(
+      "Sessize alınan kullanıcılar",
+    ),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Notlar"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("Listeler"),
     "favorite": MessageLookupByLibrary.simpleMessage("yer imi (İnternet)"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Klasör adı"),
@@ -282,7 +301,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("BİLDİRİMLER"),
     "notifications": MessageLookupByLibrary.simpleMessage("BİLDİRİMLER"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Kabul et"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Takip isteğin kabul edildi.",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Achievement unlocked",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("Tam"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage(
+      "Bağlı uygulamalardan gelen bildirimler",
+    ),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "Bir erişim jetonu oluşturuldu.",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "Eğer bilmiyorsanız, “API” aracılığıyla erişim jetonunu silin.",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "İhracat işlemi tamamlandı.",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("tarama"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "İlgi talebiniz onaylanmıştır.",
@@ -290,14 +334,51 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "Yeni takipçileriniz var.",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Biri oturum açtı"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Biri oturum açtı",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "Hepsini okundu olarak işaretle",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage(
       "Benimkinden bahsetmişken",
     ),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("Bahsetmeler"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("ÖZEL MEKTUP"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Yeni not"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage(
+      "Anket sonuçları açıklandı.",
+    ),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Alıntılar"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("Tepki"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Bir takip isteği aldınız.",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Reddet"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("Reddet"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("Renote"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage("Yanıtlar"),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage("Verilen rol"),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Rezervasyon defterine gönderilemedi",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Rezervasyon defterine gönderilemedi",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Rezervasyon defteri yayınlandı.",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Rezervasyon defteri yayınlandı."),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test bildirimi"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Bildirimler şöyle görünür",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("tanımlamak"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "Tarayıcı Ekranına Git",
@@ -367,7 +448,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("bu site"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("mesafe"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("Etiket Seçin"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
@@ -398,7 +479,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "unfollow": MessageLookupByLibrary.simpleMessage("Takibi bırak"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("Güncelleme Tarihi"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
       "Web sitesinden yükleme",
     ),
@@ -420,8 +501,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("kontrol et"),
     "viewMore": MessageLookupByLibrary.simpleMessage("Daha Fazla Görüntüle"),
     "vote": MessageLookupByLibrary.simpleMessage("referandum"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("kesme tarihi"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Birden fazla oya izin verilir",
@@ -433,12 +514,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "Oy sayısı ikiden az olamaz",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Oylama sonuçları oluşturuldu",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

@@ -59,21 +59,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "نوع الإشعار غير المدعوم: ${type}";
 
-  static String m17(seconds) => "قبل ${seconds} ثانية";
+  static String m17(count) => "${count} reactions";
 
-  static String m18(msg) => "فشل التحميل\n ${msg}";
+  static String m18(count) => "${count} renotes";
 
-  static String m19(count) => "إجمالي الأصوات ${count}";
+  static String m19(seconds) => "قبل ${seconds} ثانية";
 
-  static String m20(count) => "${count} تصويت";
+  static String m20(msg) => "فشل التحميل\n ${msg}";
 
-  static String m21(index) => "الخيار ${index}";
+  static String m21(count) => "إجمالي الأصوات ${count}";
 
-  static String m22(index) => "لا يمكن أن يكون الخيار ${index} فارغًا";
+  static String m22(count) => "${count} تصويت";
 
-  static String m23(datetime) => "ينتهي في ${datetime}";
+  static String m23(index) => "الخيار ${index}";
 
-  static String m24(years) => "قبل ${years} سنة";
+  static String m24(index) => "لا يمكن أن يكون الخيار ${index} فارغًا";
+
+  static String m25(datetime) => "ينتهي في ${datetime}";
+
+  static String m26(years) => "قبل ${years} سنة";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -171,6 +175,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "المستخدمون الذين قدموا المشاركات مؤخرًا",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("المستخدمين"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("الهوائيات"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "الحسابات المحجوبة",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("مشابك"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "إيموجي مخصص",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("المفضلات"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("المتابَعون"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage(
+      "الحسابات المكتومة",
+    ),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("الملاحظات"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("القوائم"),
     "favorite": MessageLookupByLibrary.simpleMessage("المفضلة"),
     "filter": MessageLookupByLibrary.simpleMessage("تصفية"),
     "folderName": MessageLookupByLibrary.simpleMessage("اسم المجلد"),
@@ -271,7 +290,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("عدد المشاركات"),
     "notification": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("السماح"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage("قُبل طلب المتابعة"),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Achievement earned",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("الكل"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage(
+      "إشعارات التطبيقات المرتبطة",
+    ),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "New access token created",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "If this was not you, revoke the token from the web client immediately",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "Export completed",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("تصفية"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "تم قبول طلب متابعتك",
@@ -279,12 +321,49 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "لديك متابعون جدد",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Login detected"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Your account was just signed in to",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "وضع علامة للكل كمقروء",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage("إشاراتي"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("الإشارات"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("الرسائل الخاصة"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Posted a new note"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("انتهى الاستطلاع"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("الاقتباسات"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("التفاعل"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "تلقيتَ طلب متابعة",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("رفض"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("رفض"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("أعاد النشر"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage("الردود"),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage(
+      "A role was assigned to you",
+    ),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note failed",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Your scheduled note could not be posted",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note posted",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Your scheduled note was posted"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test notification"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Notifications will be displayed like this",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("تأكيد"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "الانتقال إلى العرض في المتصفح",
@@ -346,7 +425,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchServers": MessageLookupByLibrary.simpleMessage(
       "البحث عن اسم الخادم أو النطاق",
     ),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("حدد الوسوم"),
     "selectServer": MessageLookupByLibrary.simpleMessage("يرجى اختيار الخادم"),
     "selectUser": MessageLookupByLibrary.simpleMessage("حدد المستخدم"),
@@ -367,7 +446,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("غير مصنف"),
     "unfollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("تاريخ التحديث"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage("تحميل من عنوان ويب"),
     "user": MessageLookupByLibrary.simpleMessage("المستخدم"),
     "userAll": MessageLookupByLibrary.simpleMessage("الكل"),
@@ -387,8 +466,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("عرض"),
     "viewMore": MessageLookupByLibrary.simpleMessage("شاهد المزيد"),
     "vote": MessageLookupByLibrary.simpleMessage("التصويت"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("تاريخ الانتهاء"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "السماح بتعدد الخيارات",
@@ -398,12 +477,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "لا يمكن أن يكون عدد خيارات التصويت أقل من خيارين",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "تم إنشاء نتيجة التصويت",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

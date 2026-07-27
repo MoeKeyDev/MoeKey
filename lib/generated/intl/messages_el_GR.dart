@@ -60,21 +60,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "${type}Μη υποστηριζόμενοι τύποι ειδοποιήσεων:";
 
-  static String m17(seconds) => "${seconds}δευτερόλεπτα πριν";
+  static String m17(count) => "${count} reactions";
 
-  static String m18(msg) => "\n ${msg}Αποτυχία αποστολής";
+  static String m18(count) => "${count} renotes";
 
-  static String m19(count) => "${count}Σύνολο ψήφων";
+  static String m19(seconds) => "${seconds}δευτερόλεπτα πριν";
 
-  static String m20(count) => "${count}πρόσωπο που κρατείται για λύτρα";
+  static String m20(msg) => "\n ${msg}Αποτυχία αποστολής";
 
-  static String m21(index) => "${index}Επιλογές";
+  static String m21(count) => "${count}Σύνολο ψήφων";
 
-  static String m22(index) => "${index}Η επιλογή δεν μπορεί να είναι κενή";
+  static String m22(count) => "${count}πρόσωπο που κρατείται για λύτρα";
 
-  static String m23(datetime) => "${datetime}προθεσμία μετά την ολοκλήρωση";
+  static String m23(index) => "${index}Επιλογές";
 
-  static String m24(years) => "${years}...χρόνια πριν";
+  static String m24(index) => "${index}Η επιλογή δεν μπορεί να είναι κενή";
+
+  static String m25(datetime) => "${datetime}προθεσμία μετά την ολοκλήρωση";
+
+  static String m26(years) => "${years}...χρόνια πριν";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -192,6 +196,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Πρόσφατοι συνεισφέροντες",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("χρήστης"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("Αντένες"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Blocked users",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Κλιπ"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Επιπλέον emoji",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Αγαπημένα"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("Ακολουθεί"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage("Muted users"),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Σημειώματα"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("Λίστες"),
     "favorite": MessageLookupByLibrary.simpleMessage(
       "σελιδοδείκτης (Internet)",
     ),
@@ -304,7 +321,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("ειδοποιήσεις"),
     "notifications": MessageLookupByLibrary.simpleMessage("ειδοποιήσεις"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Αποδοχή"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Follow request accepted",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Achievement earned",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("πλήρες"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage("App notification"),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "New access token created",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "If this was not you, revoke the token from the web client immediately",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "Export completed",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("διαλογή"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "Το αίτημά σας για προσοχή έχει εγκριθεί.",
@@ -312,12 +352,53 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "Έχετε νέους οπαδούς.",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Login detected"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Your account was just signed in to",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "Σημειώστε τα όλα ως αναγνωσμένα",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage("Μιλώντας για το"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("Επισήμανση"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("ιδιωτική επιστολή"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Posted a new note"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("Poll ended"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Παράθεση"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("Αντιδράσεις"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Requested to follow you",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Απόρριψη"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("Απόρριψη"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage(
+      "Κοινοποίηση σημειώματος",
+    ),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage(
+      "Replied to your note",
+    ),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage(
+      "A role was assigned to you",
+    ),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note failed",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Your scheduled note could not be posted",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note posted",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Your scheduled note was posted"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test notification"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Notifications will be displayed like this",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("define"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "Μεταβείτε στην οθόνη του προγράμματος περιήγησης",
@@ -387,7 +468,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("αυτός ο ιστότοπος"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("εξ αποστάσεως"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("Επιλέξτε ετικέτα"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
@@ -424,7 +505,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "updatedDate": MessageLookupByLibrary.simpleMessage(
       "Ημερομηνία ενημέρωσης",
     ),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
       "Ανέβασμα από την ιστοσελίδα",
     ),
@@ -446,8 +527,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("ελέγξτε"),
     "viewMore": MessageLookupByLibrary.simpleMessage("Προβολή περισσότερων"),
     "vote": MessageLookupByLibrary.simpleMessage("δημοψήφισμα"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("ημερομηνία αποκοπής"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Επιτρέπονται πολλαπλές ψήφοι",
@@ -459,12 +540,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "Ο αριθμός των ψήφων δεν μπορεί να είναι μικρότερος από δύο",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Τα αποτελέσματα της ψηφοφορίας έχουν δημιουργηθεί",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

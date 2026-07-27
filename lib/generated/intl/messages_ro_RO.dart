@@ -60,21 +60,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "${type}Tipuri de notificări nesupuse:";
 
-  static String m17(seconds) => "${seconds}secunde în urmă";
+  static String m17(count) => "${count} reactions";
 
-  static String m18(msg) => "\n ${msg}Upload eșuat";
+  static String m18(count) => "${count} renotes";
 
-  static String m19(count) => "${count}Total voturi";
+  static String m19(seconds) => "${seconds}secunde în urmă";
 
-  static String m20(count) => "${count}persoană reținută pentru răscumpărare";
+  static String m20(msg) => "\n ${msg}Upload eșuat";
 
-  static String m21(index) => "${index}Opțiuni";
+  static String m21(count) => "${count}Total voturi";
 
-  static String m22(index) => "${index}Opțiunea nu poate fi goală";
+  static String m22(count) => "${count}persoană reținută pentru răscumpărare";
 
-  static String m23(datetime) => "${datetime}termen de finalizare ulterioară";
+  static String m23(index) => "${index}Opțiuni";
 
-  static String m24(years) => "${years}...ani în urmă";
+  static String m24(index) => "${index}Opțiunea nu poate fi goală";
+
+  static String m25(datetime) => "${datetime}termen de finalizare ulterioară";
+
+  static String m26(years) => "${years}...ani în urmă";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -184,6 +188,23 @@ class MessageLookup extends MessageLookupByLibrary {
       "Contribuții recente",
     ),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("utilizator"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("Antene"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage(
+      "Utilizatori blocați",
+    ),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("Clip"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage(
+      "Emoji personalizate",
+    ),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("Favorite"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage(
+      "Îl urmărești",
+    ),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage(
+      "Utilizatori amuțiți",
+    ),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("Note"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("Liste"),
     "favorite": MessageLookupByLibrary.simpleMessage("marcaj (Internet)"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Numele dosarului"),
@@ -294,7 +315,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("Notes Count"),
     "notification": MessageLookupByLibrary.simpleMessage("notificări"),
     "notifications": MessageLookupByLibrary.simpleMessage("notificări"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("Acceptă"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage(
+      "Follow request accepted",
+    ),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "Achievement earned",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("complet"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage("App notification"),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "New access token created",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "If this was not you, revoke the token from the web client immediately",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage(
+      "Export completed",
+    ),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("screening"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "Cererea dumneavoastră de atenție a fost aprobată.",
@@ -302,12 +346,51 @@ class MessageLookup extends MessageLookupByLibrary {
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage(
       "Aveți noi adepți.",
     ),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("Login detected"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "Your account was just signed in to",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage(
       "Marcați toate ca citite",
     ),
     "notifyMention": MessageLookupByLibrary.simpleMessage("Vorbind despre"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("Mențiune"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("scrisoare privată"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("Posted a new note"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("Poll ended"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("Citează"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("Reacție"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "Requested to follow you",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("Respinge"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("Respinge"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("Re-Note"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage(
+      "Replied to your note",
+    ),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage(
+      "A role was assigned to you",
+    ),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note failed",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage(
+          "Your scheduled note could not be posted",
+        ),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "Scheduled note posted",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("Your scheduled note was posted"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("Test notification"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "Notifications will be displayed like this",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("definiție"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage(
       "Mergeți la Afișarea browserului",
@@ -373,7 +456,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("acest site"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("de la distanță"),
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("Selectați eticheta"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
@@ -406,7 +489,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("Fără categorie"),
     "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("Data actualizării"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage(
       "Încărcare de pe site-ul web",
     ),
@@ -428,8 +511,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("verificați"),
     "viewMore": MessageLookupByLibrary.simpleMessage("Vezi mai multe"),
     "vote": MessageLookupByLibrary.simpleMessage("referendum"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("data limită"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Voturi multiple permise",
@@ -439,12 +522,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "Numărul de voturi nu poate fi mai mic de două",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Rezultatele votării au fost generate",
     ),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

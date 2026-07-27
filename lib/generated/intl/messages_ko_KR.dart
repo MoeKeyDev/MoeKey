@@ -58,21 +58,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "지원하지 않는 알림 유형: ${type}";
 
-  static String m17(seconds) => "${seconds}초 전";
+  static String m17(count) => "${count}명이 리액션했습니다";
 
-  static String m18(msg) => "업로드 실패\n ${msg}";
+  static String m18(count) => "${count}명이 리노트했습니다";
 
-  static String m19(count) => "총 투표수 ${count}";
+  static String m19(seconds) => "${seconds}초 전";
 
-  static String m20(count) => "${count}표";
+  static String m20(msg) => "업로드 실패\n ${msg}";
 
-  static String m21(index) => "${index} 옵션";
+  static String m21(count) => "총 투표수 ${count}";
 
-  static String m22(index) => "${index} 옵션은 비워둘 수 없습니다";
+  static String m22(count) => "${count}표";
 
-  static String m23(datetime) => "${datetime} 후 종료";
+  static String m23(index) => "${index} 옵션";
 
-  static String m24(years) => "${years}년 전";
+  static String m24(index) => "${index} 옵션은 비워둘 수 없습니다";
+
+  static String m25(datetime) => "${datetime} 후 종료";
+
+  static String m26(years) => "${years}년 전";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -142,6 +146,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "exploreUserPined": MessageLookupByLibrary.simpleMessage("고정된 유저"),
     "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("최근 게시한 유저"),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("유저"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("안테나"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage("차단한 유저"),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("클립"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage("커스텀 이모지"),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("즐겨찾기"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("팔로잉"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage("뮤트한 유저"),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("노트"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("리스트"),
     "favorite": MessageLookupByLibrary.simpleMessage("즐겨찾기"),
     "filter": MessageLookupByLibrary.simpleMessage("필터"),
     "folderName": MessageLookupByLibrary.simpleMessage("폴더 이름"),
@@ -222,16 +235,68 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("노트 수"),
     "notification": MessageLookupByLibrary.simpleMessage("알림"),
     "notifications": MessageLookupByLibrary.simpleMessage("알림"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("수락하기"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage("팔로우 요청이 수락되었습니다"),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage(
+      "도전 과제를 달성했습니다",
+    ),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Action failed. Please try again",
+    ),
     "notifyAll": MessageLookupByLibrary.simpleMessage("전체"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage("연동된 앱을 통한 알림"),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Chat room invitations are not supported",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage(
+      "액세스 토큰이 생성되었습니다",
+    ),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "만약 기억이 나지 않는다면 \'API\'를 통해 액세스 토큰을 삭제해 주세요.",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage("추출을 성공함"),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("필터"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "팔로우가 수락되었습니다",
     ),
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("새로운 팔로워가 있습니다"),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("로그인 알림이 있습니다"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "로그인 알림이 있습니다",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("모두 읽음으로 표시"),
     "notifyMention": MessageLookupByLibrary.simpleMessage("받은 멘션"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("멘션"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("다이렉트"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("새 게시물"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("투표 결과가 발표되었습니다"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("인용"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("리액션"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage(
+      "새로운 팔로우 요청이 있습니다",
+    ),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("거절하기"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("거절하기"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("리노트"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage("답글"),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage("역할이 부여 되었습니다."),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "예약 노트의 게시에 실패했습니다.",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage("예약 노트의 게시에 실패했습니다."),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "예약 노트가 게시됐습니다.",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("예약 노트가 게시됐습니다."),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("알림 테스트"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage(
+      "알림이 이렇게 표시됩니다",
+    ),
     "ok": MessageLookupByLibrary.simpleMessage("확인"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage("새 탭에서 열기"),
     "overviews": MessageLookupByLibrary.simpleMessage("요약"),
@@ -279,7 +344,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("로컬"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("리모트"),
     "searchServers": MessageLookupByLibrary.simpleMessage("서버 검색"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("해시태그 선택"),
     "selectServer": MessageLookupByLibrary.simpleMessage("서버를 선택해 주세요"),
     "selectUser": MessageLookupByLibrary.simpleMessage("유저 선택"),
@@ -300,7 +365,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("분류되지 않음"),
     "unfollow": MessageLookupByLibrary.simpleMessage("팔로우 취소"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("업데이트한 날짜"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage("URL로부터"),
     "user": MessageLookupByLibrary.simpleMessage("유저"),
     "userAll": MessageLookupByLibrary.simpleMessage("전체"),
@@ -316,8 +381,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("조회"),
     "viewMore": MessageLookupByLibrary.simpleMessage("더 보기"),
     "vote": MessageLookupByLibrary.simpleMessage("투표"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("투표 기한"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("복수 응답 허용"),
     "voteExpired": MessageLookupByLibrary.simpleMessage("투표 종료됨"),
@@ -325,10 +390,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "투표 항목이 최소 2개 필요합니다",
     ),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage("투표 결과가 생성되었습니다"),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }

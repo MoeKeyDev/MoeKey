@@ -1,11 +1,15 @@
 import 'package:blurhash_shader/blurhash_shader.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-ExtendedResizeImage getExtendedResizeImage(String url) {
-  return ExtendedResizeImage(ExtendedNetworkImageProvider(url, cache: true),
-      maxBytes: 500 << 10);
+ImageProvider<Object> getExtendedResizeImage(String url) {
+  final provider = ExtendedNetworkImageProvider(url, cache: true);
+  if (kIsWeb) {
+    return provider;
+  }
+  return ExtendedResizeImage(provider, maxBytes: 500 << 10);
 }
 
 class MkImage extends StatelessWidget {
@@ -33,9 +37,7 @@ class MkImage extends StatelessWidget {
     // 额外判断svg
     if (url.endsWith(".svg")) {
       return DecoratedBox(
-        decoration: BoxDecoration(
-          shape: shape ?? BoxShape.rectangle,
-        ),
+        decoration: BoxDecoration(shape: shape ?? BoxShape.rectangle),
         child: SvgPicture.network(url, width: width, height: height, fit: fit),
       );
     }
@@ -53,9 +55,7 @@ class MkImage extends StatelessWidget {
             if (constraints.maxWidth == double.infinity) {
               constraintsWidth = constraints.minWidth;
             }
-            Widget child = ColoredBox(
-              color: const Color.fromARGB(40, 0, 0, 0),
-            );
+            Widget child = ColoredBox(color: const Color.fromARGB(40, 0, 0, 0));
             if (blurHash != null && blurHash!.isNotEmpty) {
               child = BlurHash(blurHash!);
             }
@@ -81,10 +81,7 @@ class MkImage extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           child: child,
           transitionBuilder: (child, animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
+            return FadeTransition(opacity: animation, child: child);
           },
         );
       },
@@ -93,8 +90,6 @@ class MkImage extends StatelessWidget {
     if (heroKey != null) {
       image = Hero(tag: heroKey!, child: image);
     }
-    return RepaintBoundary(
-      child: image,
-    );
+    return RepaintBoundary(child: image);
   }
 }

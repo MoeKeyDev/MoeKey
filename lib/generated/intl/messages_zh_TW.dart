@@ -56,21 +56,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(type) => "不支持的通知類型:${type}";
 
-  static String m17(seconds) => "${seconds}秒前";
+  static String m17(count) => "${count} 個回應";
 
-  static String m18(msg) => "上傳失敗\n ${msg}";
+  static String m18(count) => "${count} 次轉發";
 
-  static String m19(count) => "總票數 ${count}";
+  static String m19(seconds) => "${seconds}秒前";
 
-  static String m20(count) => "${count}票";
+  static String m20(msg) => "上傳失敗\n ${msg}";
 
-  static String m21(index) => "選項${index}";
+  static String m21(count) => "總票數 ${count}";
 
-  static String m22(index) => "選項${index}不能為空";
+  static String m22(count) => "${count}票";
 
-  static String m23(datetime) => "${datetime}後截止";
+  static String m23(index) => "選項${index}";
 
-  static String m24(years) => "${years}年前";
+  static String m24(index) => "選項${index}不能為空";
+
+  static String m25(datetime) => "${datetime}後截止";
+
+  static String m26(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -138,6 +142,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "exploreUserPined": MessageLookupByLibrary.simpleMessage("置頂用戶"),
     "exploreUserUpdated": MessageLookupByLibrary.simpleMessage("最近投稿的用戶"),
     "exploreUsers": MessageLookupByLibrary.simpleMessage("用戶"),
+    "exportEntityAntenna": MessageLookupByLibrary.simpleMessage("天線"),
+    "exportEntityBlocking": MessageLookupByLibrary.simpleMessage("封鎖使用者"),
+    "exportEntityClip": MessageLookupByLibrary.simpleMessage("便籤"),
+    "exportEntityCustomEmoji": MessageLookupByLibrary.simpleMessage("自訂表情符號"),
+    "exportEntityFavorite": MessageLookupByLibrary.simpleMessage("我的最愛"),
+    "exportEntityFollowing": MessageLookupByLibrary.simpleMessage("關注"),
+    "exportEntityMuting": MessageLookupByLibrary.simpleMessage("靜音使用者"),
+    "exportEntityNote": MessageLookupByLibrary.simpleMessage("貼文"),
+    "exportEntityUserList": MessageLookupByLibrary.simpleMessage("使用者清單"),
     "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
     "filter": MessageLookupByLibrary.simpleMessage("過濾"),
     "folderName": MessageLookupByLibrary.simpleMessage("文件夾名稱"),
@@ -216,16 +229,58 @@ class MessageLookup extends MessageLookupByLibrary {
     "notesCount": MessageLookupByLibrary.simpleMessage("帖子數"),
     "notification": MessageLookupByLibrary.simpleMessage("通知"),
     "notifications": MessageLookupByLibrary.simpleMessage("通知"),
+    "notifyAccept": MessageLookupByLibrary.simpleMessage("接受"),
+    "notifyAccepted": MessageLookupByLibrary.simpleMessage("已接受關注請求"),
+    "notifyAchievementEarned": MessageLookupByLibrary.simpleMessage("獲得了新成就"),
+    "notifyActionFailed": MessageLookupByLibrary.simpleMessage("操作失敗，請稍後再試"),
     "notifyAll": MessageLookupByLibrary.simpleMessage("全部"),
+    "notifyApp": MessageLookupByLibrary.simpleMessage("應用程式通知"),
+    "notifyChatRoomInvitationUnsupported": MessageLookupByLibrary.simpleMessage(
+      "暫不支援聊天室邀請",
+    ),
+    "notifyCreateToken": MessageLookupByLibrary.simpleMessage("建立了新的存取權杖"),
+    "notifyCreateTokenDescription": MessageLookupByLibrary.simpleMessage(
+      "如果這不是你本人的操作，請立即在網頁版中撤銷該權杖",
+    ),
+    "notifyExportCompleted": MessageLookupByLibrary.simpleMessage("匯出完成"),
     "notifyFilter": MessageLookupByLibrary.simpleMessage("篩選"),
     "notifyFollowedAccepted": MessageLookupByLibrary.simpleMessage(
       "你的關注請求被通過了",
     ),
     "notifyFollowedYou": MessageLookupByLibrary.simpleMessage("你有新的關注者"),
+    "notifyLogin": MessageLookupByLibrary.simpleMessage("偵測到一次登入"),
+    "notifyLoginDescription": MessageLookupByLibrary.simpleMessage(
+      "你的帳號剛剛發生了一次登入",
+    ),
     "notifyMarkAllRead": MessageLookupByLibrary.simpleMessage("全部標記為已讀"),
     "notifyMention": MessageLookupByLibrary.simpleMessage("提到我的"),
+    "notifyMentionedYou": MessageLookupByLibrary.simpleMessage("在貼文中提到了你"),
     "notifyMessage": MessageLookupByLibrary.simpleMessage("私信"),
+    "notifyNewNote": MessageLookupByLibrary.simpleMessage("發佈了新貼文"),
     "notifyNotSupport": m16,
+    "notifyPollEnded": MessageLookupByLibrary.simpleMessage("投票已結束"),
+    "notifyQuoted": MessageLookupByLibrary.simpleMessage("引用了你的貼文"),
+    "notifyReacted": MessageLookupByLibrary.simpleMessage("回應了你的貼文"),
+    "notifyReactionGrouped": m17,
+    "notifyReceiveFollowRequest": MessageLookupByLibrary.simpleMessage("請求關注你"),
+    "notifyReject": MessageLookupByLibrary.simpleMessage("拒絕"),
+    "notifyRejected": MessageLookupByLibrary.simpleMessage("已拒絕關注請求"),
+    "notifyRenoteGrouped": m18,
+    "notifyRenoted": MessageLookupByLibrary.simpleMessage("轉發了你的貼文"),
+    "notifyRepliedToYou": MessageLookupByLibrary.simpleMessage("回覆了你的貼文"),
+    "notifyRoleAssigned": MessageLookupByLibrary.simpleMessage("你被授予了一個角色"),
+    "notifyScheduledNotePostFailed": MessageLookupByLibrary.simpleMessage(
+      "定時貼文發佈失敗",
+    ),
+    "notifyScheduledNotePostFailedDescription":
+        MessageLookupByLibrary.simpleMessage("預定的貼文未能發佈"),
+    "notifyScheduledNotePosted": MessageLookupByLibrary.simpleMessage(
+      "定時貼文發佈成功",
+    ),
+    "notifyScheduledNotePostedDescription":
+        MessageLookupByLibrary.simpleMessage("預定的貼文已經發佈"),
+    "notifyTest": MessageLookupByLibrary.simpleMessage("測試通知"),
+    "notifyTestDescription": MessageLookupByLibrary.simpleMessage("通知將以這種方式顯示"),
     "ok": MessageLookupByLibrary.simpleMessage("確定"),
     "openInNewTab": MessageLookupByLibrary.simpleMessage("轉到瀏覽器顯示"),
     "overviews": MessageLookupByLibrary.simpleMessage("概覽"),
@@ -269,7 +324,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("遠程"),
     "searchServers": MessageLookupByLibrary.simpleMessage("搜索伺服器名稱或者域名"),
-    "secondsAgo": m17,
+    "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("選擇標籤"),
     "selectServer": MessageLookupByLibrary.simpleMessage("請選擇伺服器"),
     "selectUser": MessageLookupByLibrary.simpleMessage("選擇用戶"),
@@ -290,7 +345,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "uncategorized": MessageLookupByLibrary.simpleMessage("未分類"),
     "unfollow": MessageLookupByLibrary.simpleMessage("取消關注"),
     "updatedDate": MessageLookupByLibrary.simpleMessage("更新日期"),
-    "uploadFailed": m18,
+    "uploadFailed": m20,
     "uploadFromUrl": MessageLookupByLibrary.simpleMessage("從網址上傳"),
     "user": MessageLookupByLibrary.simpleMessage("用戶"),
     "userAll": MessageLookupByLibrary.simpleMessage("全部"),
@@ -306,17 +361,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "view": MessageLookupByLibrary.simpleMessage("檢視"),
     "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
     "vote": MessageLookupByLibrary.simpleMessage("投票"),
-    "voteAllCount": m19,
-    "voteCount": m20,
+    "voteAllCount": m21,
+    "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允許多個投票"),
     "voteExpired": MessageLookupByLibrary.simpleMessage("投票已結束"),
     "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage("投票數量不能少於兩個"),
-    "voteOptionHint": m21,
-    "voteOptionNullIndex": m22,
+    "voteOptionHint": m23,
+    "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage("投票結果已經生成"),
-    "voteWillExpired": m23,
-    "yearsAgo": m24,
+    "voteWillExpired": m25,
+    "yearsAgo": m26,
   };
 }
