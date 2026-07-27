@@ -19,7 +19,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 0.9.0+59
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: ^3.12.2
+  flutter: '>=3.44.8'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -82,7 +83,7 @@ dependencies:
   freezed: ^3.0.4
   freezed_annotation: ^3.0.0
   json_annotation: ^4.9.0
-  date_picker_plus: ^4.2.0
+  date_picker_plus: ^7.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -92,7 +93,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   riverpod_generator: ^2.3.8
   build_runner: ^2.4.6
   custom_lint: ^0.7.5

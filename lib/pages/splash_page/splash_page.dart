@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:moekey/status/apis.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../database/init_database.dart';
 import '../../status/server.dart';
@@ -38,6 +39,11 @@ Future initApp(BuildContext context, WidgetRef ref) async {
 
   // 代理配置
   HttpOverrides.global = HttpProxy();
+
+  // Some desktop path providers return the cache path before creating it.
+  // Ensure it exists so image cache plugins can create their own subfolders.
+  final temporaryDirectory = await getTemporaryDirectory();
+  await temporaryDirectory.create(recursive: true);
 
   // 初始化数据库
   await initDatabase();
@@ -73,8 +79,6 @@ class SplashPage extends HookConsumerWidget {
       });
       return null;
     }, const []);
-    return const Scaffold(
-      body: LoadingWidget(),
-    );
+    return const Scaffold(body: LoadingWidget());
   }
 }

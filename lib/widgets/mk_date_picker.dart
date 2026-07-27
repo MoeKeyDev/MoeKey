@@ -73,7 +73,8 @@ class _MkDatePickerState extends ConsumerState<MkDatePicker> {
     super.initState();
     _formatter = DateFormat(widget.dateFormat ?? 'yyyy-MM-dd');
     _controller = TextEditingController(
-        text: widget.value != null ? _formatter.format(widget.value!) : '');
+      text: widget.value != null ? _formatter.format(widget.value!) : '',
+    );
   }
 
   @override
@@ -81,8 +82,9 @@ class _MkDatePickerState extends ConsumerState<MkDatePicker> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
       // Update controller text only if the value actually changed in the parent
-      final newText =
-          widget.value != null ? _formatter.format(widget.value!) : '';
+      final newText = widget.value != null
+          ? _formatter.format(widget.value!)
+          : '';
       if (_controller.text != newText) {
         _controller.text = newText;
       }
@@ -110,48 +112,55 @@ class _MkDatePickerState extends ConsumerState<MkDatePicker> {
       context: context,
       builder: (BuildContext context) {
         return MkDialog(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DatePicker(
-              initialDate: widget.value,
-              onDateSelected: (value) {
-                // Update the temporary selected date when a date is picked in the calendar
-                _selectedDate = value;
-              },
-              minDate: widget.firstDate ?? DateTime(1900),
-              maxDate: widget.lastDate ?? DateTime(2100),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              spacing: 12,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context)
-                      .pop(null), // Return null when Clear is pressed
-                  child: Text(S.of(context).clear,
-                      style: TextStyle(color: themes.fgColor)),
-                ),
-                Spacer(),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(
-                    widget.initialDate,
-                  ), // Return null when Cancel is pressed
-                  child: Text(S.of(context).cancel,
-                      style: TextStyle(color: themes.fgColor)),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    // Return the selected date
-                    // Return the temporarily selected date when OK is pressed
-                    Navigator.of(context).pop(_selectedDate);
-                  },
-                  child: Text(S.of(context).ok),
-                ),
-              ],
-            ),
-          ],
-        ));
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DatePicker(
+                displayedDate: _selectedDate,
+                selectedDate: _selectedDate,
+                onDateSelected: (value) {
+                  // Update the temporary selected date when a date is picked in the calendar
+                  _selectedDate = value;
+                },
+                minDate: widget.firstDate ?? DateTime(1900),
+                maxDate: widget.lastDate ?? DateTime(2100),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                spacing: 12,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).pop(null), // Return null when Clear is pressed
+                    child: Text(
+                      S.of(context).clear,
+                      style: TextStyle(color: themes.fgColor),
+                    ),
+                  ),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(
+                      widget.initialDate,
+                    ), // Return null when Cancel is pressed
+                    child: Text(
+                      S.of(context).cancel,
+                      style: TextStyle(color: themes.fgColor),
+                    ),
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      // Return the selected date
+                      // Return the temporarily selected date when OK is pressed
+                      Navigator.of(context).pop(_selectedDate);
+                    },
+                    child: Text(S.of(context).ok),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
       },
     );
 
@@ -160,7 +169,8 @@ class _MkDatePickerState extends ConsumerState<MkDatePicker> {
       //
       if (widget.onChanged != null) {
         widget.onChanged!(
-            picked); // Pass the picked date (or null) to the callback
+          picked,
+        ); // Pass the picked date (or null) to the callback
       }
       // didUpdateWidget will handle controller update if picked is not null
       // If picked is null (cleared), update controller manually
@@ -206,10 +216,7 @@ class _MkDatePickerState extends ConsumerState<MkDatePicker> {
                   widget.hintText,
                   prefixIcon: widget.prefixIcon,
                   // Simplified suffix icon logic using a single IconButton
-                ).copyWith(
-                  fillColor: themes.panelColor,
-                  filled: true,
-                ),
+                ).copyWith(fillColor: themes.panelColor, filled: true),
                 cursorWidth: 1,
                 style: TextStyle(fontSize: 14, color: themes.fgColor),
                 cursorColor: themes.fgColor,
