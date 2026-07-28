@@ -28,15 +28,17 @@ part 'router.g.dart';
 
 @riverpod
 GoRouter router(Ref ref) {
-  return GoRouter(initialLocation: '/SplashPage', routes: [
-    GoRoute(path: "/", redirect: (_, _) => "/timeline"),
-    GoRoute(
-      name: 'splash',
-      path: '/SplashPage',
-      builder: (_, _) => const SplashPage(),
-    ),
-    ShellRoute(
-      builder: (context, status, child) => PopScope(
+  return GoRouter(
+    initialLocation: '/SplashPage',
+    routes: [
+      GoRoute(path: "/", redirect: (_, _) => "/timeline"),
+      GoRoute(
+        name: 'splash',
+        path: '/SplashPage',
+        builder: (_, _) => const SplashPage(),
+      ),
+      ShellRoute(
+        builder: (context, status, child) => PopScope(
           canPop: GoRouter.of(context).state.name == "timeline",
           onPopInvokedWithResult: (bool didPop, Object? result) async {
             if (didPop) {
@@ -47,99 +49,130 @@ GoRouter router(Ref ref) {
             context.goNamed('timeline');
             // }
           },
-          child: HomePage(
-            child: child,
-          )),
-      routes: [
-        StatefulShellRoute.indexedStack(
-          builder: (context, status, child) => child,
-          branches: [
-            StatefulShellBranch(routes: [
-              GoRoute(
-                name: "timeline",
-                path: "/timeline",
-                builder: (_, _) => Consumer(builder: (context, ref, _) {
-                  var key =
-                      ref.read(mkTabBarRefreshScrollStatusProvider("timeline"));
-                  return TimelinePage(
-                    mkTabBarListKey: key,
-                  );
-                }),
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                name: "notifications",
-                path: "/notifications",
-                builder: (_, _) => Consumer(builder: (context, ref, _) {
-                  var key = ref.read(
-                      mkTabBarRefreshScrollStatusProvider("notifications"));
-                  return NotificationsPage(
-                    mkTabBarListKey: key,
-                  );
-                }),
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                name: "clips",
-                path: "/clips",
-                builder: (_, _) => const ClipsPage(),
+          child: HomePage(child: child),
+        ),
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: (context, status, child) => child,
+            branches: [
+              StatefulShellBranch(
                 routes: [
                   GoRoute(
-                    path: ":id",
-                    builder: (_, status) {
-                      return ClipsNotes(status.pathParameters['id']!);
-                    },
+                    name: "timeline",
+                    path: "/timeline",
+                    builder: (_, _) => Consumer(
+                      builder: (context, ref, _) {
+                        var key = ref.read(
+                          mkTabBarRefreshScrollStatusProvider("timeline"),
+                        );
+                        return TimelinePage(mkTabBarListKey: key);
+                      },
+                    ),
                   ),
                 ],
               ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                name: "drives",
-                path: "/drives",
-                builder: (_, _) => const DrivePage(),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    name: "notifications",
+                    path: "/notifications",
+                    builder: (_, status) => Consumer(
+                      builder: (context, ref, _) {
+                        var key = ref.read(
+                          mkTabBarRefreshScrollStatusProvider("notifications"),
+                        );
+                        var showSentFollowRequests =
+                            status.uri.queryParameters["tab"] ==
+                            "sent-follow-requests";
+                        return NotificationsPage(
+                          mkTabBarListKey: showSentFollowRequests ? null : key,
+                          initialIndex: showSentFollowRequests ? 3 : 0,
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                name: "explore",
-                path: "/explore",
-                builder: (_, _) => const ExplorePage(),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    name: "clips",
+                    path: "/clips",
+                    builder: (_, _) => const ClipsPage(),
+                    routes: [
+                      GoRoute(
+                        path: ":id",
+                        builder: (_, status) {
+                          return ClipsNotes(status.pathParameters['id']!);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                name: "announcements",
-                path: "/announcements",
-                builder: (_, _) => const AnnouncementsPage(),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    name: "drives",
+                    path: "/drives",
+                    builder: (_, _) => const DrivePage(),
+                  ),
+                ],
               ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                name: "search",
-                path: "/search",
-                builder: (_, _) => const SearchPage(),
-              )
-            ]),
-            StatefulShellBranch(
-              routes: [settingsRouter],
-            ),
-          ],
-        ),
-        GoRoute(
-          path: "/notes/:id",
-          builder: (_, status) => NotesPage(
-            noteId: status.pathParameters['id']!,
-            previewNote: status.extra as NoteModel?,
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    name: "explore",
+                    path: "/explore",
+                    builder: (_, _) => const ExplorePage(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    name: "announcements",
+                    path: "/announcements",
+                    builder: (_, _) => const AnnouncementsPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (_, status) => AnnouncementDetailPage(
+                          announcementId: status.pathParameters['id']!,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    name: "search",
+                    path: "/search",
+                    builder: (_, _) => const SearchPage(),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(routes: [settingsRouter]),
+            ],
           ),
-        ),
-        GoRoute(
+          GoRoute(
+            name: "followRequests",
+            path: "/my/follow-requests",
+            redirect: (_, _) => "/notifications?tab=sent-follow-requests",
+          ),
+          GoRoute(
+            path: "/notes/:id",
+            builder: (_, status) => NotesPage(
+              noteId: status.pathParameters['id']!,
+              previewNote: status.extra as NoteModel?,
+            ),
+          ),
+          GoRoute(
             path: "/user/:id",
-            builder: (_, status) => UserPage(
-                  userId: status.pathParameters['id']!,
-                ),
+            builder: (_, status) =>
+                UserPage(userId: status.pathParameters['id']!),
             routes: [
               GoRoute(
                 path: 'following',
@@ -155,63 +188,62 @@ GoRouter router(Ref ref) {
                   type: 'followers',
                 ),
               ),
-            ]),
-        GoRoute(
-          path: "/user/null/:username",
-          builder: (_, status) => UserPage(
-            host: null,
-            username: status.pathParameters['username']!,
+            ],
           ),
-        ),
-        GoRoute(
-          path: "/user/:host/:username",
-          builder: (_, status) => UserPage(
-            host: status.pathParameters['host']!,
-            username: status.pathParameters['username']!,
+          GoRoute(
+            path: "/user/null/:username",
+            builder: (_, status) => UserPage(
+              host: null,
+              username: status.pathParameters['username']!,
+            ),
           ),
-        ),
-        GoRoute(
-          path: "/tags/:name",
-          builder: (_, status) => HashtagPage(
-            name: status.pathParameters['name']!,
+          GoRoute(
+            path: "/user/:host/:username",
+            builder: (_, status) => UserPage(
+              host: status.pathParameters['host']!,
+              username: status.pathParameters['username']!,
+            ),
           ),
-        ),
-      ],
-    ),
-    GoRoute(
-      path: '/image-preview',
-      pageBuilder: (_, status) {
-        var params = status.extra as Map<String, dynamic>;
-        return CustomTransitionPage(
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-          opaque: false,
-          child: ImagePreviewPage(
-            initialIndex: params['initialIndex'],
-            galleryItems: params['galleryItems'],
-            heroKeys: params['heroKeys'],
-            backgroundDecoration: null,
+          GoRoute(
+            path: "/tags/:name",
+            builder: (_, status) =>
+                HashtagPage(name: status.pathParameters['name']!),
           ),
-        );
-      },
-    ),
-    GoRoute(
-      name: 'login',
-      path: '/login',
-      builder: (_, _) => const LoginPage(),
-      routes: [],
-    ),
-    GoRoute(
-      name: 'logout',
-      path: '/logout',
-      builder: (_, _) => const LogoutPage(),
-      routes: [],
-    )
-  ]);
+        ],
+      ),
+      GoRoute(
+        path: '/image-preview',
+        pageBuilder: (_, status) {
+          var params = status.extra as Map<String, dynamic>;
+          return CustomTransitionPage(
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+            opaque: false,
+            child: ImagePreviewPage(
+              initialIndex: params['initialIndex'],
+              galleryItems: params['galleryItems'],
+              heroKeys: params['heroKeys'],
+              backgroundDecoration: null,
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        name: 'login',
+        path: '/login',
+        builder: (_, _) => const LoginPage(),
+        routes: [],
+      ),
+      GoRoute(
+        name: 'logout',
+        path: '/logout',
+        builder: (_, _) => const LogoutPage(),
+        routes: [],
+      ),
+    ],
+  );
 }
 
 extension NavigatorExt on BuildContext {

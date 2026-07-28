@@ -78,7 +78,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}προθεσμία μετά την ολοκλήρωση";
 
-  static String m26(years) => "${years}...χρόνια πριν";
+  static String m26(name) =>
+      "Are you sure that you want to cancel your follow request to ${name}?";
+
+  static String m27(years) => "${years}...χρόνια πριν";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -215,6 +218,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Όνομα φακέλου"),
     "follow": MessageLookupByLibrary.simpleMessage("εστίαση"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("Ακολούθησε το"),
     "followers": MessageLookupByLibrary.simpleMessage("παρατηρητής"),
     "following": MessageLookupByLibrary.simpleMessage("Ανήσυχο"),
@@ -269,6 +273,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Το όνομα δεν μπορεί να είναι κενό",
     ),
     "next": MessageLookupByLibrary.simpleMessage("το επόμενο βήμα"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "You don\'t have any pending follow requests",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -546,6 +553,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Τα αποτελέσματα της ψηφοφορίας έχουν δημιουργηθεί",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

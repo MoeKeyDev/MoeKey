@@ -76,7 +76,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime} 후 종료";
 
-  static String m26(years) => "${years}년 전";
+  static String m26(name) => "${name}(으)로의 팔로우 신청을 취소하시겠습니까?";
+
+  static String m27(years) => "${years}년 전";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -159,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("필터"),
     "folderName": MessageLookupByLibrary.simpleMessage("폴더 이름"),
     "follow": MessageLookupByLibrary.simpleMessage("팔로우"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("보낸 신청"),
     "followed": MessageLookupByLibrary.simpleMessage("팔로우함"),
     "followers": MessageLookupByLibrary.simpleMessage("팔로워"),
     "following": MessageLookupByLibrary.simpleMessage("팔로잉"),
@@ -199,6 +202,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("이름"),
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("이름은 비워둘 수 없습니다"),
     "next": MessageLookupByLibrary.simpleMessage("다음"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "처리되지 않은 팔로우 요청이 없습니다",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage("이 목록은 비어 있습니다."),
     "notFindServer": MessageLookupByLibrary.simpleMessage(
       "당신이 있는 서버를 찾지 못했습니까?",
@@ -394,6 +400,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage("투표 결과가 생성되었습니다"),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

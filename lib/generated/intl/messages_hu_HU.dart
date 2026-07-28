@@ -78,7 +78,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}a befejezés utáni határidő";
 
-  static String m26(years) => "${years}...évvel ezelőtt";
+  static String m26(name) =>
+      "Are you sure that you want to cancel your follow request to ${name}?";
+
+  static String m27(years) => "${years}...évvel ezelőtt";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -207,6 +210,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Mappa neve"),
     "follow": MessageLookupByLibrary.simpleMessage("fókusz"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("Követett"),
     "followers": MessageLookupByLibrary.simpleMessage("watcher"),
     "following": MessageLookupByLibrary.simpleMessage("Aggódó"),
@@ -261,6 +265,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "A név nem lehet üres",
     ),
     "next": MessageLookupByLibrary.simpleMessage("a következő lépés"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "You don\'t have any pending follow requests",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -530,6 +537,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "A szavazás eredményei elkészültek",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

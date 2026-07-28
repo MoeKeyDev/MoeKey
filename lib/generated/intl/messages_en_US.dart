@@ -68,7 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m21(count) => "Total Vote ${count}";
 
-  static String m27(choice) => "Vote for “${choice}”?";
+  static String m28(choice) => "Vote for “${choice}”?";
 
   static String m22(count) => "Voted ${count}";
 
@@ -78,7 +78,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "Deadline after ${datetime}";
 
-  static String m26(years) => "${years}y ago";
+  static String m26(name) =>
+      "Are you sure that you want to cancel your follow request to ${name}?";
+
+  static String m27(years) => "${years}y ago";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -182,9 +185,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "exportEntityNote": MessageLookupByLibrary.simpleMessage("Notes"),
     "exportEntityUserList": MessageLookupByLibrary.simpleMessage("User lists"),
     "favorite": MessageLookupByLibrary.simpleMessage("Add to Favorites"),
+    "files": MessageLookupByLibrary.simpleMessage("Files"),
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Folder Name"),
     "follow": MessageLookupByLibrary.simpleMessage("Follow"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("Followed"),
     "followers": MessageLookupByLibrary.simpleMessage("Followers"),
     "following": MessageLookupByLibrary.simpleMessage("Following"),
@@ -231,6 +236,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "The name cannot be empty",
     ),
     "next": MessageLookupByLibrary.simpleMessage("Next Steps"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "You don\'t have any pending follow requests",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -405,6 +413,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Reply to this note...",
     ),
     "replyNoteText": MessageLookupByLibrary.simpleMessage("Reply to Note"),
+    "requestFollow": MessageLookupByLibrary.simpleMessage("Follow request"),
     "saveFailed": MessageLookupByLibrary.simpleMessage("Save Failed"),
     "saveImage": MessageLookupByLibrary.simpleMessage("Save picture"),
     "saveSuccess": MessageLookupByLibrary.simpleMessage("Save successful"),
@@ -416,6 +425,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "searchServers": MessageLookupByLibrary.simpleMessage("Search Servers"),
     "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("Select tag"),
+    "selectSelf": MessageLookupByLibrary.simpleMessage("Select myself"),
     "selectServer": MessageLookupByLibrary.simpleMessage(
       "Please Select Your Server",
     ),
@@ -460,7 +470,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewMore": MessageLookupByLibrary.simpleMessage("View More"),
     "vote": MessageLookupByLibrary.simpleMessage("Vote"),
     "voteAllCount": m21,
-    "voteConfirm": m27,
+    "voteConfirm": m28,
     "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("Due Date"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
@@ -482,6 +492,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteShowResult": MessageLookupByLibrary.simpleMessage("Show results"),
     "voteVoted": MessageLookupByLibrary.simpleMessage("Voted"),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

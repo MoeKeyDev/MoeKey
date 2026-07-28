@@ -5,11 +5,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:moekey/apis/models/announcement.dart';
 import 'package:moekey/pages/home/home_page_state.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/global_snackbar.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
+import 'package:moekey/status/unread_announcement.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/login/servers_select.dart';
 
@@ -21,27 +23,21 @@ import '../../widgets/hover_builder.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/mk_info_dialog.dart';
 import '../../widgets/note_create_dialog/note_create_dialog.dart';
+import '../../widgets/notification_badge_icon.dart';
 
 void updateUserInfo(WidgetRef ref) {
-  Future.delayed(
-    Duration.zero,
-    () async {
-      var api = ref.read(misskeyApisProvider);
-      var user = ref.read(currentLoginUserProvider);
-      var data = await api.user.show(userId: user?.id);
+  Future.delayed(Duration.zero, () async {
+    var api = ref.read(misskeyApisProvider);
+    var user = ref.read(currentLoginUserProvider);
+    var data = await api.user.show(userId: user?.id);
 
-      user =
-          user?.copyWith(name: data?.name ?? data!.username, userInfo: data!);
-      ref.read(loginUserListProvider.notifier).addUser(user!);
-    },
-  );
+    user = user?.copyWith(name: data?.name ?? data!.username, userInfo: data!);
+    ref.read(loginUserListProvider.notifier).addUser(user!);
+  });
 }
 
 class HomePage extends HookConsumerWidget {
-  const HomePage({
-    super.key,
-    required this.child,
-  });
+  const HomePage({super.key, required this.child});
 
   static final GlobalKey<ScaffoldState> _scaffoldKey =
       GlobalKey<ScaffoldState>();
@@ -50,17 +46,8 @@ class HomePage extends HookConsumerWidget {
     _scaffoldKey.currentState!.openDrawer();
   }
 
-  void _openEndDrawer() {
-    _scaffoldKey.currentState!.openEndDrawer();
-  }
-
   void _closeDrawer() {
     _scaffoldKey.currentState!.closeDrawer();
-  }
-
-  // ignore: unused_element
-  void _closeEndDrawer() {
-    _scaffoldKey.currentState!.closeEndDrawer();
   }
 
   final Widget child;
@@ -85,32 +72,23 @@ class HomePage extends HookConsumerWidget {
       return null;
     }, [user?.id]);
     var media = MediaQuery.of(context);
-    return LayoutBuilder(builder: (context, constraints) {
-      var btnStyle =
-          ButtonStyle(backgroundColor: WidgetStateColor.resolveWith((states) {
-        return themes.panelColor.withValues(alpha: 0.5);
-      }));
-      return Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: themes.isDark ? Colors.black : Colors.white,
-        resizeToAvoidBottomInset: false,
-        drawer: constraints.maxWidth < 500
-            ? NavBar(
-                width: 250,
-                onSelect: _closeDrawer,
-              )
-            : null,
-        // endDrawer: constraints.maxWidth < 500
-        //     ? Container(
-        //         color: themes.panelColor,
-        //         child: const WidgetsListPage(),
-        //       )
-        //     : null,
-        body: Consumer(
-          builder: (BuildContext context, WidgetRef ref, Widget? child) {
-            ref.listen(
-              globalSnackbarProvider,
-              (previous, next) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var btnStyle = ButtonStyle(
+          backgroundColor: WidgetStateColor.resolveWith((states) {
+            return themes.panelColor.withValues(alpha: 0.5);
+          }),
+        );
+        return Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: themes.isDark ? Colors.black : Colors.white,
+          resizeToAvoidBottomInset: false,
+          drawer: constraints.maxWidth < 500
+              ? NavBar(width: 250, onSelect: _closeDrawer)
+              : null,
+          body: Consumer(
+            builder: (BuildContext context, WidgetRef ref, Widget? child) {
+              ref.listen(globalSnackbarProvider, (previous, next) {
                 if (next != null && previous != next) {
                   showDialog(
                     context: context,
@@ -124,125 +102,211 @@ class HomePage extends HookConsumerWidget {
                     },
                   );
                 }
-              },
-            );
+              });
 
-            return Stack(
-              children: [
-                Row(
-                  children: [
-                    if (constraints.maxWidth >= 500)
-                      NavBar(
-                        width: constraints.maxWidth < 900 ? 80 : 250,
-                      ),
-                    Expanded(
-                      child: MediaQuery(
-                        data: media.copyWith(
+              return Stack(
+                children: [
+                  Row(
+                    children: [
+                      if (constraints.maxWidth >= 500)
+                        NavBar(width: constraints.maxWidth < 900 ? 80 : 250),
+                      Expanded(
+                        child: MediaQuery(
+                          data: media.copyWith(
                             padding: media.padding.copyWith(
-                                bottom: media.padding.bottom +
-                                    (constraints.maxWidth > 500 ||
-                                            !isShowBottomNav
-                                        ? 16
-                                        : 100))),
-                        // child: Router(
-                        //   routerDelegate: router,
-                        //   backButtonDispatcher: RootBackButtonDispatcher(),
-                        // ),
-                        child: child ?? const SizedBox(),
-                      ),
-                    ),
-                    // if (constraints.maxWidth >= 1090) const WidgetsListPage()
-                  ],
-                ),
-                if (constraints.maxWidth < 500)
-                  AnimatedPositioned(
-                    bottom: isShowBottomNav ? 0 : -86,
-                    left: 0,
-                    duration: const Duration(milliseconds: 150),
-                    child: SizedBox(
-                      width: constraints.maxWidth,
-                      height: 86 + media.viewPadding.bottom,
-                      child: BlurWidget(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            bottom: media.viewPadding.bottom,
+                              bottom:
+                                  media.padding.bottom +
+                                  (constraints.maxWidth > 500 ||
+                                          !isShowBottomNav
+                                      ? 16
+                                      : 100),
+                            ),
                           ),
+                          // child: Router(
+                          //   routerDelegate: router,
+                          //   backButtonDispatcher: RootBackButtonDispatcher(),
+                          // ),
+                          child: Column(
+                            children: [
+                              const _UnreadAnnouncementBanner(),
+                              Expanded(child: child ?? const SizedBox()),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // if (constraints.maxWidth >= 1090) const WidgetsListPage()
+                    ],
+                  ),
+                  if (constraints.maxWidth < 500)
+                    AnimatedPositioned(
+                      bottom: isShowBottomNav ? 0 : -86,
+                      left: 0,
+                      duration: const Duration(milliseconds: 150),
+                      child: SizedBox(
+                        width: constraints.maxWidth,
+                        height: 86 + media.viewPadding.bottom,
+                        child: BlurWidget(
                           child: Padding(
                             padding: EdgeInsets.only(
-                              left: media.viewPadding.left,
-                              right: media.viewPadding.right,
+                              bottom: media.viewPadding.bottom,
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                IconButton(
-                                  onPressed: _openDrawer,
-                                  icon: const Icon(TablerIcons.menu_2),
-                                  padding: const EdgeInsets.all(20),
-                                  color: themes.fgColor,
-                                  style: btnStyle,
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    var logic = ref
-                                        .read(homePageStateProvider.notifier);
-                                    logic.changePage("timeline");
-                                  },
-                                  icon: const Icon(TablerIcons.home),
-                                  padding: const EdgeInsets.all(20),
-                                  color: themes.fgColor,
-                                  style: btnStyle,
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    var logic = ref
-                                        .read(homePageStateProvider.notifier);
-                                    logic.changePage("notifications");
-                                  },
-                                  icon: const Icon(TablerIcons.bell),
-                                  padding: const EdgeInsets.all(20),
-                                  color: themes.fgColor,
-                                  style: btnStyle,
-                                ),
-                                IconButton(
-                                  onPressed: _openEndDrawer,
-                                  icon: const Icon(TablerIcons.apps),
-                                  padding: const EdgeInsets.all(20),
-                                  color: themes.fgColor,
-                                  style: btnStyle,
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    NoteCreateDialog.open(context: context);
-                                  },
-                                  icon: const Icon(TablerIcons.pencil),
-                                  padding: const EdgeInsets.all(20),
-                                  color: themes.fgColor,
-                                  style: btnStyle,
-                                ),
-                              ],
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: media.viewPadding.left,
+                                right: media.viewPadding.right,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  IconButton(
+                                    onPressed: _openDrawer,
+                                    icon: const Icon(TablerIcons.menu_2),
+                                    padding: const EdgeInsets.all(20),
+                                    color: themes.fgColor,
+                                    style: btnStyle,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      var logic = ref.read(
+                                        homePageStateProvider.notifier,
+                                      );
+                                      logic.changePage("timeline");
+                                    },
+                                    icon: const Icon(TablerIcons.home),
+                                    padding: const EdgeInsets.all(20),
+                                    color: themes.fgColor,
+                                    style: btnStyle,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      var logic = ref.read(
+                                        homePageStateProvider.notifier,
+                                      );
+                                      logic.changePage("notifications");
+                                    },
+                                    icon: NotificationBadgeIcon(
+                                      color: themes.fgColor,
+                                      size: 24,
+                                    ),
+                                    padding: const EdgeInsets.all(20),
+                                    color: themes.fgColor,
+                                    style: btnStyle,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      var logic = ref.read(
+                                        homePageStateProvider.notifier,
+                                      );
+                                      logic.changePage("search");
+                                    },
+                                    icon: const Icon(TablerIcons.search),
+                                    padding: const EdgeInsets.all(20),
+                                    color: themes.fgColor,
+                                    style: btnStyle,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      NoteCreateDialog.open(context: context);
+                                    },
+                                    icon: const Icon(TablerIcons.pencil),
+                                    padding: const EdgeInsets.all(20),
+                                    color: themes.fgColor,
+                                    style: btnStyle,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
+                ],
+              );
+            },
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _UnreadAnnouncementBanner extends ConsumerWidget {
+  const _UnreadAnnouncementBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final announcement = ref.watch(firstUnreadBannerAnnouncementProvider).value;
+    if (announcement == null) {
+      return const SizedBox.shrink();
+    }
+
+    final themes = ref.watch(themeColorsProvider);
+    final icon = switch (announcement.icon) {
+      AnnouncementIcon.error => TablerIcons.circle_x,
+      AnnouncementIcon.info => TablerIcons.info_circle,
+      AnnouncementIcon.success => TablerIcons.check,
+      AnnouncementIcon.warning => TablerIcons.alert_triangle,
+    };
+
+    return ColoredBox(
+      color: themes.accentColor,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => context.push('/announcements/${announcement.id}'),
+        child: SizedBox(
+          height: 24,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Icon(icon, size: 15, color: themes.fgOnAccentColor),
+                const SizedBox(width: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 240),
+                  child: Text(
+                    announcement.title,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: themes.fgOnAccentColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      announcement.text.replaceAll(RegExp(r'\s+'), ' '),
+                      maxLines: 1,
+                      // Keep a finite paragraph width so RichText fills the
+                      // Expanded area; maxLines still prevents visual wrapping.
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                      textWidthBasis: TextWidthBasis.parent,
+                      style: TextStyle(
+                        color: themes.fgOnAccentColor,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
               ],
-            );
-          },
-          child: child,
+            ),
+          ),
         ),
-      );
-    });
+      ),
+    );
   }
 }
 
 class NavBar extends HookConsumerWidget {
-  const NavBar({
-    super.key,
-    required this.width,
-    this.onSelect,
-  });
+  const NavBar({super.key, required this.width, this.onSelect});
 
   final void Function()? onSelect;
   final double width;
@@ -261,78 +325,89 @@ class NavBar extends HookConsumerWidget {
       curve: Curves.easeInOut,
       child: Padding(
         padding: EdgeInsetsGeometry.only(
-            left: MediaQuery.of(context).viewPadding.left),
+          left: MediaQuery.of(context).viewPadding.left,
+        ),
         child: Column(
           children: [
             const ServerIconAndBanner(),
-            Expanded(child: SingleChildScrollView(
-              child: Builder(builder: (context) {
-                var list = <Widget>[];
-                for (var element in state.navItemList) {
-                  if (element["line"] == null) {
-                    list.add(NavbarItem(
-                      icon: element["icon"],
-                      label: element["label"],
-                      id: element["id"] ?? '',
-                      currentId: currentId ?? '',
-                      onSelect: () {
-                        if (onSelect != null) {
-                          onSelect!();
-                        }
-                      },
-                    ));
-                  } else {
-                    list.add(Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 1,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(color: themes.dividerColor),
-                        ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Builder(
+                  builder: (context) {
+                    var list = <Widget>[];
+                    for (var element in state.navItemList) {
+                      if (element["line"] == null) {
+                        list.add(
+                          NavbarItem(
+                            icon: element["icon"],
+                            label: element["label"],
+                            id: element["id"] ?? '',
+                            currentId: currentId ?? '',
+                            onSelect: () {
+                              if (onSelect != null) {
+                                onSelect!();
+                              }
+                            },
+                          ),
+                        );
+                      } else {
+                        list.add(
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 1,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: themes.dividerColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    }
+
+                    return SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          ...list,
+                          if (isWide)
+                            NavbarItem(
+                              icon: TablerIcons.settings,
+                              label: S.current.settings,
+                              id: "settingProfile",
+                              currentId: currentId ?? '',
+                              onSelect: () {
+                                if (onSelect != null) {
+                                  onSelect!();
+                                }
+
+                                context.goNamed("settingProfile");
+                              },
+                            )
+                          else
+                            NavbarItem(
+                              icon: TablerIcons.settings,
+                              label: S.current.settings,
+                              id: "settings",
+                              currentId: currentId ?? '',
+                              onSelect: () {
+                                if (onSelect != null) {
+                                  onSelect!();
+                                }
+
+                                context.goNamed("settings");
+                              },
+                            ),
+                        ],
                       ),
-                    ));
-                  }
-                }
-
-                return SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    children: [
-                      ...list,
-                      if (isWide)
-                        NavbarItem(
-                          icon: TablerIcons.settings,
-                          label: S.current.settings,
-                          id: "settingProfile",
-                          currentId: currentId ?? '',
-                          onSelect: () {
-                            if (onSelect != null) {
-                              onSelect!();
-                            }
-
-                            context.goNamed("settingProfile");
-                          },
-                        )
-                      else
-                        NavbarItem(
-                          icon: TablerIcons.settings,
-                          label: S.current.settings,
-                          id: "settings",
-                          currentId: currentId ?? '',
-                          onSelect: () {
-                            if (onSelect != null) {
-                              onSelect!();
-                            }
-
-                            context.goNamed("settings");
-                          },
-                        ),
-                    ],
-                  ),
-                );
-              }),
-            )),
+                    );
+                  },
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
             const CreateBottom(),
             const SizedBox(height: 20),
@@ -355,17 +430,15 @@ class ServerIconAndBanner extends ConsumerWidget {
     var meta = ref.watch(instanceMetaProvider).value;
     return LayoutBuilder(
       builder: (context, constraints) {
-        var icon = Builder(builder: (BuildContext context) {
-          if (meta?.iconUrl != null) {
-            return MkImage(meta!.iconUrl!, width: 30, height: 30);
-          } else {
-            return Image.asset(
-              "assets/favicon.ico",
-              width: 30,
-              height: 30,
-            );
-          }
-        });
+        var icon = Builder(
+          builder: (BuildContext context) {
+            if (meta?.iconUrl != null) {
+              return MkImage(meta!.iconUrl!, width: 30, height: 30);
+            } else {
+              return Image.asset("assets/favicon.ico", width: 30, height: 30);
+            }
+          },
+        );
 
         var extend = constraints.maxWidth >= 250;
         if (extend) {
@@ -378,31 +451,28 @@ class ServerIconAndBanner extends ConsumerWidget {
                   width: double.infinity,
                   height: double.infinity,
                 ),
-              SizedBox(
-                width: 38,
-                height: 38,
-                child: icon,
-              )
+              SizedBox(width: 38, height: 38, child: icon),
             ],
           );
           if (meta?.bannerUrl?.isNotEmpty == true) {
             child = ShaderMask(
               shaderCallback: (rect) {
                 return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.black, Colors.transparent],
-                        stops: [0, 0.9])
-                    .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.black, Colors.transparent],
+                  stops: [0, 0.9],
+                ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
               },
               blendMode: BlendMode.dstIn,
               child: child,
             );
           }
           return SizedBox(
-              width: double.infinity,
-              height: 82 + mediaPadding.top,
-              child: child);
+            width: double.infinity,
+            height: 82 + mediaPadding.top,
+            child: child,
+          );
         }
         var top = 10 + mediaPadding.top;
         if (top < 20) {
@@ -426,231 +496,236 @@ class UserAvatarButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var user = ref.watch(currentLoginUserProvider);
     var userData = user?.userInfo;
-    return LayoutBuilder(builder: (context, constraints) {
-      var extend = constraints.maxWidth >= 100;
-      return ContextMenuBuilder(
-        menu: ContextMenuCard(
-          width: 250,
-          menuListBuilder: () async {
-            var list = ref.read(loginUserListProvider);
-            var user = ref.read(currentLoginUserProvider);
-            return [
-              ContextMenuItem(
-                divider: true,
-                widget: (context, large, isHover) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: large ? 16 : 4, horizontal: large ? 16 : 8),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 28,
-                          height: 28,
-                          child: MkImage(user?.userInfo.avatarUrl ?? "",
-                              shape: BoxShape.circle),
-                        ),
-                        SizedBox(width: large ? 8 : 4),
-                        Expanded(
-                            child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (user?.userInfo.name != null) ...[
-                              Text(user?.userInfo.name ?? ""),
-                              Text(
-                                "@${user?.userInfo.username ?? ""}@${Uri.parse(user?.serverUrl ?? "").host}",
-                                style: const TextStyle(fontSize: 12),
-                                maxLines: 1,
-                              )
-                            ] else ...[
-                              Text("@${user?.userInfo.username ?? ""}"),
-                              Text(
-                                Uri.parse(user?.serverUrl ?? "").host,
-                                style: const TextStyle(fontSize: 12),
-                                maxLines: 1,
-                              )
-                            ]
-                          ],
-                        ))
-                      ],
-                    ),
-                  );
-                },
-                onTap: () {
-                  ref.read(homePageStateProvider.notifier);
-                  if (onSelect != null) {
-                    onSelect!();
-                  }
-                  Future.delayed(
-                    Durations.medium1,
-                    () {
-                      if (!context.mounted) return;
-                      context.push("/user/${user?.id}");
-                    },
-                  );
-                  return false;
-                },
-              ),
-              for (var item in list.values)
-                if (item.id != user?.id)
-                  ContextMenuItem(
-                    widget: (context, large, isHover) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 8),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 28,
-                              height: 28,
-                              child: MkImage(item.userInfo.avatarUrl ?? "",
-                                  shape: BoxShape.circle),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var extend = constraints.maxWidth >= 100;
+        return ContextMenuBuilder(
+          menu: ContextMenuCard(
+            width: 250,
+            menuListBuilder: () async {
+              var list = ref.read(loginUserListProvider);
+              var user = ref.read(currentLoginUserProvider);
+              return [
+                ContextMenuItem(
+                  divider: true,
+                  widget: (context, large, isHover) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: large ? 16 : 4,
+                        horizontal: large ? 16 : 8,
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: MkImage(
+                              user?.userInfo.avatarUrl ?? "",
+                              shape: BoxShape.circle,
                             ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                                child: Column(
+                          ),
+                          SizedBox(width: large ? 8 : 4),
+                          Expanded(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (item.userInfo.name != null) ...[
-                                  Text(item.userInfo.name ?? ""),
+                                if (user?.userInfo.name != null) ...[
+                                  Text(user?.userInfo.name ?? ""),
                                   Text(
-                                    "@${item.userInfo.username}@${Uri.parse(item.serverUrl).host}",
+                                    "@${user?.userInfo.username ?? ""}@${Uri.parse(user?.serverUrl ?? "").host}",
                                     style: const TextStyle(fontSize: 12),
                                     maxLines: 1,
-                                  )
+                                  ),
                                 ] else ...[
-                                  Text("@${item.userInfo.username}"),
+                                  Text("@${user?.userInfo.username ?? ""}"),
                                   Text(
-                                    Uri.parse(item.serverUrl).host,
+                                    Uri.parse(user?.serverUrl ?? "").host,
                                     style: const TextStyle(fontSize: 12),
                                     maxLines: 1,
-                                  )
-                                ]
+                                  ),
+                                ],
                               ],
-                            ))
-                          ],
-                        ),
-                      );
-                    },
-                    onTap: () {
-                      Future.delayed(const Duration(milliseconds: 200), () {
-                        ref
-                            .read(currentLoginUserProvider.notifier)
-                            .setLoginUser(item.id);
-                      });
-                      return false;
-                    },
-                  ),
-              ContextMenuItem(
-                icon: TablerIcons.plus,
-                label: S.current.addAccount,
-                onTap: () {
-                  Timer(const Duration(milliseconds: 150), () {
-                    showServerListDialog(context);
-                  });
-                  return false;
-                },
-              ),
-              ContextMenuItem(
-                icon: TablerIcons.users,
-                label: S.current.manageAccount,
-                onTap: () {
-                  Timer(const Duration(milliseconds: 150), () {
-                    context.goNamed("settingsAccountManager");
-                  });
-                  return false;
-                },
-              ),
-            ];
-          },
-        ),
-        mode: const [ContextMenuMode.onTap, ContextMenuMode.onSecondaryTap],
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-            child: Tooltip(
-              message: extend
-                  ? ""
-                  : "${S.current.account}：@${userData?.username ?? ""}",
-              child: Row(
-                mainAxisAlignment:
-                    extend ? MainAxisAlignment.start : MainAxisAlignment.center,
-                children: [
-                  userData?.avatarUrl != null
-                      ? SizedBox(
-                          width: extend ? 32 : 38,
-                          height: extend ? 32 : 38,
-                          child: MkImage(
-                            userData?.avatarUrl ?? "",
-                            blurHash: userData?.avatarBlurhash,
-                            width: extend ? 32 : 38,
-                            height: extend ? 32 : 38,
-                            fit: BoxFit.cover,
-                            shape: BoxShape.circle,
-                          ),
-                        )
-                      : SizedBox(
-                          width: extend ? 32 : 38,
-                          height: extend ? 32 : 38,
-                        ),
-                  if (extend) const SizedBox(width: 8),
-                  if (extend)
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (userData?.name != null)
-                            Text(
-                              userData?.name ?? "",
-                              maxLines: 1,
                             ),
-                          Text(
-                            "@${userData?.username ?? ""}",
-                            maxLines: 1,
                           ),
                         ],
                       ),
-                    )
-                ],
-              ),
-            ),
+                    );
+                  },
+                  onTap: () {
+                    ref.read(homePageStateProvider.notifier);
+                    if (onSelect != null) {
+                      onSelect!();
+                    }
+                    Future.delayed(Durations.medium1, () {
+                      if (!context.mounted) return;
+                      context.push("/user/${user?.id}");
+                    });
+                    return false;
+                  },
+                ),
+                for (var item in list.values)
+                  if (item.id != user?.id)
+                    ContextMenuItem(
+                      widget: (context, large, isHover) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 28,
+                                height: 28,
+                                child: MkImage(
+                                  item.userInfo.avatarUrl ?? "",
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (item.userInfo.name != null) ...[
+                                      Text(item.userInfo.name ?? ""),
+                                      Text(
+                                        "@${item.userInfo.username}@${Uri.parse(item.serverUrl).host}",
+                                        style: const TextStyle(fontSize: 12),
+                                        maxLines: 1,
+                                      ),
+                                    ] else ...[
+                                      Text("@${item.userInfo.username}"),
+                                      Text(
+                                        Uri.parse(item.serverUrl).host,
+                                        style: const TextStyle(fontSize: 12),
+                                        maxLines: 1,
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      onTap: () {
+                        Future.delayed(const Duration(milliseconds: 200), () {
+                          ref
+                              .read(currentLoginUserProvider.notifier)
+                              .setLoginUser(item.id);
+                        });
+                        return false;
+                      },
+                    ),
+                ContextMenuItem(
+                  icon: TablerIcons.plus,
+                  label: S.current.addAccount,
+                  onTap: () {
+                    Timer(const Duration(milliseconds: 150), () {
+                      showServerListDialog(context);
+                    });
+                    return false;
+                  },
+                ),
+                ContextMenuItem(
+                  icon: TablerIcons.users,
+                  label: S.current.manageAccount,
+                  onTap: () {
+                    Timer(const Duration(milliseconds: 150), () {
+                      context.goNamed("settingsAccountManager");
+                    });
+                    return false;
+                  },
+                ),
+              ];
+            },
           ),
-        ),
-      );
-    });
-  }
-}
-
-Future<dynamic> showServerListDialog(BuildContext context) {
-  return showDialog(
-      context: context,
-      builder: (context) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Material(
-            color: Colors.transparent,
-            child: Center(
-              child: SizedBox(
-                width: 450,
-                height: 600,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: const ServersSelectCard(),
-                  ),
+          mode: const [ContextMenuMode.onTap, ContextMenuMode.onSecondaryTap],
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+              child: Tooltip(
+                message: extend
+                    ? ""
+                    : "${S.current.account}：@${userData?.username ?? ""}",
+                child: Row(
+                  mainAxisAlignment: extend
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.center,
+                  children: [
+                    userData?.avatarUrl != null
+                        ? SizedBox(
+                            width: extend ? 32 : 38,
+                            height: extend ? 32 : 38,
+                            child: MkImage(
+                              userData?.avatarUrl ?? "",
+                              blurHash: userData?.avatarBlurhash,
+                              width: extend ? 32 : 38,
+                              height: extend ? 32 : 38,
+                              fit: BoxFit.cover,
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        : SizedBox(
+                            width: extend ? 32 : 38,
+                            height: extend ? 32 : 38,
+                          ),
+                    if (extend) const SizedBox(width: 8),
+                    if (extend)
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (userData?.name != null)
+                              Text(userData?.name ?? "", maxLines: 1),
+                            Text("@${userData?.username ?? ""}", maxLines: 1),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
           ),
         );
       },
-      useRootNavigator: true);
+    );
+  }
+}
+
+Future<dynamic> showServerListDialog(BuildContext context) {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Material(
+          color: Colors.transparent,
+          child: Center(
+            child: SizedBox(
+              width: 450,
+              height: 600,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: const ServersSelectCard(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+    useRootNavigator: true,
+  );
 }
 
 class NavbarItem extends ConsumerWidget {
@@ -677,52 +752,55 @@ class NavbarItem extends ConsumerWidget {
       builder: (context, constraints) {
         var extend = constraints.maxWidth >= 100;
         if (extend) {
-          return HoverBuilder(builder: (context, isHover) {
-            var textColor =
-                isHover || isActive ? themes.accentColor : themes.fgColor;
-            return GestureDetector(
-              onTap: () {
-                var logic = ref.read(homePageStateProvider.notifier);
-                logic.changePage(id);
-                if (onSelect != null) {
-                  onSelect!();
-                }
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(100)),
-                  color: isHover || isActive
-                      ? themes.accentedBgColor
-                      : Colors.transparent,
-                ),
-                clipBehavior: Clip.antiAlias,
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                margin: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    Icon(icon, size: 16, color: textColor),
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    Expanded(
-                      child: Text(
-                        label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: textColor),
+          return HoverBuilder(
+            builder: (context, isHover) {
+              var textColor = isHover || isActive
+                  ? themes.accentColor
+                  : themes.fgColor;
+              return GestureDetector(
+                onTap: () {
+                  var logic = ref.read(homePageStateProvider.notifier);
+                  logic.changePage(id);
+                  if (onSelect != null) {
+                    onSelect!();
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(100)),
+                    color: isHover || isActive
+                        ? themes.accentedBgColor
+                        : Colors.transparent,
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  margin: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      Icon(icon, size: 16, color: textColor),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(color: textColor),
+                        ),
                       ),
-                    ),
-                  ],
+                      if (id == "notifications")
+                        const NotificationCountIndicator(
+                          key: ValueKey('sidebar-notification-count'),
+                          margin: EdgeInsets.only(left: 8, right: 16),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          });
+              );
+            },
+          );
         }
         return Material(
           color: Colors.transparent,
@@ -737,25 +815,58 @@ class NavbarItem extends ConsumerWidget {
             borderRadius: const BorderRadius.all(Radius.circular(100)),
             hoverColor: themes.accentedBgColor,
             splashColor: themes.accentedBgColor,
-            child: HoverBuilder(builder: (context, isHover) {
-              return Tooltip(
-                message: label,
-                child: Container(
-                  decoration: BoxDecoration(
+            child: HoverBuilder(
+              builder: (context, isHover) {
+                return Tooltip(
+                  message: label,
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: isActive
                           ? themes.accentedBgColor
                           : Colors.transparent,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(100))),
-                  padding: const EdgeInsets.all(18),
-                  child: Icon(icon,
-                      size: 18,
-                      color: isHover || isActive
-                          ? themes.accentColor
-                          : themes.fgColor),
-                ),
-              );
-            }),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(100),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(18),
+                    child: id == "notifications"
+                        ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.none,
+                              children: [
+                                Icon(
+                                  icon,
+                                  size: 18,
+                                  color: isHover || isActive
+                                      ? themes.accentColor
+                                      : themes.fgColor,
+                                ),
+                                const Positioned(
+                                  top: -12,
+                                  right: -28,
+                                  child: NotificationCountIndicator(
+                                    key: ValueKey(
+                                      'compact-sidebar-notification-count',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Icon(
+                            icon,
+                            size: 18,
+                            color: isHover || isActive
+                                ? themes.accentColor
+                                : themes.fgColor,
+                          ),
+                  ),
+                );
+              },
+            ),
           ),
         );
       },
@@ -770,56 +881,56 @@ class CreateBottom extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
 
-    return LayoutBuilder(builder: (context, constraints) {
-      var extend = constraints.maxWidth >= 100;
-      if (extend) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-          child: TextButton(
-            onPressed: () {
-              NoteCreateDialog.open(context: context);
-            },
-            style: ButtonStyle(
-              splashFactory: InkSparkle.splashFactory,
-              animationDuration: Duration.zero,
-              shadowColor: WidgetStateProperty.all(Colors.transparent),
-              backgroundColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.hovered)) {
-                  return themes.buttonGradateBColor;
-                }
-                return themes.buttonGradateAColor;
-              }),
-              foregroundColor: WidgetStateProperty.resolveWith((states) {
-                return themes.fgOnAccentColor;
-              }),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Row(
-                children: [
-                  Icon(TablerIcons.pencil,
-                      size: 16, color: themes.fgOnAccentColor),
-                  const SizedBox(
-                    width: 16,
-                  ),
-                  Expanded(
-                    child: Text(S.current.notes),
-                  )
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var extend = constraints.maxWidth >= 100;
+        if (extend) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+            child: TextButton(
+              onPressed: () {
+                NoteCreateDialog.open(context: context);
+              },
+              style: ButtonStyle(
+                splashFactory: InkSparkle.splashFactory,
+                animationDuration: Duration.zero,
+                shadowColor: WidgetStateProperty.all(Colors.transparent),
+                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.hovered)) {
+                    return themes.buttonGradateBColor;
+                  }
+                  return themes.buttonGradateAColor;
+                }),
+                foregroundColor: WidgetStateProperty.resolveWith((states) {
+                  return themes.fgOnAccentColor;
+                }),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: Row(
+                  children: [
+                    Icon(
+                      TablerIcons.pencil,
+                      size: 16,
+                      color: themes.fgOnAccentColor,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(child: Text(S.current.notes)),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }
-      return IconButton(
-        onPressed: () {
-          NoteCreateDialog.open(context: context);
-        },
-        icon: const Icon(TablerIcons.pencil),
-        padding: const EdgeInsets.all(18),
-        tooltip: S.current.notes,
-        isSelected: false,
-        style: ButtonStyle(
+          );
+        }
+        return IconButton(
+          onPressed: () {
+            NoteCreateDialog.open(context: context);
+          },
+          icon: const Icon(TablerIcons.pencil),
+          padding: const EdgeInsets.all(18),
+          tooltip: S.current.notes,
+          isSelected: false,
+          style: ButtonStyle(
             backgroundColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.hovered)) {
                 return themes.buttonGradateBColor;
@@ -829,8 +940,10 @@ class CreateBottom extends ConsumerWidget {
             foregroundColor: WidgetStateProperty.resolveWith((states) {
               return themes.fgOnAccentColor;
             }),
-            iconSize: WidgetStateProperty.all(20)),
-      );
-    });
+            iconSize: WidgetStateProperty.all(20),
+          ),
+        );
+      },
+    );
   }
 }

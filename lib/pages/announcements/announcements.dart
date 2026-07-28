@@ -6,17 +6,30 @@ import 'package:moekey/status/misskey_api.dart';
 import 'package:moekey/utils/get_padding_note.dart';
 import 'package:moekey/widgets/mfm_text/mfm_text.dart';
 import 'package:moekey/widgets/mk_card.dart';
+import 'package:moekey/widgets/mk_header.dart';
 import 'package:moekey/widgets/mk_image.dart';
 import 'package:moekey/widgets/mk_refresh_load.dart';
+import 'package:moekey/widgets/mk_scaffold.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/announcement.dart';
 import '../../generated/l10n.dart';
 import '../../status/themes.dart';
+import '../../status/me_detailed.dart';
+import '../../status/unread_announcement.dart';
 import '../../utils/time_to_desired_format.dart';
+import '../../widgets/loading_weight.dart';
 
 part 'announcements.g.dart';
+
+final announcementDetailProvider = FutureProvider.autoDispose
+    .family<Announcement?, String>((ref, announcementId) {
+      return ref
+          .watch(misskeyApisProvider)
+          .meta
+          .announcement(announcementId: announcementId);
+    });
 
 class AnnouncementsPage extends HookConsumerWidget {
   const AnnouncementsPage({super.key});
@@ -27,37 +40,33 @@ class AnnouncementsPage extends HookConsumerWidget {
     return MkTabBarRefreshScroll(
       items: [
         MkTabBarItem(
-            label: Tab(
-              child: Row(
-                children: [
-                  const Icon(
-                    TablerIcons.bolt,
-                    size: 14,
-                  ),
-                  Text(S.current.announcementActive,
-                      style: const TextStyle(fontSize: 12)),
-                ],
-              ),
+          label: Tab(
+            child: Row(
+              children: [
+                const Icon(TablerIcons.bolt, size: 14),
+                Text(
+                  S.current.announcementActive,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
             ),
-            child: const AnnouncementsList(
-              isActive: true,
-            )),
+          ),
+          child: const AnnouncementsList(isActive: true),
+        ),
         MkTabBarItem(
-            label: Tab(
-              child: Row(
-                children: [
-                  const Icon(
-                    TablerIcons.point,
-                    size: 14,
-                  ),
-                  Text(S.current.announcementExpired,
-                      style: const TextStyle(fontSize: 12)),
-                ],
-              ),
+          label: Tab(
+            child: Row(
+              children: [
+                const Icon(TablerIcons.point, size: 14),
+                Text(
+                  S.current.announcementExpired,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
             ),
-            child: const AnnouncementsList(
-              isActive: false,
-            ))
+          ),
+          child: const AnnouncementsList(isActive: false),
+        ),
       ],
       leading: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -76,11 +85,85 @@ class AnnouncementsPage extends HookConsumerWidget {
   }
 }
 
+class AnnouncementDetailPage extends HookConsumerWidget {
+  const AnnouncementDetailPage({super.key, required this.announcementId});
+
+  final String announcementId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = announcementDetailProvider(announcementId);
+    final detail = ref.watch(provider);
+    final announcement = detail.value;
+
+    return MkScaffold(
+      header: MkAppbar(
+        showBack: true,
+        content: Text(
+          announcement?.title ?? S.current.announcements,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final padding = getPaddingForNote(constraints);
+          return MkRefreshLoadList(
+            onLoad: () async {},
+            onRefresh: () => ref.refresh(provider.future),
+            hasMore: false,
+            empty: false,
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            slivers: [
+              if (detail.isLoading)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: LoadingCircularProgress(size: 28)),
+                )
+              else if (announcement != null)
+                SliverToBoxAdapter(
+                  child: AnnouncementsCard(
+                    announcement: announcement,
+                    onRead: () async {
+                      final dismissedAnnouncements = ref.read(
+                        dismissedAnnouncementBannerIdsProvider.notifier,
+                      )..dismiss(announcement.id);
+                      try {
+                        await ref
+                            .read(misskeyApisProvider)
+                            .meta
+                            .readAnnouncement(announcementId: announcement.id);
+                      } catch (_) {
+                        dismissedAnnouncements.restore(announcement.id);
+                        rethrow;
+                      } finally {
+                        ref.invalidate(provider);
+                        ref.invalidate(_announcementsProvider(isActive: true));
+                        ref.invalidate(currentMeDetailedProvider);
+                        ref.invalidate(firstUnreadBannerAnnouncementProvider);
+                      }
+                    },
+                  ),
+                )
+              else
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: EmptyWidget()),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
 @riverpod
 class _Announcements extends _$Announcements {
   @override
-  FutureOr<MkLoadMoreListModel<Announcement>> build(
-      {bool isActive = true}) async {
+  FutureOr<MkLoadMoreListModel<Announcement>> build({
+    bool isActive = true,
+  }) async {
     var model = MkLoadMoreListModel<Announcement>();
     model.list = await api();
     model.hasMore = model.list.isNotEmpty;
@@ -92,13 +175,15 @@ class _Announcements extends _$Announcements {
 
   Future<List<Announcement>> api({int limit = 10, String? untilId}) {
     var api = ref.watch(misskeyApisProvider);
-    return api.meta
-        .announcements(limit: limit, isActive: isActive, untilId: untilId);
+    return api.meta.announcements(
+      limit: limit,
+      isActive: isActive,
+      untilId: untilId,
+    );
   }
 
   Future<void> read({required String announcementId}) async {
     var api = ref.read(misskeyApisProvider);
-    api.meta.readAnnouncement(announcementId: announcementId);
     var model = state.value ?? MkLoadMoreListModel<Announcement>();
     for (var value in model.list) {
       if (value.id == announcementId) {
@@ -106,6 +191,24 @@ class _Announcements extends _$Announcements {
       }
     }
     state = AsyncData(model);
+    final dismissedAnnouncements = ref.read(
+      dismissedAnnouncementBannerIdsProvider.notifier,
+    )..dismiss(announcementId);
+    try {
+      await api.meta.readAnnouncement(announcementId: announcementId);
+    } catch (_) {
+      for (var value in model.list) {
+        if (value.id == announcementId) {
+          value.isRead = false;
+        }
+      }
+      state = AsyncData(model);
+      dismissedAnnouncements.restore(announcementId);
+      rethrow;
+    } finally {
+      ref.invalidate(currentMeDetailedProvider);
+      ref.invalidate(firstUnreadBannerAnnouncementProvider);
+    }
   }
 
   Future<void> loadMore() async {
@@ -126,10 +229,7 @@ class _Announcements extends _$Announcements {
 }
 
 class AnnouncementsList extends HookConsumerWidget {
-  const AnnouncementsList({
-    super.key,
-    required this.isActive,
-  });
+  const AnnouncementsList({super.key, required this.isActive});
 
   final bool isActive;
 
@@ -151,17 +251,15 @@ class AnnouncementsList extends HookConsumerWidget {
                 announcement: data.value!.list[index],
                 onRead: isActive
                     ? () => ref
-                        .read(provider.notifier)
-                        .read(announcementId: data.value!.list[index].id)
+                          .read(provider.notifier)
+                          .read(announcementId: data.value!.list[index].id)
                     : null,
               ),
               itemCount: data.value?.list.length ?? 0,
               separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(
-                  height: 10,
-                );
+                return const SizedBox(height: 10);
               },
-            )
+            ),
           ],
           empty: data.value?.list.isEmpty,
         );
@@ -171,11 +269,7 @@ class AnnouncementsList extends HookConsumerWidget {
 }
 
 class AnnouncementsCard extends HookConsumerWidget {
-  const AnnouncementsCard({
-    super.key,
-    required this.announcement,
-    this.onRead,
-  });
+  const AnnouncementsCard({super.key, required this.announcement, this.onRead});
 
   final Announcement announcement;
   final Future Function()? onRead;
@@ -200,7 +294,7 @@ class AnnouncementsCard extends HookConsumerWidget {
                   else if (announcement.icon == AnnouncementIcon.success)
                     TablerIcons.check
                   else if (announcement.icon == AnnouncementIcon.warning)
-                    TablerIcons.alert_triangle
+                    TablerIcons.alert_triangle,
                 ][0],
                 size: 18,
                 color: [
@@ -211,14 +305,14 @@ class AnnouncementsCard extends HookConsumerWidget {
                   else if (announcement.icon == AnnouncementIcon.success)
                     themes.successColor
                   else if (announcement.icon == AnnouncementIcon.warning)
-                    themes.warnColor
+                    themes.warnColor,
                 ][0],
               ),
               const SizedBox(width: 8),
               Text(
                 announcement.title,
                 style: const TextStyle(fontWeight: FontWeight.bold),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -252,10 +346,12 @@ class AnnouncementsCard extends HookConsumerWidget {
                 onRead!();
               },
               style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(themes.accentColor),
-                  foregroundColor:
-                      WidgetStateProperty.all(themes.fgOnAccentColor),
-                  elevation: WidgetStateProperty.all(0)),
+                backgroundColor: WidgetStateProperty.all(themes.accentColor),
+                foregroundColor: WidgetStateProperty.all(
+                  themes.fgOnAccentColor,
+                ),
+                elevation: WidgetStateProperty.all(0),
+              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -264,8 +360,8 @@ class AnnouncementsCard extends HookConsumerWidget {
                   Text(S.current.ok),
                 ],
               ),
-            )
-          ]
+            ),
+          ],
         ],
       ),
     );

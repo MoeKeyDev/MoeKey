@@ -79,7 +79,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}срок после завершения работ";
 
-  static String m26(years) => "${years}...лет назад";
+  static String m26(name) =>
+      "Вы уверены, что хотите отменить запрос на подписку пользователю ${name}?";
+
+  static String m27(years) => "${years}...лет назад";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -206,6 +209,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Имя папки"),
     "follow": MessageLookupByLibrary.simpleMessage("фокус"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("Следовать"),
     "followers": MessageLookupByLibrary.simpleMessage("наблюдатель"),
     "following": MessageLookupByLibrary.simpleMessage("Озабоченные"),
@@ -260,6 +264,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Имя не может быть пустым",
     ),
     "next": MessageLookupByLibrary.simpleMessage("следующий шаг"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "Нерассмотренные запросы на подписку отсутствуют",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage("Список пуст"),
     "notFindServer": MessageLookupByLibrary.simpleMessage(
       "Не нашли свой сервер?",
@@ -527,6 +534,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Результаты голосования были получены",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

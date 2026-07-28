@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,40 +10,65 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_player.g.dart';
 
+@visibleForTesting
+VideoControllerConfiguration videoControllerConfiguration({
+  required bool isMacOS,
+}) {
+  return VideoControllerConfiguration(
+    // media_kit's hardware texture path can abort inside libmpv on macOS.
+    // Disable both the texture path and hardware decoding there so mpv does
+    // not initialize a hardware-backed video output.
+    enableHardwareAcceleration: !isMacOS,
+    hwdec: isMacOS ? 'no' : null,
+  );
+}
+
 @riverpod
-VideoController videoPlayerState(Ref ref,
-    {required String url, bool play = false}) {
-  var player = Player();
-  var controller = VideoController(player);
-  player.open(Media(url), play: false);
+VideoController videoPlayerState(
+  Ref ref, {
+  required String url,
+  bool play = false,
+}) {
+  final player = Player();
+  final controller = VideoController(
+    player,
+    configuration: videoControllerConfiguration(isMacOS: Platform.isMacOS),
+  );
+  unawaited(_openVideo(player, url, play: play));
   ref.onDispose(() {
-    player.dispose();
+    unawaited(player.dispose());
   });
   return controller;
+}
+
+Future<void> _openVideo(Player player, String url, {required bool play}) async {
+  try {
+    await player.open(Media(url), play: play);
+  } catch (exception, stacktrace) {
+    debugPrint('Failed to open video: $exception');
+    debugPrintStack(stackTrace: stacktrace);
+  }
 }
 
 Future<void> enterNativeFullscreen() async {
   try {
     if (Platform.isAndroid || Platform.isIOS) {
-      await Future.wait(
-        [
-          SystemChrome.setEnabledSystemUIMode(
-            SystemUiMode.immersiveSticky,
-            overlays: [],
-          ),
-          // SystemChrome.setPreferredOrientations(
-          //   [
-          //     DeviceOrientation.landscapeLeft,
-          //     DeviceOrientation.landscapeRight,
-          //   ],
-          // ),
-        ],
-      );
+      await Future.wait([
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.immersiveSticky,
+          overlays: [],
+        ),
+        // SystemChrome.setPreferredOrientations(
+        //   [
+        //     DeviceOrientation.landscapeLeft,
+        //     DeviceOrientation.landscapeRight,
+        //   ],
+        // ),
+      ]);
     } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-      await const MethodChannel('com.alexmercerind/media_kit_video')
-          .invokeMethod(
-        'Utils.EnterNativeFullscreen',
-      );
+      await const MethodChannel(
+        'com.alexmercerind/media_kit_video',
+      ).invokeMethod('Utils.EnterNativeFullscreen');
     }
   } catch (exception, stacktrace) {
     debugPrint(exception.toString());
@@ -54,22 +80,19 @@ Future<void> enterNativeFullscreen() async {
 Future<void> exitNativeFullscreen() async {
   try {
     if (Platform.isAndroid || Platform.isIOS) {
-      await Future.wait(
-        [
-          SystemChrome.setEnabledSystemUIMode(
-            SystemUiMode.manual,
-            overlays: SystemUiOverlay.values,
-          ),
-          // SystemChrome.setPreferredOrientations(
-          //   [],
-          // ),
-        ],
-      );
+      await Future.wait([
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.manual,
+          overlays: SystemUiOverlay.values,
+        ),
+        // SystemChrome.setPreferredOrientations(
+        //   [],
+        // ),
+      ]);
     } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-      await const MethodChannel('com.alexmercerind/media_kit_video')
-          .invokeMethod(
-        'Utils.ExitNativeFullscreen',
-      );
+      await const MethodChannel(
+        'com.alexmercerind/media_kit_video',
+      ).invokeMethod('Utils.ExitNativeFullscreen');
     }
   } catch (exception, stacktrace) {
     debugPrint(exception.toString());

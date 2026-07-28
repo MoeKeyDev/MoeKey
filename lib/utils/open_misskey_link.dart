@@ -20,6 +20,12 @@ String? resolveLocalMisskeyRoute({
   }
 
   final segments = target.pathSegments.where((part) => part.isNotEmpty).toList();
+  if (segments.length == 2 &&
+      segments[0] == 'my' &&
+      segments[1] == 'follow-requests') {
+    return '/notifications?tab=sent-follow-requests';
+  }
+
   if (segments.length == 2) {
     final id = Uri.encodeComponent(segments[1]);
     switch (segments[0]) {

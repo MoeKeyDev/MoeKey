@@ -48,6 +48,7 @@ class NotificationsUserCard extends HookConsumerWidget {
             shadow: false,
             borderRadius: borderRadius,
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   width: isSmall ? 7 * (fontsize - 8) : 8 * (fontsize - 8),

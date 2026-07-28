@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/note.dart';
 import 'package:moekey/logger.dart';
+import 'package:moekey/pages/search/search_filter.dart';
 import 'package:moekey/status/misskey_api.dart';
-import 'package:moekey/status/themes.dart';
-import 'package:moekey/widgets/mk_card.dart';
-import 'package:moekey/widgets/mk_input.dart';
 import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../generated/l10n.dart';
 
 part 'notes_search.g.dart';
 
@@ -25,104 +20,14 @@ class NotesSearchPage extends HookConsumerWidget {
       onRefresh: () => ref.read(notesSearchStatusProvider.notifier).search(),
       hasMore: status.searched && status.hasMore,
       items: status.data,
-      slivers: const [
-        SliverToBoxAdapter(
-          child: NotesSearchPanel(),
-        ),
-        SliverToBoxAdapter(child: SizedBox(height: 8))
-      ],
+      padding: const EdgeInsets.only(top: 8),
     );
-  }
-}
-
-class NotesSearchPanel extends HookConsumerWidget {
-  const NotesSearchPanel({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var themes = ref.watch(themeColorsProvider);
-    var status = ref.watch(notesSearchStatusProvider);
-    var widgetStateProperty = WidgetStateProperty.resolveWith(
-      (states) {
-        if (states.contains(WidgetState.selected)) {
-          return themes.accentColor;
-        }
-        return themes.fgColor;
-      },
-    );
-    return MkCard(
-        shadow: false,
-        child: Column(
-          children: [
-            MkInput(
-              prefixIcon: const Icon(TablerIcons.search),
-              value: status.searchValue,
-              onChanged: ref
-                  .read(notesSearchStatusProvider.notifier)
-                  .updateSearchValue,
-            ),
-            const SizedBox(height: 16),
-            RadioGroup<int>(
-              groupValue: status.serverType,
-              onChanged: (value) {
-                if (value != null) {
-                  ref
-                      .read(notesSearchStatusProvider.notifier)
-                      .updateServerType(value);
-                }
-              },
-              child: Row(
-                children: [
-                  Radio(
-                    value: 1,
-                    fillColor: widgetStateProperty,
-                  ),
-                  Text(S.current.all),
-                  const SizedBox(width: 8),
-                  Radio(
-                    value: 2,
-                    fillColor: widgetStateProperty,
-                  ),
-                  Text(S.current.local),
-                  const SizedBox(width: 8),
-                  Radio(
-                    value: 3,
-                    fillColor: widgetStateProperty,
-                  ),
-                  Text(S.current.searchHost),
-                ],
-              ),
-            ),
-            if (status.serverType == 3) ...[
-              const SizedBox(height: 16),
-              MkInput(
-                value: status.hostValue,
-                prefixIcon: const Icon(TablerIcons.server),
-                onChanged: ref
-                    .read(notesSearchStatusProvider.notifier)
-                    .updateHostValue,
-              ),
-            ],
-            const SizedBox(height: 16),
-            FilledButton(
-                onPressed: () =>
-                    ref.read(notesSearchStatusProvider.notifier).search(),
-                style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all(themes.accentColor),
-                    foregroundColor: WidgetStateProperty.all(themes.panelColor),
-                    elevation: WidgetStateProperty.all(0)),
-                child: Text("   ${S.current.search}   "))
-          ],
-        ));
   }
 }
 
 class NotesSearchStatusModel {
   List<NoteModel> data = [];
-  int serverType = 1;
   String searchValue = "";
-  String hostValue = "";
   bool loading = false;
   bool searched = false;
   bool hasMore = true;
@@ -140,35 +45,63 @@ class NotesSearchStatus extends _$NotesSearchStatus {
     ref.notifyListeners();
   }
 
-  void updateHostValue(String hostValue) {
-    state.hostValue = hostValue;
-    ref.notifyListeners();
+  String? _searchHost(SearchFilterModel filter) {
+    String? host;
+    if (filter.scope == SearchFilterScope.local) {
+      return ".";
+    }
+    if (filter.scope == SearchFilterScope.host) {
+      host = filter.host.trim();
+      final uri = Uri.tryParse(host);
+      if (uri != null && uri.hasScheme && uri.host.isNotEmpty) {
+        host = uri.host;
+      }
+    } else if (filter.scope == SearchFilterScope.user) {
+      host = filter.user?.host ?? ".";
+    }
+    if (host == null || host.isEmpty) {
+      return null;
+    }
+    final localHost = Uri.tryParse(
+      ref.read(misskeyApisProvider).instance,
+    )?.host;
+    return host == localHost ? "." : host;
   }
 
-  void updateServerType(int serverType) {
-    state.serverType = serverType;
-    ref.notifyListeners();
+  Future<List<NoteModel>> _request({required String query, String? untilId}) {
+    final filter = ref.read(searchFilterProvider);
+    return ref
+        .read(misskeyApisProvider)
+        .notes
+        .search(
+          query: query,
+          untilId: untilId,
+          host: _searchHost(filter),
+          userId: filter.scope == SearchFilterScope.user
+              ? filter.user?.id
+              : null,
+          rangeStartAt: filter.rangeStartAt?.millisecondsSinceEpoch,
+          rangeEndAt: filter.rangeEndAt?.millisecondsSinceEpoch,
+        );
   }
 
   Future<void> search() async {
     if (state.loading) return;
+    final query = state.searchValue.trim();
+    if (query.isEmpty) {
+      state.searched = false;
+      state.hasMore = false;
+      state.data = [];
+      ref.notifyListeners();
+      return;
+    }
     state.loading = true;
     state.searched = true;
     state.hasMore = true;
     state.data = [];
     ref.notifyListeners();
     try {
-      String? host;
-      if (state.serverType == 2) {
-        host = ".";
-      }
-      if (state.serverType == 3 && state.hostValue.isNotEmpty) {
-        host = state.hostValue;
-      }
-      var data = await ref.read(misskeyApisProvider).notes.search(
-            query: state.searchValue,
-            host: host,
-          );
+      final data = await _request(query: query);
       state.data = data;
       state.hasMore = data.isNotEmpty;
     } catch (e) {
@@ -182,18 +115,10 @@ class NotesSearchStatus extends _$NotesSearchStatus {
     if (state.loading) return;
     state.loading = true;
     try {
-      String? host;
-      if (state.serverType == 2) {
-        host = ".";
-      }
-      if (state.serverType == 3 && state.hostValue.isNotEmpty) {
-        host = state.hostValue;
-      }
-      var data = await ref.read(misskeyApisProvider).notes.search(
-            query: state.searchValue,
-            host: host,
-            untilId: state.data.lastOrNull?.id,
-          );
+      final data = await _request(
+        query: state.searchValue,
+        untilId: state.data.lastOrNull?.id,
+      );
       state.data += data;
       state.hasMore = data.isNotEmpty;
     } catch (e) {

@@ -78,7 +78,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}kapanış sonrası tarih";
 
-  static String m26(years) => "${years}yıllar önce";
+  static String m26(name) =>
+      "${name} adlı kişiye gönderdiğiniz takip isteğini iptal etmek ister misiniz?";
+
+  static String m27(years) => "${years}yıllar önce";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -197,6 +200,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Klasör adı"),
     "follow": MessageLookupByLibrary.simpleMessage("odaklanma"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage(
+      "İstek gönderildi",
+    ),
     "followed": MessageLookupByLibrary.simpleMessage("Takip edildi"),
     "followers": MessageLookupByLibrary.simpleMessage("gözlemci"),
     "following": MessageLookupByLibrary.simpleMessage("Endişeli"),
@@ -249,6 +255,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "İsim boş olamaz",
     ),
     "next": MessageLookupByLibrary.simpleMessage("bir sonraki adım"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "Bekleyen takip istekleri yok.",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -520,6 +529,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Oylama sonuçları oluşturuldu",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

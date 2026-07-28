@@ -31,13 +31,15 @@ class UserInfo extends _$UserInfo {
   StreamSubscription<Map>? listen;
 
   @override
-  FutureOr<UserFullModel?> build(
-      {String? username,
-      String? host,
-      String? userId,
-      UserFullModel? userModel}) async {
+  FutureOr<UserFullModel?> build({
+    String? username,
+    String? host,
+    String? userId,
+    UserFullModel? userModel,
+  }) async {
     var apis = ref.read(misskeyApisProvider);
-    var model = userModel ??
+    var model =
+        userModel ??
         await apis.user.show(username: username, host: host, userId: userId);
     // 如果服务端没有返回用户名HOST，默认使用本示例的地址
     model?.host ??= Uri.parse(apis.instance).host;
@@ -55,17 +57,26 @@ class UserInfo extends _$UserInfo {
           logger.d("内容不存在");
           return;
         }
-        UserFullModel userModel = state.value!;
+        final userModel = state.value!;
         logger.d(userModel);
         if (event["type"] == "follow" && event["body"]["id"] == model?.id) {
-          userModel.isFollowing = true;
-          userModel.hasPendingFollowRequestFromYou = false;
+          state = AsyncValue.data(
+            userModel.copyWith(
+              isFollowing: true,
+              hasPendingFollowRequestFromYou: false,
+            ),
+          );
+          return;
         }
         if (event["type"] == "unfollow" && event["body"]["id"] == model?.id) {
-          userModel.isFollowing = false;
-          userModel.hasPendingFollowRequestFromYou = false;
+          state = AsyncValue.data(
+            userModel.copyWith(
+              isFollowing: false,
+              hasPendingFollowRequestFromYou: false,
+            ),
+          );
+          return;
         }
-        state = AsyncValue.data(userModel);
       } catch (e) {
         logger.e(e);
       }
@@ -74,36 +85,66 @@ class UserInfo extends _$UserInfo {
   }
 
   Future<void> followingCreate() async {
-    if (state.value == null) {
+    final previous = state.value;
+    if (previous == null) {
       return;
     }
-    UserFullModel userModel = state.value!;
-    userModel.hasPendingFollowRequestFromYou = true;
-    state = AsyncValue.data(userModel);
+    final pending = previous.copyWith(hasPendingFollowRequestFromYou: true);
+    state = AsyncValue.data(pending);
     var apis = ref.read(misskeyApisProvider);
-    await apis.following.create(userId: userModel.id);
+    try {
+      await apis.following.create(userId: pending.id);
+      if (!pending.isLocked) {
+        state = AsyncValue.data(
+          pending.copyWith(
+            isFollowing: true,
+            hasPendingFollowRequestFromYou: false,
+          ),
+        );
+      }
+    } catch (_) {
+      state = AsyncValue.data(previous);
+      rethrow;
+    }
   }
 
   Future<void> followingDelete() async {
-    if (state.value == null) {
+    final previous = state.value;
+    if (previous == null) {
       return;
     }
-    UserFullModel userModel = state.value!;
-    userModel.hasPendingFollowRequestFromYou = true;
-    state = AsyncValue.data(userModel);
+    final pending = previous.copyWith(hasPendingFollowRequestFromYou: true);
+    state = AsyncValue.data(pending);
     var apis = ref.read(misskeyApisProvider);
-    await apis.following.delete(userId: userModel.id);
+    try {
+      await apis.following.delete(userId: pending.id);
+      state = AsyncValue.data(
+        pending.copyWith(
+          isFollowing: false,
+          hasPendingFollowRequestFromYou: false,
+        ),
+      );
+    } catch (_) {
+      state = AsyncValue.data(previous);
+      rethrow;
+    }
   }
 
   Future<void> followingCancel() async {
-    if (state.value == null) {
+    final previous = state.value;
+    if (previous == null) {
       return;
     }
-    UserFullModel userModel = state.value!;
-    userModel.hasPendingFollowRequestFromYou = false;
-    state = AsyncValue.data(userModel);
     var apis = ref.read(misskeyApisProvider);
-    await apis.following.requestsCancel(userId: userModel.id);
+    try {
+      await apis.following.requestsCancel(userId: previous.id);
+      state = AsyncValue.data(
+        previous.copyWith(hasPendingFollowRequestFromYou: false),
+      );
+    } catch (_) {
+      state = AsyncValue.data(previous);
+      rethrow;
+    }
   }
 }
 
@@ -167,9 +208,7 @@ class UserNotesList extends _$UserNotesList {
 @riverpod
 class UserReactionsList extends _$UserReactionsList {
   @override
-  FutureOr<NoteListModel> build({
-    required String userId,
-  }) async {
+  FutureOr<NoteListModel> build({required String userId}) async {
     var note = NoteListModel();
 
     note.list = await reactions();

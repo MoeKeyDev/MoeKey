@@ -74,7 +74,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}后截止";
 
-  static String m26(years) => "${years}年前";
+  static String m26(name) =>
+      "Are you sure that you want to cancel your follow request to ${name}?";
+
+  static String m27(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -161,6 +164,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
     "follow": MessageLookupByLibrary.simpleMessage("关注"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("已关注"),
     "followers": MessageLookupByLibrary.simpleMessage("关注者"),
     "following": MessageLookupByLibrary.simpleMessage("关注中"),
@@ -201,6 +205,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("名称"),
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
     "next": MessageLookupByLibrary.simpleMessage("下一步"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "You don\'t have any pending follow requests",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -402,6 +409,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

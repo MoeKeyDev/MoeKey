@@ -14,12 +14,15 @@ class UserService extends MisskeyApiServices {
     String? sinceId,
     String type = "following",
   }) async {
-    var res = await client.post<List?>("/users/$type", data: {
-      "userId": userId,
-      "limit": limit,
-      "untilId": ?untilId,
-      "sinceId": ?sinceId
-    });
+    var res = await client.post<List?>(
+      "/users/$type",
+      data: {
+        "userId": userId,
+        "limit": limit,
+        "untilId": ?untilId,
+        "sinceId": ?sinceId,
+      },
+    );
     if (res == null) {
       return [];
     }
@@ -31,11 +34,10 @@ class UserService extends MisskeyApiServices {
     String? host,
     String? userId,
   }) async {
-    var res = await client.post("/users/show", data: {
-      "username": ?username,
-      "host": ?host,
-      "userId": ?userId,
-    });
+    var res = await client.post(
+      "/users/show",
+      data: {"username": ?username, "host": ?host, "userId": ?userId},
+    );
     if (res == null) {
       return null;
     }
@@ -49,6 +51,7 @@ class UserService extends MisskeyApiServices {
     bool withChannelNotes = false,
     bool withFiles = false,
     bool withFeatured = false,
+    int limit = 30,
     String? untilId,
   }) async {
     var res = await client.post<List?>(
@@ -59,7 +62,7 @@ class UserService extends MisskeyApiServices {
         "withReplies": withReplies,
         "withChannelNotes": withChannelNotes,
         "withFiles": withFiles,
-        "limit": 30,
+        "limit": limit,
         "untilId": ?untilId,
       },
     );
@@ -74,11 +77,10 @@ class UserService extends MisskeyApiServices {
     required String userId,
     String? untilId,
   }) async {
-    var res = await client.post("/users/reactions", data: {
-      "userId": userId,
-      "limit": 30,
-      "untilId": ?untilId,
-    });
+    var res = await client.post(
+      "/users/reactions",
+      data: {"userId": userId, "limit": 30, "untilId": ?untilId},
+    );
     if (res == null) {
       return [];
     }
@@ -91,23 +93,22 @@ class UserService extends MisskeyApiServices {
     String? sinceId,
     String? untilId,
   }) async {
-    var res = await client.post<List>("/users/clips", data: {
-      "userId": userId,
-      "limit": 10,
-      "sinceId": ?sinceId,
-      "untilId": ?untilId,
-    });
-    return List<ClipsModel>.from(res.map(
-      (e) => ClipsModel.fromJson(e),
-    ));
+    var res = await client.post<List>(
+      "/users/clips",
+      data: {
+        "userId": userId,
+        "limit": 10,
+        "sinceId": ?sinceId,
+        "untilId": ?untilId,
+      },
+    );
+    return List<ClipsModel>.from(res.map((e) => ClipsModel.fromJson(e)));
   }
 
   /// 获取全站置顶用户
   Future<List<UserFullModel>> pinnedUsers() async {
     var res = await client.post<List>("/pinned-users");
-    return List<UserFullModel>.from(res.map(
-      (e) => UserFullModel.fromJson(e),
-    ));
+    return List<UserFullModel>.from(res.map((e) => UserFullModel.fromJson(e)));
   }
 
   /// 获取全站用户
@@ -117,15 +118,11 @@ class UserService extends MisskeyApiServices {
     String? sort,
     String? state,
   }) async {
-    var res = await client.post<List>("/users", data: {
-      "limit": 10,
-      "origin": ?origin,
-      "sort": ?sort,
-      "state": ?state,
-    });
-    return List<UserFullModel>.from(res.map(
-      (e) => UserFullModel.fromJson(e),
-    ));
+    var res = await client.post<List>(
+      "/users",
+      data: {"limit": 10, "origin": ?origin, "sort": ?sort, "state": ?state},
+    );
+    return List<UserFullModel>.from(res.map((e) => UserFullModel.fromJson(e)));
   }
 
   /// 搜索用户
@@ -133,16 +130,17 @@ class UserService extends MisskeyApiServices {
     required String query,
     int limit = 10,
     String origin = "combined",
-    String? untilId,
+    int offset = 0,
   }) async {
-    var res = await client.post<List>("/users/search", data: {
-      "query": query,
-      "limit": limit,
-      "origin": origin,
-      "untilId": ?untilId,
-    });
-    return List<UserFullModel>.from(res.map(
-      (e) => UserFullModel.fromJson(e),
-    ));
+    var res = await client.post<List>(
+      "/users/search",
+      data: {
+        "query": query,
+        "limit": limit,
+        "origin": origin,
+        "offset": offset,
+      },
+    );
+    return List<UserFullModel>.from(res.map((e) => UserFullModel.fromJson(e)));
   }
 }

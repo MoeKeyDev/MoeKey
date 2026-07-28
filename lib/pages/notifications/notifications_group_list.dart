@@ -123,6 +123,20 @@ class NotificationItemCard extends HookConsumerWidget {
       return _iconAvatar(fallbackIcon, themes.accentColor);
     }
 
+    Widget noteAuthorAvatar(IconData fallbackIcon) {
+      final author = data.note?.user;
+      if (author?.avatarUrl?.isNotEmpty == true) {
+        return MkImage(
+          author!.avatarUrl!,
+          blurHash: author.avatarBlurhash,
+          shape: BoxShape.circle,
+          width: double.infinity,
+          height: double.infinity,
+        );
+      }
+      return _iconAvatar(fallbackIcon, themes.accentColor);
+    }
+
     NotificationsUserCard card({
       required Widget content,
       Widget? name,
@@ -216,6 +230,7 @@ class NotificationItemCard extends HookConsumerWidget {
             S.current.notifyNewNote,
             summary: _noteSummary(data.note),
           ),
+          avatar: noteAuthorAvatar(TablerIcons.note),
           onTap: openNote,
         );
       case NotificationType.follow:
@@ -280,6 +295,7 @@ class NotificationItemCard extends HookConsumerWidget {
             S.current.voteResult,
             summary: _noteSummary(data.note),
           ),
+          avatar: noteAuthorAvatar(TablerIcons.chart_arrows),
           badge: _iconBadge(
             themes,
             TablerIcons.chart_arrows,

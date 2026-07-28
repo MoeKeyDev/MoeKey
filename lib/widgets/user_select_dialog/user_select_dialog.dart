@@ -14,7 +14,9 @@ import '../../status/themes.dart';
 import '../mk_input.dart';
 
 class UserSelectDialog extends HookConsumerWidget {
-  const UserSelectDialog({super.key});
+  const UserSelectDialog({super.key, this.maxSelect});
+
+  final int? maxSelect;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,15 +27,17 @@ class UserSelectDialog extends HookConsumerWidget {
     return MkModal(
       body: buildUserListView(userList, selectList, themes),
       appbar: buildHeader(selectList.value),
+      bodyColor: themes.bgColor,
       width: 400,
       height: 550,
     );
   }
 
   SingleChildScrollView buildUserListView(
-      AsyncValue<List<UserFullModel>> userList,
-      ValueNotifier<Map<dynamic, dynamic>> selectList,
-      ThemeColorModel themes) {
+    AsyncValue<List<UserFullModel>> userList,
+    ValueNotifier<Map<dynamic, dynamic>> selectList,
+    ThemeColorModel themes,
+  ) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -46,6 +50,12 @@ class UserSelectDialog extends HookConsumerWidget {
                 if (selectList.value.containsKey(item.id)) {
                   selectList.value.remove(item.id);
                 } else {
+                  if (maxSelect == 1) {
+                    selectList.value.clear();
+                  } else if (maxSelect != null &&
+                      selectList.value.length >= maxSelect!) {
+                    return;
+                  }
                   selectList.value[item.id] = item;
                 }
 
@@ -55,11 +65,9 @@ class UserSelectDialog extends HookConsumerWidget {
               child: buildUserItem(
                 themes,
                 item,
-                selectList.value.containsKey(
-                  item.id,
-                ),
+                selectList.value.containsKey(item.id),
               ),
-            )
+            ),
         ],
       ),
     );
@@ -72,43 +80,26 @@ class UserSelectDialog extends HookConsumerWidget {
         var data = ref.watch(userSelectDialogStateProvider);
         return Row(
           children: [
-            const SizedBox(
-              width: 4,
-            ),
+            const SizedBox(width: 4),
             IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Icon(
-                TablerIcons.x,
-                size: 18,
-                color: themes.fgColor,
-              ),
+              icon: Icon(TablerIcons.x, size: 18, color: themes.fgColor),
             ),
-            const SizedBox(
-              width: 4,
-            ),
+            const SizedBox(width: 4),
             Text(S.current.selectUser),
             Text("(${selectList.length})"),
             const Spacer(),
             if (data.isLoading)
-              const LoadingCircularProgress(
-                size: 18,
-                strokeWidth: 4,
-              ),
+              const LoadingCircularProgress(size: 18, strokeWidth: 4),
             IconButton(
               onPressed: () {
                 Navigator.of(context).pop(selectList.values);
               },
-              icon: Icon(
-                TablerIcons.check,
-                size: 18,
-                color: themes.fgColor,
-              ),
+              icon: Icon(TablerIcons.check, size: 18, color: themes.fgColor),
             ),
-            const SizedBox(
-              width: 4,
-            ),
+            const SizedBox(width: 4),
           ],
         );
       },
@@ -126,10 +117,9 @@ class UserSelectDialog extends HookConsumerWidget {
               Expanded(
                 child: MkInput(
                   label: S.current.username,
-                  prefixIcon: Icon(
-                    TablerIcons.at,
-                    color: themes.fgColor,
-                  ),
+                  prefixIcon: Icon(TablerIcons.at, color: themes.fgColor),
+                  backgroundColor: Colors.transparent,
+                  fillColor: themes.panelColor,
                   onChanged: (value) {
                     ref
                         .read(userSelectDialogStateProvider.notifier)
@@ -137,13 +127,13 @@ class UserSelectDialog extends HookConsumerWidget {
                   },
                 ),
               ),
-              const SizedBox(
-                width: 8,
-              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: MkInput(
                   label: S.current.hostnames,
                   prefixIcon: Icon(TablerIcons.at, color: themes.fgColor),
+                  backgroundColor: Colors.transparent,
+                  fillColor: themes.panelColor,
                   onChanged: (value) {
                     ref
                         .read(userSelectDialogStateProvider.notifier)
@@ -168,7 +158,7 @@ class UserSelectDialog extends HookConsumerWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        color: isActive ? themes.accentColor : themes.panelColor,
+        color: isActive ? themes.accentColor : Colors.transparent,
         child: Row(
           children: [
             SizedBox(
@@ -182,25 +172,26 @@ class UserSelectDialog extends HookConsumerWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(
-              width: 8,
-            ),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 200),
-                      style: style.copyWith(
-                          fontWeight: FontWeight.bold, fontSize: 14),
-                      child: MFMText(
-                        text: name,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        bigEmojiCode: false,
-                        feature: const [MFMFeature.emojiCode],
-                      )),
+                    duration: const Duration(milliseconds: 200),
+                    style: style.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    child: MFMText(
+                      text: name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      bigEmojiCode: false,
+                      feature: const [MFMFeature.emojiCode],
+                    ),
+                  ),
                   Builder(
                     builder: (context) {
                       return Text.rich(
@@ -209,22 +200,23 @@ class UserSelectDialog extends HookConsumerWidget {
                             TextSpan(text: "@${item.username}"),
                             if (item.host != null)
                               TextSpan(
-                                  text: "@${item.host}",
-                                  style: TextStyle(
-                                      color: DefaultTextStyle.of(context)
-                                          .style
-                                          .color
-                                          ?.withValues(alpha: 0.6)))
+                                text: "@${item.host}",
+                                style: TextStyle(
+                                  color: DefaultTextStyle.of(
+                                    context,
+                                  ).style.color?.withValues(alpha: 0.6),
+                                ),
+                              ),
                           ],
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       );
                     },
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

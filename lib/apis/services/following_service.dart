@@ -1,3 +1,4 @@
+import 'package:moekey/apis/models/follow_request.dart';
 import 'package:moekey/apis/services/services.dart';
 
 enum IncomingFollowRequestStatus { unknown, pending, accepted, handled }
@@ -23,6 +24,26 @@ class FollowingService extends MisskeyApiServices {
 
   Future<void> requestsReject({required String userId}) async {
     await client.post("/following/requests/reject", data: {"userId": userId});
+  }
+
+  Future<List<FollowRequestModel>> requestsSent({
+    int limit = 10,
+    String? sinceId,
+    String? untilId,
+  }) async {
+    final response = await client.post<List<dynamic>?>(
+      "/following/requests/sent",
+      data: {"limit": limit, "sinceId": ?sinceId, "untilId": ?untilId},
+    );
+    if (response == null) {
+      return [];
+    }
+    return response
+        .map(
+          (request) =>
+              FollowRequestModel.fromJson(request as Map<String, dynamic>),
+        )
+        .toList();
   }
 
   /// Notifications do not include whether a follow request is still pending.

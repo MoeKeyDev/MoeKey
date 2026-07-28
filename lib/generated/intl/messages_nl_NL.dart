@@ -78,7 +78,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}termijn na voltooiing";
 
-  static String m26(years) => "${years}...jaren geleden";
+  static String m26(name) =>
+      "Are you sure that you want to cancel your follow request to ${name}?";
+
+  static String m27(years) => "${years}...jaren geleden";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -209,6 +212,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Mapnaam"),
     "follow": MessageLookupByLibrary.simpleMessage("focus"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("Ik heb  gevolgd."),
     "followers": MessageLookupByLibrary.simpleMessage("watcher"),
     "following": MessageLookupByLibrary.simpleMessage("Bezorgd"),
@@ -261,6 +265,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Naam kan niet leeg zijn",
     ),
     "next": MessageLookupByLibrary.simpleMessage("de volgende stap"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "Je hebt geen lopende volgverzoeken",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -516,6 +523,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Stemuitslagen zijn gegenereerd",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

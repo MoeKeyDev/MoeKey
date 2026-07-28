@@ -66,7 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m21(count) => "總票數 ${count}";
 
-  static String m27(choice) => "確定投票給「${choice}」嗎？";
+  static String m28(choice) => "確定投票給「${choice}」嗎？";
 
   static String m22(count) => "${count}票";
 
@@ -76,7 +76,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}後截止";
 
-  static String m26(years) => "${years}年前";
+  static String m26(name) => "要取消向 ${name} 送出的追隨申請嗎？";
+
+  static String m27(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -157,6 +159,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("過濾"),
     "folderName": MessageLookupByLibrary.simpleMessage("文件夾名稱"),
     "follow": MessageLookupByLibrary.simpleMessage("關注"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("送出的請求"),
     "followed": MessageLookupByLibrary.simpleMessage("已關注"),
     "followers": MessageLookupByLibrary.simpleMessage("關注者"),
     "following": MessageLookupByLibrary.simpleMessage("關注中"),
@@ -197,6 +200,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("名稱"),
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名稱不能為空"),
     "next": MessageLookupByLibrary.simpleMessage("下一步"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage("沒有追隨您的請求"),
     "noLists": MessageLookupByLibrary.simpleMessage("列表為空"),
     "notFindServer": MessageLookupByLibrary.simpleMessage("沒有找到你所在的伺服器？"),
     "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("複製本站鏈接"),
@@ -364,7 +368,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
     "vote": MessageLookupByLibrary.simpleMessage("投票"),
     "voteAllCount": m21,
-    "voteConfirm": m27,
+    "voteConfirm": m28,
     "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允許多個投票"),
@@ -378,6 +382,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteShowResult": MessageLookupByLibrary.simpleMessage("查看結果"),
     "voteVoted": MessageLookupByLibrary.simpleMessage("已投票"),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

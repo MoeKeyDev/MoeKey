@@ -78,7 +78,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}Nacherfüllungsfrist";
 
-  static String m26(years) => "${years}vor Jahren";
+  static String m26(name) =>
+      "Möchten Sie die Voll-Anfrage an ${name} zurückziehen?";
+
+  static String m27(years) => "${years}vor Jahren";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -205,6 +208,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Name des Ordners"),
     "follow": MessageLookupByLibrary.simpleMessage("Fokus"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage(
+      "Anfrage gesendet",
+    ),
     "followed": MessageLookupByLibrary.simpleMessage("Gefolgt von"),
     "followers": MessageLookupByLibrary.simpleMessage("Beobachter"),
     "following": MessageLookupByLibrary.simpleMessage("Besorgt"),
@@ -261,6 +267,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Name darf nicht leer sein",
     ),
     "next": MessageLookupByLibrary.simpleMessage("der nächste Schritt"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "Keine ausstehenden Follow-Anfragen vorhanden",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -534,6 +543,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Die Abstimmungsergebnisse wurden erstellt",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

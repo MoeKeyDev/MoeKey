@@ -78,7 +78,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}кінцевий термін після завершення";
 
-  static String m26(years) => "${years}...багато років тому.";
+  static String m26(name) =>
+      "Ви впевнені, що хочете скасувати запит на підписку до ${name}?";
+
+  static String m27(years) => "${years}...багато років тому.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -205,6 +208,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Ім\'я папки"),
     "follow": MessageLookupByLibrary.simpleMessage("фокус"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("Слідкували за"),
     "followers": MessageLookupByLibrary.simpleMessage("спостерігач"),
     "following": MessageLookupByLibrary.simpleMessage("Занепокоєні"),
@@ -265,6 +269,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ім\'я не може бути порожнім",
     ),
     "next": MessageLookupByLibrary.simpleMessage("наступний крок"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "Немає запитів на підписку",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -530,6 +537,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Підбито підсумки голосування",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

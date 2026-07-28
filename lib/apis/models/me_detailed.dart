@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:moekey/apis/models/announcement.dart';
 import 'package:moekey/apis/models/note.dart';
 import 'package:moekey/apis/models/user_full.dart';
 import 'package:moekey/apis/models/user_lite.dart';
@@ -106,7 +107,7 @@ abstract class MeDetailed with _$MeDetailed {
     required bool receiveAnnouncementEmail,
     // List<SecurityKeysList>? securityKeysList,
     // required TwoFactorBackupCodesStock twoFactorBackupCodesStock,
-    // required List<Announcement> unreadAnnouncements,
+    @Default([]) List<Announcement> unreadAnnouncements,
     required double unreadNotificationsCount,
   }) = _MeDetailed;
 

@@ -15,6 +15,7 @@ class MkModal extends HookConsumerWidget {
     this.width = 450,
     this.height = 500,
     this.padding,
+    this.bodyColor,
     this.maskClosable = true,
   });
 
@@ -23,6 +24,7 @@ class MkModal extends HookConsumerWidget {
   final double width;
   final double height;
   final EdgeInsetsGeometry? padding;
+  final Color? bodyColor;
   final bool maskClosable;
 
   @override
@@ -30,39 +32,38 @@ class MkModal extends HookConsumerWidget {
     var querySize = MediaQuery.of(context).size;
     var themes = ref.watch(themeColorsProvider);
 
-    var borderRadius = const BorderRadius.all(
-      Radius.circular(12),
-    );
+    var borderRadius = const BorderRadius.all(Radius.circular(12));
     return ModalWrapper(
-        child: AnimatedContainer(
-      width: querySize.width > width ? width : querySize.width,
-      height: querySize.height > height ? height : querySize.height,
-      duration: const Duration(milliseconds: 500),
-      child: ClipRRect(
-        borderRadius: borderRadius,
-        child: Column(
-          children: [
-            if (appbar != null)
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: BlurWidget(
-                  color: themes.windowHeaderColor,
-                  child: appbar,
+      child: AnimatedContainer(
+        width: querySize.width > width ? width : querySize.width,
+        height: querySize.height > height ? height : querySize.height,
+        duration: const Duration(milliseconds: 500),
+        child: ClipRRect(
+          borderRadius: borderRadius,
+          child: Column(
+            children: [
+              if (appbar != null)
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: BlurWidget(
+                    color: themes.windowHeaderColor,
+                    child: appbar,
+                  ),
+                ),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: bodyColor ?? themes.panelColor,
+                  child: body,
                 ),
               ),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: themes.panelColor,
-                child: body,
-              ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 }
 
@@ -106,7 +107,7 @@ class ModalWrapper extends StatelessWidget {
                     child: child,
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -118,6 +119,7 @@ class ModalWrapper extends StatelessWidget {
 Future<T?> showModel<T>({
   required BuildContext context,
   required Widget Function(BuildContext) builder,
+  bool useRootNavigator = true,
 }) {
   var page = PageRouteBuilder<T>(
     opaque: false,
@@ -127,25 +129,31 @@ Future<T?> showModel<T>({
       return builder(context);
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var tween = animation.drive(Tween(begin: 0.0, end: 1.0)
-          .chain(CurveTween(curve: Curves.easeInOut)));
-      var tween1 = animation.drive(Tween(begin: 0.0, end: 1.0)
-          .chain(CurveTween(curve: Curves.easeInOut)));
-      var tween2 = animation.drive(Tween(begin: 0.9, end: 1.0)
-          .chain(CurveTween(curve: Curves.easeInOut)));
+      var tween = animation.drive(
+        Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)),
+      );
+      var tween1 = animation.drive(
+        Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)),
+      );
+      var tween2 = animation.drive(
+        Tween(begin: 0.9, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)),
+      );
       Widget background = Consumer(
         builder: (context, ref, child) {
           var themes = ref.watch(themeColorsProvider);
           return Container(
-            color: themes.modalBgColor
-                .withValues(alpha: themes.modalBgColor.a * tween1.value),
+            color: themes.modalBgColor.withValues(
+              alpha: themes.modalBgColor.a * tween1.value,
+            ),
           );
         },
       );
       if (!(Platform.isAndroid || Platform.isIOS)) {
         background = BackdropFilter(
           filter: ImageFilter.blur(
-              sigmaX: tween1.value * 5, sigmaY: tween1.value * 5),
+            sigmaX: tween1.value * 5,
+            sigmaY: tween1.value * 5,
+          ),
           child: background,
         );
       }
@@ -159,10 +167,10 @@ Future<T?> showModel<T>({
               scale: tween2,
               child: child,
             ),
-          )
+          ),
         ],
       );
     },
   );
-  return Navigator.of(context, rootNavigator: true).push<T>(page);
+  return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(page);
 }

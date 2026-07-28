@@ -16,7 +16,7 @@ abstract class Announcement with _$Announcement {
     required AnnouncementIcon icon,
     required String id,
     String? imageUrl,
-    required bool isRead,
+    @Default(false) bool isRead,
     required bool needConfirmationToRead,
     required bool silence,
     required String text,

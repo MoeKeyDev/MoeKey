@@ -43,6 +43,10 @@ class MkImage extends StatelessWidget {
     }
     Widget image = ExtendedImage(
       image: getExtendedResizeImage(url),
+      width: width,
+      height: height,
+      fit: fit,
+      filterQuality: FilterQuality.medium,
       shape: shape,
       loadStateChanged: (state) {
         Widget child = LayoutBuilder(
@@ -68,13 +72,7 @@ class MkImage extends StatelessWidget {
         );
 
         if (state.extendedImageLoadState == LoadState.completed) {
-          child = ExtendedRawImage(
-            image: state.extendedImageInfo?.image,
-            height: height,
-            width: width,
-            fit: fit,
-            filterQuality: FilterQuality.medium,
-          );
+          child = state.completedWidget;
         }
 
         return AnimatedSwitcher(

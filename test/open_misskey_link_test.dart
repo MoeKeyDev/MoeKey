@@ -56,6 +56,13 @@ void main() {
         ),
         '/clips/clip-id',
       );
+      expect(
+        resolveLocalMisskeyRoute(
+          url: 'https://nya.one/my/follow-requests',
+          instanceUrl: instanceUrl,
+        ),
+        '/notifications?tab=sent-follow-requests',
+      );
     });
 
     test('leaves remote, different-port, and unsupported links external', () {

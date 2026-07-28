@@ -77,7 +77,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "ينتهي في ${datetime}";
 
-  static String m26(years) => "قبل ${years} سنة";
+  static String m26(name) =>
+      "Are you sure that you want to cancel your follow request to ${name}?";
+
+  static String m27(years) => "قبل ${years} سنة";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -194,6 +197,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("تصفية"),
     "folderName": MessageLookupByLibrary.simpleMessage("اسم المجلد"),
     "follow": MessageLookupByLibrary.simpleMessage("متابعة"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("تمت المتابعة"),
     "followers": MessageLookupByLibrary.simpleMessage("المتابعون"),
     "following": MessageLookupByLibrary.simpleMessage("متابعة"),
@@ -242,6 +246,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "لا يمكن أن يكون الاسم فارغًا",
     ),
     "next": MessageLookupByLibrary.simpleMessage("الخطوة التالية"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "ليس لديك طلبات متابعة معلقة",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage("القائمة فارغة"),
     "notFindServer": MessageLookupByLibrary.simpleMessage(
       "لم يُعثر على الخادم الذي تستخدمه؟",
@@ -483,6 +490,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم إنشاء نتيجة التصويت",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

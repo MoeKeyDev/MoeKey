@@ -169,6 +169,31 @@ class S {
     return Intl.message('搜索', name: 'search', desc: '', args: []);
   }
 
+  /// `选项`
+  String get searchOptions {
+    return Intl.message('选项', name: 'searchOptions', desc: '', args: []);
+  }
+
+  /// `起始日期`
+  String get searchStartDate {
+    return Intl.message('起始日期', name: 'searchStartDate', desc: '', args: []);
+  }
+
+  /// `终止日期`
+  String get searchEndDate {
+    return Intl.message('终止日期', name: 'searchEndDate', desc: '', args: []);
+  }
+
+  /// `指定服务器`
+  String get searchServer {
+    return Intl.message('指定服务器', name: 'searchServer', desc: '', args: []);
+  }
+
+  /// `指定用户`
+  String get searchUser {
+    return Intl.message('指定用户', name: 'searchUser', desc: '', args: []);
+  }
+
   /// `更多`
   String get more {
     return Intl.message('更多', name: 'more', desc: '', args: []);
@@ -1014,6 +1039,11 @@ class S {
     return Intl.message('选择用户', name: 'selectUser', desc: '', args: []);
   }
 
+  /// `选择自己`
+  String get selectSelf {
+    return Intl.message('选择自己', name: 'selectSelf', desc: '', args: []);
+  }
+
   /// `用户名`
   String get username {
     return Intl.message('用户名', name: 'username', desc: '', args: []);
@@ -1049,6 +1079,11 @@ class S {
     return Intl.message('关注', name: 'follow', desc: '', args: []);
   }
 
+  /// `申请关注`
+  String get requestFollow {
+    return Intl.message('申请关注', name: 'requestFollow', desc: '', args: []);
+  }
+
   /// `取消关注`
   String get unfollow {
     return Intl.message('取消关注', name: 'unfollow', desc: '', args: []);
@@ -1067,6 +1102,26 @@ class S {
   /// `关注中`
   String get following {
     return Intl.message('关注中', name: 'following', desc: '', args: []);
+  }
+
+  /// `关注请求`
+  String get followRequestsSent {
+    return Intl.message('关注请求', name: 'followRequestsSent', desc: '', args: []);
+  }
+
+  /// `没有关注请求`
+  String get noFollowRequests {
+    return Intl.message('没有关注请求', name: 'noFollowRequests', desc: '', args: []);
+  }
+
+  /// `要取消申请关注{name}吗？`
+  String withdrawFollowRequestConfirm(Object name) {
+    return Intl.message(
+      '要取消申请关注$name吗？',
+      name: 'withdrawFollowRequestConfirm',
+      desc: '',
+      args: [name],
+    );
   }
 
   /// `{day}天{hour}小时{minute}分钟{second}秒`
@@ -1722,6 +1777,11 @@ class S {
   /// `附件`
   String get userFile {
     return Intl.message('附件', name: 'userFile', desc: '', args: []);
+  }
+
+  /// `文件`
+  String get files {
+    return Intl.message('文件', name: 'files', desc: '', args: []);
   }
 
   /// `注册于`

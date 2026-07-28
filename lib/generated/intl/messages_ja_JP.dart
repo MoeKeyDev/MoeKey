@@ -68,7 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m21(count) => "総得票数${count}";
 
-  static String m27(choice) => "「${choice}」に投票しますか？";
+  static String m28(choice) => "「${choice}」に投票しますか？";
 
   static String m22(count) => "${count}票";
 
@@ -78,7 +78,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}以内に締め切り";
 
-  static String m26(years) => "${years}年前";
+  static String m26(name) => "${name}へのフォロー申請をキャンセルしますか？";
+
+  static String m27(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -167,6 +169,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("フィルタ"),
     "folderName": MessageLookupByLibrary.simpleMessage("フォルダ名"),
     "follow": MessageLookupByLibrary.simpleMessage("フォロー"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("送った申請"),
     "followed": MessageLookupByLibrary.simpleMessage("フォロー済"),
     "followers": MessageLookupByLibrary.simpleMessage("フォロワー"),
     "following": MessageLookupByLibrary.simpleMessage("フォロー中"),
@@ -209,6 +212,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("名前"),
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名前は空欄にできません"),
     "next": MessageLookupByLibrary.simpleMessage("次へ"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage("フォロー申請はありません"),
     "noLists": MessageLookupByLibrary.simpleMessage("リストがありません"),
     "notFindServer": MessageLookupByLibrary.simpleMessage("サーバーが見つかりませんか？"),
     "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage(
@@ -398,7 +402,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewMore": MessageLookupByLibrary.simpleMessage("詳細"),
     "vote": MessageLookupByLibrary.simpleMessage("投票"),
     "voteAllCount": m21,
-    "voteConfirm": m27,
+    "voteConfirm": m28,
     "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("期限"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("複数の投票を許可する"),
@@ -414,6 +418,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteShowResult": MessageLookupByLibrary.simpleMessage("結果を見る"),
     "voteVoted": MessageLookupByLibrary.simpleMessage("投票済み"),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

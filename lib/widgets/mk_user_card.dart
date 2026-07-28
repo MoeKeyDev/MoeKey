@@ -12,12 +12,10 @@ import 'loading_weight.dart';
 import 'mfm_text/mfm_text.dart';
 import 'mk_card.dart';
 import 'mk_image.dart';
+import 'mk_user_avatar.dart';
 
 class MkUserCard extends HookConsumerWidget {
-  const MkUserCard({
-    super.key,
-    required this.user,
-  });
+  const MkUserCard({super.key, required this.user});
 
   final UserFullModel user;
 
@@ -71,13 +69,17 @@ class MkUserCard extends HookConsumerWidget {
                             child: Container(
                               padding: const EdgeInsets.all(4),
                               decoration: const BoxDecoration(
-                                  color: Color.fromARGB(180, 0, 0, 0),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(4))),
+                                color: Color.fromARGB(180, 0, 0, 0),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(4),
+                                ),
+                              ),
                               child: Text(
                                 S.current.isFollowingYouNow,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 10),
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
                               ),
                             ),
                           ),
@@ -85,7 +87,9 @@ class MkUserCard extends HookConsumerWidget {
                           right: 8,
                           top: 8,
                           child: UserFullCardFollowBtn(
-                              userData: user, themes: themes),
+                            userData: user,
+                            themes: themes,
+                          ),
                         ),
                         Positioned(
                           top: 66,
@@ -95,29 +99,37 @@ class MkUserCard extends HookConsumerWidget {
                             height: 66,
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                                color: themes.panelColor,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(50))),
-                            child: MkImage(
-                              shape: BoxShape.circle,
-                              user.avatarUrl ?? "",
-                              blurHash: user.avatarBlurhash,
+                              color: themes.panelColor,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(50),
+                              ),
+                            ),
+                            child: MkUserAvatar(
+                              size: 58,
+                              avatarUrl: user.avatarUrl,
+                              avatarBlurhash: user.avatarBlurhash,
+                              onlineStatus: user.onlineStatus,
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                        left: 88, top: 10, right: 10, bottom: 10),
+                      left: 88,
+                      top: 10,
+                      right: 10,
+                      bottom: 10,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         DefaultTextStyle(
-                          style:
-                              textStyle.copyWith(fontWeight: FontWeight.bold),
+                          style: textStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                           child: MFMText(
                             text: user.name ?? user.username,
                             maxLines: 1,
@@ -128,19 +140,22 @@ class MkUserCard extends HookConsumerWidget {
                           ),
                         ),
                         RichText(
-                            text: TextSpan(children: [
-                          TextSpan(
-                              text: "@${user.username}",
-                              style: textStyle.copyWith(
-                                fontSize: 11,
-                              )),
-                          TextSpan(
-                            text: user.host != null ? "@${user.host}" : "",
-                            style: textStyle.copyWith(
-                                color: themes.fgColor.withAlpha(128),
-                                fontSize: 11),
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "@${user.username}",
+                                style: textStyle.copyWith(fontSize: 11),
+                              ),
+                              TextSpan(
+                                text: user.host != null ? "@${user.host}" : "",
+                                style: textStyle.copyWith(
+                                  color: themes.fgColor.withAlpha(128),
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
                           ),
-                        ]))
+                        ),
                       ],
                     ),
                   ),
@@ -159,7 +174,8 @@ class MkUserCard extends HookConsumerWidget {
                             child: SizedBox(
                               width: double.infinity,
                               child: MFMText(
-                                text: user.description ??
+                                text:
+                                    user.description ??
                                     S.current.userDescriptionIsNull,
                                 maxLines: 3,
                                 textAlign: TextAlign.start,
@@ -186,37 +202,52 @@ class MkUserCard extends HookConsumerWidget {
                       children: [
                         Column(
                           children: [
-                            Text(S.current.notes,
-                                style: const TextStyle(fontSize: 11)),
-                            Text("${user.notesCount}",
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: themes.accentColor,
-                                    fontWeight: FontWeight.bold)),
+                            Text(
+                              S.current.notes,
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                            Text(
+                              "${user.notesCount}",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: themes.accentColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                         Column(
                           children: [
-                            Text(S.current.following,
-                                style: const TextStyle(fontSize: 11)),
-                            Text("${user.followingCount}",
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: themes.accentColor,
-                                    fontWeight: FontWeight.bold)),
+                            Text(
+                              S.current.following,
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                            Text(
+                              "${user.followingCount}",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: themes.accentColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                         Column(
                           children: [
-                            Text(S.current.followers,
-                                style: const TextStyle(fontSize: 11)),
-                            Text("${user.followersCount}",
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: themes.accentColor,
-                                    fontWeight: FontWeight.bold)),
+                            Text(
+                              S.current.followers,
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                            Text(
+                              "${user.followersCount}",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: themes.accentColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -262,10 +293,9 @@ class UserFullCardFollowBtn extends HookConsumerWidget {
           },
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(100),
-              ),
-              color: (userData.isFollowing) ||
+              borderRadius: const BorderRadius.all(Radius.circular(100)),
+              color:
+                  (userData.isFollowing) ||
                       (userData.hasPendingFollowRequestFromYou)
                   ? themes.buttonGradateAColor
                   : Colors.white,
@@ -288,7 +318,7 @@ class UserFullCardFollowBtn extends HookConsumerWidget {
                         color: Colors.white,
                         strokeWidth: 3,
                         backgroundColor: Colors.white.withValues(alpha: 0.5),
-                      )
+                      ),
                   ],
                 )
               else
@@ -302,9 +332,9 @@ class UserFullCardFollowBtn extends HookConsumerWidget {
                           ? Colors.white
                           : themes.buttonGradateAColor,
                       size: 15,
-                    )
+                    ),
                   ],
-                )
+                ),
             ][0],
           ),
         );

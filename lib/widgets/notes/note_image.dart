@@ -20,6 +20,9 @@ class NoteImage extends HookConsumerWidget {
     this.onClick,
     this.minHeight,
     required this.heroKey,
+    this.fit = BoxFit.contain,
+    this.showHideButton = true,
+    this.onClickForVideo = false,
   });
 
   final num? maxHeight;
@@ -27,6 +30,9 @@ class NoteImage extends HookConsumerWidget {
   final UniqueKey? heroKey;
   final DriveFileModel imageFile;
   final void Function()? onClick;
+  final BoxFit fit;
+  final bool showHideButton;
+  final bool onClickForVideo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,8 +56,12 @@ class NoteImage extends HookConsumerWidget {
       builder: (context, constraints) {
         var width = constraints.maxWidth;
         var height = maxHeight != null
-            ? getHeight(imageFile.properties?.width ?? 16,
-                imageFile.properties?.height ?? 9, width.toInt(), maxHeight!)
+            ? getHeight(
+                imageFile.properties?.width ?? 16,
+                imageFile.properties?.height ?? 9,
+                width.toInt(),
+                maxHeight!,
+              )
             : constraints.maxHeight;
         return ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -61,7 +71,7 @@ class NoteImage extends HookConsumerWidget {
               if (isHidden.value) {
                 isHidden.value = false;
               } else {
-                if (onClick != null && isImage) {
+                if (onClick != null && (isImage || onClickForVideo)) {
                   onClick!();
                 }
               }
@@ -102,15 +112,13 @@ class NoteImage extends HookConsumerWidget {
                         fit: BoxFit.fill,
                       ),
                     ),
-                  Container(
-                    color: Colors.black.withValues(alpha: 0.2),
-                  ),
+                  Container(color: Colors.black.withValues(alpha: 0.2)),
                   // ),
                   if (isHidden.value)
                     DefaultTextStyle(
-                      style: DefaultTextStyle.of(context)
-                          .style
-                          .copyWith(color: Colors.white, fontSize: 14),
+                      style: DefaultTextStyle.of(
+                        context,
+                      ).style.copyWith(color: Colors.white, fontSize: 14),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -124,14 +132,16 @@ class NoteImage extends HookConsumerWidget {
                                 color: Colors.white,
                                 size: 13,
                               ),
-                              Text(imageFile.isSensitive
-                                  ? S.current.sensitiveContent
-                                  : isImage
-                                      ? S.current.image
-                                      : S.current.video),
+                              Text(
+                                imageFile.isSensitive
+                                    ? S.current.sensitiveContent
+                                    : isImage
+                                    ? S.current.image
+                                    : S.current.video,
+                              ),
                             ],
                           ),
-                          Text(S.current.sensitiveClickShow)
+                          Text(S.current.sensitiveClickShow),
                         ],
                       ),
                     ),
@@ -143,7 +153,7 @@ class NoteImage extends HookConsumerWidget {
                           imageFile.thumbnailUrl!,
                           width: double.infinity,
                           height: double.infinity,
-                          fit: BoxFit.contain,
+                          fit: fit,
                         )
                       else
                         MkImage(
@@ -151,31 +161,34 @@ class NoteImage extends HookConsumerWidget {
                           imageFile.url,
                           width: double.infinity,
                           height: double.infinity,
-                          fit: BoxFit.contain,
+                          fit: fit,
                         ),
                     ] else if (isVideo)
                       VideoPlayerComponent(url: imageFile.url),
-                  if (!isHidden.value)
+                  if (!isHidden.value && showHideButton)
                     Positioned(
-                        right: 8,
-                        top: 8,
-                        child: GestureDetector(
-                          onTap: () {
-                            isHidden.value = true;
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
-                            decoration: BoxDecoration(
-                                color: theme.fgColor.withValues(alpha: 0.5),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(6))),
-                            child: const Icon(
-                              TablerIcons.eye_off,
-                              size: 16,
-                              color: Colors.white,
+                      right: 8,
+                      top: 8,
+                      child: GestureDetector(
+                        onTap: () {
+                          isHidden.value = true;
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+                          decoration: BoxDecoration(
+                            color: theme.fgColor.withValues(alpha: 0.5),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(6),
                             ),
                           ),
-                        ))
+                          child: const Icon(
+                            TablerIcons.eye_off,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

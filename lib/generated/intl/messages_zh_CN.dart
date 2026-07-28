@@ -66,7 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m21(count) => "总票数 ${count}";
 
-  static String m27(choice) => "确定投票给“${choice}”吗？";
+  static String m28(choice) => "确定投票给“${choice}”吗？";
 
   static String m22(count) => "${count}票";
 
@@ -76,7 +76,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}后截止";
 
-  static String m26(years) => "${years}年前";
+  static String m26(name) => "要取消申请关注${name}吗？";
+
+  static String m27(years) => "${years}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -154,9 +156,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "exportEntityNote": MessageLookupByLibrary.simpleMessage("帖子"),
     "exportEntityUserList": MessageLookupByLibrary.simpleMessage("用户列表"),
     "favorite": MessageLookupByLibrary.simpleMessage("收藏"),
+    "files": MessageLookupByLibrary.simpleMessage("文件"),
     "filter": MessageLookupByLibrary.simpleMessage("过滤"),
     "folderName": MessageLookupByLibrary.simpleMessage("文件夹名称"),
     "follow": MessageLookupByLibrary.simpleMessage("关注"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("关注请求"),
     "followed": MessageLookupByLibrary.simpleMessage("已关注"),
     "followers": MessageLookupByLibrary.simpleMessage("关注者"),
     "following": MessageLookupByLibrary.simpleMessage("关注中"),
@@ -197,6 +201,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "name": MessageLookupByLibrary.simpleMessage("名称"),
     "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage("名称不能为空"),
     "next": MessageLookupByLibrary.simpleMessage("下一步"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage("没有关注请求"),
     "noLists": MessageLookupByLibrary.simpleMessage("列表为空"),
     "notFindServer": MessageLookupByLibrary.simpleMessage("没有找到你所在的服务器？"),
     "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
@@ -317,17 +322,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "renameFolder": MessageLookupByLibrary.simpleMessage("重命名文件夹"),
     "replyNoteHint": MessageLookupByLibrary.simpleMessage("回复这个帖子..."),
     "replyNoteText": MessageLookupByLibrary.simpleMessage("回复帖子"),
+    "requestFollow": MessageLookupByLibrary.simpleMessage("申请关注"),
     "saveFailed": MessageLookupByLibrary.simpleMessage("保存失败"),
     "saveImage": MessageLookupByLibrary.simpleMessage("保存图片"),
     "saveSuccess": MessageLookupByLibrary.simpleMessage("保存成功"),
     "search": MessageLookupByLibrary.simpleMessage("搜索"),
     "searchAll": MessageLookupByLibrary.simpleMessage("全部"),
+    "searchEndDate": MessageLookupByLibrary.simpleMessage("终止日期"),
     "searchHost": MessageLookupByLibrary.simpleMessage("指定域名"),
     "searchLocal": MessageLookupByLibrary.simpleMessage("本站"),
+    "searchOptions": MessageLookupByLibrary.simpleMessage("选项"),
     "searchRemote": MessageLookupByLibrary.simpleMessage("远程"),
+    "searchServer": MessageLookupByLibrary.simpleMessage("指定服务器"),
     "searchServers": MessageLookupByLibrary.simpleMessage("搜索服务器名称或者域名"),
+    "searchStartDate": MessageLookupByLibrary.simpleMessage("起始日期"),
+    "searchUser": MessageLookupByLibrary.simpleMessage("指定用户"),
     "secondsAgo": m19,
     "selectHashtag": MessageLookupByLibrary.simpleMessage("选择标签"),
+    "selectSelf": MessageLookupByLibrary.simpleMessage("选择自己"),
     "selectServer": MessageLookupByLibrary.simpleMessage("请选择服务器"),
     "selectUser": MessageLookupByLibrary.simpleMessage("选择用户"),
     "sensitiveClickShow": MessageLookupByLibrary.simpleMessage("点击显示"),
@@ -364,7 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
     "vote": MessageLookupByLibrary.simpleMessage("投票"),
     "voteAllCount": m21,
-    "voteConfirm": m27,
+    "voteConfirm": m28,
     "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
@@ -378,6 +390,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteShowResult": MessageLookupByLibrary.simpleMessage("查看结果"),
     "voteVoted": MessageLookupByLibrary.simpleMessage("已投票"),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

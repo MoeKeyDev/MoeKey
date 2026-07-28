@@ -21,29 +21,46 @@ class MetaService extends MisskeyApiServices {
       return [];
     }
     return List<EmojiSimple>.from(
-        data["emojis"].map((x) => EmojiSimple.fromJson(x)));
+      data["emojis"].map((x) => EmojiSimple.fromJson(x)),
+    );
   }
 
-  Future<List<Announcement>> announcements(
-      {int limit = 10,
-      String? sinceId,
-      String? untilId,
-      bool isActive = true}) async {
-    var data = await client.post<List?>("/announcements", data: {
-      "limit": limit,
-      'sinceId': ?sinceId,
-      'untilId': ?untilId,
-      "isActive": isActive,
-    });
+  Future<List<Announcement>> announcements({
+    int limit = 10,
+    String? sinceId,
+    String? untilId,
+    bool isActive = true,
+  }) async {
+    var data = await client.post<List?>(
+      "/announcements",
+      data: {
+        "limit": limit,
+        'sinceId': ?sinceId,
+        'untilId': ?untilId,
+        "isActive": isActive,
+      },
+    );
     if (data == null) {
       return [];
     }
     return List<Announcement>.from(data.map((x) => Announcement.fromJson(x)));
   }
 
+  Future<Announcement?> announcement({required String announcementId}) async {
+    final data = await client.post(
+      '/announcements/show',
+      data: {'announcementId': announcementId},
+    );
+    if (data == null) {
+      return null;
+    }
+    return Announcement.fromJson(data);
+  }
+
   Future<void> readAnnouncement({required String announcementId}) async {
-    await client.post("/i/read-announcement", data: {
-      "announcementId": announcementId,
-    });
+    await client.post(
+      "/i/read-announcement",
+      data: {"announcementId": announcementId},
+    );
   }
 }

@@ -130,7 +130,11 @@ void main() {
     username: 'author',
   );
 
-  NoteModel note({NoteReactionAcceptance? reactionAcceptance}) {
+  NoteModel note({
+    NoteReactionAcceptance? reactionAcceptance,
+    UserLiteModel? author,
+  }) {
+    final noteAuthor = author ?? user;
     return NoteModel(
       id: 'note',
       createdAt: DateTime.utc(2026, 7, 27),
@@ -140,8 +144,8 @@ void main() {
       reactionEmojis: const {},
       reactions: const {},
       text: 'Note summary',
-      user: user,
-      userId: user.id,
+      user: noteAuthor,
+      userId: noteAuthor.id,
       visibility: NoteVisibility.public,
     );
   }
@@ -297,6 +301,26 @@ void main() {
     await tester.pump();
     expect(find.byType(MkImage), findsOneWidget);
     expect(find.byIcon(TablerIcons.apps), findsNothing);
+  });
+
+  testWidgets('poll-ended notification uses the note author avatar', (
+    tester,
+  ) async {
+    const avatarUrl = 'https://example.com/poll-author.png';
+    await pumpNotification(
+      tester,
+      notification('pollEnded').copyWith(
+        note: note(author: user.copyWith(avatarUrl: avatarUrl)),
+      ),
+    );
+    await tester.pump();
+
+    final image = tester.widget<MkImage>(find.byType(MkImage));
+    expect(image.url, avatarUrl);
+
+    final avatarTop = tester.getTopLeft(find.byType(MkImage)).dy;
+    final titleTop = tester.getTopLeft(find.text('投票已结束')).dy;
+    expect(avatarTop, closeTo(titleTop, 2));
   });
 
   testWidgets('follow request actions expose loading and success state', (

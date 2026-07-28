@@ -78,7 +78,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m25(datetime) => "${datetime}termen de finalizare ulterioară";
 
-  static String m26(years) => "${years}...ani în urmă";
+  static String m26(name) =>
+      "Are you sure that you want to cancel your follow request to ${name}?";
+
+  static String m27(years) => "${years}...ani în urmă";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -209,6 +212,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter": MessageLookupByLibrary.simpleMessage("Filter"),
     "folderName": MessageLookupByLibrary.simpleMessage("Numele dosarului"),
     "follow": MessageLookupByLibrary.simpleMessage("focalizare"),
+    "followRequestsSent": MessageLookupByLibrary.simpleMessage("Sent requests"),
     "followed": MessageLookupByLibrary.simpleMessage("Urmărit"),
     "followers": MessageLookupByLibrary.simpleMessage("observator"),
     "following": MessageLookupByLibrary.simpleMessage("Îngrijorat"),
@@ -263,6 +267,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Numele nu poate fi gol",
     ),
     "next": MessageLookupByLibrary.simpleMessage("pasul următor"),
+    "noFollowRequests": MessageLookupByLibrary.simpleMessage(
+      "Nu ai nicio cerere de urmărire în așteptare",
+    ),
     "noLists": MessageLookupByLibrary.simpleMessage(
       "You don\'t have any lists",
     ),
@@ -528,6 +535,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Rezultatele votării au fost generate",
     ),
     "voteWillExpired": m25,
-    "yearsAgo": m26,
+    "withdrawFollowRequestConfirm": m26,
+    "yearsAgo": m27,
   };
 }

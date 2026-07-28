@@ -26,6 +26,7 @@ class MkTabBarRefreshScroll extends StatefulWidget {
       this.initIndex = 0,
       this.offset = 0,
       this.padding = EdgeInsets.zero,
+      this.alwaysStackHeader = false,
       this.tabAlignment = TabAlignment.center});
 
   final List<MkTabBarItem> items;
@@ -36,6 +37,7 @@ class MkTabBarRefreshScroll extends StatefulWidget {
   final int initIndex;
   final double offset;
   final EdgeInsetsGeometry padding;
+  final bool alwaysStackHeader;
   final void Function(int)? onIndexUpdate;
 
   final TabAlignment tabAlignment;
@@ -74,6 +76,15 @@ class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
   @override
   void didUpdateWidget(MkTabBarRefreshScroll oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.initIndex != widget.initIndex &&
+        widget.initIndex >= 0 &&
+        widget.initIndex < tabController.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          tabController.animateTo(widget.initIndex);
+        }
+      });
+    }
   }
 
   @override
@@ -95,12 +106,13 @@ class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
           ),
           header: MkAppbar(
             leading: widget.leading,
-            isSmallLeadingCenter: widget.leading != null ||
-                    widget.trailing != null ||
-                    widget.content != null ||
-                    widget.showBack == true
-                ? constraints.maxWidth < 500
-                : false,
+            isSmallLeadingCenter: widget.alwaysStackHeader ||
+                (widget.leading != null ||
+                        widget.trailing != null ||
+                        widget.content != null ||
+                        widget.showBack == true
+                    ? constraints.maxWidth < 500
+                    : false),
             bottom: MkTabBar(
                 controller: tabController,
                 tabAlignment: widget.tabAlignment,

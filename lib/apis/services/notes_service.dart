@@ -14,11 +14,10 @@ class NotesService extends MisskeyApiServices {
     String? untilId,
     String? sinceId,
   }) async {
-    var res = await client.post<List?>("/notes/$api", data: {
-      "limit": 10,
-      "untilId": ?untilId,
-      "sinceId": ?sinceId
-    });
+    var res = await client.post<List?>(
+      "/notes/$api",
+      data: {"limit": 10, "untilId": ?untilId, "sinceId": ?sinceId},
+    );
     if (res == null) {
       return [];
     }
@@ -26,10 +25,13 @@ class NotesService extends MisskeyApiServices {
   }
 
   Future<NoteTranslate?> translate({required String noteId}) async {
-    var data = await client.post("/notes/translate", data: {
-      "noteId": noteId,
-      "targetLang": Platform.localeName.replaceAll("_", "-"),
-    });
+    var data = await client.post(
+      "/notes/translate",
+      data: {
+        "noteId": noteId,
+        "targetLang": Platform.localeName.replaceAll("_", "-"),
+      },
+    );
     if (data == null) {
       return null;
     }
@@ -38,10 +40,10 @@ class NotesService extends MisskeyApiServices {
 
   Future<LinkPreview?> linkPreview({required String url}) async {
     String myLocale = Platform.localeName.replaceAll("_", "-");
-    var res = await client.get("${client.host}/url", data: {
-      "url": url,
-      "lang": myLocale,
-    });
+    var res = await client.get(
+      "${client.host}/url",
+      data: {"url": url, "lang": myLocale},
+    );
     if (res == null) {
       return null;
     }
@@ -49,12 +51,7 @@ class NotesService extends MisskeyApiServices {
   }
 
   Future<NoteModel?> show({required String noteId}) async {
-    var data = await client.post(
-      "/notes/show",
-      data: {
-        "noteId": noteId,
-      },
-    );
+    var data = await client.post("/notes/show", data: {"noteId": noteId});
     if (data == null) {
       return null;
     }
@@ -66,25 +63,9 @@ class NotesService extends MisskeyApiServices {
     int limit = 30,
     String? untilId,
   }) async {
-    var data = await client.post<List?>("/notes/children", data: {
-      "noteId": noteId,
-      "limit": limit,
-      "untilId": ?untilId,
-    });
-    if (data == null) {
-      return [];
-    }
-    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
-  }
-
-  Future<List<NoteModel>> pollsRecommendation(
-      {int limit = 10, String? untilId}) async {
     var data = await client.post<List?>(
-      "/notes/polls/recommendation",
-      data: {
-        "limit": limit,
-        "untilId": ?untilId,
-      },
+      "/notes/children",
+      data: {"noteId": noteId, "limit": limit, "untilId": ?untilId},
     );
     if (data == null) {
       return [];
@@ -92,26 +73,31 @@ class NotesService extends MisskeyApiServices {
     return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
   }
 
-  Future<void> votePoll({
-    required String noteId,
-    required int choice,
+  Future<List<NoteModel>> pollsRecommendation({
+    int limit = 10,
+    String? untilId,
   }) async {
+    var data = await client.post<List?>(
+      "/notes/polls/recommendation",
+      data: {"limit": limit, "untilId": ?untilId},
+    );
+    if (data == null) {
+      return [];
+    }
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
+  }
+
+  Future<void> votePoll({required String noteId, required int choice}) async {
     await client.post(
       "/notes/polls/vote",
-      data: {
-        "noteId": noteId,
-        "choice": choice,
-      },
+      data: {"noteId": noteId, "choice": choice},
     );
   }
 
   Future<List<NoteModel>> featured({int limit = 10, String? untilId}) async {
     var data = await client.post<List?>(
       "/notes/featured",
-      data: {
-        "limit": limit,
-        "untilId": ?untilId,
-      },
+      data: {"limit": limit, "untilId": ?untilId},
     );
     if (data == null) {
       return [];
@@ -120,29 +106,28 @@ class NotesService extends MisskeyApiServices {
   }
 
   Future<NoteModel?> reNote({required String renoteId}) async {
-    var data = await client.post("/notes/create", data: {
-      "localOnly": false,
-      "visibility": "public",
-      "renoteId": renoteId,
-    });
+    var data = await client.post(
+      "/notes/create",
+      data: {"localOnly": false, "visibility": "public", "renoteId": renoteId},
+    );
     if (data == null) {
       return null;
     }
     return NoteModel.fromJson(data);
   }
 
-  Future createReactions(
-      {required String noteId, required String reaction}) async {
-    await client.post("/notes/reactions/create", data: {
-      "noteId": noteId,
-      "reaction": reaction,
-    });
+  Future createReactions({
+    required String noteId,
+    required String reaction,
+  }) async {
+    await client.post(
+      "/notes/reactions/create",
+      data: {"noteId": noteId, "reaction": reaction},
+    );
   }
 
   Future deleteReactions({required String noteId}) async {
-    await client.post("/notes/reactions/delete", data: {
-      "noteId": noteId,
-    });
+    await client.post("/notes/reactions/delete", data: {"noteId": noteId});
   }
 
   Future<List<NoteModel>> mentions({
@@ -150,11 +135,14 @@ class NotesService extends MisskeyApiServices {
     String? untilId,
     bool specified = false,
   }) async {
-    var data = await client.post<List?>("/notes/mentions", data: {
-      "limit": limit,
-      if (specified) "visibility": "specified",
-      "untilId": ?untilId,
-    });
+    var data = await client.post<List?>(
+      "/notes/mentions",
+      data: {
+        "limit": limit,
+        if (specified) "visibility": "specified",
+        "untilId": ?untilId,
+      },
+    );
     if (data == null) {
       return [];
     }
@@ -169,16 +157,23 @@ class NotesService extends MisskeyApiServices {
     String? host,
     String? userId,
     String? channelId,
+    int? rangeStartAt,
+    int? rangeEndAt,
   }) async {
-    var data = await client.post("/notes/search", data: {
-      "query": query,
-      "limit": limit,
-      "sinceId": ?sinceId,
-      "untilId": ?untilId,
-      "host": ?host,
-      "userId": ?userId,
-      "channelId": ?channelId,
-    });
+    var data = await client.post(
+      "/notes/search",
+      data: {
+        "query": query,
+        "limit": limit,
+        "sinceId": ?sinceId,
+        "untilId": ?untilId,
+        "host": ?host,
+        "userId": ?userId,
+        "channelId": ?channelId,
+        "rangeStartAt": ?rangeStartAt,
+        "rangeEndAt": ?rangeEndAt,
+      },
+    );
     if (data == null) {
       return [];
     }
@@ -191,12 +186,15 @@ class NotesService extends MisskeyApiServices {
     String? untilId,
     int limit = 10,
   }) async {
-    var data = await client.post("/notes/search-by-tag", data: {
-      "tag": tag,
-      "limit": limit,
-      "sinceId": ?sinceId,
-      "untilId": ?untilId,
-    });
+    var data = await client.post(
+      "/notes/search-by-tag",
+      data: {
+        "tag": tag,
+        "limit": limit,
+        "sinceId": ?sinceId,
+        "untilId": ?untilId,
+      },
+    );
     if (data == null) {
       return [];
     }
