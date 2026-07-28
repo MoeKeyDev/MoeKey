@@ -201,8 +201,8 @@ class _UserFollowsCount extends StatelessWidget {
             ],
           ),
           if (userData.followingVisibility == null ||
-              userData.followingVisibility == FollowVisibility.PUBLIC ||
-              (userData.followingVisibility == FollowVisibility.FOLLOWERS &&
+              userData.followingVisibility == FollowVisibility.public ||
+              (userData.followingVisibility == FollowVisibility.followers &&
                   userData.isFollowing))
             GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -231,8 +231,8 @@ class _UserFollowsCount extends StatelessWidget {
               ),
             ),
           if (userData.followersVisibility == null ||
-              userData.followersVisibility == FollowVisibility.PUBLIC ||
-              (userData.followersVisibility == FollowVisibility.FOLLOWERS &&
+              userData.followersVisibility == FollowVisibility.public ||
+              (userData.followersVisibility == FollowVisibility.followers &&
                   userData.isFollowing))
             GestureDetector(
               onTap: () {

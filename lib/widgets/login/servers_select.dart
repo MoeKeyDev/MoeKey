@@ -17,7 +17,7 @@ import 'login_dialog.dart';
 class ServersSelectCard extends HookConsumerWidget {
   const ServersSelectCard({super.key});
 
-  login(BuildContext context, WidgetRef ref, String url) {
+  void login(BuildContext context, WidgetRef ref, String url) {
     ref.read(selectServerHostProvider.notifier).setServer(url);
     // context.go("/login/dialog");
     showDialog(context: context, builder: (context) => LoginDialog());

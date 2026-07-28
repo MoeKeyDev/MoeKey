@@ -13,7 +13,7 @@ var settingsRouter = ShellRoute(
     GoRoute(
       name: "settings",
       path: "/settings",
-      builder: (_, __) => const SettingBodyNarrow(),
+      builder: (_, _) => const SettingBodyNarrow(),
       routes: [
         StatefulShellRoute.indexedStack(
           builder: (context, status, child) => child,
@@ -23,7 +23,7 @@ var settingsRouter = ShellRoute(
                 GoRoute(
                   path: 'account_manager',
                   name: "settingsAccountManager",
-                  builder: (_, __) {
+                  builder: (_, _) {
                     return AccountManagerPage();
                   },
                 ),
@@ -34,7 +34,7 @@ var settingsRouter = ShellRoute(
                 GoRoute(
                   path: 'profile',
                   name: "settingProfile",
-                  builder: (_, __) {
+                  builder: (_, _) {
                     return SettingsProfile();
                   },
                 ),

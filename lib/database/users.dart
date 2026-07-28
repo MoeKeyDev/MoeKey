@@ -18,7 +18,7 @@ class UsersDatabase {
     return openLazyDatabase<String>(name: "users_cache");
   }
 
-  put(UserFullModel userFullModel) async {
+  Future<void> put(UserFullModel userFullModel) async {
     var db = await _getDatabase();
     compute((message) {
       var json = jsonEncode(message);
@@ -26,7 +26,7 @@ class UsersDatabase {
     }, userFullModel);
   }
 
-  get(String id) async {
+  Future<String?> get(String id) async {
     var db = await _getDatabase();
     return db.get(id);
   }

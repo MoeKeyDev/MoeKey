@@ -135,22 +135,22 @@ class NotesSearchStatus extends _$NotesSearchStatus {
     return NotesSearchStatusModel();
   }
 
-  updateSearchValue(String searchValue) {
+  void updateSearchValue(String searchValue) {
     state.searchValue = searchValue;
     ref.notifyListeners();
   }
 
-  updateHostValue(String hostValue) {
+  void updateHostValue(String hostValue) {
     state.hostValue = hostValue;
     ref.notifyListeners();
   }
 
-  updateServerType(int serverType) {
+  void updateServerType(int serverType) {
     state.serverType = serverType;
     ref.notifyListeners();
   }
 
-  search() async {
+  Future<void> search() async {
     if (state.loading) return;
     state.loading = true;
     state.searched = true;
@@ -178,7 +178,7 @@ class NotesSearchStatus extends _$NotesSearchStatus {
     ref.notifyListeners();
   }
 
-  load() async {
+  Future<void> load() async {
     if (state.loading) return;
     state.loading = true;
     try {

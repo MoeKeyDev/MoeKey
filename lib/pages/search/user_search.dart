@@ -146,17 +146,17 @@ class UserSearchStatus extends _$UserSearchStatus {
     return UserSearchStatusModel();
   }
 
-  updateSearchValue(String searchValue) {
+  void updateSearchValue(String searchValue) {
     state.searchValue = searchValue;
     ref.notifyListeners();
   }
 
-  updateOrigin(String origin) {
+  void updateOrigin(String origin) {
     state.origin = origin;
     ref.notifyListeners();
   }
 
-  search() async {
+  Future<void> search() async {
     if (state.loading) return;
     state.loading = true;
     state.searched = true;
@@ -177,7 +177,7 @@ class UserSearchStatus extends _$UserSearchStatus {
     ref.notifyListeners();
   }
 
-  load() async {
+  Future<void> load() async {
     if (state.loading) return;
     state.loading = true;
     try {

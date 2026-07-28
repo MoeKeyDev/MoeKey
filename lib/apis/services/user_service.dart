@@ -17,8 +17,8 @@ class UserService extends MisskeyApiServices {
     var res = await client.post<List?>("/users/$type", data: {
       "userId": userId,
       "limit": limit,
-      if (untilId != null) "untilId": untilId,
-      if (sinceId != null) "sinceId": sinceId
+      "untilId": ?untilId,
+      "sinceId": ?sinceId
     });
     if (res == null) {
       return [];
@@ -32,9 +32,9 @@ class UserService extends MisskeyApiServices {
     String? userId,
   }) async {
     var res = await client.post("/users/show", data: {
-      if (username != null) "username": username,
-      if (host != null) "host": host,
-      if (userId != null) "userId": userId,
+      "username": ?username,
+      "host": ?host,
+      "userId": ?userId,
     });
     if (res == null) {
       return null;
@@ -60,7 +60,7 @@ class UserService extends MisskeyApiServices {
         "withChannelNotes": withChannelNotes,
         "withFiles": withFiles,
         "limit": 30,
-        if (untilId != null) "untilId": untilId,
+        "untilId": ?untilId,
       },
     );
 
@@ -77,7 +77,7 @@ class UserService extends MisskeyApiServices {
     var res = await client.post("/users/reactions", data: {
       "userId": userId,
       "limit": 30,
-      if (untilId != null) "untilId": untilId,
+      "untilId": ?untilId,
     });
     if (res == null) {
       return [];
@@ -94,8 +94,8 @@ class UserService extends MisskeyApiServices {
     var res = await client.post<List>("/users/clips", data: {
       "userId": userId,
       "limit": 10,
-      if (sinceId != null) "sinceId": sinceId,
-      if (untilId != null) "untilId": untilId,
+      "sinceId": ?sinceId,
+      "untilId": ?untilId,
     });
     return List<ClipsModel>.from(res.map(
       (e) => ClipsModel.fromJson(e),
@@ -119,9 +119,9 @@ class UserService extends MisskeyApiServices {
   }) async {
     var res = await client.post<List>("/users", data: {
       "limit": 10,
-      if (origin != null) "origin": origin,
-      if (sort != null) "sort": sort,
-      if (state != null) "state": state,
+      "origin": ?origin,
+      "sort": ?sort,
+      "state": ?state,
     });
     return List<UserFullModel>.from(res.map(
       (e) => UserFullModel.fromJson(e),
@@ -139,7 +139,7 @@ class UserService extends MisskeyApiServices {
       "query": query,
       "limit": limit,
       "origin": origin,
-      if (untilId != null) "untilId": untilId,
+      "untilId": ?untilId,
     });
     return List<UserFullModel>.from(res.map(
       (e) => UserFullModel.fromJson(e),

@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class MkRefreshController extends ChangeNotifier {
-  refresh() {
+  void refresh() {
     notifyListeners();
   }
 }
@@ -53,7 +53,7 @@ class _MkRefreshIndicatorState extends State<MkRefreshIndicator> {
 
   MkRefreshController? _controller;
 
-  _updateController() {
+  void _updateController() {
     MkRefreshController? oldController = _controller;
     _controller = widget.controller ?? DefaultMkRefreshController.of(context);
     if (oldController != _controller) {
@@ -62,7 +62,7 @@ class _MkRefreshIndicatorState extends State<MkRefreshIndicator> {
     _controller?.addListener(_show);
   }
 
-  _show() {
+  void _show() {
     _indicatorKey.currentState?.show();
   }
 

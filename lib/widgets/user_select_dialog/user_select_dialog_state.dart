@@ -32,7 +32,7 @@ class UserSelectDialogState extends _$UserSelectDialogState {
     return list;
   }
 
-  search({String? name, String? host}) {
+  void search({String? name, String? host}) {
     // 防抖
     timer?.cancel();
     state = const AsyncLoading();
@@ -41,7 +41,7 @@ class UserSelectDialogState extends _$UserSelectDialogState {
     });
   }
 
-  _search({String? name, String? host}) async {
+  Future<void> _search({String? name, String? host}) async {
     if (name != null) {
       this.name = name;
     }

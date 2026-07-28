@@ -110,9 +110,9 @@ abstract class Features with _$Features {
 
 enum NoteSearchableScope {
   @JsonValue("global")
-  GLOBAL,
+  global,
   @JsonValue("local")
-  LOCAL,
+  local,
 }
 
 ///RolePolicies

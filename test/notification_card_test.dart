@@ -126,7 +126,7 @@ void main() {
     makeNotesFollowersOnlyBefore: null,
     makeNotesHiddenBefore: null,
     name: 'Author',
-    onlineStatus: OnlineStatus.UNKNOWN,
+    onlineStatus: OnlineStatus.unknown,
     username: 'author',
   );
 

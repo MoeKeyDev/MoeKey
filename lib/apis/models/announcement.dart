@@ -30,20 +30,20 @@ abstract class Announcement with _$Announcement {
 
 enum AnnouncementDisplay {
   @JsonValue('banner')
-  BANNER,
+  banner,
   @JsonValue('dialog')
-  DIALOG,
+  dialog,
   @JsonValue('normal')
-  NORMAL,
+  normal,
 }
 
 enum AnnouncementIcon {
   @JsonValue('error')
-  ERROR,
+  error,
   @JsonValue('info')
-  INFO,
+  info,
   @JsonValue('success')
-  SUCCESS,
+  success,
   @JsonValue('warning')
-  WARNING,
+  warning,
 }

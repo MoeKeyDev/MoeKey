@@ -221,7 +221,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                       if (!form.preview)
                         buildTextField(data, fullscreen, contentController)
                       else
-                        buildPreview(data),
+                        buildPreview(),
                       if (form.files.isNotEmpty) ...[
                         buildDriverList(),
                         const SizedBox(
@@ -885,7 +885,6 @@ class NoteCreateDialog extends HookConsumerWidget {
                       return const UserSelectDialog();
                     },
                   );
-                  print(list);
                   if (list != null && list != []) {
                     contentController.text = "${contentController.text} ${[
                       for (var item in list ?? [])
@@ -1424,7 +1423,7 @@ class NoteCreateDialog extends HookConsumerWidget {
     );
   }
 
-  static open({
+  static void open({
     required BuildContext context,
     String? noteId,
     NoteType type = NoteType.note,
@@ -1446,7 +1445,7 @@ class NoteCreateDialog extends HookConsumerWidget {
     );
   }
 
-  buildPreview(data) {
+  HookConsumer buildPreview() {
     return HookConsumer(
       builder: (context, ref, child) {
         var state = ref.watch(noteCreateDialogStateProvider(noteId, noteType));

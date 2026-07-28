@@ -64,7 +64,7 @@ class HashTagPage extends _$HashTagPage {
     return list;
   }
 
-  load() async {
+  Future<void> load() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
     var model = state.value ?? NoteListModel();

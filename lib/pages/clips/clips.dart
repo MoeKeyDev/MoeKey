@@ -47,7 +47,7 @@ class ClipsNotesList extends _$ClipsNotesList {
     } finally {}
   }
 
-  load() async {
+  Future<void> load() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
     var model = state.value ?? ClipsNoteListState();

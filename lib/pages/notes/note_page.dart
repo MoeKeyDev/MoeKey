@@ -477,7 +477,7 @@ class UserInfo extends HookConsumerWidget {
             },
           ),
         ),
-        if (suffix != null) suffix!
+        ?suffix,
       ],
     );
   }

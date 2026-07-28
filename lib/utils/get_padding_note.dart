@@ -1,4 +1,6 @@
-double getPaddingForNote(constraints) {
+import 'package:flutter/rendering.dart' show BoxConstraints;
+
+double getPaddingForNote(BoxConstraints constraints) {
   double padding = 0;
   if (constraints.maxWidth > 860) {
     padding = (constraints.maxWidth - 800) / 2;

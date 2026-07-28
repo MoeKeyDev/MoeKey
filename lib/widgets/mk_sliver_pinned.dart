@@ -25,10 +25,13 @@ class SliverFixedHeader extends SingleChildRenderObjectWidget {
 }
 
 class RenderSliverFixedHeader extends RenderSliverSingleBoxAdapter {
+  // The public constructor parameter intentionally differs from the private
+  // backing field used by the invalidating setter.
   RenderSliverFixedHeader({required double pinnedOffset})
+      // ignore: prefer_initializing_formals
       : _pinnedOffset = pinnedOffset;
 
-  late double _pinnedOffset = 0;
+  double _pinnedOffset;
 
   set pinnedOffset(double value) {
     if (_pinnedOffset == value) {

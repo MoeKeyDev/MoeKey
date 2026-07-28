@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/meta.dart';
-import 'package:moekey/hook/useExtendedPageController.dart';
+import 'package:moekey/hook/use_extended_page_controller.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/dio.dart';
 import 'package:moekey/utils/save_image.dart';
@@ -87,6 +87,7 @@ class ImagePreviewPage extends HookConsumerWidget {
     useEffect(() {
       setBar();
       Future.microtask(() {
+        if (!context.mounted) return;
         _preloadImage(initialIndex - 1, context);
         _preloadImage(initialIndex + 1, context);
       });
@@ -167,7 +168,6 @@ class ImagePreviewPage extends HookConsumerWidget {
                         context,
                       ),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        print(snapshot);
                         var isLoaded =
                             snapshot.connectionState == ConnectionState.done ||
                                 snapshot.hasError;

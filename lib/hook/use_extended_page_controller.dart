@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+/// Creates and disposes an [ExtendedPageController] with the widget lifecycle.
 ExtendedPageController useExtendedPageController({
   int initialPage = 0,
   bool keepPage = true,

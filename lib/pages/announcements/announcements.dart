@@ -96,7 +96,7 @@ class _Announcements extends _$Announcements {
         .announcements(limit: limit, isActive: isActive, untilId: untilId);
   }
 
-  read({required String announcementId}) async {
+  Future<void> read({required String announcementId}) async {
     var api = ref.read(misskeyApisProvider);
     api.meta.readAnnouncement(announcementId: announcementId);
     var model = state.value ?? MkLoadMoreListModel<Announcement>();
@@ -108,14 +108,13 @@ class _Announcements extends _$Announcements {
     state = AsyncData(model);
   }
 
-  loadMore() async {
+  Future<void> loadMore() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
     var model = state.value ?? MkLoadMoreListModel<Announcement>();
     try {
       page++;
       var list = await api(limit: 10, untilId: model.list.lastOrNull?.id);
-      print(list);
       model.list += list;
       if (list.isEmpty) {
         model.hasMore = false;
@@ -194,24 +193,24 @@ class AnnouncementsCard extends HookConsumerWidget {
             children: [
               Icon(
                 [
-                  if (announcement.icon == AnnouncementIcon.ERROR)
+                  if (announcement.icon == AnnouncementIcon.error)
                     TablerIcons.circle_x
-                  else if (announcement.icon == AnnouncementIcon.INFO)
+                  else if (announcement.icon == AnnouncementIcon.info)
                     TablerIcons.info_circle
-                  else if (announcement.icon == AnnouncementIcon.SUCCESS)
+                  else if (announcement.icon == AnnouncementIcon.success)
                     TablerIcons.check
-                  else if (announcement.icon == AnnouncementIcon.WARNING)
+                  else if (announcement.icon == AnnouncementIcon.warning)
                     TablerIcons.alert_triangle
                 ][0],
                 size: 18,
                 color: [
-                  if (announcement.icon == AnnouncementIcon.ERROR)
+                  if (announcement.icon == AnnouncementIcon.error)
                     themes.errorColor
-                  else if (announcement.icon == AnnouncementIcon.INFO)
+                  else if (announcement.icon == AnnouncementIcon.info)
                     themes.accentColor
-                  else if (announcement.icon == AnnouncementIcon.SUCCESS)
+                  else if (announcement.icon == AnnouncementIcon.success)
                     themes.successColor
-                  else if (announcement.icon == AnnouncementIcon.WARNING)
+                  else if (announcement.icon == AnnouncementIcon.warning)
                     themes.warnColor
                 ][0],
               ),

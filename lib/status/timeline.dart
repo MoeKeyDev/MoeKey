@@ -54,7 +54,7 @@ class Timeline extends _$Timeline {
     return list;
   }
 
-  load() async {
+  Future<void> load() async {
     if (state.isLoading) return;
 
     var model = state.value ?? NoteListModel();
@@ -74,7 +74,7 @@ class Timeline extends _$Timeline {
     state = AsyncData(model);
   }
 
-  cleanCache() async {
+  Future<void> cleanCache() async {
     var db = await ref.read(timelineDatabaseProvider.future);
     await db.cleanTimeline(api);
   }

@@ -103,7 +103,7 @@ class MFMText extends HookConsumerWidget {
   }
 }
 
-_getParse({
+Map<String, dynamic> _getParse({
   List<MFMFeature>? feature,
   Map? emojis,
   bool bigEmojiCode = true,

@@ -17,7 +17,7 @@ class InstanceDatabase {
   }
 
   /// 设置元数据
-  setMeta(MetaDetailedModel model) async {
+  Future<void> setMeta(MetaDetailedModel model) async {
     var db = await _getDatabase();
     db.put("meta", jsonEncode(model.toJson()));
   }
@@ -33,7 +33,7 @@ class InstanceDatabase {
   }
 
   /// 设置表情
-  setEmojis(List<EmojiSimple> models) async {
+  Future<void> setEmojis(List<EmojiSimple> models) async {
     var db = await _getDatabase();
     db.put("emojis", jsonEncode(models));
   }

@@ -44,5 +44,5 @@ class _ScrollControllerHookState
   void dispose() => controller.dispose();
 
   @override
-  String get debugLabel => 'useExtendedPageController';
+  String get debugLabel => 'useTimelineScrollController';
 }

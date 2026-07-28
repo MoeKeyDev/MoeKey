@@ -14,7 +14,7 @@ class HashtagSelectDialogState extends _$HashtagSelectDialogState {
     return [];
   }
 
-  search({String? query}) {
+  void search({String? query}) {
     // 防抖
     timer?.cancel();
     state = const AsyncLoading();
@@ -23,7 +23,7 @@ class HashtagSelectDialogState extends _$HashtagSelectDialogState {
     });
   }
 
-  _search({String? query}) async {
+  Future<void> _search({String? query}) async {
     if (query == null) {
       state = const AsyncData([]);
       return;

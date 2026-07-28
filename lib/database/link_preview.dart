@@ -13,7 +13,7 @@ class LinkPreviewDatabase {
     return _box!;
   }
 
-  put(String src, note.LinkPreview link) async {
+  Future<void> put(String src, note.LinkPreview link) async {
     var db = await _getDatabase();
     await db.put(src, jsonEncode(link.toJson()));
   }

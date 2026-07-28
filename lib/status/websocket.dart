@@ -110,12 +110,12 @@ class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
     );
   }
 
-  send(Map data) async {
+  Future<void> send(Map data) async {
     var json = jsonEncode(data);
     sendString(json);
   }
 
-  sendString(String data) async {
+  Future<void> sendString(String data) async {
     try {
       var channel = await ref.read(moekeyWebSocketProvider.future);
       channel?.sink.add(data);

@@ -9,13 +9,13 @@ class GlobalSnackbar extends _$GlobalSnackbar {
     return null;
   }
 
-  show(String message) {
+  void show(String message) {
     state = message;
     // 触发监听器
     ref.notifyListeners();
   }
 
-  hide() {
+  void hide() {
     state = null;
     ref.notifyListeners();
   }

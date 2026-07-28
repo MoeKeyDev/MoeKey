@@ -117,74 +117,74 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     return state;
   }
 
-  setVisibility(NoteVisibility visibility) {
+  void setVisibility(NoteVisibility visibility) {
     state.visibility = visibility;
     ref.notifyListeners();
   }
 
-  setLocalOnly(bool localOnly) {
+  void setLocalOnly(bool localOnly) {
     state.localOnly = localOnly;
     ref.notifyListeners();
   }
 
-  setReactionAcceptance(NoteReactionAcceptance? reactionAcceptance) {
+  void setReactionAcceptance(NoteReactionAcceptance? reactionAcceptance) {
     state.reactionAcceptance = reactionAcceptance;
     ref.notifyListeners();
   }
 
-  setText(String text) {
+  void setText(String text) {
     state.text = text;
     ref.notifyListeners();
   }
 
-  createPoll() {
+  void createPoll() {
     state.poll ??= NotePollModel();
     state.isNotePoll = true;
 
     ref.notifyListeners();
   }
 
-  removePoll() {
+  void removePoll() {
     state.isNotePoll = false;
     ref.notifyListeners();
   }
 
-  setPollChoices(index, string) {
+  void setPollChoices(int index, String string) {
     if (state.poll != null) {
       state.poll?.choices[index] = (state.poll!.choices[index].$1, string);
       ref.notifyListeners();
     }
   }
 
-  addPollChoices() {
+  void addPollChoices() {
     if (state.poll != null) {
       state.poll?.choices.add((UniqueKey(), ""));
       ref.notifyListeners();
     }
   }
 
-  removePollChoices(index) {
+  void removePollChoices(int index) {
     if (state.poll != null) {
       state.poll?.choices.removeAt(index);
       ref.notifyListeners();
     }
   }
 
-  setPollMultiple(bool multiple) {
+  void setPollMultiple(bool multiple) {
     if (state.poll != null) {
       state.poll?.multiple = multiple;
       ref.notifyListeners();
     }
   }
 
-  setPollNever(bool never) {
+  void setPollNever(bool never) {
     if (state.poll != null) {
       state.poll?.never = never;
       ref.notifyListeners();
     }
   }
 
-  setPollTime({int? days, int? hours, int? minutes}) {
+  void setPollTime({int? days, int? hours, int? minutes}) {
     if (state.poll != null) {
       if (days != null) {
         state.poll!.days = days;
@@ -199,37 +199,37 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     }
   }
 
-  setIsCw(bool isCw) {
+  void setIsCw(bool isCw) {
     state.isCw = isCw;
     ref.notifyListeners();
   }
 
-  setCw(String cw) {
+  void setCw(String cw) {
     state.cw = cw;
     ref.notifyListeners();
   }
 
-  setIsShowEmoji(bool isShowEmoji) {
+  void setIsShowEmoji(bool isShowEmoji) {
     state.isShowEmoji = isShowEmoji;
     ref.notifyListeners();
   }
 
-  setPreview(bool preview) {
+  void setPreview(bool preview) {
     state.preview = preview;
     ref.notifyListeners();
   }
 
-  setEmojiListHeight(num emojiListHeight) {
+  void setEmojiListHeight(num emojiListHeight) {
     state.emojiListHeight = emojiListHeight;
     ref.notifyListeners();
   }
 
-  addVisibleUser(String id, data) {
+  void addVisibleUser(String id, data) {
     state.visibleUserIds[id] = data;
     ref.notifyListeners();
   }
 
-  removeVisibleUser(String id) {
+  void removeVisibleUser(String id) {
     if (state.visibleUserIds[id] != null) {
       state.visibleUserIds.remove(id);
       ref.notifyListeners();
@@ -240,17 +240,17 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     return "$type::$noteId";
   }
 
-  addFile(DriveFileModel file) {
+  void addFile(DriveFileModel file) {
     state.files.add(file);
     ref.notifyListeners();
   }
 
-  addFileList(List<DriveFileModel> files) {
+  void addFileList(List<DriveFileModel> files) {
     state.files.addAll(files);
     ref.notifyListeners();
   }
 
-  removeFile(int index) {
+  void removeFile(int index) {
     if (state.files.length > index) {
       state.files.removeAt(index);
       ref.notifyListeners();

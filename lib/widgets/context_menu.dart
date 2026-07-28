@@ -60,7 +60,7 @@ class ContextMenuBuilder extends ConsumerStatefulWidget {
     return context.findAncestorStateOfType<ContextMenuBuilderState>()!;
   }
 
-  static show(BuildContext context, TapUpDetails details) {
+  static void show(BuildContext context, TapUpDetails details) {
     var offset = details.globalPosition;
     of(context).show(offset);
   }
@@ -94,7 +94,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
   late Animation<double> tween1;
   late Animation<double> tween2;
 
-  show(Offset offset) {
+  void show(Offset offset) {
     if (Platform.isAndroid || Platform.isIOS) {
       showBottomSheet();
       return;
@@ -102,7 +102,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     _show(offset);
   }
 
-  _show(Offset offset) {
+  void _show(Offset offset) {
     if (mounted) {
       _animationController.reset();
       _animationController.forward();
@@ -115,7 +115,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     }
   }
 
-  showBottomSheet() {
+  void showBottomSheet() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -193,7 +193,7 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
     }
   }
 
-  hidden() async {
+  Future<void> hidden() async {
     if (mounted) {
       await _animationController.reverse();
 
@@ -302,6 +302,7 @@ class ContextDraggableBottomSheet extends HookConsumerWidget {
                         onTap: () async {
                           if (item.child != null) {
                             Future.delayed(Duration.zero).then((value) {
+                              if (!context.mounted) return;
                               showModalBottomSheet(
                                 context: context,
                                 backgroundColor: Colors.transparent,
@@ -356,7 +357,7 @@ class _ContextMenuLayoutWidgetState extends State<ContextMenuLayoutWidget> {
   Map<ContextMenuCard, Future<List<ContextMenuItem>>> menuListCacheMap = {};
   Map<ContextMenuCard, Future<Widget>> widgetCacheMap = {};
 
-  getWidgetFromItem(ContextMenuCard list, {int index = 0}) {
+  FutureBuilder<List<ContextMenuItem>> getWidgetFromItem(ContextMenuCard list, {int index = 0}) {
     assert(list.menuListBuilder != null);
     if (indexList[index] == null) {
       indexList[index] = -1;
@@ -422,7 +423,7 @@ class _ContextMenuLayoutWidgetState extends State<ContextMenuLayoutWidget> {
     );
   }
 
-  getWidgetFromWidgetItem(ContextMenuCard list, {int index = 0}) {
+  FutureBuilder<Widget> getWidgetFromWidgetItem(ContextMenuCard list, {int index = 0}) {
     assert(list.widgetBuilder != null);
     if (indexList[index] == null) {
       indexList[index] = -1;

@@ -162,10 +162,10 @@ class MkAppbar extends ConsumerWidget implements PreferredSizeWidget {
                       ),
                       const SizedBox(width: 8)
                     ],
-                    if (leading != null) leading!,
+                    ?leading,
                     if (content != null) Expanded(child: content!),
                     if (bottom != null) Expanded(child: bottom!),
-                    if (trailing != null) trailing!
+                    ?trailing,
                   ],
                 ),
               ),

@@ -31,8 +31,8 @@ class MetaService extends MisskeyApiServices {
       bool isActive = true}) async {
     var data = await client.post<List?>("/announcements", data: {
       "limit": limit,
-      if (sinceId != null) 'sinceId': sinceId,
-      if (untilId != null) 'untilId': untilId,
+      'sinceId': ?sinceId,
+      'untilId': ?untilId,
       "isActive": isActive,
     });
     if (data == null) {
@@ -41,8 +41,8 @@ class MetaService extends MisskeyApiServices {
     return List<Announcement>.from(data.map((x) => Announcement.fromJson(x)));
   }
 
-  readAnnouncement({required String announcementId}) async {
-    return client.post("/i/read-announcement", data: {
+  Future<void> readAnnouncement({required String announcementId}) async {
+    await client.post("/i/read-announcement", data: {
       "announcementId": announcementId,
     });
   }

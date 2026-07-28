@@ -16,7 +16,7 @@ class HomePageState extends _$HomePageState {
     return HomeState();
   }
 
-  changePage(String id) {
+  void changePage(String id) {
     for (var element in state.navItemList) {
       if (element["id"] != null) {
         if (id == element["id"]) {

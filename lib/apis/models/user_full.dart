@@ -51,9 +51,9 @@ abstract class UserFullModel with _$UserFullModel {
 
 enum FollowVisibility {
   @JsonValue("followers")
-  FOLLOWERS,
+  followers,
   @JsonValue("private")
-  PRIVATE,
+  private,
   @JsonValue("public")
-  PUBLIC
+  public
 }

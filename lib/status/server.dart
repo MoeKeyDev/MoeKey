@@ -16,7 +16,7 @@ class SelectServerHost extends _$SelectServerHost {
     return "";
   }
 
-  setServer(String host) {
+  void setServer(String host) {
     state = host;
     ref.notifyListeners();
   }
@@ -68,17 +68,17 @@ class CurrentLoginUser extends _$CurrentLoginUser {
       }
       return userList[userid];
     } on TypeError catch (e) {
-      print(e);
-      print(e.stackTrace);
+      debugPrint(e.toString());
+      debugPrintStack(stackTrace: e.stackTrace);
     }
     return null;
   }
 
-  setLoginUser(String id) {
+  Future<void> setLoginUser(String id) async {
     Preferences.set("currentLoginUser", id);
     var userList = ref.watch(loginUserListProvider);
     if (!userList.containsKey(id)) {
-      return null;
+      return;
     }
     state = userList[id];
     ref.notifyListeners();

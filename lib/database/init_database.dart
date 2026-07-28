@@ -17,7 +17,7 @@ class Preferences {
     return Hive.box<String>("preferences_string");
   }
 
-  static get(String key, {dynamic defaultValue}) {
+  static dynamic get(String key, {dynamic defaultValue}) {
     var value = getPreferencesDatabase().get(key);
     if (value == null) {
       return defaultValue;
@@ -25,7 +25,7 @@ class Preferences {
     return jsonDecode(value);
   }
 
-  static set(String key, dynamic value) {
+  static void set(String key, dynamic value) {
     getPreferencesDatabase().put(key, jsonEncode(value));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:moekey/apis/models/clips.dart';
 import 'package:moekey/generated/l10n.dart';
 import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/status/misskey_api.dart';
@@ -29,27 +30,27 @@ class ClipCreateDialogState extends _$ClipCreateDialogState {
     return ClipCreateDialogStateModel();
   }
 
-  updateName(String name) {
+  void updateName(String name) {
     state.name = name;
     ref.notifyListeners();
   }
 
-  updateDescription(String description) {
+  void updateDescription(String description) {
     state.description = description;
     ref.notifyListeners();
   }
 
-  updateIsPublic(bool isPublic) {
+  void updateIsPublic(bool isPublic) {
     state.isPublic = isPublic;
     ref.notifyListeners();
   }
 
-  updateIsPreview(bool isPreview) {
+  void updateIsPreview(bool isPreview) {
     state.isPreview = isPreview;
     ref.notifyListeners();
   }
 
-  send(BuildContext context) async {
+  Future<ClipsModel?> send(BuildContext context) async {
     var apis = ref.read(misskeyApisProvider);
     try {
       if (state.name.isEmpty) {
@@ -78,7 +79,7 @@ class ClipCreateDialogState extends _$ClipCreateDialogState {
       return res;
     } on DioException catch (e) {
       logger.d(e.response);
-      if (!context.mounted) return;
+      if (!context.mounted) return null;
       MkInfoDialog.show(
         info: S.current
             .creationFailedDialog(e.response?.data.toString() ?? e.toString()),
@@ -86,12 +87,13 @@ class ClipCreateDialogState extends _$ClipCreateDialogState {
         context: context,
       );
     } catch (e) {
-      if (!context.mounted) return;
+      if (!context.mounted) return null;
       MkInfoDialog.show(
         info: "$e",
         isError: true,
         context: context,
       );
     }
+    return null;
   }
 }

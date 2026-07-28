@@ -56,7 +56,7 @@ NoteModel _note({
       makeNotesFollowersOnlyBefore: null,
       makeNotesHiddenBefore: null,
       name: 'User',
-      onlineStatus: OnlineStatus.UNKNOWN,
+      onlineStatus: OnlineStatus.unknown,
       username: 'user',
     ),
     userId: 'user-id',

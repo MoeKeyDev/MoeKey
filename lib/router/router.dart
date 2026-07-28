@@ -29,11 +29,11 @@ part 'router.g.dart';
 @riverpod
 GoRouter router(Ref ref) {
   return GoRouter(initialLocation: '/SplashPage', routes: [
-    GoRoute(path: "/", redirect: (_, __) => "/timeline"),
+    GoRoute(path: "/", redirect: (_, _) => "/timeline"),
     GoRoute(
       name: 'splash',
       path: '/SplashPage',
-      builder: (_, __) => const SplashPage(),
+      builder: (_, _) => const SplashPage(),
     ),
     ShellRoute(
       builder: (context, status, child) => PopScope(
@@ -58,7 +58,7 @@ GoRouter router(Ref ref) {
               GoRoute(
                 name: "timeline",
                 path: "/timeline",
-                builder: (_, __) => Consumer(builder: (context, ref, _) {
+                builder: (_, _) => Consumer(builder: (context, ref, _) {
                   var key =
                       ref.read(mkTabBarRefreshScrollStatusProvider("timeline"));
                   return TimelinePage(
@@ -71,7 +71,7 @@ GoRouter router(Ref ref) {
               GoRoute(
                 name: "notifications",
                 path: "/notifications",
-                builder: (_, __) => Consumer(builder: (context, ref, _) {
+                builder: (_, _) => Consumer(builder: (context, ref, _) {
                   var key = ref.read(
                       mkTabBarRefreshScrollStatusProvider("notifications"));
                   return NotificationsPage(
@@ -84,7 +84,7 @@ GoRouter router(Ref ref) {
               GoRoute(
                 name: "clips",
                 path: "/clips",
-                builder: (_, __) => const ClipsPage(),
+                builder: (_, _) => const ClipsPage(),
                 routes: [
                   GoRoute(
                     path: ":id",
@@ -99,28 +99,28 @@ GoRouter router(Ref ref) {
               GoRoute(
                 name: "drives",
                 path: "/drives",
-                builder: (_, __) => const DrivePage(),
+                builder: (_, _) => const DrivePage(),
               ),
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                 name: "explore",
                 path: "/explore",
-                builder: (_, __) => const ExplorePage(),
+                builder: (_, _) => const ExplorePage(),
               ),
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                 name: "announcements",
                 path: "/announcements",
-                builder: (_, __) => const AnnouncementsPage(),
+                builder: (_, _) => const AnnouncementsPage(),
               ),
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                 name: "search",
                 path: "/search",
-                builder: (_, __) => const SearchPage(),
+                builder: (_, _) => const SearchPage(),
               )
             ]),
             StatefulShellBranch(
@@ -202,13 +202,13 @@ GoRouter router(Ref ref) {
     GoRoute(
       name: 'login',
       path: '/login',
-      builder: (_, __) => const LoginPage(),
+      builder: (_, _) => const LoginPage(),
       routes: [],
     ),
     GoRoute(
       name: 'logout',
       path: '/logout',
-      builder: (_, __) => const LogoutPage(),
+      builder: (_, _) => const LogoutPage(),
       routes: [],
     )
   ]);

@@ -19,7 +19,7 @@ class MkRefreshLoadListController extends ChangeNotifier {
     super.dispose();
   }
 
-  refresh() {
+  void refresh() {
     if (!scrollController.hasClients) return;
     if (scrollController.offset > 0) {
       scrollController.animateTo(

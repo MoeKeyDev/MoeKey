@@ -49,7 +49,7 @@ class MkInfoDialog extends HookConsumerWidget {
     );
   }
 
-  static show({
+  static void show({
     required String info,
     required BuildContext context,
     bool isError = false,

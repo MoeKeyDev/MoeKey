@@ -134,7 +134,7 @@ class EmojiList extends HookConsumerWidget {
     );
   }
 
-  static showBottomSheet(BuildContext context,
+  static void showBottomSheet(BuildContext context,
       {required void Function(Map data, BuildContext context) onInsert}) {
     showModalBottomSheet(
       context: context,

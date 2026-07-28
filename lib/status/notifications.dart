@@ -31,7 +31,7 @@ class Notifications extends _$Notifications {
     return [];
   }
 
-  loadMore() async {
+  Future<void> loadMore() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
     var model = state.value ?? MkLoadMoreListModel<NotificationModel>();
@@ -66,7 +66,7 @@ class MentionsNotifications extends _$MentionsNotifications {
     return notes;
   }
 
-  loadMore() async {
+  Future<void> loadMore() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
     var model = state.value ?? NoteListModel();

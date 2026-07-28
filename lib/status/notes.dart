@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
@@ -29,10 +27,10 @@ class Notes extends _$Notes {
   }
 
   ///notes/conversation
-  loadConversation() async {
+  Future<AsyncData<NotesState?>?> loadConversation() async {
     var http = await ref.read(httpProvider.future);
     var user = ref.read(currentLoginUserProvider);
-    if (state.value!.conversation.firstOrNull?.id == null) return;
+    if (state.value!.conversation.firstOrNull?.id == null) return null;
     var data = await http.post(
       "/notes/conversation",
       data: {

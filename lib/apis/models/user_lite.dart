@@ -80,11 +80,11 @@ abstract class Instance with _$Instance {
 
 enum OnlineStatus {
   @JsonValue("active")
-  ACTIVE,
+  active,
   @JsonValue("offline")
-  OFFLINE,
+  offline,
   @JsonValue("online")
-  ONLINE,
+  online,
   @JsonValue("unknown")
-  UNKNOWN
+  unknown
 }

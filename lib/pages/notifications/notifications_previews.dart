@@ -189,7 +189,7 @@ class NotificationPreviewCurrentLoginUser extends CurrentLoginUser {
         id: 'preview-current-user',
         name: 'Moe',
         notesCount: 1024,
-        onlineStatus: OnlineStatus.ONLINE,
+        onlineStatus: OnlineStatus.online,
         username: 'moe',
       ),
     );
@@ -237,7 +237,7 @@ const notificationPreviewAlice = UserLiteModel(
   makeNotesFollowersOnlyBefore: null,
   makeNotesHiddenBefore: null,
   name: '爱丽丝',
-  onlineStatus: OnlineStatus.ONLINE,
+  onlineStatus: OnlineStatus.online,
   username: 'alice',
 );
 
@@ -251,7 +251,7 @@ const notificationPreviewBob = UserLiteModel(
   makeNotesFollowersOnlyBefore: null,
   makeNotesHiddenBefore: null,
   name: 'Bob',
-  onlineStatus: OnlineStatus.ACTIVE,
+  onlineStatus: OnlineStatus.active,
   username: 'bob',
 );
 
@@ -265,7 +265,7 @@ const notificationPreviewCarol = UserLiteModel(
   makeNotesFollowersOnlyBefore: null,
   makeNotesHiddenBefore: null,
   name: 'Carol',
-  onlineStatus: OnlineStatus.OFFLINE,
+  onlineStatus: OnlineStatus.offline,
   username: 'carol',
 );
 
@@ -279,7 +279,7 @@ const notificationPreviewCurrentUser = UserLiteModel(
   makeNotesFollowersOnlyBefore: null,
   makeNotesHiddenBefore: null,
   name: 'Moe',
-  onlineStatus: OnlineStatus.ONLINE,
+  onlineStatus: OnlineStatus.online,
   username: 'moe',
 );
 

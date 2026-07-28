@@ -18,7 +18,7 @@ class TimelineDatabase {
     return openDatabase<String>(name: "timeline", server: server, user: userId);
   }
 
-  setTimeline(String name, List<NoteModel> list) async {
+  Future<void> setTimeline(String name, List<NoteModel> list) async {
     var db = await _getDatabase();
     db.put(
         "$name-timeline",
@@ -27,7 +27,7 @@ class TimelineDatabase {
             list));
   }
 
-  cleanTimeline(String name) async {
+  Future<void> cleanTimeline(String name) async {
     var db = await _getDatabase();
     db.delete("$name-timeline");
   }

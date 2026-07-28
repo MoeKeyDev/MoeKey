@@ -23,12 +23,12 @@ class DrivePath extends _$DrivePath {
     ];
   }
 
-  push({required String name, required String id}) {
+  void push({required String name, required String id}) {
     state.add({"name": name, "id": id});
     ref.notifyListeners();
   }
 
-  backAt({required int index}) {
+  void backAt({required int index}) {
     state.removeRange(index + 1, state.length);
     ref.notifyListeners();
   }
@@ -253,7 +253,7 @@ class DriveList extends _$DriveList {
     return list;
   }
 
-  loadMore() async {
+  Future<void> loadMore() async {
     if (state.isLoading) return;
     state = const AsyncLoading();
     try {
@@ -303,7 +303,7 @@ class DriveList extends _$DriveList {
     return res;
   }
 
-  addFile(dynamic data) {
+  void addFile(dynamic data) {
     var list = state.value ?? [];
     var fileIndex = -1;
     for (var (index, item) in list.indexed) {
@@ -317,13 +317,13 @@ class DriveList extends _$DriveList {
     state = AsyncData(list);
   }
 
-  addFolder(dynamic data) {
+  void addFolder(dynamic data) {
     var list = state.value ?? [];
     list.insert(0, data);
     state = AsyncData(list);
   }
 
-  updateFile(String id, dynamic data) {
+  void updateFile(String id, dynamic data) {
     var list = state.value ?? [];
     for (var (index, item) in list.indexed) {
       if (item is DriveFileModel && item.id == id) {
@@ -334,7 +334,7 @@ class DriveList extends _$DriveList {
     state = AsyncData(list);
   }
 
-  updateFolder(String id, dynamic data) {
+  void updateFolder(String id, dynamic data) {
     var list = state.value ?? [];
     for (var (index, item) in list.indexed) {
       if (item is DriverFolderModel && item.id == id) {

@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../status/themes.dart';
 
-inputDecoration(ThemeColorModel themes, String? hintText,
+InputDecoration inputDecoration(ThemeColorModel themes, String? hintText,
     {Widget? prefixIcon, Widget? suffixIcon}) {
   return InputDecoration(
       border: OutlineInputBorder(

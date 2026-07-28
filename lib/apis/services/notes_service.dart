@@ -16,8 +16,8 @@ class NotesService extends MisskeyApiServices {
   }) async {
     var res = await client.post<List?>("/notes/$api", data: {
       "limit": 10,
-      if (untilId != null) "untilId": untilId,
-      if (sinceId != null) "sinceId": sinceId
+      "untilId": ?untilId,
+      "sinceId": ?sinceId
     });
     if (res == null) {
       return [];
@@ -69,7 +69,7 @@ class NotesService extends MisskeyApiServices {
     var data = await client.post<List?>("/notes/children", data: {
       "noteId": noteId,
       "limit": limit,
-      if (untilId != null) "untilId": untilId,
+      "untilId": ?untilId,
     });
     if (data == null) {
       return [];
@@ -83,7 +83,7 @@ class NotesService extends MisskeyApiServices {
       "/notes/polls/recommendation",
       data: {
         "limit": limit,
-        if (untilId != null) "untilId": untilId,
+        "untilId": ?untilId,
       },
     );
     if (data == null) {
@@ -110,7 +110,7 @@ class NotesService extends MisskeyApiServices {
       "/notes/featured",
       data: {
         "limit": limit,
-        if (untilId != null) "untilId": untilId,
+        "untilId": ?untilId,
       },
     );
     if (data == null) {
@@ -153,7 +153,7 @@ class NotesService extends MisskeyApiServices {
     var data = await client.post<List?>("/notes/mentions", data: {
       "limit": limit,
       if (specified) "visibility": "specified",
-      if (untilId != null) "untilId": untilId,
+      "untilId": ?untilId,
     });
     if (data == null) {
       return [];
@@ -173,11 +173,11 @@ class NotesService extends MisskeyApiServices {
     var data = await client.post("/notes/search", data: {
       "query": query,
       "limit": limit,
-      if (sinceId != null) "sinceId": sinceId,
-      if (untilId != null) "untilId": untilId,
-      if (host != null) "host": host,
-      if (userId != null) "userId": userId,
-      if (channelId != null) "channelId": channelId,
+      "sinceId": ?sinceId,
+      "untilId": ?untilId,
+      "host": ?host,
+      "userId": ?userId,
+      "channelId": ?channelId,
     });
     if (data == null) {
       return [];
@@ -194,8 +194,8 @@ class NotesService extends MisskeyApiServices {
     var data = await client.post("/notes/search-by-tag", data: {
       "tag": tag,
       "limit": limit,
-      if (sinceId != null) "sinceId": sinceId,
-      if (untilId != null) "untilId": untilId,
+      "sinceId": ?sinceId,
+      "untilId": ?untilId,
     });
     if (data == null) {
       return [];

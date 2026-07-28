@@ -126,7 +126,7 @@ class UserFollow extends _$UserFollow {
 
   var loading = false;
 
-  load() async {
+  Future<void> load() async {
     if (loading) return;
     if (!(state.value?.hasMore ?? true)) return;
     loading = true;

@@ -141,6 +141,7 @@ class MkSettingEditableDateField extends HookConsumerWidget {
 
 class MkSettingEditableSelectField<T> extends HookConsumerWidget {
   const MkSettingEditableSelectField({
+    super.key,
     this.prefixIcon,
     required this.label,
     required this.value,

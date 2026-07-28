@@ -33,7 +33,7 @@ class UserClipListState extends _$UserClipListState {
 
   bool loading = false;
 
-  loadMore() async {
+  Future<void> loadMore() async {
     if (loading) return;
     loading = true;
 

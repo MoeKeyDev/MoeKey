@@ -16,7 +16,7 @@ class NotesDatabase {
     return _box!;
   }
 
-  put(String noteId, NoteModel note) async {
+  Future<void> put(String noteId, NoteModel note) async {
     var db = await _getDatabase();
     await db.put(noteId, note.toJson());
   }

@@ -81,7 +81,7 @@ class ExploreHotPageStates extends _$ExploreHotPageStates {
     return model;
   }
 
-  load() async {
+  Future<void> load() async {
     var model = state.value ?? NoteListModel();
     var apis = ref.watch(misskeyApisProvider);
     List<NoteModel> list = [];

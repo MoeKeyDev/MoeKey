@@ -25,8 +25,8 @@ class NotesListener extends _$NotesListener {
     listen = moekeyStreamController.stream.listen((event) {
       if (event.type == MoekeyEventType.data) {
         if (event.data["type"] == "noteUpdated") {
-          print("Notes Listener");
-          print(event.data["body"]);
+          logger.d("Notes Listener");
+          logger.d(event.data["body"]);
           stream.add(event.data["body"]);
         }
       }
@@ -41,26 +41,26 @@ class NotesListener extends _$NotesListener {
     return stream.stream;
   }
 
-  _s(String id) {
+  void _s(String id) {
     ref.read(moekeyGlobalEventProvider.notifier).send({
       "type": "s",
       "body": {"id": id}
     });
   }
 
-  _un(String id) {
+  void _un(String id) {
     ref.read(moekeyGlobalEventProvider.notifier).send({
       "type": "un",
       "body": {"id": id}
     });
   }
 
-  subNote(String noteId) {
+  void subNote(String noteId) {
     noteList.add(noteId);
     _s(noteId);
   }
 
-  unsubNote(String noteId) {
+  void unsubNote(String noteId) {
     noteList.remove(noteId);
     _un(noteId);
   }
@@ -169,7 +169,7 @@ class NoteListener extends _$NoteListener {
     return noteModel;
   }
 
-  updateNote(void Function(NoteModel noteModel) update) {
+  void updateNote(void Function(NoteModel noteModel) update) {
     update(noteModel);
     ref.notifyListeners();
   }

@@ -14,7 +14,7 @@ class DriveService extends MisskeyApiServices {
     var res = await client.client.post(
       "/drive/files/create",
       data: FormData.fromMap({
-        if (folderId != null) "folderId": folderId,
+        "folderId": ?folderId,
         "force": true,
         "name": filename,
         "i": client.accessToken,
@@ -36,7 +36,7 @@ class DriveService extends MisskeyApiServices {
     var res = await client.post(
       "/drive/folders/create",
       data: {
-        if (parentId != null) "parentId": parentId,
+        "parentId": ?parentId,
         "name": name,
       },
     );
@@ -51,7 +51,7 @@ class DriveService extends MisskeyApiServices {
     String? folderId,
   }) async {
     await client.post("/drive/files/upload-from-url", data: {
-      if (folderId != null) "folderId": folderId,
+      "folderId": ?folderId,
       "url": url,
     });
   }
@@ -65,10 +65,10 @@ class DriveService extends MisskeyApiServices {
   }) async {
     var res = await client.post("/drive/files/update", data: {
       "fileId": fileId,
-      if (folderId != null) "folderId": folderId,
-      if (name != null) "name": name,
-      if (isSensitive != null) "isSensitive": isSensitive,
-      if (comment != null) "comment": comment,
+      "folderId": ?folderId,
+      "name": ?name,
+      "isSensitive": ?isSensitive,
+      "comment": ?comment,
     });
     if (res == null) {
       return null;
@@ -83,8 +83,8 @@ class DriveService extends MisskeyApiServices {
   }) async {
     var res = await client.post("/drive/folders/update", data: {
       "folderId": folderId,
-      if (name != null) "name": name,
-      if (parentId != null) "parentId": parentId,
+      "name": ?name,
+      "parentId": ?parentId,
     });
     if (res == null) {
       return null;
@@ -109,8 +109,8 @@ class DriveService extends MisskeyApiServices {
     String? untilId,
   }) async {
     var res = await client.post<List?>("/drive/files", data: {
-      if (folderId != null) "folderId": folderId,
-      if (untilId != null) "untilId": untilId,
+      "folderId": ?folderId,
+      "untilId": ?untilId,
       "limit": 30,
     });
     if (res == null) {
@@ -125,8 +125,8 @@ class DriveService extends MisskeyApiServices {
     String? untilId,
   }) async {
     var res = await client.post<List?>("/drive/folders", data: {
-      if (folderId != null) "folderId": folderId,
-      if (untilId != null) "untilId": untilId,
+      "folderId": ?folderId,
+      "untilId": ?untilId,
       "limit": 30,
     });
     if (res == null) {

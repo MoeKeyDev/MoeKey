@@ -12,19 +12,19 @@ class DriverSelectDialogState extends _$DriverSelectDialogState {
     return LinkedHashMap<String, DriveFileModel>();
   }
 
-  add(String id, DriveFileModel data) {
+  void add(String id, DriveFileModel data) {
     state[id] = data;
     ref.notifyListeners();
   }
 
-  remove(String id) {
+  void remove(String id) {
     if (state[id] != null) {
       state.remove(id);
       ref.notifyListeners();
     }
   }
 
-  clear() {
+  void clear() {
     state.clear();
     ref.notifyListeners();
   }

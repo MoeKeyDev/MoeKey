@@ -116,7 +116,7 @@ abstract class MeDetailed with _$MeDetailed {
 
 enum Notify {
   @JsonValue("none")
-  NONE,
+  none,
   @JsonValue("normal")
-  NORMAL
+  normal
 }

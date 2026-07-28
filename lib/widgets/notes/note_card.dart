@@ -439,7 +439,7 @@ class _TimeLineNoteCardContent extends StatelessWidget {
               for (var link in links) ...[
                 NoteLinkPreview(link: link, fontsize: fontsize)
               ],
-            if (innerWidget != null) innerWidget!,
+            ?innerWidget,
           ],
         ],
       ),
@@ -931,7 +931,7 @@ class TimeLineImage extends StatefulWidget {
 }
 
 class _TimeLineImageState extends State<TimeLineImage> {
-  open(index) {
+  void open(int index) {
     context.push('/image-preview', extra: {
       'initialIndex': index,
       'galleryItems': [
@@ -1089,7 +1089,7 @@ class _TimeLineImageState extends State<TimeLineImage> {
           runSpacing: 8,
           children: filesWidget,
         ),
-        if (imageListWidget != null) imageListWidget,
+        ?imageListWidget,
       ],
     );
   }
@@ -1101,7 +1101,7 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
   return ContextMenuCard(
       menuListBuilder: () {
         return [
-          if (customMenuItem != null) ...customMenuItem,
+          ...?customMenuItem,
           ContextMenuItem(
             icon: TablerIcons.copy,
             label: S.current.copyContent,

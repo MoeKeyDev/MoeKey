@@ -62,7 +62,7 @@ class ClipsService extends MisskeyApiServices {
     var res = await client.post<List?>("/clips/notes", data: {
       "clipId": clipId,
       "limit": limit,
-      if (untilId != null) "untilId": untilId,
+      "untilId": ?untilId,
     });
     if (res == null) {
       return [];

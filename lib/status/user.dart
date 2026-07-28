@@ -73,7 +73,7 @@ class UserInfo extends _$UserInfo {
     return model;
   }
 
-  followingCreate() async {
+  Future<void> followingCreate() async {
     if (state.value == null) {
       return;
     }
@@ -84,7 +84,7 @@ class UserInfo extends _$UserInfo {
     await apis.following.create(userId: userModel.id);
   }
 
-  followingDelete() async {
+  Future<void> followingDelete() async {
     if (state.value == null) {
       return;
     }
@@ -95,7 +95,7 @@ class UserInfo extends _$UserInfo {
     await apis.following.delete(userId: userModel.id);
   }
 
-  followingCancel() async {
+  Future<void> followingCancel() async {
     if (state.value == null) {
       return;
     }
@@ -141,7 +141,7 @@ class UserNotesList extends _$UserNotesList {
     return list;
   }
 
-  load() async {
+  Future<void> load() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
     var model = state.value ?? NoteListModel();
@@ -183,7 +183,7 @@ class UserReactionsList extends _$UserReactionsList {
     return list;
   }
 
-  load() async {
+  Future<void> load() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
     var model = state.value ?? NoteListModel();
