@@ -68,19 +68,36 @@ StreamController<MoekeyEvent> moekeyStreamController =
 
 @Riverpod(keepAlive: true)
 class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
-  @override
-  FutureOr build() async {
-    var channel = await ref.watch(moekeyWebSocketProvider.future);
-    var timer = Timer.periodic(const Duration(seconds: 60), (t) {
-      sendString("h");
+  Timer? _heartbeatTimer;
+  StreamSubscription<dynamic>? _channelSubscription;
+  Object? _activeConnectionGeneration;
+  bool _reconnectScheduled = false;
 
-      // t.cancel(); //关闭定时器
+  @override
+  Future<void> build() async {
+    final connectionGeneration = Object();
+    _activeConnectionGeneration = connectionGeneration;
+    ref.onDispose(() {
+      if (identical(_activeConnectionGeneration, connectionGeneration)) {
+        _activeConnectionGeneration = null;
+      }
+      _heartbeatTimer?.cancel();
+      _heartbeatTimer = null;
+      _channelSubscription?.cancel();
+      _channelSubscription = null;
+    });
+
+    var channel = await ref.watch(moekeyWebSocketProvider.future);
+    if (channel == null) return;
+
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 60), (_) {
+      sendString("h");
     });
     moekeyStreamController.sink.add(MoekeyEvent(
       type: MoekeyEventType.load,
       data: {},
     ));
-    channel?.stream.listen(
+    _channelSubscription = channel.stream.listen(
       (data) {
         logger.d("=========emit moekeyEvent=======");
         logger.d(data);
@@ -90,24 +107,33 @@ class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
         );
         moekeyStreamController.sink.add(event);
       },
-      onDone: () {
-        ref.invalidate(moekeyWebSocketProvider);
-        moekeyStreamController.sink.add(MoekeyEvent(
-          type: MoekeyEventType.load,
-          data: {},
-        ));
-        if (timer.isActive) {
-          timer.cancel();
-        }
-      },
+      onDone: () => _handleDisconnect(connectionGeneration),
       onError: (error) {
         logger.d(error);
-        if (timer.isActive) {
-          timer.cancel();
-        }
+        _handleDisconnect(connectionGeneration);
       },
       cancelOnError: true,
     );
+  }
+
+  void _handleDisconnect(Object connectionGeneration) {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
+    _scheduleReconnect(connectionGeneration);
+  }
+
+  void _scheduleReconnect([Object? connectionGeneration]) {
+    if (_reconnectScheduled) return;
+    _reconnectScheduled = true;
+    scheduleMicrotask(() {
+      _reconnectScheduled = false;
+      if (!ref.mounted) return;
+      if (connectionGeneration != null &&
+          !identical(_activeConnectionGeneration, connectionGeneration)) {
+        return;
+      }
+      ref.invalidate(moekeyWebSocketProvider);
+    });
   }
 
   Future<void> send(Map data) async {
@@ -121,7 +147,7 @@ class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
       channel?.sink.add(data);
     } catch (e) {
       logger.d(e);
-      ref.invalidate(moekeyWebSocketProvider);
+      _scheduleReconnect();
     }
   }
 }

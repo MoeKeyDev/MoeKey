@@ -13,16 +13,15 @@ part 'notes_listener.g.dart';
 /// NotesListener 负责保存当前需要更新状态的note id列表，并且从ws中拉取Note的更新，并且调用NoteListener更新Note
 @Riverpod(keepAlive: true)
 class NotesListener extends _$NotesListener {
-  Set<String> noteList = {};
-  StreamSubscription<MoekeyEvent>? listen;
+  final Map<String, Set<Object>> _noteSubscriptions = {};
 
   @override
   Raw<Stream<Map>> build() {
     StreamController<Map> stream = StreamController.broadcast();
-    for (var item in noteList) {
+    for (var item in _noteSubscriptions.keys) {
       _s(item);
     }
-    listen = moekeyStreamController.stream.listen((event) {
+    final eventSubscription = moekeyStreamController.stream.listen((event) {
       if (event.type == MoekeyEventType.data) {
         if (event.data["type"] == "noteUpdated") {
           logger.d("Notes Listener");
@@ -32,16 +31,21 @@ class NotesListener extends _$NotesListener {
       }
       if (event.type == MoekeyEventType.load) {
         logger.d("========= NotesListener load ===================");
-        logger.d(noteList);
-        for (var item in noteList) {
+        logger.d(_noteSubscriptions.keys);
+        for (var item in _noteSubscriptions.keys) {
           _s(item);
         }
       }
+    });
+    ref.onDispose(() {
+      eventSubscription.cancel();
+      stream.close();
     });
     return stream.stream;
   }
 
   void _s(String id) {
+    if (!ref.mounted) return;
     ref.read(moekeyGlobalEventProvider.notifier).send({
       "type": "s",
       "body": {"id": id}
@@ -49,20 +53,32 @@ class NotesListener extends _$NotesListener {
   }
 
   void _un(String id) {
+    if (!ref.mounted) return;
     ref.read(moekeyGlobalEventProvider.notifier).send({
       "type": "un",
       "body": {"id": id}
     });
   }
 
-  void subNote(String noteId) {
-    noteList.add(noteId);
-    _s(noteId);
+  Object subNote(String noteId) {
+    final subscription = Object();
+    final subscriptions =
+        _noteSubscriptions.putIfAbsent(noteId, () => <Object>{});
+    final shouldSubscribe = subscriptions.isEmpty;
+    subscriptions.add(subscription);
+    if (shouldSubscribe) {
+      _s(noteId);
+    }
+    return subscription;
   }
 
-  void unsubNote(String noteId) {
-    noteList.remove(noteId);
-    _un(noteId);
+  void unsubNote(String noteId, Object subscription) {
+    final subscriptions = _noteSubscriptions[noteId];
+    if (subscriptions == null || !subscriptions.remove(subscription)) return;
+    if (subscriptions.isEmpty) {
+      _noteSubscriptions.remove(noteId);
+      _un(noteId);
+    }
   }
 }
 
@@ -77,23 +93,23 @@ Future<NotesDatabase> notesDatabase(Ref ref) async {
 /// 负责提供Note更新监听服务、注册/取消注册Note更新事件监听
 @riverpod
 class NoteIdListener extends _$NoteIdListener {
-  StreamSubscription<Map>? listen;
-
   @override
   Raw<Stream<Map>> build(String noteId) {
     var listener = ref.read(notesListenerProvider.notifier);
     StreamController<Map> streamController = StreamController.broadcast();
     var event = ref.watch(notesListenerProvider);
-    listen?.cancel();
-    listen = event.listen((event) {
+    final eventSubscription = event.listen((event) {
       if (noteId == event["id"]) {
         return streamController.add(event);
       }
     });
-    listener.subNote(noteId);
+    final noteSubscription = listener.subNote(noteId);
     ref.onDispose(() {
-      listener.unsubNote(noteId);
-      listen?.cancel();
+      eventSubscription.cancel();
+      streamController.close();
+      scheduleMicrotask(
+        () => listener.unsubNote(noteId, noteSubscription),
+      );
     });
 
     return streamController.stream;
@@ -102,14 +118,11 @@ class NoteIdListener extends _$NoteIdListener {
 
 @riverpod
 class NoteListener extends _$NoteListener {
-  StreamSubscription<Map>? listen;
-
   @override
   NoteModel build(NoteModel noteModel) {
     var stream = ref.watch(noteIdListenerProvider(noteModel.id));
     var user = ref.watch(currentLoginUserProvider);
-    listen?.cancel();
-    listen = stream.listen((event) {
+    final eventSubscription = stream.listen((event) {
       var type = event["type"];
       var reactions = this.noteModel.reactions;
       if (type == "reacted") {
@@ -164,7 +177,7 @@ class NoteListener extends _$NoteListener {
       ref.notifyListeners();
     });
     ref.onDispose(() {
-      listen?.cancel();
+      eventSubscription.cancel();
     });
     return noteModel;
   }
