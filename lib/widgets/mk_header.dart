@@ -213,7 +213,7 @@ class MkTabBar extends ConsumerWidget implements PreferredSizeWidget {
       dividerColor: Colors.transparent,
       automaticIndicatorColorAdjustment: false,
       labelColor: themes.fgColor,
-      unselectedLabelColor: themes.fgColor.withOpacity(0.8),
+      unselectedLabelColor: themes.fgColor.withValues(alpha: 0.8),
     );
   }
 

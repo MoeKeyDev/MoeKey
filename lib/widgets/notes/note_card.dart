@@ -111,7 +111,7 @@ class NoteCard extends ConsumerWidget {
                       margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
                       decoration: BoxDecoration(
                           border: Border.all(
-                              width: 1, color: themes.fgColor.withOpacity(0.6)),
+                              width: 1, color: themes.fgColor.withValues(alpha: 0.6)),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(8))),
                       padding: const EdgeInsets.all(12),

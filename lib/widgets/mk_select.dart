@@ -88,7 +88,7 @@ class MkSelect<T> extends ConsumerWidget {
             const SizedBox(height: 6),
           ],
           DropdownButtonFormField<T>(
-            value: value,
+            initialValue: value,
             items: items.map((item) {
               return DropdownMenuItem<T>(
                 value: item.value,
@@ -100,7 +100,7 @@ class MkSelect<T> extends ConsumerWidget {
             hint: hintText != null
                 ? Text(hintText!,
                     style: effectiveStyle.copyWith(
-                        color: themes.fgColor.withOpacity(0.6)))
+                        color: themes.fgColor.withValues(alpha: 0.6)))
                 : null,
             disabledHint: disabledHint,
             elevation: elevation,

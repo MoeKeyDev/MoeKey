@@ -18,7 +18,7 @@ class MkSwitch extends ConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     return Switch(
       value: value,
-      activeColor: themes.switchOnFgColor,
+      activeThumbColor: themes.switchOnFgColor,
       inactiveThumbColor: themes.switchOffFgColor,
       activeTrackColor: themes.switchOnBgColor,
       inactiveTrackColor: themes.switchOffBgColor,

@@ -103,7 +103,7 @@ class NoteImage extends HookConsumerWidget {
                       ),
                     ),
                   Container(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                   ),
                   // ),
                   if (isHidden.value)
@@ -166,7 +166,7 @@ class NoteImage extends HookConsumerWidget {
                           child: Container(
                             padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
                             decoration: BoxDecoration(
-                                color: theme.fgColor.withOpacity(0.5),
+                                color: theme.fgColor.withValues(alpha: 0.5),
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(6))),
                             child: const Icon(

@@ -29,9 +29,6 @@ class EditableFieldsList extends HookConsumerWidget {
     final isSaving = useState(false);
 
     void handleReorder(int oldIndex, int newIndex) {
-      if (oldIndex < newIndex) {
-        newIndex -= 1;
-      }
       final item = fields.value.removeAt(oldIndex);
       // Create a new list instance to trigger rebuild
       fields.value = List.from(fields.value)..insert(newIndex, item);
@@ -188,7 +185,7 @@ class EditableFieldsList extends HookConsumerWidget {
               ),
             );
           },
-          onReorder: handleReorder,
+          onReorderItem: handleReorder,
         ),
         const SizedBox(height: 8),
         Row(

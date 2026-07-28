@@ -320,7 +320,8 @@ class DriverList extends HookConsumerWidget {
     }
     return PopScope(
       canPop: path.length < 2,
-      onPopInvoked: (_) async {
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
         // 监听物理返回
         ref.read(drivePathProvider.notifier).backAt(index: path.length - 2);
       },

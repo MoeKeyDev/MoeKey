@@ -227,7 +227,7 @@ class DriveImageThumbnail extends HookConsumerWidget {
                   isHover ? themes.buttonHoverBgColor : Colors.transparent;
               if (isSelect) {
                 bgColor = Color.lerp(
-                    themes.accentColor.withOpacity(0.6), bgColor, 0.3);
+                    themes.accentColor.withValues(alpha: 0.6), bgColor, 0.3);
               }
               return Container(
                 decoration: BoxDecoration(
@@ -427,7 +427,7 @@ class DriverFileIcon extends StatelessWidget {
               if (data.isSensitive)
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     borderRadius: const BorderRadius.all(Radius.circular(4)),
                   ),
                   padding: const EdgeInsets.all(2),

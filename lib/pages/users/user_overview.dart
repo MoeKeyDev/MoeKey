@@ -556,10 +556,10 @@ class _UserBanner extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.black.withOpacity(0.3),
+                    Colors.black.withValues(alpha: 0.3),
                     Colors.transparent,
                     Colors.transparent,
-                    Colors.black.withOpacity(0.4),
+                    Colors.black.withValues(alpha: 0.4),
                   ],
                   end: Alignment.bottomCenter,
                   begin: Alignment.topCenter,
@@ -584,7 +584,7 @@ class _UserBanner extends StatelessWidget {
                   boxShadow: [
                     if (!isSmall)
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         offset: const Offset(0, 1),
                         blurRadius: 2,
                       ),
@@ -868,7 +868,7 @@ class _UserFollowButton extends HookConsumerWidget {
                       size: 12,
                       color: Colors.white,
                       strokeWidth: 2,
-                      backgroundColor: Colors.white.withOpacity(0.5),
+                      backgroundColor: Colors.white.withValues(alpha: 0.5),
                     )
                 ],
               )

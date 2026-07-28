@@ -30,7 +30,7 @@ Future getInstanceMetaAndUpdateThemes() async {
   //         ),
   //       ),
   //       textSelectionTheme: TextSelectionThemeData(
-  //         selectionColor: ThemeColorModel.themeColor.value.withOpacity(0.3),
+  //         selectionColor: ThemeColorModel.themeColor.value.withValues(alpha: 0.3),
   //       ));
   //   Get.changeTheme(theme);
   // }

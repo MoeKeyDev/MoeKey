@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -116,7 +117,7 @@ class ExploreUsersLocal extends HookConsumerWidget {
         double maxCrossAxisExtent = constraints.maxWidth < 580 ? 600 : 350;
         return CustomScrollView(
           primary: true,
-          cacheExtent: 2000,
+          scrollCacheExtent: const ScrollCacheExtent.pixels(2000),
           slivers: [
             SliverPadding(
               padding: padding.copyWith(
@@ -292,7 +293,7 @@ class ExploreUsersNetwork extends HookConsumerWidget {
         double maxCrossAxisExtent = constraints.maxWidth < 580 ? 600 : 350;
         return CustomScrollView(
           primary: true,
-          cacheExtent: 2000,
+          scrollCacheExtent: const ScrollCacheExtent.pixels(2000),
           slivers: [
             SliverPadding(
               padding: padding.copyWith(

@@ -355,7 +355,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                   margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
                   decoration: BoxDecoration(
                       border: Border.all(
-                          width: 1, color: themes.fgColor.withOpacity(0.6)),
+                          width: 1, color: themes.fgColor.withValues(alpha: 0.6)),
                       borderRadius: const BorderRadius.all(Radius.circular(8))),
                   padding: const EdgeInsets.all(12),
                   child: TimeLineNoteCardComponent(
@@ -452,7 +452,7 @@ class UserInfo extends HookConsumerWidget {
                         TextSpan(
                           text: "@${data.host}",
                           style: TextStyle(
-                            color: themes.fgColor.withOpacity(0.7),
+                            color: themes.fgColor.withValues(alpha: 0.7),
                           ),
                         ),
                     ],

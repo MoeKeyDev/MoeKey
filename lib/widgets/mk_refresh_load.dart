@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/widgets/sliver_load_more.dart';
 
@@ -88,7 +89,9 @@ class MkRefreshLoadList<T> extends StatelessWidget {
 
     Widget child = CustomScrollView(
       primary: true,
-      cacheExtent: (Platform.isAndroid || Platform.isIOS) ? null : 4000,
+      scrollCacheExtent: (Platform.isAndroid || Platform.isIOS)
+          ? null
+          : const ScrollCacheExtent.pixels(4000),
       slivers: [
         SliverPadding(
           padding: mediaPadding.add(padding),

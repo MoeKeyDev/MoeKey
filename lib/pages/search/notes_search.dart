@@ -62,38 +62,36 @@ class NotesSearchPanel extends HookConsumerWidget {
                   .updateSearchValue,
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Radio(
-                  value: 1,
-                  groupValue: status.serverType,
-                  fillColor: widgetStateProperty,
-                  onChanged: (value) => ref
+            RadioGroup<int>(
+              groupValue: status.serverType,
+              onChanged: (value) {
+                if (value != null) {
+                  ref
                       .read(notesSearchStatusProvider.notifier)
-                      .updateServerType(value!),
-                ),
-                Text(S.current.all),
-                const SizedBox(width: 8),
-                Radio(
-                  value: 2,
-                  groupValue: status.serverType,
-                  fillColor: widgetStateProperty,
-                  onChanged: (value) => ref
-                      .read(notesSearchStatusProvider.notifier)
-                      .updateServerType(value!),
-                ),
-                Text(S.current.local),
-                const SizedBox(width: 8),
-                Radio(
-                  value: 3,
-                  groupValue: status.serverType,
-                  fillColor: widgetStateProperty,
-                  onChanged: (value) => ref
-                      .read(notesSearchStatusProvider.notifier)
-                      .updateServerType(value!),
-                ),
-                Text(S.current.searchHost),
-              ],
+                      .updateServerType(value);
+                }
+              },
+              child: Row(
+                children: [
+                  Radio(
+                    value: 1,
+                    fillColor: widgetStateProperty,
+                  ),
+                  Text(S.current.all),
+                  const SizedBox(width: 8),
+                  Radio(
+                    value: 2,
+                    fillColor: widgetStateProperty,
+                  ),
+                  Text(S.current.local),
+                  const SizedBox(width: 8),
+                  Radio(
+                    value: 3,
+                    fillColor: widgetStateProperty,
+                  ),
+                  Text(S.current.searchHost),
+                ],
+              ),
             ),
             if (status.serverType == 3) ...[
               const SizedBox(height: 16),

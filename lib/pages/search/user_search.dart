@@ -84,38 +84,36 @@ class UserSearchPanel extends HookConsumerWidget {
                   ref.read(userSearchStatusProvider.notifier).updateSearchValue,
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Radio(
-                  value: "combined",
-                  groupValue: status.origin,
-                  fillColor: widgetStateProperty,
-                  onChanged: (value) => ref
+            RadioGroup<String>(
+              groupValue: status.origin,
+              onChanged: (value) {
+                if (value != null) {
+                  ref
                       .read(userSearchStatusProvider.notifier)
-                      .updateOrigin(value!),
-                ),
-                Text(S.current.searchAll),
-                const SizedBox(width: 8),
-                Radio(
-                  value: "local",
-                  groupValue: status.origin,
-                  fillColor: widgetStateProperty,
-                  onChanged: (value) => ref
-                      .read(userSearchStatusProvider.notifier)
-                      .updateOrigin(value!),
-                ),
-                Text(S.current.searchLocal),
-                const SizedBox(width: 8),
-                Radio(
-                  value: "remote",
-                  groupValue: status.origin,
-                  fillColor: widgetStateProperty,
-                  onChanged: (value) => ref
-                      .read(userSearchStatusProvider.notifier)
-                      .updateOrigin(value!),
-                ),
-                Text(S.current.searchRemote),
-              ],
+                      .updateOrigin(value);
+                }
+              },
+              child: Row(
+                children: [
+                  Radio(
+                    value: "combined",
+                    fillColor: widgetStateProperty,
+                  ),
+                  Text(S.current.searchAll),
+                  const SizedBox(width: 8),
+                  Radio(
+                    value: "local",
+                    fillColor: widgetStateProperty,
+                  ),
+                  Text(S.current.searchLocal),
+                  const SizedBox(width: 8),
+                  Radio(
+                    value: "remote",
+                    fillColor: widgetStateProperty,
+                  ),
+                  Text(S.current.searchRemote),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             FilledButton(

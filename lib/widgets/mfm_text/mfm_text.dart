@@ -293,7 +293,7 @@ _getParse({
                   },
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: themes.mentionColor.withOpacity(0.1),
+                      color: themes.mentionColor.withValues(alpha: 0.1),
                       borderRadius:
                           const BorderRadius.all(Radius.circular(100)),
                     ),
@@ -324,7 +324,7 @@ _getParse({
                                       text: "@$host",
                                       style: textStyle.copyWith(
                                         color: themes.mentionColor
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                       )),
                               ],
                             ),
@@ -510,7 +510,7 @@ _getParse({
           textStyle = textStyle.copyWith(fontStyle: FontStyle.italic);
         } else {
           textStyle = textStyle.copyWith(
-              fontSize: 12, color: textStyle.color?.withOpacity(0.7));
+              fontSize: 12, color: textStyle.color?.withValues(alpha: 0.7));
         }
         return TextSpan(children: [
           for (var item in a)

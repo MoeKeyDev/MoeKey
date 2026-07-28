@@ -81,7 +81,7 @@ class TimelineListView extends StatefulWidget {
   /// See: [ListView.itemExtent]
   final double? itemExtent;
 
-  /// See: [ScrollView.cacheExtent]
+  /// See: [ScrollView.scrollCacheExtent]
   final double? cacheExtent;
 
   /// See: [ScrollView.anchor]
@@ -196,14 +196,18 @@ class _TimelineListViewState extends State<TimelineListView> {
                 anchor: 1.0 - widget.anchor,
                 offset: negativeOffset,
                 slivers: negativeSlivers,
-                cacheExtent: widget.cacheExtent,
+                scrollCacheExtent: widget.cacheExtent == null
+                    ? null
+                    : ScrollCacheExtent.pixels(widget.cacheExtent!),
               ),
               Viewport(
                 axisDirection: axisDirection,
                 anchor: widget.anchor,
                 offset: offset,
                 slivers: slivers,
-                cacheExtent: widget.cacheExtent,
+                scrollCacheExtent: widget.cacheExtent == null
+                    ? null
+                    : ScrollCacheExtent.pixels(widget.cacheExtent!),
               ),
             ],
           );

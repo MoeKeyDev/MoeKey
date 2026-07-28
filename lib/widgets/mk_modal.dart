@@ -138,7 +138,7 @@ Future<T?> showModel<T>({
           var themes = ref.watch(themeColorsProvider);
           return Container(
             color: themes.modalBgColor
-                .withOpacity(themes.modalBgColor.opacity * tween1.value),
+                .withValues(alpha: themes.modalBgColor.a * tween1.value),
           );
         },
       );

@@ -42,7 +42,7 @@ class ImagePreviewPage extends HookConsumerWidget {
   void setBar() {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
-          statusBarColor: Colors.black.withOpacity(0.9),
+          statusBarColor: Colors.black.withValues(alpha: 0.9),
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.light),
     );
@@ -156,7 +156,7 @@ class ImagePreviewPage extends HookConsumerWidget {
                 slidePageBackgroundHandler: (offset, pageSize) {
                   var tmp = (pageSize.height / 2 - offset.dy.abs()) /
                       (pageSize.height / 2);
-                  return Colors.black.withOpacity((tmp - 0.1).clamp(0, 0.9));
+                  return Colors.black.withValues(alpha: (tmp - 0.1).clamp(0, 0.9));
                 },
                 child: ExtendedImageGesturePageView.builder(
                   itemBuilder: (BuildContext context, int index) {
@@ -331,7 +331,7 @@ class ImagePreviewTabbar extends StatelessWidget {
         opacity: appBarOpacity.value,
         duration: const Duration(milliseconds: 200),
         child: AppBar(
-          backgroundColor: Colors.black.withOpacity(0.4),
+          backgroundColor: Colors.black.withValues(alpha: 0.4),
           iconTheme: const IconThemeData(color: Colors.white),
           title: Text(
             "${currentIndex.value + 1} / ${galleryItems.length} ",

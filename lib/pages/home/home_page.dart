@@ -88,7 +88,7 @@ class HomePage extends HookConsumerWidget {
     return LayoutBuilder(builder: (context, constraints) {
       var btnStyle =
           ButtonStyle(backgroundColor: WidgetStateColor.resolveWith((states) {
-        return themes.panelColor.withOpacity(0.5);
+        return themes.panelColor.withValues(alpha: 0.5);
       }));
       return Scaffold(
         key: _scaffoldKey,

@@ -287,7 +287,7 @@ class UserFullCardFollowBtn extends HookConsumerWidget {
                         size: 15,
                         color: Colors.white,
                         strokeWidth: 3,
-                        backgroundColor: Colors.white.withOpacity(0.5),
+                        backgroundColor: Colors.white.withValues(alpha: 0.5),
                       )
                   ],
                 )
