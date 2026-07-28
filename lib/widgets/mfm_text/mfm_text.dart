@@ -6,9 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mfm_parser/mfm_parser.dart';
 import 'package:moekey/status/apis.dart';
+import 'package:moekey/status/server.dart';
+import 'package:moekey/utils/open_misskey_link.dart';
 import 'package:moekey/widgets/mfm_text/animate/jelly.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../apis/models/emojis.dart';
 import '../../logger.dart';
@@ -52,6 +53,7 @@ class MFMText extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var meta = ref.watch(instanceMetaProvider);
+    var currentUser = ref.watch(currentLoginUserProvider);
     var emoji = ref.watch(apiEmojisProvider);
     var lastText = useState<String?>(null);
     var mfmParse = useState<List<MfmNode>>([]);
@@ -65,7 +67,7 @@ class MFMText extends HookConsumerWidget {
       bigEmojiCode: bigEmojiCode,
       defaultServerHost: defaultServerHost,
       themes: themes,
-      loginServerUrl: meta.value?.uri ?? "",
+      loginServerUrl: currentUser?.serverUrl ?? meta.value?.uri ?? "",
       currentServerHost: currentServerHost,
       systemEmojis: emoji.value ?? {},
       context: context,
@@ -146,6 +148,7 @@ Map<String, dynamic> _getParse({
     },
     "url": (MfmURL item, TextStyle textStyle) {
       if (feature!.contains(MFMFeature.url)) {
+        final url = item.props?["url"]?.toString() ?? "";
         return TextSpan(
           children: [
             TextSpan(
@@ -156,7 +159,11 @@ Map<String, dynamic> _getParse({
               mouseCursor: SystemMouseCursors.click,
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  launchUrlString(item.props?["url"]);
+                  openMisskeyLink(
+                    context,
+                    url: url,
+                    instanceUrl: loginServerUrl,
+                  );
                 },
             ),
             WidgetSpan(
@@ -194,7 +201,11 @@ Map<String, dynamic> _getParse({
             message: item.url,
             child: GestureDetector(
               onTap: () {
-                launchUrlString(item.url);
+                openMisskeyLink(
+                  context,
+                  url: item.url,
+                  instanceUrl: loginServerUrl,
+                );
               },
               child: Text.rich(
                 TextSpan(
@@ -211,7 +222,11 @@ Map<String, dynamic> _getParse({
                     WidgetSpan(
                       child: GestureDetector(
                         onTap: () {
-                          launchUrlString(item.url);
+                          openMisskeyLink(
+                            context,
+                            url: item.url,
+                            instanceUrl: loginServerUrl,
+                          );
                         },
                         child: Icon(
                           TablerIcons.external_link,

@@ -13,6 +13,7 @@ import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
+import 'package:moekey/utils/open_misskey_link.dart';
 import 'package:moekey/widgets/clips/clips_create_dialog.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/emoji_list.dart';
@@ -598,6 +599,7 @@ class NoteLinkPreview extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var res = ref.watch(getUriInfoProvider(link));
+    var serverUrl = ref.watch(currentLoginUserProvider)?.serverUrl ?? "";
 
     var data = res.value;
 
@@ -617,7 +619,11 @@ class NoteLinkPreview extends HookConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            launchUrlString(link);
+            openMisskeyLink(
+              context,
+              url: link,
+              instanceUrl: serverUrl,
+            );
           },
           child: Row(
             children: [
