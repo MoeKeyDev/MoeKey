@@ -143,6 +143,24 @@ class NoteListener extends _$NoteListener {
           noteModel.myReaction = null;
         }
       }
+      if (type == "pollVoted" && noteModel.poll != null) {
+        final choice = event["body"]["choice"];
+        final userId = event["body"]["userId"];
+        final choices = [...noteModel.poll!.choices];
+        if (choice is int && choice >= 0 && choice < choices.length) {
+          final currentChoice = choices[choice];
+          final votedByCurrentUser = userId == user?.id;
+          // A local vote is applied as soon as its API request succeeds.
+          // Do not count it twice when its stream event arrives.
+          if (!(votedByCurrentUser && currentChoice.isVoted)) {
+            choices[choice] = currentChoice.copyWith(
+              votes: currentChoice.votes + 1,
+              isVoted: currentChoice.isVoted || votedByCurrentUser,
+            );
+            noteModel.poll = noteModel.poll!.copyWith(choices: choices);
+          }
+        }
+      }
       ref.notifyListeners();
     });
     ref.onDispose(() {

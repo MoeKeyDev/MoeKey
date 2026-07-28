@@ -25,6 +25,7 @@ import '../../widgets/mk_card.dart';
 import '../../widgets/mk_image.dart';
 import '../../widgets/mk_scaffold.dart';
 import '../../widgets/notes/note_card.dart';
+import '../../widgets/notes/note_poll.dart';
 import '../../widgets/reactions.dart';
 
 class NotesPage extends HookConsumerWidget {
@@ -336,7 +337,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                   ),
                 const SizedBox(height: 4),
                 // 投票
-                if (data.poll != null) PollCard(data: data),
+                if (data.poll != null) NotePoll(data: data),
                 TimeLineImage(
                     files: data.files,
                     mainAxisExtent: constraints.maxWidth * 0.7),

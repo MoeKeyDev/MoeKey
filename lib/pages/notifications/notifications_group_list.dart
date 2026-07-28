@@ -13,6 +13,7 @@ import 'package:moekey/widgets/mk_refresh_load.dart';
 import 'package:moekey/widgets/notifications/notifications_user_card.dart';
 
 import '../../apis/models/notification.dart';
+import '../../apis/services/following_service.dart';
 import '../../generated/l10n.dart';
 import '../../utils/achievement_title.dart';
 import '../../utils/get_padding_note.dart';
@@ -20,6 +21,14 @@ import '../../widgets/mk_image.dart';
 import '../../widgets/reactions.dart';
 
 enum _FollowRequestAction { idle, loading, accepted, rejected }
+
+final _incomingFollowRequestStatusProvider = FutureProvider.autoDispose
+    .family<IncomingFollowRequestStatus, String>((ref, userId) {
+      return ref
+          .watch(misskeyApisProvider)
+          .following
+          .incomingRequestStatus(userId: userId);
+    });
 
 class NotificationsGroupList extends HookConsumerWidget {
   const NotificationsGroupList({super.key});
@@ -94,6 +103,12 @@ class NotificationItemCard extends HookConsumerWidget {
     final themes = ref.watch(themeColorsProvider);
     final currentUser = ref.watch(currentLoginUserProvider)?.userInfo;
     final followRequestAction = useState(_FollowRequestAction.idle);
+    final followRequesterId = data.user?.id ?? data.userId;
+    final followRequestStatus =
+        data.notificationType == NotificationType.receiveFollowRequest &&
+            followRequesterId != null
+        ? ref.watch(_incomingFollowRequestStatusProvider(followRequesterId))
+        : null;
 
     Widget currentUserAvatar(IconData fallbackIcon) {
       if (currentUser?.avatarUrl != null) {
@@ -164,6 +179,7 @@ class NotificationItemCard extends HookConsumerWidget {
         followRequestAction.value = accept
             ? _FollowRequestAction.accepted
             : _FollowRequestAction.rejected;
+        ref.invalidate(_incomingFollowRequestStatusProvider(userId));
       } catch (_) {
         followRequestAction.value = _FollowRequestAction.idle;
         if (context.mounted) {
@@ -303,6 +319,7 @@ class NotificationItemCard extends HookConsumerWidget {
           footer: _followRequestFooter(
             themes,
             followRequestAction.value,
+            followRequestStatus,
             respondToFollowRequest,
           ),
           onTap: openUser,
@@ -508,6 +525,7 @@ class NotificationItemCard extends HookConsumerWidget {
 Widget _followRequestFooter(
   ThemeColorModel themes,
   _FollowRequestAction action,
+  AsyncValue<IncomingFollowRequestStatus>? serverStatus,
   Future<void> Function(bool accept) respond,
 ) {
   if (action == _FollowRequestAction.accepted) {
@@ -516,37 +534,80 @@ Widget _followRequestFooter(
   if (action == _FollowRequestAction.rejected) {
     return Text(S.current.notifyRejected);
   }
-  final loading = action == _FollowRequestAction.loading;
+  if (action == _FollowRequestAction.loading ||
+      serverStatus?.isLoading == true) {
+    return const Center(
+      child: SizedBox(
+        width: 18,
+        height: 18,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+    );
+  }
+  final resolvedStatus = serverStatus?.valueOrNull;
+  if (resolvedStatus == IncomingFollowRequestStatus.accepted) {
+    return Text(S.current.notifyAccepted);
+  }
+  if (resolvedStatus == IncomingFollowRequestStatus.handled) {
+    return Text(S.current.done);
+  }
   return Row(
     children: [
-      FilledButton.icon(
-        onPressed: loading ? null : () => respond(true),
-        icon: const Icon(TablerIcons.check, size: 16),
-        label: Text(S.current.notifyAccept),
-        style: FilledButton.styleFrom(
-          backgroundColor: themes.successColor,
+      Expanded(
+        child: _followRequestButton(
+          label: S.current.notifyAccept,
+          icon: TablerIcons.check,
+          color: themes.successColor,
           foregroundColor: themes.fgOnAccentColor,
+          onPressed: () => respond(true),
         ),
       ),
       const SizedBox(width: 8),
-      FilledButton.icon(
-        onPressed: loading ? null : () => respond(false),
-        icon: const Icon(TablerIcons.x, size: 16),
-        label: Text(S.current.notifyReject),
-        style: FilledButton.styleFrom(
-          backgroundColor: themes.errorColor,
+      Expanded(
+        child: _followRequestButton(
+          label: S.current.notifyReject,
+          icon: TablerIcons.x,
+          color: themes.errorColor,
           foregroundColor: themes.fgOnAccentColor,
+          onPressed: () => respond(false),
         ),
       ),
-      if (loading) ...[
-        const SizedBox(width: 12),
-        const SizedBox(
-          width: 18,
-          height: 18,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-      ],
     ],
+  );
+}
+
+Widget _followRequestButton({
+  required String label,
+  required IconData icon,
+  required Color color,
+  required Color foregroundColor,
+  required VoidCallback onPressed,
+}) {
+  return FilledButton(
+    onPressed: onPressed,
+    style: FilledButton.styleFrom(
+      backgroundColor: color,
+      foregroundColor: foregroundColor,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+    ),
+    child: SizedBox(
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Align(alignment: Alignment.centerLeft, child: Icon(icon, size: 16)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    ),
   );
 }
 

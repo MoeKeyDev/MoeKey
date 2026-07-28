@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
@@ -15,7 +13,6 @@ import 'package:moekey/status/apis.dart';
 import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
-import 'package:moekey/utils/format_duration.dart';
 import 'package:moekey/widgets/clips/clips_create_dialog.dart';
 import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/emoji_list.dart';
@@ -33,6 +30,7 @@ import '../../apis/models/translate.dart';
 import '../../apis/models/user_lite.dart';
 import '../../status/misskey_api.dart';
 import '../../utils/parse_color.dart';
+import 'note_poll.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../hover_builder.dart';
 import '../mfm_text/mfm_text.dart';
@@ -432,7 +430,7 @@ class _TimeLineNoteCardContent extends StatelessWidget {
             if (data.noteTranslate != null) NoteCardTranslate(data: data),
             const SizedBox(height: 4),
             // 投票
-            if (data.poll != null) PollCard(data: data),
+            if (data.poll != null) NotePoll(data: data),
             // 图片
             TimeLineImage(
                 files: data.files, mainAxisExtent: constraints.maxWidth * 0.7),
@@ -1387,146 +1385,6 @@ class TimelineActionButton extends HookConsumerWidget {
               ),
             ),
           ),
-        );
-      },
-    );
-  }
-}
-
-class PollCard extends HookConsumerWidget {
-  const PollCard({
-    super.key,
-    required this.data,
-  });
-
-  final NoteModel data;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // return Text(data.poll["choices"].toString());
-    num count = 0;
-    var isVoted = false;
-    for (var item in data.poll!.choices) {
-      count += item.votes;
-      isVoted = isVoted || item.isVoted;
-    }
-    return HookConsumer(
-      builder: (context, ref, child) {
-        var themes = ref.watch(themeColorsProvider);
-        var isExpires = useState(false);
-        var duration = useState<int?>(null);
-        func() {
-          isExpires.value = data.poll!.expiresAt != null &&
-              (data.poll!.expiresAt!.millisecondsSinceEpoch <
-                  DateTime.now().millisecondsSinceEpoch);
-          // int? duration;
-          if (data.poll?.expiresAt != null && !isExpires.value) {
-            duration.value = data.poll!.expiresAt!.millisecondsSinceEpoch -
-                DateTime.now().millisecondsSinceEpoch;
-          } else {
-            duration.value = null;
-          }
-        }
-
-        func();
-        useEffect(() {
-          var time = Timer.periodic(
-            const Duration(seconds: 1),
-            (timer) => func(),
-          );
-          return () => time.cancel();
-        }, const []);
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (var item in data.poll!.choices)
-              Builder(
-                builder: (context) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 2, bottom: 2),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 32,
-                        child: Stack(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: themes.accentedBgColor,
-                              ),
-                            ),
-                            AnimatedFractionallySizedBox(
-                              duration: const Duration(milliseconds: 300),
-                              widthFactor: count == 0
-                                  ? 0
-                                  : isVoted || isExpires.value
-                                      ? item.votes / count
-                                      : 0,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: themes.accentColor,
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: AlignmentDirectional.centerStart,
-                              child: Container(
-                                margin: const EdgeInsets.only(left: 4),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 2),
-                                decoration: BoxDecoration(
-                                    color: themes.panelColor,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(4))),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (item.isVoted)
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 4),
-                                        child: Icon(
-                                          TablerIcons.check,
-                                          size: 16,
-                                          color: themes.fgColor,
-                                        ),
-                                      ),
-                                    Text(item.text),
-                                    if (isVoted || isExpires.value)
-                                      Opacity(
-                                        opacity: 0.7,
-                                        child: Text(
-                                            " ${S.current.voteCount(item.votes)} "),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                Text(S.current.voteAllCount(count)),
-                if (isExpires.value)
-                  Text(" · ${S.current.voteExpired}")
-                else if (duration.value != null) ...[
-                  const Text(" · "),
-                  Text(S.current
-                      .voteWillExpired(formatDuration(duration.value!))),
-                ]
-              ],
-            )
-          ],
         );
       },
     );

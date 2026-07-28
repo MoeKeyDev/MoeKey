@@ -3,13 +3,30 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../status/themes.dart';
 
+ButtonStyle _mkButtonStyle({
+  required Color backgroundColor,
+  required Color foregroundColor,
+}) {
+  return ButtonStyle(
+    // Flutter uses a larger density and padded tap target on mobile by
+    // default. Keep MK buttons aligned with their desktop layout while
+    // allowing their parent and content to determine the actual size.
+    visualDensity: VisualDensity.compact,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    backgroundColor: WidgetStateProperty.all(backgroundColor),
+    foregroundColor: WidgetStateProperty.all(foregroundColor),
+    elevation: WidgetStateProperty.all(0),
+  );
+}
+
 class MkPrimaryButton extends HookConsumerWidget {
-  const MkPrimaryButton(
-      {super.key,
-      required this.child,
-      required this.onPressed,
-      this.onLongPress,
-      this.clipBehavior});
+  const MkPrimaryButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+    this.onLongPress,
+    this.clipBehavior,
+  });
 
   final Widget child;
   final void Function() onPressed;
@@ -20,24 +37,26 @@ class MkPrimaryButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     return ElevatedButton(
-        onPressed: onPressed,
-        onLongPress: onLongPress,
-        clipBehavior: clipBehavior,
-        style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(themes.accentColor),
-            foregroundColor: WidgetStateProperty.all(themes.fgOnAccentColor),
-            elevation: WidgetStateProperty.all(0)),
-        child: child);
+      onPressed: onPressed,
+      onLongPress: onLongPress,
+      clipBehavior: clipBehavior,
+      style: _mkButtonStyle(
+        backgroundColor: themes.accentColor,
+        foregroundColor: themes.fgOnAccentColor,
+      ),
+      child: child,
+    );
   }
 }
 
 class MkSecondaryButton extends HookConsumerWidget {
-  const MkSecondaryButton(
-      {super.key,
-      required this.child,
-      required this.onPressed,
-      this.onLongPress,
-      this.clipBehavior});
+  const MkSecondaryButton({
+    super.key,
+    required this.child,
+    required this.onPressed,
+    this.onLongPress,
+    this.clipBehavior,
+  });
 
   final Widget child;
   final void Function() onPressed;
@@ -48,13 +67,14 @@ class MkSecondaryButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     return ElevatedButton(
-        onPressed: onPressed,
-        onLongPress: onLongPress,
-        clipBehavior: clipBehavior,
-        style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(themes.buttonBgColor),
-            foregroundColor: WidgetStateProperty.all(themes.fgColor),
-            elevation: WidgetStateProperty.all(0)),
-        child: child);
+      onPressed: onPressed,
+      onLongPress: onLongPress,
+      clipBehavior: clipBehavior,
+      style: _mkButtonStyle(
+        backgroundColor: themes.buttonBgColor,
+        foregroundColor: themes.fgColor,
+      ),
+      child: child,
+    );
   }
 }

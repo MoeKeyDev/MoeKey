@@ -36,6 +36,9 @@ class _TestClient extends MisskeyApisHttpClient {
   Object? failure;
   String? lastPath;
   Map? lastData;
+  bool pendingFollowRequest = true;
+  bool isFollowed = false;
+  final paths = <String>[];
 
   @override
   Future<T> post<T>(
@@ -46,9 +49,24 @@ class _TestClient extends MisskeyApisHttpClient {
   }) async {
     lastPath = path;
     lastData = data;
+    paths.add(path);
+    if (path == '/users/show') {
+      return <String, dynamic>{
+            'hasPendingFollowRequestToYou': pendingFollowRequest,
+            'isFollowed': isFollowed,
+          }
+          as T;
+    }
     await pending?.future;
     if (failure case final failure?) {
       throw failure;
+    }
+    if (path == '/following/requests/accept') {
+      pendingFollowRequest = false;
+      isFollowed = true;
+    } else if (path == '/following/requests/reject') {
+      pendingFollowRequest = false;
+      isFollowed = false;
     }
     return null as T;
   }
@@ -290,13 +308,12 @@ void main() {
       notification('receiveFollowRequest').copyWith(userId: 'requester'),
       apis: testApis(client),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('接受'));
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    expect(client.lastPath, '/following/requests/accept');
-    expect(client.lastData, {'userId': 'requester'});
+    expect(client.paths, contains('/following/requests/accept'));
 
     client.pending!.complete();
     await tester.pumpAndSettle();
@@ -313,14 +330,74 @@ void main() {
       notification('receiveFollowRequest').copyWith(userId: 'requester'),
       apis: testApis(client),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('拒绝'));
     await tester.pumpAndSettle();
-    expect(client.lastPath, '/following/requests/reject');
+    expect(client.paths, contains('/following/requests/reject'));
     expect(find.text('操作失败，请稍后重试'), findsOneWidget);
     expect(find.text('接受'), findsOneWidget);
     expect(find.text('拒绝'), findsOneWidget);
+  });
+
+  testWidgets('follow request labels are centered in equal-width buttons', (
+    tester,
+  ) async {
+    final client = _TestClient();
+    await pumpNotification(
+      tester,
+      notification('receiveFollowRequest').copyWith(userId: 'requester'),
+      apis: testApis(client),
+    );
+    await tester.pumpAndSettle();
+
+    final acceptButton = find.ancestor(
+      of: find.text('接受'),
+      matching: find.byType(FilledButton),
+    );
+    final rejectButton = find.ancestor(
+      of: find.text('拒绝'),
+      matching: find.byType(FilledButton),
+    );
+    final acceptRect = tester.getRect(acceptButton);
+    final rejectRect = tester.getRect(rejectButton);
+    expect(acceptRect.width, closeTo(rejectRect.width, 0.01));
+    expect(
+      tester.getRect(find.text('接受')).center.dx,
+      closeTo(acceptRect.center.dx, 0.01),
+    );
+    expect(
+      tester.getRect(find.text('拒绝')).center.dx,
+      closeTo(rejectRect.center.dx, 0.01),
+    );
+  });
+
+  testWidgets('follow request state is restored from the server relationship', (
+    tester,
+  ) async {
+    final acceptedClient = _TestClient()
+      ..pendingFollowRequest = false
+      ..isFollowed = true;
+    await pumpNotification(
+      tester,
+      notification('receiveFollowRequest').copyWith(userId: 'requester'),
+      apis: testApis(acceptedClient),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('已接受关注请求'), findsOneWidget);
+    expect(find.text('接受'), findsNothing);
+
+    final handledClient = _TestClient()
+      ..pendingFollowRequest = false
+      ..isFollowed = false;
+    await pumpNotification(
+      tester,
+      notification('receiveFollowRequest').copyWith(userId: 'requester'),
+      apis: testApis(handledClient),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('完成'), findsOneWidget);
+    expect(find.text('拒绝'), findsNothing);
   });
 
   testWidgets('scheduled-note success opens the native note route', (

@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../generated/l10n.dart';
 import '../status/themes.dart';
+import 'mk_button.dart';
 import 'mk_dialog.dart';
 import 'mk_modal.dart';
 
@@ -28,41 +29,21 @@ class MkInfoDialog extends HookConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isError)
-            Icon(
-              TablerIcons.circle_x,
-              size: 30,
-              color: themes.errorColor,
-            )
+            Icon(TablerIcons.circle_x, size: 30, color: themes.errorColor)
           else
-            Icon(
-              TablerIcons.alert_circle,
-              size: 30,
-              color: themes.warnColor,
-            ),
-          const SizedBox(
-            height: 12,
-          ),
-          Text(
-            info,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          FilledButton(
+            Icon(TablerIcons.alert_circle, size: 30, color: themes.warnColor),
+          const SizedBox(height: 12),
+          Text(info, textAlign: TextAlign.center),
+          const SizedBox(height: 12),
+          MkPrimaryButton(
             onPressed: () {
               if (onOk != null) {
                 onOk!();
               }
               Navigator.of(context).pop();
             },
-            style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(themes.accentColor),
-                foregroundColor:
-                    WidgetStateProperty.all(themes.fgOnAccentColor),
-                elevation: WidgetStateProperty.all(0)),
             child: Text(S.current.ok),
-          )
+          ),
         ],
       ),
     );
@@ -82,73 +63,58 @@ class MkInfoDialog extends HookConsumerWidget {
   }
 }
 
-class MkConfirm extends ConsumerWidget {
+class MkConfirm extends StatelessWidget {
   const MkConfirm({super.key, required this.children});
 
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var themes = ref.watch(themeColorsProvider);
+  Widget build(BuildContext context) {
     return MkDialog(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ...children,
-          const SizedBox(
-            height: 12,
-          ),
+          const SizedBox(height: 12),
           Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 120),
-                child: FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStateProperty.all(themes.accentColor),
-                        foregroundColor:
-                            WidgetStateProperty.all(themes.fgOnAccentColor),
-                        elevation: WidgetStateProperty.all(0)),
-                    child: Text(S.current.ok)),
+                child: MkPrimaryButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: Text(S.current.ok),
+                ),
               ),
-              const SizedBox(
-                width: 12,
-              ),
+              const SizedBox(width: 12),
               ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 120),
-                child: FilledButton(
+                child: MkSecondaryButton(
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
-                  style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all(themes.buttonBgColor),
-                      foregroundColor: WidgetStateProperty.all(themes.fgColor),
-                      elevation: WidgetStateProperty.all(0)),
                   child: Text(S.current.cancel),
                 ),
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
-  static Future<bool?> show(
-      {required List<Widget> children, required BuildContext context}) {
+  static Future<bool?> show({
+    required List<Widget> children,
+    required BuildContext context,
+  }) {
     return showModel<bool?>(
       context: context,
       builder: (context) {
-        return MkConfirm(
-          children: children,
-        );
+        return MkConfirm(children: children);
       },
     );
   }

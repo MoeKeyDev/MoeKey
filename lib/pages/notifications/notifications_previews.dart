@@ -200,6 +200,13 @@ class NotificationPreviewFollowingService extends FollowingService {
   NotificationPreviewFollowingService({required super.client});
 
   @override
+  Future<IncomingFollowRequestStatus> incomingRequestStatus({
+    required String userId,
+  }) async {
+    return IncomingFollowRequestStatus.pending;
+  }
+
+  @override
   Future<void> requestsAccept({required String userId}) async {
     await Future<void>.delayed(const Duration(milliseconds: 400));
   }

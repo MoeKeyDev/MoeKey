@@ -92,6 +92,19 @@ class NotesService extends MisskeyApiServices {
     return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
   }
 
+  Future<void> votePoll({
+    required String noteId,
+    required int choice,
+  }) async {
+    await client.post(
+      "/notes/polls/vote",
+      data: {
+        "noteId": noteId,
+        "choice": choice,
+      },
+    );
+  }
+
   Future<List<NoteModel>> featured({int limit = 10, String? untilId}) async {
     var data = await client.post<List?>(
       "/notes/featured",

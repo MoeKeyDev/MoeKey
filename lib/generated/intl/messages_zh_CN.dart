@@ -66,6 +66,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m21(count) => "总票数 ${count}";
 
+  static String m27(choice) => "确定投票给“${choice}”吗？";
+
   static String m22(count) => "${count}票";
 
   static String m23(index) => "选项${index}";
@@ -362,15 +364,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewMore": MessageLookupByLibrary.simpleMessage("查看更多"),
     "vote": MessageLookupByLibrary.simpleMessage("投票"),
     "voteAllCount": m21,
+    "voteConfirm": m27,
     "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("截止日期"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("允许多个投票"),
     "voteExpired": MessageLookupByLibrary.simpleMessage("投票已结束"),
+    "voteFailed": MessageLookupByLibrary.simpleMessage("投票失败，请稍后重试"),
     "voteNoDueDate": MessageLookupByLibrary.simpleMessage("永久"),
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage("投票数量不能少于两个"),
     "voteOptionHint": m23,
     "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage("投票结果已经生成"),
+    "voteShowResult": MessageLookupByLibrary.simpleMessage("查看结果"),
+    "voteVoted": MessageLookupByLibrary.simpleMessage("已投票"),
     "voteWillExpired": m25,
     "yearsAgo": m26,
   };

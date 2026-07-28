@@ -68,6 +68,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m21(count) => "Total Vote ${count}";
 
+  static String m27(choice) => "Vote for “${choice}”?";
+
   static String m22(count) => "Voted ${count}";
 
   static String m23(index) => "The Option ${index}";
@@ -458,12 +460,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewMore": MessageLookupByLibrary.simpleMessage("View More"),
     "vote": MessageLookupByLibrary.simpleMessage("Vote"),
     "voteAllCount": m21,
+    "voteConfirm": m27,
     "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("Due Date"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage(
       "Multiple votes allowed",
     ),
     "voteExpired": MessageLookupByLibrary.simpleMessage("Voting has ended"),
+    "voteFailed": MessageLookupByLibrary.simpleMessage(
+      "Voting failed. Please try again.",
+    ),
     "voteNoDueDate": MessageLookupByLibrary.simpleMessage("Permanently"),
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "The number of votes cannot be less than two",
@@ -473,6 +479,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteResult": MessageLookupByLibrary.simpleMessage(
       "Vote results generated",
     ),
+    "voteShowResult": MessageLookupByLibrary.simpleMessage("Show results"),
+    "voteVoted": MessageLookupByLibrary.simpleMessage("Voted"),
     "voteWillExpired": m25,
     "yearsAgo": m26,
   };

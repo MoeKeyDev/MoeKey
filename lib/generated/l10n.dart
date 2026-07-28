@@ -564,6 +564,31 @@ class S {
     return Intl.message('投票', name: 'vote', desc: '', args: []);
   }
 
+  /// `查看结果`
+  String get voteShowResult {
+    return Intl.message('查看结果', name: 'voteShowResult', desc: '', args: []);
+  }
+
+  /// `已投票`
+  String get voteVoted {
+    return Intl.message('已投票', name: 'voteVoted', desc: '', args: []);
+  }
+
+  /// `确定投票给“{choice}”吗？`
+  String voteConfirm(Object choice) {
+    return Intl.message(
+      '确定投票给“$choice”吗？',
+      name: 'voteConfirm',
+      desc: '',
+      args: [choice],
+    );
+  }
+
+  /// `投票失败，请稍后重试`
+  String get voteFailed {
+    return Intl.message('投票失败，请稍后重试', name: 'voteFailed', desc: '', args: []);
+  }
+
   /// `投票数量不能少于两个`
   String get voteOptionAtLeastTwo {
     return Intl.message(

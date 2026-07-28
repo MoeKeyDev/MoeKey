@@ -68,6 +68,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m21(count) => "総得票数${count}";
 
+  static String m27(choice) => "「${choice}」に投票しますか？";
+
   static String m22(count) => "${count}票";
 
   static String m23(index) => "${index} オプション";
@@ -396,10 +398,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewMore": MessageLookupByLibrary.simpleMessage("詳細"),
     "vote": MessageLookupByLibrary.simpleMessage("投票"),
     "voteAllCount": m21,
+    "voteConfirm": m27,
     "voteCount": m22,
     "voteDueDate": MessageLookupByLibrary.simpleMessage("期限"),
     "voteEnableMultiChoice": MessageLookupByLibrary.simpleMessage("複数の投票を許可する"),
     "voteExpired": MessageLookupByLibrary.simpleMessage("投票は終了しました。"),
+    "voteFailed": MessageLookupByLibrary.simpleMessage("投票に失敗しました。もう一度お試しください"),
     "voteNoDueDate": MessageLookupByLibrary.simpleMessage("無期限"),
     "voteOptionAtLeastTwo": MessageLookupByLibrary.simpleMessage(
       "投票数は2つ未満にすることはできません。",
@@ -407,6 +411,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "voteOptionHint": m23,
     "voteOptionNullIndex": m24,
     "voteResult": MessageLookupByLibrary.simpleMessage("投票結果が生成されました"),
+    "voteShowResult": MessageLookupByLibrary.simpleMessage("結果を見る"),
+    "voteVoted": MessageLookupByLibrary.simpleMessage("投票済み"),
     "voteWillExpired": m25,
     "yearsAgo": m26,
   };
