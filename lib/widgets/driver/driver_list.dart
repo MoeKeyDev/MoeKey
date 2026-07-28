@@ -281,7 +281,7 @@ class DriverList extends HookConsumerWidget {
             }),
             child: LoadingAndEmpty(
                 loading: data.isLoading,
-                empty: data.valueOrNull?.isEmpty ?? true,
+                empty: data.value?.isEmpty ?? true,
                 refresh: () {
                   ref.invalidate(driveListProvider);
                 },
@@ -297,12 +297,12 @@ class DriverList extends HookConsumerWidget {
                       ),
                       sliver: SliverAlignedGrid.extent(
                         itemBuilder: (context, index) {
-                          return buildDriverListItem(data.valueOrNull![index]);
+                          return buildDriverListItem(data.value![index]);
                         },
                         maxCrossAxisExtent: 150,
                         crossAxisSpacing: 18,
                         mainAxisSpacing: 18,
-                        itemCount: data.valueOrNull?.length ?? 0,
+                        itemCount: data.value?.length ?? 0,
                       ),
                     ),
                   ],

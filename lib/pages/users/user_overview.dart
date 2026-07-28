@@ -41,7 +41,7 @@ class UserOverview extends HookConsumerWidget {
     );
     var userProvider = userInfoProvider(userId: userId);
     var user = ref.watch(userProvider);
-    var userPinNote = user.valueOrNull?.pinnedNotes ?? [];
+    var userPinNote = user.value?.pinnedNotes ?? [];
     var themes = ref.watch(themeColorsProvider);
     var data = ref.watch(dataProvider);
     return MkPaginationNoteList(
@@ -97,8 +97,8 @@ class UserOverview extends HookConsumerWidget {
           ),
         ),
       ],
-      hasMore: data.valueOrNull?.hasMore ?? true,
-      items: data.valueOrNull?.list,
+      hasMore: data.value?.hasMore ?? true,
+      items: data.value?.list,
     );
   }
 }
@@ -116,7 +116,7 @@ class UserHomeCard extends HookConsumerWidget {
     var userProvider = userInfoProvider(userId: userId);
     var user = ref.watch(userProvider);
     var currentUser = ref.watch(currentLoginUserProvider);
-    var userData = user.valueOrNull;
+    var userData = user.value;
     var themes = ref.watch(themeColorsProvider);
     if (userData != null) {
       return LayoutBuilder(

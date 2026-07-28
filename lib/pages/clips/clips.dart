@@ -50,7 +50,7 @@ class ClipsNotesList extends _$ClipsNotesList {
   load() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
-    var model = state.valueOrNull ?? ClipsNoteListState();
+    var model = state.value ?? ClipsNoteListState();
     try {
       var untilId = model.list.lastOrNull?.id;
       var list = await clipsNotesList(clipId: clipId, untilId: untilId);

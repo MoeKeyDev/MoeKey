@@ -71,7 +71,7 @@ class UserPage extends HookConsumerWidget {
             showBack: true,
           ));
     }
-    var userData = user.valueOrNull;
+    var userData = user.value;
     var userId = userData!.id;
     return LayoutBuilder(builder: (context, constraints) {
       return MkTabBarRefreshScroll(

@@ -18,14 +18,14 @@ import 'misskey_api.dart';
 part 'apis.g.dart';
 
 @Riverpod(keepAlive: true)
-Future<InstanceDatabase> instanceDatabase(InstanceDatabaseRef ref) async {
+Future<InstanceDatabase> instanceDatabase(Ref ref) async {
   var user = ref.watch(currentLoginUserProvider);
   var instance = user?.serverUrl;
   return InstanceDatabase(server: instance ?? "default");
 }
 
 @Riverpod(keepAlive: true)
-Future<MetaDetailedModel?> instanceMeta(InstanceMetaRef ref) async {
+Future<MetaDetailedModel?> instanceMeta(Ref ref) async {
   var apis = ref.watch(misskeyApisProvider);
 
   var colors = ref.read(themeColorsProvider.notifier);
@@ -44,7 +44,7 @@ Future<MetaDetailedModel?> instanceMeta(InstanceMetaRef ref) async {
 }
 
 @Riverpod(keepAlive: true)
-Future<List<EmojiSimple>> apiEmojisList(ApiEmojisListRef ref) async {
+Future<List<EmojiSimple>> apiEmojisList(Ref ref) async {
   try {
     var apis = ref.watch(misskeyApisProvider);
 
@@ -74,8 +74,7 @@ Future<List<EmojiSimple>> apiEmojisList(ApiEmojisListRef ref) async {
 }
 
 @Riverpod(keepAlive: true)
-Future<Map<String, List<EmojiSimple>>> apiEmojisByCategory(
-    ApiEmojisByCategoryRef ref) async {
+Future<Map<String, List<EmojiSimple>>> apiEmojisByCategory(Ref ref) async {
   var data = await ref.watch(apiEmojisListProvider.future);
   LinkedHashMap<String, List<EmojiSimple>> emojiMap = LinkedHashMap();
   var user = [
@@ -137,7 +136,7 @@ Future<Map<String, List<EmojiSimple>>> apiEmojisByCategory(
 }
 
 @Riverpod(keepAlive: true)
-Future<Map<String, EmojiSimple>> apiEmojis(ApiEmojisRef ref) async {
+Future<Map<String, EmojiSimple>> apiEmojis(Ref ref) async {
   var data = await ref.watch(apiEmojisListProvider.future);
   Map<String, EmojiSimple> emojiMap = {};
   for (var item in data) {
@@ -147,12 +146,12 @@ Future<Map<String, EmojiSimple>> apiEmojis(ApiEmojisRef ref) async {
 }
 
 @Riverpod(keepAlive: true)
-Future<LinkPreviewDatabase> linkPreview(LinkPreviewRef ref) async {
+Future<LinkPreviewDatabase> linkPreview(Ref ref) async {
   return LinkPreviewDatabase();
 }
 
 @riverpod
-Future<LinkPreview?> getUriInfo(GetUriInfoRef ref, String url) async {
+Future<LinkPreview?> getUriInfo(Ref ref, String url) async {
   var apis = ref.watch(misskeyApisProvider);
   var db = await ref.watch(linkPreviewProvider.future);
   var item = await db.get(url);

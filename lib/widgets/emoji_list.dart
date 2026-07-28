@@ -19,7 +19,7 @@ class EmojiList extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var data = ref.watch(apiEmojisByCategoryProvider);
-    var list = data.valueOrNull?.keys.toList() ?? [];
+    var list = data.value?.keys.toList() ?? [];
     ScrollController scrollController1 =
         scrollController ?? useScrollController();
     var a = useMemoized<ListObserverController>(
@@ -43,17 +43,17 @@ class EmojiList extends HookConsumerWidget {
                     child: Tooltip(
                       message: item,
                       child: [
-                        if (data.valueOrNull![item]?[0].code == false)
+                        if (data.value![item]?[0].code == false)
                           SizedBox(
                             width: 30,
                             height: 30,
                             child: MkImage(
-                              data.valueOrNull![item]![0].url,
+                              data.value![item]![0].url,
                             ),
                           )
                         else
                           Twemoji(
-                            emoji: data.valueOrNull![item]![0].url,
+                            emoji: data.value![item]![0].url,
                             width: 30,
                             height: 30,
                           )
@@ -88,7 +88,7 @@ class EmojiList extends HookConsumerWidget {
                     controller: scrollController1,
                     itemBuilder: (context, index) {
                       var item = list[index];
-                      var i = data.valueOrNull![item];
+                      var i = data.value![item];
                       var rowCount = ((i?.length ?? 0) / colCount).ceil();
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,

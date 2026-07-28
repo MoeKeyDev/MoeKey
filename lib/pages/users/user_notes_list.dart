@@ -78,8 +78,8 @@ class UserNotesPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(top: 50),
               onLoad: () => ref.read(dataProvider.notifier).load(),
               onRefresh: () => ref.refresh(dataProvider.future),
-              hasMore: data.valueOrNull?.hasMore,
-              items: data.valueOrNull?.list,
+              hasMore: data.value?.hasMore,
+              items: data.value?.list,
             ),
             Positioned(
               top: mediaPadding.top - 8,

@@ -20,7 +20,7 @@ class SettingsProfile extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
-    var meDetail = ref.watch(memberInfoStateProvider).valueOrNull;
+    var meDetail = ref.watch(memberInfoStateProvider).value;
     if (meDetail == null) {
       return const MkScaffold(
         body: Center(
@@ -198,7 +198,7 @@ class _ProfileMemberCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var meDetail = ref.watch(memberInfoStateProvider).valueOrNull;
+    var meDetail = ref.watch(memberInfoStateProvider).value;
     if (meDetail == null) return const SizedBox.shrink();
     return SizedBox(
       height: 216,

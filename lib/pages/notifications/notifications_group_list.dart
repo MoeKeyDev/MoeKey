@@ -37,7 +37,7 @@ class NotificationsGroupList extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themes = ref.watch(themeColorsProvider);
     final data = ref.watch(notificationsProvider);
-    final list = data.valueOrNull?.list ?? [];
+    final list = data.value?.list ?? [];
     return LayoutBuilder(
       builder: (context, constraints) {
         final padding = EdgeInsets.symmetric(
@@ -46,7 +46,7 @@ class NotificationsGroupList extends HookConsumerWidget {
         return MkRefreshLoadList(
           onLoad: () => ref.read(notificationsProvider.notifier).loadMore(),
           onRefresh: () => ref.refresh(notificationsProvider.future),
-          hasMore: data.valueOrNull?.hasMore,
+          hasMore: data.value?.hasMore,
           slivers: [
             SliverList.separated(
               itemCount: list.length,
@@ -544,7 +544,7 @@ Widget _followRequestFooter(
       ),
     );
   }
-  final resolvedStatus = serverStatus?.valueOrNull;
+  final resolvedStatus = serverStatus?.value;
   if (resolvedStatus == IncomingFollowRequestStatus.accepted) {
     return Text(S.current.notifyAccepted);
   }

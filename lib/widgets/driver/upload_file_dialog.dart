@@ -89,7 +89,7 @@ class DriverUploadFileDialog extends HookConsumerWidget {
       {required BuildContext context,
       required bool isOriginal,
       required WidgetRef ref}) async {
-    var result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    var result = await FilePicker.pickFiles(allowMultiple: true);
     if (result != null) {
       List<String> files = result.paths.map((path) => path!).toList();
       logger.d(files);

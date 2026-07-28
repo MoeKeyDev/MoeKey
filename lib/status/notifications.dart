@@ -34,7 +34,7 @@ class Notifications extends _$Notifications {
   loadMore() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
-    var model = state.valueOrNull ?? MkLoadMoreListModel<NotificationModel>();
+    var model = state.value ?? MkLoadMoreListModel<NotificationModel>();
     try {
       var res = await notificationsGrouped(untilId: model.list.lastOrNull?.id);
 
@@ -69,11 +69,11 @@ class MentionsNotifications extends _$MentionsNotifications {
   loadMore() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
-    var model = state.valueOrNull ?? NoteListModel();
+    var model = state.value ?? NoteListModel();
     try {
       String? untilId;
-      if (state.valueOrNull!.list.isNotEmpty) {
-        untilId = state.valueOrNull?.list.last.id;
+      if (state.value!.list.isNotEmpty) {
+        untilId = state.value?.list.last.id;
       }
       List<NoteModel> notesList = await mentions(untilId: untilId);
 

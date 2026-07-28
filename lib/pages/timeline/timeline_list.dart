@@ -15,8 +15,8 @@ class TimeLineListPage extends HookConsumerWidget {
     var data = ref.watch(dataProvider);
     return MkPaginationNoteList(
       onLoad: () => ref.read(dataProvider.notifier).load(),
-      hasMore: data.valueOrNull?.hasMore,
-      items: data.valueOrNull?.list,
+      hasMore: data.value?.hasMore,
+      items: data.value?.list,
       onRefresh: () async {
         await ref.read(dataProvider.notifier).cleanCache();
         return await ref.refresh(dataProvider.future);

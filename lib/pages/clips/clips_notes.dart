@@ -273,7 +273,7 @@ class _ClipContentCard extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 MFMText(
-                  text: showDate.valueOrNull?.description ?? "",
+                  text: showDate.value?.description ?? "",
                 ),
               ],
             ),

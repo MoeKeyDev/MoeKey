@@ -20,7 +20,7 @@ class HashtagPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var model = hashTagPageProvider(name);
     var state = ref.watch(model);
-    var data = state.valueOrNull;
+    var data = state.value;
     var controller = useMkRefreshLoadListController();
     return MkScaffold(
       header: MkAppbar(
@@ -67,11 +67,11 @@ class HashTagPage extends _$HashTagPage {
   load() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
-    var model = state.valueOrNull ?? NoteListModel();
+    var model = state.value ?? NoteListModel();
     try {
       String? untilId;
-      if (state.valueOrNull?.list.isNotEmpty ?? false) {
-        untilId = state.valueOrNull?.list.last.id;
+      if (state.value?.list.isNotEmpty ?? false) {
+        untilId = state.value?.list.last.id;
       }
       List<NoteModel> notesList = await notes(untilId: untilId);
 

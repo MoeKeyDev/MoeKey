@@ -99,7 +99,7 @@ class _Announcements extends _$Announcements {
   read({required String announcementId}) async {
     var api = ref.read(misskeyApisProvider);
     api.meta.readAnnouncement(announcementId: announcementId);
-    var model = state.valueOrNull ?? MkLoadMoreListModel<Announcement>();
+    var model = state.value ?? MkLoadMoreListModel<Announcement>();
     for (var value in model.list) {
       if (value.id == announcementId) {
         value.isRead = true;
@@ -111,7 +111,7 @@ class _Announcements extends _$Announcements {
   loadMore() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
-    var model = state.valueOrNull ?? MkLoadMoreListModel<Announcement>();
+    var model = state.value ?? MkLoadMoreListModel<Announcement>();
     try {
       page++;
       var list = await api(limit: 10, untilId: model.list.lastOrNull?.id);
@@ -144,19 +144,19 @@ class AnnouncementsList extends HookConsumerWidget {
         return MkRefreshLoadList(
           onLoad: () => ref.read(provider.notifier).loadMore(),
           onRefresh: () => ref.refresh(provider.future),
-          hasMore: data.valueOrNull?.hasMore,
+          hasMore: data.value?.hasMore,
           padding: EdgeInsets.symmetric(horizontal: padding),
           slivers: [
             SliverList.separated(
               itemBuilder: (context, index) => AnnouncementsCard(
-                announcement: data.valueOrNull!.list[index],
+                announcement: data.value!.list[index],
                 onRead: isActive
                     ? () => ref
                         .read(provider.notifier)
-                        .read(announcementId: data.valueOrNull!.list[index].id)
+                        .read(announcementId: data.value!.list[index].id)
                     : null,
               ),
-              itemCount: data.valueOrNull?.list.length ?? 0,
+              itemCount: data.value?.list.length ?? 0,
               separatorBuilder: (BuildContext context, int index) {
                 return const SizedBox(
                   height: 10,
@@ -164,7 +164,7 @@ class AnnouncementsList extends HookConsumerWidget {
               },
             )
           ],
-          empty: data.valueOrNull?.list.isEmpty,
+          empty: data.value?.list.isEmpty,
         );
       },
     );

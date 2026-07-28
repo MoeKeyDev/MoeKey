@@ -31,14 +31,14 @@ class ClipsCollection extends HookConsumerWidget {
           }),
           child: LoadingAndEmpty(
               loading: res.isLoading,
-              empty: res.valueOrNull?.isEmpty ?? true,
+              empty: res.value?.isEmpty ?? true,
               refresh: () => ref.refresh(clipsMyFavoritesProvider.future),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   var padding = getPaddingForNote(constraints);
                   return ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: res.valueOrNull!.length,
+                    itemCount: res.value!.length,
                     padding: EdgeInsets.only(
                         left: padding,
                         right: padding,
@@ -58,7 +58,7 @@ class ClipsCollection extends HookConsumerWidget {
     return Column(
       children: [
         ClipsFolder(
-          data: clipsList.valueOrNull![index],
+          data: clipsList.value![index],
         ),
         const SizedBox(
           height: 20,

@@ -71,7 +71,7 @@ class EmptyWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var infoUrl = ref.watch(instanceMetaProvider.select(
-      (value) => value.valueOrNull?.infoImageUrl,
+      (value) => value.value?.infoImageUrl,
     ));
     return SizedBox(
       height: double.infinity,

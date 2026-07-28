@@ -37,8 +37,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_hooks: ^0.21.2
-  hooks_riverpod: ^2.4.8
-  riverpod_annotation: ^2.3.2
+  hooks_riverpod: ^3.1.0
+  riverpod_annotation: ^4.0.0
   intl: ^0.20.2
   shared_preferences: ^2.2.2
   dio: ^5.3.3
@@ -56,11 +56,11 @@ dependencies:
   mfm_parser: ^1.0.5
   twemoji_v2: ^0.6.0
   media_kit: ^1.1.10
-  media_kit_video: ^1.2.4
+  media_kit_video: ^2.0.1
   media_kit_libs_video: ^1.0.4
   scrollview_observer: ^1.18.0
   flutter_constraintlayout: ^1.7.0-stable
-  file_picker: ^9.2.2
+  file_picker: ^11.0.2
   gal: ^2.1.3
   path: ^1.8.3
   image_compression: ^1.0.4
@@ -69,7 +69,7 @@ dependencies:
   mfm: ^1.0.5+1
   logger: ^2.0.2+1
   chinese_font_library: ^1.1.0
-  share_plus: ^10.1.2
+  share_plus: ^12.0.2
   date_format: ^2.0.7
   badges: ^3.1.2
   dio_smart_retry: ^7.0.0
@@ -78,7 +78,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   mime: 1.0.6
-  go_router: ^14.6.1
+  go_router: ^17.3.0
   blurhash_shader: ^1.1.2
   freezed: ^3.0.4
   freezed_annotation: ^3.0.0
@@ -94,10 +94,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  riverpod_generator: ^2.3.8
+  riverpod_generator: ^4.0.0+1
   build_runner: ^2.4.6
-  custom_lint: ^0.7.5
-  riverpod_lint: ^2.6.5
+  custom_lint: ^0.8.1
+  riverpod_lint: ^3.1.0
   json_serializable: ^6.9.0
   intl_utils: ^2.8.11
 

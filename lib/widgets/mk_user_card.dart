@@ -243,7 +243,7 @@ class UserFullCardFollowBtn extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var userProvider = userInfoProvider(userModel: this.userData);
-    var userData = ref.watch(userProvider).valueOrNull;
+    var userData = ref.watch(userProvider).value;
     if (userData == null) return const SizedBox();
     return HoverBuilder(
       builder: (context, isHover) {

@@ -19,11 +19,11 @@ class UserReactionsPage extends HookConsumerWidget {
       userId: userId,
     );
     var data = ref.watch(dataProvider);
-    var items = data.valueOrNull?.list ?? (List<NoteModel>.empty());
+    var items = data.value?.list ?? (List<NoteModel>.empty());
     return MkPaginationNoteList(
       onLoad: () => ref.read(dataProvider.notifier).load(),
       onRefresh: () => ref.refresh(dataProvider.future),
-      hasMore: data.valueOrNull?.hasMore ?? true,
+      hasMore: data.value?.hasMore ?? true,
       items: items,
     );
   }

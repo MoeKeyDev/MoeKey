@@ -36,12 +36,12 @@ class ClipsMy extends HookConsumerWidget {
             }),
             child: LoadingAndEmpty(
               loading: res.isLoading,
-              empty: res.valueOrNull?.isEmpty ?? true,
+              empty: res.value?.isEmpty ?? true,
               refresh: () => ref.refresh(clipsProvider.future),
               child: ImplicitlyAnimatedList<ClipsModel>(
                 physics: const AlwaysScrollableScrollPhysics(),
                 controller: scrollController,
-                items: res.valueOrNull ?? [],
+                items: res.value ?? [],
                 padding: EdgeInsets.only(
                   left: padding,
                   right: padding,

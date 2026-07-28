@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'video_player.g.dart';
 
 @riverpod
-VideoController videoPlayerState(VideoPlayerStateRef ref,
+VideoController videoPlayerState(Ref ref,
     {required String url, bool play = false}) {
   var player = Player();
   var controller = VideoController(player);

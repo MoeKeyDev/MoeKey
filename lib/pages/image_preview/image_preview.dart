@@ -340,11 +340,11 @@ class ImagePreviewTabbar extends StatelessWidget {
           actions: [
             IconButton(
                 onPressed: () async {
-                  if (http.valueOrNull != null) {
+                  if (http.value != null) {
                     var res = await saveImage(
-                        http: http.valueOrNull!,
+                        http: http.value!,
                         url: galleryItems[currentIndex.value].url,
-                        album: meta.valueOrNull?.name ?? "MoeKey",
+                        album: meta.value?.name ?? "MoeKey",
                         name: galleryItems[currentIndex.value].name);
                     if (context.mounted) {
                       var snackBar = SnackBar(

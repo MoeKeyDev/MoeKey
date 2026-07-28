@@ -41,10 +41,10 @@ class UserClipListState extends _$UserClipListState {
       String? untilId = state.value?.list.lastOrNull?.id;
       var res = await clips(untilId);
       if (res.isEmpty) {
-        state.valueOrNull?.hasMore = false;
+        state.value?.hasMore = false;
       }
-      state.valueOrNull!.list += res;
-      state = AsyncData(state.valueOrNull!);
+      state.value!.list += res;
+      state = AsyncData(state.value!);
     } finally {
       loading = false;
     }
@@ -66,12 +66,12 @@ class UserClipList extends HookConsumerWidget {
     return MkRefreshLoadingEmptyBuilder(
       onRefresh: () => ref.refresh(provider.future),
       loading: data.isLoading,
-      empty: data.valueOrNull?.list.isEmpty ?? true,
+      empty: data.value?.list.isEmpty ?? true,
       builder: (context, constraints) {
         return CustomScrollView(
           slivers: [
             SliverImplicitlyAnimatedList<ClipsModel>(
-              items: data.valueOrNull?.list ?? [],
+              items: data.value?.list ?? [],
               itemBuilder: (BuildContext context, Animation<double> animation,
                   item, int i) {
                 return SizeFadeTransition(
@@ -94,7 +94,7 @@ class UserClipList extends HookConsumerWidget {
             ),
             SliverLayoutBuilder(
               builder: (context, constraints) {
-                if (data.valueOrNull?.hasMore ?? true) {
+                if (data.value?.hasMore ?? true) {
                   if (constraints.remainingPaintExtent > 0) {
                     ref.read(provider.notifier).loadMore();
                   }

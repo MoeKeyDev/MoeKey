@@ -43,8 +43,8 @@ class NotesPage extends HookConsumerWidget {
 
     var loadConversation = useState<Future?>(null);
     var loadConversationSnapshot = useFuture(loadConversation.value);
-    var conversation = dataProvider.valueOrNull?.conversation ?? [];
-    var data = dataProvider.valueOrNull?.data ?? previewNote;
+    var conversation = dataProvider.value?.conversation ?? [];
+    var data = dataProvider.value?.data ?? previewNote;
     data?.noteTranslate ??= previewNote?.noteTranslate;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -213,7 +213,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
     // }, [this.data.id]);
 
     var links = extractLinksFromMarkdown(data.text ?? "");
-    var meta = ref.watch(instanceMetaProvider).valueOrNull;
+    var meta = ref.watch(instanceMetaProvider).value;
     var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
     return LayoutBuilder(
       builder: (context, constraints) {

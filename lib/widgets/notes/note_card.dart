@@ -193,7 +193,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
 
     var links = extractLinksFromMarkdown(data.text ?? "");
     var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
-    var meta = ref.watch(instanceMetaProvider).valueOrNull;
+    var meta = ref.watch(instanceMetaProvider).value;
     return LayoutBuilder(
       builder: (context, constraints) {
         var isSmall = constraints.maxWidth < 400;
@@ -599,7 +599,7 @@ class NoteLinkPreview extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var res = ref.watch(getUriInfoProvider(link));
 
-    var data = res.valueOrNull;
+    var data = res.value;
 
     if (data == null) {
       return const SizedBox();
@@ -1127,7 +1127,9 @@ ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
             label: S.current.share,
             onTap: () {
               // ref.read(noteApisProvider.notifier).reNote(data.id);
-              Share.shareUri(Uri.parse("$serverUrl/notes/${data.id}"));
+              SharePlus.instance.share(
+                ShareParams(uri: Uri.parse("$serverUrl/notes/${data.id}")),
+              );
               return false;
             },
           ),
@@ -1234,7 +1236,7 @@ class TimeLineActions extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var currentUser = ref.watch(currentLoginUserProvider);
     var serverUrl = currentUser!.serverUrl;
-    var meta = ref.watch(instanceMetaProvider).valueOrNull;
+    var meta = ref.watch(instanceMetaProvider).value;
     return Row(
       children: [
         TimelineActionButton(

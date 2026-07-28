@@ -63,7 +63,7 @@ Future<bool> saveImage({
 
     var prefs = await SharedPreferences.getInstance();
     var initialDirectory = prefs.getString("saveInitialDirectory");
-    String? outputFile = await FilePicker.platform.saveFile(
+    String? outputFile = await FilePicker.saveFile(
         dialogTitle: 'Please select an output file:',
         fileName: name,
         type: FileType.image,

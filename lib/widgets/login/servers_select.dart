@@ -28,7 +28,7 @@ class ServersSelectCard extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var list = ref.watch(instanceListStateProvider);
     var url = useState("");
-    var filterList = instanceListFilter(list.valueOrNull ?? [], url.value);
+    var filterList = instanceListFilter(list.value ?? [], url.value);
     return MkCard(
         padding: EdgeInsets.zero,
         child: Column(

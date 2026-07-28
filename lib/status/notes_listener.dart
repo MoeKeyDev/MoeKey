@@ -68,7 +68,7 @@ class NotesListener extends _$NotesListener {
 
 /// 维护当前服务器的帖子缓存
 @riverpod
-Future<NotesDatabase> notesDatabase(NotesDatabaseRef ref) async {
+Future<NotesDatabase> notesDatabase(Ref ref) async {
   var user = ref.watch(currentLoginUserProvider);
   var instance = user?.serverUrl;
   return NotesDatabase(server: instance ?? "default");

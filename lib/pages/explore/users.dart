@@ -182,7 +182,7 @@ class _UserExplore extends HookConsumerWidget {
           sorts: sorts,
           states: states,
         ))
-        .valueOrNull;
+        .value;
     return SliverMainAxisGroup(slivers: [
       SliverToBoxAdapter(
         child: _UsersTitle(
@@ -225,7 +225,7 @@ class _UserPinGrid extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var pinned = ref.watch(pinnedUsersProvider).valueOrNull;
+    var pinned = ref.watch(pinnedUsersProvider).value;
     return SliverMainAxisGroup(slivers: [
       SliverToBoxAdapter(
         child: _UsersTitle(

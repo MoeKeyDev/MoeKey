@@ -40,7 +40,7 @@ class UserSelectDialog extends HookConsumerWidget {
           const SizedBox(height: 12),
           buildUserQuery(),
           const SizedBox(height: 8),
-          for (var item in userList.valueOrNull ?? [])
+          for (var item in userList.value ?? [])
             GestureDetector(
               onTap: () {
                 if (selectList.value.containsKey(item.id)) {

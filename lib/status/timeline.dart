@@ -11,7 +11,7 @@ import 'misskey_api.dart';
 part 'timeline.g.dart';
 
 @riverpod
-Future<TimelineDatabase> timelineDatabase(TimelineDatabaseRef ref) async {
+Future<TimelineDatabase> timelineDatabase(Ref ref) async {
   var user = ref.watch(currentLoginUserProvider);
   var instance = user?.serverUrl;
   return TimelineDatabase(
@@ -57,7 +57,7 @@ class Timeline extends _$Timeline {
   load() async {
     if (state.isLoading) return;
 
-    var model = state.valueOrNull ?? NoteListModel();
+    var model = state.value ?? NoteListModel();
     state = const AsyncValue.loading();
     try {
       String? untilId = model.list.lastOrNull?.id;

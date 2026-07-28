@@ -65,9 +65,9 @@ class MFMText extends HookConsumerWidget {
       bigEmojiCode: bigEmojiCode,
       defaultServerHost: defaultServerHost,
       themes: themes,
-      loginServerUrl: meta.valueOrNull?.uri ?? "",
+      loginServerUrl: meta.value?.uri ?? "",
       currentServerHost: currentServerHost,
-      systemEmojis: emoji.valueOrNull ?? {},
+      systemEmojis: emoji.value ?? {},
       context: context,
     );
 

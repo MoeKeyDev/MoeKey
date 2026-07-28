@@ -352,7 +352,7 @@ class ServerIconAndBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var mediaPadding = MediaQuery.paddingOf(context);
-    var meta = ref.watch(instanceMetaProvider).valueOrNull;
+    var meta = ref.watch(instanceMetaProvider).value;
     return LayoutBuilder(
       builder: (context, constraints) {
         var icon = Builder(builder: (BuildContext context) {

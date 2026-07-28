@@ -144,11 +144,11 @@ class UserNotesList extends _$UserNotesList {
   load() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
-    var model = state.valueOrNull ?? NoteListModel();
+    var model = state.value ?? NoteListModel();
     try {
       String? untilId;
-      if (state.valueOrNull?.list.isNotEmpty ?? false) {
-        untilId = state.valueOrNull?.list.last.id;
+      if (state.value?.list.isNotEmpty ?? false) {
+        untilId = state.value?.list.last.id;
       }
       List<NoteModel> notesList;
 
@@ -186,11 +186,11 @@ class UserReactionsList extends _$UserReactionsList {
   load() async {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
-    var model = state.valueOrNull ?? NoteListModel();
+    var model = state.value ?? NoteListModel();
     try {
       String? untilId;
-      if (state.valueOrNull?.list.isNotEmpty ?? false) {
-        untilId = state.valueOrNull?.list.last.id;
+      if (state.value?.list.isNotEmpty ?? false) {
+        untilId = state.value?.list.last.id;
       }
       List<NoteModel> notesList = await reactions(untilId: untilId);
 

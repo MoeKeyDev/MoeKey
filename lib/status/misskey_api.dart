@@ -8,7 +8,7 @@ import 'server.dart';
 part 'misskey_api.g.dart';
 
 @Riverpod(keepAlive: true)
-MisskeyApis misskeyApis(MisskeyApisRef ref) {
+MisskeyApis misskeyApis(Ref ref) {
   var user = ref.watch(currentLoginUserProvider);
   var instance = user?.serverUrl;
   var accessToken = user?.token;

@@ -113,7 +113,7 @@ class NoteCreateDialog extends HookConsumerWidget {
       ThemeColorModel themes, bool fullscreen, double keyboardHeight) {
     return HookConsumer(
       builder: (context, ref, child) {
-        MetaDetailedModel? data = ref.watch(instanceMetaProvider).valueOrNull;
+        MetaDetailedModel? data = ref.watch(instanceMetaProvider).value;
         var form = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
         var contentController =
             useTextEditingController(text: form.text ?? initText);

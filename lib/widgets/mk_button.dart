@@ -8,11 +8,6 @@ ButtonStyle _mkButtonStyle({
   required Color foregroundColor,
 }) {
   return ButtonStyle(
-    // Flutter uses a larger density and padded tap target on mobile by
-    // default. Keep MK buttons aligned with their desktop layout while
-    // allowing their parent and content to determine the actual size.
-    visualDensity: VisualDensity.compact,
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
     backgroundColor: WidgetStateProperty.all(backgroundColor),
     foregroundColor: WidgetStateProperty.all(foregroundColor),
     elevation: WidgetStateProperty.all(0),

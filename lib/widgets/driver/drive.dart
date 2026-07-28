@@ -257,7 +257,7 @@ class DriveList extends _$DriveList {
     if (state.isLoading) return;
     state = const AsyncLoading();
     try {
-      List<DriveModel> list = state.valueOrNull ?? [];
+      List<DriveModel> list = state.value ?? [];
       if (endFolder == false) {
         // 继续加载文件夹
         var res = await loadFolders(untilId: list.lastOrNull?.id);
@@ -304,7 +304,7 @@ class DriveList extends _$DriveList {
   }
 
   addFile(dynamic data) {
-    var list = state.valueOrNull ?? [];
+    var list = state.value ?? [];
     var fileIndex = -1;
     for (var (index, item) in list.indexed) {
       if (item is DriveFileModel) {
@@ -318,13 +318,13 @@ class DriveList extends _$DriveList {
   }
 
   addFolder(dynamic data) {
-    var list = state.valueOrNull ?? [];
+    var list = state.value ?? [];
     list.insert(0, data);
     state = AsyncData(list);
   }
 
   updateFile(String id, dynamic data) {
-    var list = state.valueOrNull ?? [];
+    var list = state.value ?? [];
     for (var (index, item) in list.indexed) {
       if (item is DriveFileModel && item.id == id) {
         list[index] = data;
@@ -335,7 +335,7 @@ class DriveList extends _$DriveList {
   }
 
   updateFolder(String id, dynamic data) {
-    var list = state.valueOrNull ?? [];
+    var list = state.value ?? [];
     for (var (index, item) in list.indexed) {
       if (item is DriverFolderModel && item.id == id) {
         list[index] = data;
@@ -346,7 +346,7 @@ class DriveList extends _$DriveList {
   }
 
   void deleteFile(String fileId) {
-    var list = state.valueOrNull ?? [];
+    var list = state.value ?? [];
     var fileIndex = 0;
     for (var (index, item) in list.indexed) {
       if (item is DriveFileModel && item.id == fileId) {
@@ -359,7 +359,7 @@ class DriveList extends _$DriveList {
   }
 
   void deleteFolder(String folderId) {
-    var list = state.valueOrNull ?? [];
+    var list = state.value ?? [];
     var fileIndex = 0;
     for (var (index, item) in list.indexed) {
       if (item is DriverFolderModel && item.id == folderId) {

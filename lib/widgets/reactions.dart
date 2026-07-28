@@ -50,7 +50,7 @@ class ReactionsListComponent extends HookConsumerWidget {
         })) {
       var code = parseString(item.key);
       var isOutSite = false;
-      if (code != null && siteEmoji.valueOrNull?[code] == null) {
+      if (code != null && siteEmoji.value?[code] == null) {
         isOutSite = true;
       }
       var container = ReactionButton(
@@ -157,8 +157,8 @@ class ReactionsIcon extends HookConsumerWidget {
     var code = parseString(emojiCode);
     if (code != null) {
       String url = "";
-      if (emoji.valueOrNull?[code] != null) {
-        url = emoji.valueOrNull![code]?.url ?? '';
+      if (emoji.value?[code] != null) {
+        url = emoji.value![code]?.url ?? '';
       }
       if (emojis?[code] != null) {
         url = emojis?[code];

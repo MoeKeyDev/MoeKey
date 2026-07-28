@@ -37,16 +37,16 @@ class UserFollowPage extends HookConsumerWidget {
     var user = ref.watch(userProvider);
 
     return MkScaffold(
-      body: user.valueOrNull != null
+      body: user.value != null
           ? UserFollowList(
-              userId: user.valueOrNull!.id,
+              userId: user.value!.id,
               type: type,
             )
           : const LoadingWidget(),
       header: MkAppbar(
         showBack: true,
         leading: AppBarUserTitle(
-          user: user.valueOrNull,
+          user: user.value,
           text: type == "following" ? S.current.following : S.current.followers,
         ),
       ),
@@ -77,15 +77,15 @@ class UserFollowList extends HookConsumerWidget {
         return MkRefreshLoadList(
           onLoad: () => ref.read(provider.notifier).load(),
           onRefresh: () => ref.refresh(provider.future),
-          hasMore: follow.valueOrNull?.hasMore,
+          hasMore: follow.value?.hasMore,
           padding: EdgeInsets.symmetric(horizontal: paddingH),
           slivers: [
             SliverGrid.builder(
               itemBuilder: (context, index) {
-                return MkUserCard(user: follow.valueOrNull!.list[index]);
+                return MkUserCard(user: follow.value!.list[index]);
               },
 
-              itemCount: follow.valueOrNull?.list.length ?? 0,
+              itemCount: follow.value?.list.length ?? 0,
               // maxCrossAxisExtent: maxCrossAxisExtent,
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: maxCrossAxisExtent,
@@ -94,7 +94,7 @@ class UserFollowList extends HookConsumerWidget {
                   mainAxisExtent: 300),
             )
           ],
-          empty: follow.valueOrNull?.list.isEmpty,
+          empty: follow.value?.list.isEmpty,
         );
       },
     );
@@ -135,7 +135,7 @@ class UserFollow extends _$UserFollow {
       notesList = await follow();
 
       var model = MkLoadMoreListModel<UserFullModel>();
-      model.list = (state.valueOrNull?.list ?? []) + notesList;
+      model.list = (state.value?.list ?? []) + notesList;
       if (notesList.isEmpty || notesList.length < 20) {
         model.hasMore = false;
       }

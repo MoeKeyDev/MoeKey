@@ -32,12 +32,12 @@ class Notes extends _$Notes {
   loadConversation() async {
     var http = await ref.read(httpProvider.future);
     var user = ref.read(currentLoginUserProvider);
-    if (state.valueOrNull!.conversation.firstOrNull?.id == null) return;
+    if (state.value!.conversation.firstOrNull?.id == null) return;
     var data = await http.post(
       "/notes/conversation",
       data: {
         "i": user!.token,
-        "noteId": state.valueOrNull!.conversation.firstOrNull!.id,
+        "noteId": state.value!.conversation.firstOrNull!.id,
       },
     );
     List<NoteModel> list = [];
