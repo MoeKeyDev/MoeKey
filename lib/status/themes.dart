@@ -52,17 +52,19 @@ class ThemeColors extends _$ThemeColors {
 
   void updateThemes(MetaDetailedModel metas, Brightness brightness) {
     var model = ThemeColorModel();
-    if (metas.defaultLightTheme != null && metas.defaultDarkTheme != null) {
-      try {
-        // 获取系统是否是深色模式
+    final themeJson = brightness == Brightness.dark
+        ? metas.defaultDarkTheme ?? metas.defaultLightTheme
+        : metas.defaultLightTheme;
 
-        var themeData = jsonDecode(metas.defaultLightTheme!);
-        if (brightness == Brightness.dark) {
-          model.isDark = true;
-          themeData = jsonDecode(metas.defaultDarkTheme!);
+    if (themeJson != null) {
+      try {
+        final themeData = jsonDecode(themeJson);
+        if (themeData is! Map<String, dynamic> ||
+            themeData["props"] is! Map<String, dynamic>) {
+          throw const FormatException("Invalid instance theme format");
         }
-        Map<String, dynamic> themes = themeData["props"];
-        // model.isDark = themeData["base"] == "dark";
+        final themes = themeData["props"] as Map<String, dynamic>;
+        model.isDark = themeData["base"] == "dark";
         model.accentColor =
             getThemesColor(themes["accent"] ?? "", themes) ?? model.accentColor;
         model.bgColor =
@@ -95,7 +97,11 @@ class ThemeColors extends _$ThemeColors {
             getThemesColor(themes["fgOnAccent"] ?? "", themes) ??
             model.fgOnAccentColor;
         model.reNoteColor =
-            getThemesColor(themes["reNote"] ?? "", themes) ?? model.reNoteColor;
+            getThemesColor(
+              themes["renote"] ?? themes["reNote"] ?? "",
+              themes,
+            ) ??
+            model.reNoteColor;
 
         model.buttonBgColor =
             getThemesColor(themes["buttonBg"] ?? "", themes) ??

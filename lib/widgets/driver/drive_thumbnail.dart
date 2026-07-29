@@ -19,6 +19,88 @@ import '../mk_dialog.dart';
 import '../mk_image.dart';
 import 'drive.dart';
 
+class DriveGridTile extends ConsumerWidget {
+  const DriveGridTile({
+    super.key,
+    required this.thumbnail,
+    required this.label,
+    this.isSelect = false,
+    this.labelKey,
+  });
+
+  final Widget thumbnail;
+  final String label;
+  final bool isSelect;
+  final Key? labelKey;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themes = ref.watch(themeColorsProvider);
+    return HoverBuilder(
+      builder: (context, isHover) {
+        Color? bgColor =
+            isHover ? themes.buttonHoverBgColor : Colors.transparent;
+        if (isSelect) {
+          bgColor = Color.lerp(
+            themes.accentColor.withValues(alpha: 0.6),
+            bgColor,
+            0.3,
+          );
+        }
+        final labelWidget = Text(
+          label,
+          key: labelKey,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        );
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final hasFixedHeight = constraints.maxHeight.isFinite;
+            return Container(
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+              ),
+              padding: const EdgeInsets.all(4),
+              child: hasFixedHeight
+                  ? Column(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Center(
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: thumbnail,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 32, child: labelWidget),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: thumbnail,
+                          ),
+                        ),
+                        labelWidget,
+                      ],
+                    ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
 class DriveImageThumbnail extends HookConsumerWidget {
   const DriveImageThumbnail({
     super.key,
@@ -221,61 +303,27 @@ class DriveImageThumbnail extends HookConsumerWidget {
                 }
               : null,
           behavior: HitTestBehavior.opaque,
-          child: HoverBuilder(
-            builder: (context, isHover) {
-              Color? bgColor =
-                  isHover ? themes.buttonHoverBgColor : Colors.transparent;
-              if (isSelect) {
-                bgColor = Color.lerp(
-                    themes.accentColor.withValues(alpha: 0.6), bgColor, 0.3);
-              }
-              return Container(
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(6),
-                  ),
-                ),
-                padding: const EdgeInsets.all(4),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: [
-                          if (data is DriveFileModel)
-                            RepaintBoundary(
-                              child: DriverFileIcon(
-                                  themes: themes, data: data as DriveFileModel),
-                            )
-                          else
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: themes.panelColor,
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(6),
-                                ),
-                              ),
-                              child: Icon(
-                                TablerIcons.folder,
-                                size: 48,
-                                color: themes.fgColor,
-                              ),
-                            )
-                        ][0],
-                      ),
+          child: DriveGridTile(
+            isSelect: isSelect,
+            label: data.name,
+            thumbnail: data is DriveFileModel
+                ? RepaintBoundary(
+                    child: DriverFileIcon(
+                      themes: themes,
+                      data: data as DriveFileModel,
                     ),
-                    Text(
-                      data.name,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 12),
-                      maxLines: 2,
-                    )
-                  ],
-                ),
-              );
-            },
+                  )
+                : DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: themes.panelColor,
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                    ),
+                    child: Icon(
+                      TablerIcons.folder,
+                      size: 48,
+                      color: themes.fgColor,
+                    ),
+                  ),
           ),
         ));
   }

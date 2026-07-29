@@ -9,17 +9,105 @@ import 'hover_builder.dart';
 import 'mk_image.dart';
 
 String? parseString(String input) {
-  RegExp exp = RegExp(r"^:(.*):$");
-  Iterable<Match> matches = exp.allMatches(input);
-  for (Match m in matches) {
-    if (m.group(1) != null) {
-      if (m.group(1)!.endsWith("@.")) {
-        return m.group(1)!.substring(0, m.group(1)!.length - 2);
-      }
-      return m.group(1)!;
+  final match = RegExp(r'^:([^:]+):$').firstMatch(input);
+  final code = match?.group(1);
+  if (code == null) {
+    return null;
+  }
+  return code.endsWith('@.') ? code.substring(0, code.length - 2) : code;
+}
+
+String? _customEmojiName(String reaction) {
+  final code = parseString(reaction);
+  if (code == null) {
+    return null;
+  }
+  final atIndex = code.lastIndexOf('@');
+  return atIndex == -1 ? code : code.substring(0, atIndex);
+}
+
+Set<String> _normalizableReactionNames(
+  Map<String, int> reactions,
+  Iterable<String> localEmojiNames,
+) {
+  final names = localEmojiNames.toSet();
+  final reactionKeysByName = <String, Set<String>>{};
+
+  for (final reaction in reactions.keys) {
+    final name = _customEmojiName(reaction);
+    if (name != null) {
+      (reactionKeysByName[name] ??= <String>{}).add(reaction);
     }
   }
-  return null;
+  for (final entry in reactionKeysByName.entries) {
+    if (entry.value.length > 1) {
+      names.add(entry.key);
+    }
+  }
+
+  return names;
+}
+
+String _displayReactionKey(String reaction, Set<String> normalizableNames) {
+  final name = _customEmojiName(reaction);
+  return name != null && normalizableNames.contains(name)
+      ? ':$name@.:'
+      : reaction;
+}
+
+/// Groups local variants and same-named remote variants of a custom emoji.
+///
+/// A group uses `:name@.:` as its display key.  This combines local custom
+/// emoji with its remote copies, and also combines remote copies when more
+/// than one site provides the same emoji name.
+class NormalizedReactions {
+  const NormalizedReactions({
+    required this.reactions,
+    required this.myReaction,
+    required this.emojis,
+  });
+
+  final Map<String, int> reactions;
+  final String? myReaction;
+  final Map emojis;
+}
+
+NormalizedReactions normalizeReactionsForDisplay({
+  required Map<String, int> reactions,
+  required String? myReaction,
+  required Map? emojis,
+  required Iterable<String> localEmojiNames,
+}) {
+  final normalizableNames = _normalizableReactionNames(
+    reactions,
+    localEmojiNames,
+  );
+  final normalizedReactions = <String, int>{};
+  final normalizedEmojis = Map.from(emojis ?? const {});
+
+  for (final entry in reactions.entries) {
+    final key = _displayReactionKey(entry.key, normalizableNames);
+    normalizedReactions[key] = (normalizedReactions[key] ?? 0) + entry.value;
+
+    final code = parseString(entry.key);
+    final name = _customEmojiName(entry.key);
+    if (code == null || name == null || !normalizableNames.contains(name)) {
+      continue;
+    }
+    final url = emojis?[code];
+    if (code != name && url != null && !normalizedEmojis.containsKey(name)) {
+      // Use the first remote variant as the image for its merged group.
+      normalizedEmojis[name] = url;
+    }
+  }
+
+  return NormalizedReactions(
+    reactions: normalizedReactions,
+    myReaction: myReaction == null
+        ? null
+        : _displayReactionKey(myReaction, normalizableNames),
+    emojis: normalizedEmojis,
+  );
 }
 
 class ReactionsListComponent extends HookConsumerWidget {
@@ -43,9 +131,15 @@ class ReactionsListComponent extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var siteEmoji = ref.watch(apiEmojisProvider);
     var list = <Widget>[];
+    final display = normalizeReactionsForDisplay(
+      reactions: reactionsList,
+      myReaction: myReaction,
+      emojis: emojis,
+      localEmojiNames: siteEmoji.value?.keys ?? const <String>[],
+    );
     // 倒序排序
     for (var item
-        in reactionsList.entries.toList()..sort((a, b) {
+        in display.reactions.entries.toList()..sort((a, b) {
           return b.value.compareTo(a.value);
         })) {
       var code = parseString(item.key);
@@ -57,10 +151,10 @@ class ReactionsListComponent extends HookConsumerWidget {
         item: item,
         disableReactions: disableReactions,
         isOutSite: isOutSite,
-        myReaction: myReaction,
+        myReaction: display.myReaction,
         id: id,
         themes: themes,
-        emojis: emojis,
+        emojis: display.emojis,
       );
       list.add(container);
     }
@@ -164,11 +258,23 @@ class ReactionsIcon extends HookConsumerWidget {
         url = emojis?[code];
       }
       if (url != "") {
-        return SizedBox(height: 28, child: MkImage(url, height: 28));
+        return SizedBox(
+          height: 28,
+          child: MkImage(
+            url,
+            height: 28,
+            proxy: const MkImageProxyOptions(type: MkImageProxyType.emoji),
+          ),
+        );
       } else {
         return Text(code);
       }
     }
-    return Twemoji(emoji: emojiCode, height: 28, width: 28);
+    return Twemoji(
+      emoji: emojiCode,
+      height: 28,
+      width: 28,
+      twemojiFormat: TwemojiFormat.png,
+    );
   }
 }

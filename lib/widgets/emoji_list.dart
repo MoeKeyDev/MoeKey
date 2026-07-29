@@ -10,17 +10,25 @@ import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:twemoji_v2/twemoji_v2.dart';
 
 import '../apis/models/emojis.dart';
+import 'keyboard_aware_bottom_sheet.dart';
 import 'mk_image.dart';
 
 class EmojiList extends HookConsumerWidget {
-  const EmojiList({super.key, this.scrollController, required this.onInsert});
+  const EmojiList({
+    super.key,
+    this.scrollController,
+    this.tabDividerBleed = 0,
+    required this.onInsert,
+  });
 
   final ScrollController? scrollController;
+  final double tabDividerBleed;
   final void Function(Map data) onInsert;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(apiEmojisByCategoryProvider);
+    final themes = ref.watch(themeColorsProvider);
     final categories = data.value?.keys.toList(growable: false) ?? const [];
     final ScrollController scrollController1 =
         scrollController ?? useScrollController();
@@ -32,6 +40,10 @@ class EmojiList extends HookConsumerWidget {
     final categoryStartIndexes = useRef<List<int>>(const []);
     final tabSyncScheduled = useRef(false);
     final visibleCategoryIndex = useRef<int?>(null);
+    final cachedEmojiMap = useRef<Map<String, List<EmojiSimple>>?>(null);
+    final cachedColumnCount = useRef<int?>(null);
+    final cachedOnInsert = useRef<void Function(Map data)?>(null);
+    final cachedListWidget = useRef<Widget?>(null);
     if (data.isLoading) {
       return const LoadingWidget();
     }
@@ -84,7 +96,18 @@ class EmojiList extends HookConsumerWidget {
 
     return Stack(
       fit: StackFit.expand,
+      clipBehavior: Clip.none,
       children: [
+        Positioned(
+          top: 47,
+          left: -tabDividerBleed,
+          right: -tabDividerBleed,
+          height: 1,
+          child: ColoredBox(
+            key: const ValueKey('emoji-tab-divider'),
+            color: themes.dividerColor,
+          ),
+        ),
         Positioned(
           top: 0,
           left: 0,
@@ -120,6 +143,7 @@ class EmojiList extends HookConsumerWidget {
                           emoji: data.value![category]![0].url,
                           width: 30,
                           height: 30,
+                          twemojiFormat: TwemojiFormat.png,
                         ),
                     ][0],
                   ),
@@ -129,6 +153,7 @@ class EmojiList extends HookConsumerWidget {
             isScrollable: true,
             tabAlignment: TabAlignment.start,
             labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+            dividerColor: Colors.transparent,
             onTap: (value) {
               requestedCategoryIndex.value = value;
               unawaited(scrollToRequestedCategory());
@@ -145,67 +170,77 @@ class EmojiList extends HookConsumerWidget {
               final colCount = ((constraints.maxWidth - 16) / 52)
                   .truncate()
                   .clamp(1, 99);
-              final listData = _EmojiListData.build(
-                categories: categories,
-                emojisByCategory: data.value!,
-                columnCount: colCount,
-              );
-              categoryStartIndexes.value = listData.categoryStartIndex;
-              return ListViewObserver(
-                onObserve: (p0) {
-                  if (p0.displayingChildIndexList.isEmpty) return;
-                  final entryIndex = p0.displayingChildIndexList.first;
-                  if (entryIndex >= listData.entries.length) return;
+              final emojisByCategory = data.value!;
+              if (!identical(cachedEmojiMap.value, emojisByCategory) ||
+                  cachedColumnCount.value != colCount ||
+                  !identical(cachedOnInsert.value, onInsert) ||
+                  cachedListWidget.value == null) {
+                final listData = _EmojiListData.build(
+                  categories: categories,
+                  emojisByCategory: emojisByCategory,
+                  columnCount: colCount,
+                );
+                categoryStartIndexes.value = listData.categoryStartIndex;
+                cachedEmojiMap.value = emojisByCategory;
+                cachedColumnCount.value = colCount;
+                cachedOnInsert.value = onInsert;
+                cachedListWidget.value = ListViewObserver(
+                  onObserve: (p0) {
+                    if (p0.displayingChildIndexList.isEmpty) return;
+                    final entryIndex = p0.displayingChildIndexList.first;
+                    if (entryIndex >= listData.entries.length) return;
 
-                  final categoryIndex =
-                      listData.entries[entryIndex].categoryIndex;
-                  // The observer fires for every visible row. Updating the tab only
-                  // after a category boundary avoids starting an animation for every
-                  // scroll frame.
-                  scheduleTabSync(categoryIndex);
-                },
-                controller: observerController,
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  itemCount: listData.entries.length,
-                  controller: scrollController1,
-                  itemBuilder: (context, index) {
-                    final entry = listData.entries[index];
-                    if (entry.isHeader) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
-                        child: Text(categories[entry.categoryIndex]),
-                      );
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          for (
-                            var emojiIndex = entry.start;
-                            emojiIndex < entry.end;
-                            emojiIndex++
-                          )
-                            RepaintBoundary(
-                              child: _EmojiTile(
-                                item: entry.emojis[emojiIndex],
-                                onInsert: onInsert,
-                              ),
-                            ),
-                          for (
-                            var emojiIndex = entry.end;
-                            emojiIndex < entry.start + colCount;
-                            emojiIndex++
-                          )
-                            const SizedBox(width: 44, height: 44),
-                        ],
-                      ),
-                    );
+                    final categoryIndex =
+                        listData.entries[entryIndex].categoryIndex;
+                    // The observer fires for every visible row. Updating the
+                    // tab only after a category boundary avoids starting an
+                    // animation for every scroll frame.
+                    scheduleTabSync(categoryIndex);
                   },
-                ),
-              );
+                  controller: observerController,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    itemCount: listData.entries.length,
+                    controller: scrollController1,
+                    itemBuilder: (context, index) {
+                      final entry = listData.entries[index];
+                      if (entry.isHeader) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8, bottom: 8),
+                          child: Text(categories[entry.categoryIndex]),
+                        );
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            for (
+                              var emojiIndex = entry.start;
+                              emojiIndex < entry.end;
+                              emojiIndex++
+                            )
+                              RepaintBoundary(
+                                child: _EmojiTile(
+                                  item: entry.emojis[emojiIndex],
+                                  onInsert: onInsert,
+                                ),
+                              ),
+                            for (
+                              var emojiIndex = entry.end;
+                              emojiIndex < entry.start + colCount;
+                              emojiIndex++
+                            )
+                              const SizedBox(width: 44, height: 44),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+              return cachedListWidget.value!;
             },
           ),
         ),
@@ -223,48 +258,51 @@ class EmojiList extends HookConsumerWidget {
       elevation: 0,
       useRootNavigator: true,
       isScrollControlled: true,
+      requestFocus: false,
       builder: (context) {
-        return HookConsumer(
-          builder: (context, ref, child) {
-            var themes = ref.watch(themeColorsProvider);
-            return GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              behavior: HitTestBehavior.opaque,
-              child: DraggableScrollableSheet(
-                initialChildSize: 0.4,
-                //set this as you want
-                maxChildSize: 0.8,
-                //set this as you want
-                minChildSize: 0.4,
-                //set this as you want
-                expand: true,
-                builder: (context, scrollController) {
-                  return Container(
-                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                    decoration: BoxDecoration(
-                      color: themes.panelColor,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
-                      ),
-                    ),
-                    height: 1000,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: EmojiList(
-                        scrollController: scrollController,
-                        onInsert: (data) {
-                          onInsert(data, context);
-                        },
-                      ),
-                    ),
-                  );
+        return KeyboardAwareBottomSheet(
+          child: HookConsumer(
+            builder: (context, ref, child) {
+              var themes = ref.watch(themeColorsProvider);
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
                 },
-              ),
-            );
-          },
+                behavior: HitTestBehavior.opaque,
+                child: DraggableScrollableSheet(
+                  initialChildSize: 0.4,
+                  //set this as you want
+                  maxChildSize: 0.8,
+                  //set this as you want
+                  minChildSize: 0.4,
+                  //set this as you want
+                  expand: true,
+                  builder: (context, scrollController) {
+                    return Container(
+                      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                      decoration: BoxDecoration(
+                        color: themes.panelColor,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
+                        ),
+                      ),
+                      height: 1000,
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: EmojiList(
+                          scrollController: scrollController,
+                          onInsert: (data) {
+                            onInsert(data, context);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
         );
       },
     );
@@ -378,7 +416,12 @@ class _EmojiTile extends StatelessWidget {
             item1["name"] = item1["url"];
             onInsert(item1);
           },
-          child: Twemoji(width: 44, height: 44, emoji: item.url),
+          child: Twemoji(
+            width: 44,
+            height: 44,
+            emoji: item.url,
+            twemojiFormat: TwemojiFormat.png,
+          ),
         ),
       );
     }

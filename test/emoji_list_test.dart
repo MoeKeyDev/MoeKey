@@ -38,6 +38,12 @@ void main() {
     // 300 source emoji would all be mounted with the old category-level
     // Column. The flattened ListView mounts only the viewport and cache rows.
     expect(find.byType(Twemoji).evaluate().length, lessThan(100));
+    expect(
+      tester
+          .widgetList<Twemoji>(find.byType(Twemoji))
+          .every((emoji) => emoji.twemojiFormat == TwemojiFormat.png),
+      isTrue,
+    );
   });
 
   testWidgets('coalesces rapid category taps without layout exceptions', (

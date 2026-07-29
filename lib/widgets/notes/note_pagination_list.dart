@@ -19,6 +19,11 @@ class MkPaginationNoteList extends HookConsumerWidget {
     required this.hasMore,
     this.items,
     this.controller,
+    this.initialLoading = false,
+    this.initialError,
+    this.onRetry,
+    this.loadMoreError,
+    this.onRetryLoadMore,
   });
 
   final Future Function() onLoad;
@@ -29,20 +34,30 @@ class MkPaginationNoteList extends HookConsumerWidget {
 
   final List<NoteModel>? items;
   final MkRefreshLoadListController? controller;
+  final bool initialLoading;
+  final Object? initialError;
+  final VoidCallback? onRetry;
+  final Object? loadMoreError;
+  final VoidCallback? onRetryLoadMore;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     return LayoutBuilder(
       builder: (context, constraints) {
-        var padding =
-            EdgeInsets.symmetric(horizontal: getPaddingForNote(constraints))
-                .add(this.padding);
+        var padding = EdgeInsets.symmetric(
+          horizontal: getPaddingForNote(constraints),
+        ).add(this.padding);
         return MkRefreshLoadList<NoteModel>(
           onLoad: onLoad,
           onRefresh: onRefresh,
           padding: padding,
           controller: controller,
+          initialLoading: initialLoading,
+          initialError: initialError,
+          onRetry: onRetry,
+          loadMoreError: loadMoreError,
+          onRetryLoadMore: onRetryLoadMore,
           slivers: [
             ...?slivers,
             SliverList.separated(
@@ -62,9 +77,10 @@ class MkPaginationNoteList extends HookConsumerWidget {
                 }
                 return RepaintBoundary(
                   child: NoteCard(
-                      key: ValueKey(items![index].id),
-                      borderRadius: borderRadius,
-                      data: items![index]),
+                    key: ValueKey(items![index].id),
+                    borderRadius: borderRadius,
+                    data: items![index],
+                  ),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {
@@ -72,14 +88,12 @@ class MkPaginationNoteList extends HookConsumerWidget {
                   width: double.infinity,
                   height: 1,
                   child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: themes.dividerColor,
-                    ),
+                    decoration: BoxDecoration(color: themes.dividerColor),
                   ),
                 );
               },
               itemCount: items?.length ?? 0,
-            )
+            ),
           ],
           hasMore: hasMore,
           empty: items?.isEmpty,

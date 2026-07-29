@@ -250,6 +250,11 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     ref.notifyListeners();
   }
 
+  void setFileList(List<DriveFileModel> files) {
+    state.files = List.of(files);
+    ref.notifyListeners();
+  }
+
   void removeFile(int index) {
     if (state.files.length > index) {
       state.files.removeAt(index);

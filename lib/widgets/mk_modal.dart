@@ -120,9 +120,10 @@ Future<T?> showModel<T>({
   required BuildContext context,
   required Widget Function(BuildContext) builder,
   bool useRootNavigator = true,
+  bool opaque = false,
 }) {
   var page = PageRouteBuilder<T>(
-    opaque: false,
+    opaque: opaque,
     transitionDuration: const Duration(milliseconds: 150),
     reverseTransitionDuration: const Duration(milliseconds: 210),
     pageBuilder: (context, animation, secondaryAnimation) {
@@ -138,6 +139,24 @@ Future<T?> showModel<T>({
       var tween2 = animation.drive(
         Tween(begin: 0.9, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)),
       );
+      if (opaque) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final themes = ref.watch(themeColorsProvider);
+            return ColoredBox(
+              color: themes.panelColor,
+              child: FadeTransition(
+                opacity: tween,
+                child: ScaleTransition(
+                  alignment: Alignment.center,
+                  scale: tween2,
+                  child: child,
+                ),
+              ),
+            );
+          },
+        );
+      }
       Widget background = Consumer(
         builder: (context, ref, child) {
           var themes = ref.watch(themeColorsProvider);

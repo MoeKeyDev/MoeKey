@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -30,7 +31,10 @@ class DriverUploadFileDialog extends HookConsumerWidget {
     useEffect(() {
       var notifier = ref.read(driverUploaderProvider.notifier);
       notifier.createFiles(
-          filesPath: files, compression: !isOriginal, context: context);
+        filesPath: files,
+        compression: !isOriginal,
+        context: context,
+      );
       return null;
     }, files);
     bool done = true;
@@ -38,58 +42,80 @@ class DriverUploadFileDialog extends HookConsumerWidget {
       done &= item["done"];
     }
     return MkDialog(
-        child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var item in data)
-              ListTile(
-                leading: Image.file(File(item["path"]),
-                    height: 50, width: 50, fit: BoxFit.cover),
-                title: Text(
-                  basename(item["path"]),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: DefaultTextStyle.of(context).style,
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: LinearProgressIndicator(
-                    backgroundColor:
-                        Theme.of(context).primaryColor.withAlpha(32),
-                    color: Theme.of(context).primaryColor.withAlpha(200),
-                    value: item["progress"] != 1
-                        ? item["progress"]
-                        : item["done"]
-                            ? 1
-                            : null,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var item in data)
+                ListTile(
+                  leading: Image.file(
+                    File(item["path"]),
+                    height: 50,
+                    width: 50,
+                    fit: BoxFit.cover,
+                  ),
+                  title: Text(
+                    basename(item["path"]),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: DefaultTextStyle.of(context).style,
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: LinearProgressIndicator(
+                      backgroundColor: Theme.of(
+                        context,
+                      ).primaryColor.withAlpha(32),
+                      color: Theme.of(context).primaryColor.withAlpha(200),
+                      value: item["progress"] != 1
+                          ? item["progress"]
+                          : item["done"]
+                          ? 1
+                          : null,
+                    ),
                   ),
                 ),
-              )
-          ],
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        FilledButton(
-          child: Text(done ? S.current.done : S.current.cancel),
-          onPressed: () {
-            context.pop();
-          },
-        )
-      ],
-    ));
+            ],
+          ),
+          const SizedBox(height: 16),
+          FilledButton(
+            child: Text(done ? S.current.done : S.current.cancel),
+            onPressed: () {
+              context.pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   static OverlayEntry? overlayEntry;
 
-  static Future<List<DriveFileModel>> showUploadDialog(
-      {required BuildContext context,
-      required bool isOriginal,
-      required WidgetRef ref}) async {
-    var result = await FilePicker.pickFiles(allowMultiple: true);
+  static Future<List<DriveFileModel>> showUploadDialog({
+    required BuildContext context,
+    required bool isOriginal,
+    required WidgetRef ref,
+  }) async {
+    FilePickerResult? result;
+    try {
+      result = await FilePicker.pickFiles(allowMultiple: true);
+    } on PlatformException catch (error, stackTrace) {
+      logger.e(
+        'Failed to select upload files',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(S.current.uploadFailed(error.message ?? error.code)),
+          ),
+        );
+      }
+      return [];
+    }
     if (!context.mounted) return [];
     if (result != null) {
       List<String> files = result.paths.map((path) => path!).toList();
@@ -105,8 +131,13 @@ class DriverUploadFileDialog extends HookConsumerWidget {
         Overlay.of(context).insert(overlayEntry!);
       }
 
-      var list = await ref.read(driverUploaderProvider.notifier).createFiles(
-          filesPath: files, compression: !isOriginal, context: context);
+      var list = await ref
+          .read(driverUploaderProvider.notifier)
+          .createFiles(
+            filesPath: files,
+            compression: !isOriginal,
+            context: context,
+          );
       overlayEntry?.remove();
       overlayEntry = null;
       return list;

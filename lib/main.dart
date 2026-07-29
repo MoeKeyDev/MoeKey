@@ -14,11 +14,7 @@ Future<void> main() async {
 
 // final globalNav = GlobalKey<NavigatorState>();
 class WindowSize extends InheritedWidget {
-  const WindowSize({
-    super.key,
-    required this.isWide,
-    required super.child,
-  });
+  const WindowSize({super.key, required this.isWide, required super.child});
 
   final bool isWide;
 
@@ -42,10 +38,7 @@ class WindowSizeProvider extends HookConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         var isWide = constraints.maxWidth > 800;
-        return WindowSize(
-          isWide: isWide,
-          child: child,
-        );
+        return WindowSize(isWide: isWide, child: child);
       },
     );
   }
@@ -57,8 +50,6 @@ class MyApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var theme = ref.watch(themesProvider);
-    var mediaQueryData = MediaQuery.of(context);
-    mediaQueryData = mediaQueryData.copyWith(textScaler: TextScaler.linear(1));
     // 获取 MediaQuery 的 platformBrightness
     var platformBrightness = MediaQuery.platformBrightnessOf(context);
     ref.watch(systemBrightnessProvider);
@@ -88,20 +79,27 @@ class MyApp extends HookConsumerWidget {
     //     supportedLocales: S.delegate.supportedLocales,
     //   ),
     // );
-    return MediaQuery(
-        data: mediaQueryData,
-        child: WindowSizeProvider(
-            child: MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          theme: theme,
-          routerConfig: ref.watch(routerProvider),
-          localizationsDelegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-        )));
+    return WindowSizeProvider(
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        theme: theme,
+        routerConfig: ref.watch(routerProvider),
+        builder: (context, child) {
+          // Keep the app-wide text scale override below MaterialApp. Reading
+          // MediaQuery.of above MaterialApp made MyApp and the router rebuild
+          // for every animated keyboard inset frame.
+          return MediaQuery.withNoTextScaling(
+            child: child ?? const SizedBox.shrink(),
+          );
+        },
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+      ),
+    );
   }
 }

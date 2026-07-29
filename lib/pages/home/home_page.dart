@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -475,8 +476,11 @@ class ServerIconAndBanner extends ConsumerWidget {
           );
         }
         var top = 10 + mediaPadding.top;
-        if (top < 20) {
-          top = 20;
+        final minimumTop = defaultTargetPlatform == TargetPlatform.macOS
+            ? 42.0
+            : 20.0;
+        if (top < minimumTop) {
+          top = minimumTop;
         }
         return Padding(
           padding: EdgeInsets.fromLTRB(0, top, 0, 20),

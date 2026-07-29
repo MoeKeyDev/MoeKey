@@ -1,5 +1,8 @@
-import 'package:flutter/widgets.dart';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
+
+import '../generated/l10n.dart';
 import 'loading_weight.dart';
 
 /// Sliver 滑动加载更多
@@ -21,73 +24,95 @@ class SliverLoadMore extends StatefulWidget {
   State<SliverLoadMore> createState() => _SliverLoadMoreState();
 }
 
-enum _LoadMoreStatus {
-  inactive,
-  done,
-  loading,
-}
+enum _LoadMoreStatus { inactive, done, loading }
 
 class _SliverLoadMoreState extends State<SliverLoadMore> {
   _LoadMoreStatus currentState = _LoadMoreStatus.inactive;
+  ScrollPosition? _scrollPosition;
 
-  void handleNextState(double offset) {
-    switch (currentState) {
-      case _LoadMoreStatus.inactive:
-        // 当滑动不超过阈值
-        if (offset < 10) break;
-        // 超过就触发回调并且更新状态
-        currentState = _LoadMoreStatus.loading;
-        // isTriggered = true;
-        widget.onLoad().whenComplete(() {
-          // 当加载完成之后回退状态
-          currentState = _LoadMoreStatus.done;
-          // isTriggered = false;
-          // 判断加载动画是否还在显示，如果还在显示，就继续加载
-          if (context.mounted) {
-            // 获取当前的滚动控制器
-          }
-        });
-        break;
-      case _LoadMoreStatus.loading:
-        break;
-      case _LoadMoreStatus.done:
-        // 执行完毕之后，检查offset是是否为1
-        // 这里判断为1是因为在滑动的时候，会有一点点的误差，导致offset某些情况不会为0，而是比0大一点点
-        if (offset <= 1) {
-          currentState = _LoadMoreStatus.inactive;
-        }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final nextScrollPosition = Scrollable.maybeOf(context)?.position;
+    if (identical(_scrollPosition, nextScrollPosition)) return;
+
+    _scrollPosition?.removeListener(_onScroll);
+    _scrollPosition = nextScrollPosition;
+    _scrollPosition?.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollPosition?.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final position = _scrollPosition;
+    if (position == null || !(widget.hasMore ?? true)) return;
+
+    const loadThreshold = 200.0;
+    if (position.extentAfter > loadThreshold) {
+      if (currentState == _LoadMoreStatus.done) {
+        setState(() => currentState = _LoadMoreStatus.inactive);
+      }
+      return;
+    }
+
+    if (currentState != _LoadMoreStatus.inactive) return;
+    _startLoading();
+  }
+
+  void _startLoading() {
+    if (currentState == _LoadMoreStatus.loading || !(widget.hasMore ?? true)) {
+      return;
+    }
+    setState(() => currentState = _LoadMoreStatus.loading);
+    unawaited(_loadMore());
+  }
+
+  Future<void> _loadMore() async {
+    try {
+      await widget.onLoad();
+    } catch (_) {
+      // The owning list provider is responsible for exposing its error state.
+    } finally {
+      if (mounted) {
+        setState(() => currentState = _LoadMoreStatus.done);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!(widget.hasMore ?? true)) {
+      return const SliverToBoxAdapter(child: SizedBox(height: 10));
+    }
+
     return SliverLayoutBuilder(
       builder: (context, constraints) {
-        // 没有更多了
-        if (!(widget.hasMore ?? true)) {
-          return const SliverToBoxAdapter(
-            child: SizedBox(
-              height: 10,
-            ),
-          );
-        }
+        final listDoesNotFillViewport =
+            constraints.precedingScrollExtent <=
+            constraints.viewportMainAxisExtent;
+        final showManualLoad =
+            listDoesNotFillViewport && currentState != _LoadMoreStatus.loading;
 
-        // 更新状态
-        Future(() {
-          handleNextState(constraints.remainingPaintExtent);
-        });
-
-        // 显示当前状态
         return SliverToBoxAdapter(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(
-                  child: LoadingCircularProgress(),
-                ),
-              );
-            },
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 150),
+            child: currentState == _LoadMoreStatus.loading
+                ? const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: LoadingCircularProgress()),
+                  )
+                : showManualLoad
+                ? Center(
+                    child: TextButton(
+                      onPressed: _startLoading,
+                      child: Text(S.current.viewMore),
+                    ),
+                  )
+                : const SizedBox(height: 10),
           ),
         );
       },

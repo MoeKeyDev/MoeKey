@@ -7,13 +7,20 @@ class MisskeyApisHttpClient {
     required this.accessToken,
     required this.onUnauthorized,
   }) {
-    client = Dio(BaseOptions(
-      baseUrl: "$host/api",
-    ));
+    client = Dio(BaseOptions(baseUrl: "$host/api"));
     client.interceptors.add(
       RetryInterceptor(
         dio: client,
         logPrint: print,
+        retryEvaluator: (error, attempt) {
+          // A 500 response is a completed server-side failure. Retrying it
+          // immediately keeps the UI loading and can further overload a
+          // server that is already timing out.
+          if (error.response?.statusCode == 500) {
+            return false;
+          }
+          return RetryInterceptor.defaultRetryEvaluator(error, attempt);
+        },
       ),
     );
   }
@@ -30,13 +37,11 @@ class MisskeyApisHttpClient {
     Options? options,
   }) async {
     try {
-      return (await client.post(path,
-              data: {
-                if (auth) "i": accessToken,
-                ...?data,
-              },
-              options: options))
-          .data;
+      return (await client.post(
+        path,
+        data: {if (auth) "i": accessToken, ...?data},
+        options: options,
+      )).data;
     } on DioException catch (e) {
       // 401
       if (e.response?.statusCode == 401) {
@@ -53,13 +58,11 @@ class MisskeyApisHttpClient {
     Options? options,
   }) async {
     try {
-      return (await client.get(path,
-              queryParameters: {
-                if (auth) "i": accessToken,
-                ...?data,
-              },
-              options: options))
-          .data;
+      return (await client.get(
+        path,
+        queryParameters: {if (auth) "i": accessToken, ...?data},
+        options: options,
+      )).data;
     } on DioException catch (e) {
       // 401
       if (e.response?.statusCode == 401) {

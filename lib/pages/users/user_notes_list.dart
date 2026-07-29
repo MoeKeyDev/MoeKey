@@ -37,14 +37,11 @@ List<Map<String, bool>> _noteFilter = [
     "withFiles": true,
     "withReplies": false,
     "withFeatured": false,
-  }
+  },
 ];
 
 class UserNotesPage extends HookConsumerWidget {
-  const UserNotesPage({
-    super.key,
-    required this.userId,
-  });
+  const UserNotesPage({super.key, required this.userId});
 
   final String userId;
 
@@ -80,6 +77,13 @@ class UserNotesPage extends HookConsumerWidget {
               onRefresh: () => ref.refresh(dataProvider.future),
               hasMore: data.value?.hasMore,
               items: data.value?.list,
+              initialLoading: data.isLoading && data.value == null,
+              initialError: data.hasError && data.value == null
+                  ? data.error
+                  : null,
+              onRetry: () => ref.invalidate(dataProvider),
+              loadMoreError: data.value?.loadMoreError,
+              onRetryLoadMore: () => ref.read(dataProvider.notifier).load(),
             ),
             Positioned(
               top: mediaPadding.top - 8,
@@ -101,7 +105,7 @@ class UserNotesPage extends HookConsumerWidget {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         );
       },

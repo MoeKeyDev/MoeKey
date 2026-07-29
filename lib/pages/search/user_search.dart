@@ -54,6 +54,16 @@ class UserSearchPage extends HookConsumerWidget {
           hasMore: status.searched && status.hasMore,
           empty: status.data.isEmpty,
           padding: padding,
+          initialLoading:
+              status.loading &&
+              status.searched &&
+              status.data.isEmpty &&
+              status.initialError == null,
+          initialError: status.initialError,
+          onRetry: () => ref.read(userSearchStatusProvider.notifier).search(),
+          loadMoreError: status.loadMoreError,
+          onRetryLoadMore: () =>
+              ref.read(userSearchStatusProvider.notifier).load(),
         );
       },
     );
@@ -66,6 +76,8 @@ class UserSearchStatusModel {
   bool loading = false;
   bool searched = false;
   bool hasMore = true;
+  Object? initialError;
+  Object? loadMoreError;
 }
 
 @riverpod
@@ -87,6 +99,8 @@ class UserSearchStatus extends _$UserSearchStatus {
       state.searched = false;
       state.hasMore = false;
       state.data = [];
+      state.initialError = null;
+      state.loadMoreError = null;
       ref.notifyListeners();
       return;
     }
@@ -94,6 +108,8 @@ class UserSearchStatus extends _$UserSearchStatus {
     state.searched = true;
     state.hasMore = true;
     state.data = [];
+    state.initialError = null;
+    state.loadMoreError = null;
     ref.notifyListeners();
     try {
       final filter = ref.read(searchFilterProvider);
@@ -108,17 +124,26 @@ class UserSearchStatus extends _$UserSearchStatus {
           .search(query: query, origin: origin);
       state.data = data;
       state.hasMore = data.isNotEmpty;
-    } catch (e) {
-      logger.e(e);
+    } catch (error, stackTrace) {
+      logger.e(stackTrace);
+      state.initialError = error;
+      state.hasMore = false;
     }
     state.loading = false;
     ref.notifyListeners();
   }
 
   Future<void> load() async {
-    if (state.loading) return;
+    if (!state.searched ||
+        state.loading ||
+        !state.hasMore ||
+        state.data.isEmpty) {
+      return;
+    }
     final filter = ref.read(searchFilterProvider);
     state.loading = true;
+    state.loadMoreError = null;
+    ref.notifyListeners();
     try {
       final origin = switch (filter.scope) {
         SearchFilterScope.local => "local",
@@ -141,8 +166,9 @@ class UserSearchStatus extends _$UserSearchStatus {
       }).toList();
       state.data += data;
       state.hasMore = data.isNotEmpty;
-    } catch (e) {
-      logger.e(e);
+    } catch (error, stackTrace) {
+      logger.e(stackTrace);
+      state.loadMoreError = error;
     }
     state.loading = false;
     ref.notifyListeners();

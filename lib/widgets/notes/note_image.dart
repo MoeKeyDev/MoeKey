@@ -84,34 +84,7 @@ class NoteImage extends HookConsumerWidget {
                 children: [
                   // ClipRect(
                   //   child:
-                  if (imageFile.blurhash != null)
-                    BlurHash(imageFile.blurhash!)
-                  else if (imageFile.thumbnailUrl != null)
-                    ImageFiltered(
-                      imageFilter: ImageFilter.blur(
-                        sigmaX: 100.0,
-                        sigmaY: 100.0,
-                      ),
-                      child: MkImage(
-                        imageFile.thumbnailUrl!,
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.fill,
-                      ),
-                    )
-                  else
-                    ImageFiltered(
-                      imageFilter: ImageFilter.blur(
-                        sigmaX: 100.0,
-                        sigmaY: 100.0,
-                      ),
-                      child: MkImage(
-                        imageFile.url,
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                  _NoteImageBlurredBackground(imageFile: imageFile),
                   Container(color: Colors.black.withValues(alpha: 0.2)),
                   // ),
                   if (isHidden.value)
@@ -206,5 +179,45 @@ class NoteImage extends HookConsumerWidget {
     } else {
       return wh;
     }
+  }
+}
+
+class _NoteImageBlurredBackground extends StatelessWidget {
+  const _NoteImageBlurredBackground({required this.imageFile});
+
+  static final ImageFilter _blurFilter = ImageFilter.blur(
+    sigmaX: 100,
+    sigmaY: 100,
+  );
+
+  // A sigma-100 background contains no visible high-frequency detail. Decode
+  // it into a bounded texture instead of uploading the source-sized image.
+  // The foreground image still uses its normal resolution.
+  static const int _cacheExtent = 256;
+
+  final DriveFileModel imageFile;
+
+  @override
+  Widget build(BuildContext context) {
+    final blurhash = imageFile.blurhash;
+    if (blurhash != null && blurhash.isNotEmpty) {
+      return RepaintBoundary(child: BlurHash(blurhash));
+    }
+
+    return RepaintBoundary(
+      child: ImageFiltered(
+        // Reuse the same native filter object. Recreating it during a keyboard
+        // metrics rebuild would otherwise mark this render object for paint.
+        imageFilter: _blurFilter,
+        child: MkImage(
+          imageFile.thumbnailUrl ?? imageFile.url,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.fill,
+          cacheWidth: _cacheExtent,
+          cacheHeight: _cacheExtent,
+        ),
+      ),
+    );
   }
 }

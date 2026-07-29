@@ -12,16 +12,24 @@ class MkRefreshLoadingEmptyBuilder extends HookConsumerWidget {
     required this.loading,
     required this.empty,
     required this.builder,
+    this.error,
+    this.onRetry,
   });
 
   final Future<void> Function() onRefresh;
   final bool loading;
   final bool empty;
   final Widget Function(BuildContext context, BoxConstraints constraints)
-      builder;
+  builder;
+  final Object? error;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (error != null) {
+      return MkErrorState(onRetry: onRetry);
+    }
+
     var queryPadding = MediaQuery.paddingOf(context);
     return RefreshIndicator.adaptive(
       // 通知刷新指示器
@@ -29,17 +37,14 @@ class MkRefreshLoadingEmptyBuilder extends HookConsumerWidget {
       edgeOffset: queryPadding.top - 8,
       child: ScrollConfiguration(
         // 设置滑动配置，允许使用触摸和鼠标进行滑动
-        behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
-          PointerDeviceKind.touch,
-          PointerDeviceKind.mouse,
-        }),
+        behavior: ScrollConfiguration.of(context).copyWith(
+          dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
+        ),
         child: LoadingAndEmpty(
           loading: loading,
           empty: empty,
           refresh: onRefresh,
-          child: LayoutBuilder(
-            builder: builder,
-          ),
+          child: LayoutBuilder(builder: builder),
         ),
       ),
     );

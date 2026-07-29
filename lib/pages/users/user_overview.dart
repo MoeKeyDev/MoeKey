@@ -97,6 +97,11 @@ class UserOverview extends HookConsumerWidget {
       ],
       hasMore: data.value?.hasMore ?? true,
       items: data.value?.list,
+      initialLoading: data.isLoading && data.value == null,
+      initialError: data.hasError && data.value == null ? data.error : null,
+      onRetry: () => ref.invalidate(dataProvider),
+      loadMoreError: data.value?.loadMoreError,
+      onRetryLoadMore: () => ref.read(dataProvider.notifier).load(),
     );
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -116,6 +121,11 @@ class UserOverview extends HookConsumerWidget {
           onRefresh: () => ref.refresh(dataProvider.future),
           hasMore: data.value?.hasMore ?? true,
           empty: false,
+          initialLoading: data.isLoading && data.value == null,
+          initialError: data.hasError && data.value == null ? data.error : null,
+          onRetry: () => ref.invalidate(dataProvider),
+          loadMoreError: data.value?.loadMoreError,
+          onRetryLoadMore: () => ref.read(dataProvider.notifier).load(),
           slivers: [
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: sidePadding),

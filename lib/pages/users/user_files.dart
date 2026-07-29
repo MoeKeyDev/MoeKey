@@ -58,6 +58,11 @@ class UserFilesPage extends HookConsumerWidget {
       onRefresh: () => ref.refresh(provider.future),
       hasMore: state.value?.hasMore ?? true,
       empty: !state.isLoading && media.isEmpty,
+      initialLoading: state.isLoading && state.value == null,
+      initialError: state.hasError && state.value == null ? state.error : null,
+      onRetry: () => ref.invalidate(provider),
+      loadMoreError: state.value?.loadMoreError,
+      onRetryLoadMore: () => ref.read(provider.notifier).load(),
       slivers: [
         if (state.isLoading && media.isEmpty)
           const SliverFillRemaining(

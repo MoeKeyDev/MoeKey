@@ -130,7 +130,11 @@ Map<String, dynamic> _getParse({
       return TextSpan(text: item.text, style: textStyle);
     },
     "unicodeEmoji": (MfmUnicodeEmoji item, TextStyle textStyle) {
-      return TwemojiTextSpan(text: item.props?["emoji"], style: textStyle);
+      return TwemojiTextSpan(
+        text: item.props?["emoji"],
+        style: textStyle,
+        twemojiFormat: TwemojiFormat.png,
+      );
     },
     "hashtag": (MfmHashTag item, TextStyle textStyle) {
       if (feature!.contains(MFMFeature.hashtag)) {
@@ -273,6 +277,9 @@ Map<String, dynamic> _getParse({
                           height: bigEmojiCode
                               ? textStyle.fontSize! * 2
                               : textStyle.fontSize! + 1,
+                          proxy: const MkImageProxyOptions(
+                            type: MkImageProxyType.emoji,
+                          ),
                         ),
                       ),
                     ),

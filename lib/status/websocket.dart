@@ -28,7 +28,8 @@ class MoekeyWebSocket extends _$MoekeyWebSocket {
     logger.d(uri.port);
     logger.d(uri.host);
     uri = Uri.parse(
-        "$scheme://${uri.host}:${uri.port}/streaming?i=${user?.token ?? ""}");
+      "$scheme://${uri.host}:${uri.port}/streaming?i=${user?.token ?? ""}",
+    );
     var channel = WebSocketChannel.connect(uri);
     ref.onDispose(() {
       channel.sink.close();
@@ -44,14 +45,8 @@ class MoekeyEvent {
 
   MoekeyEvent({required this.data, required this.type});
 
-  MoekeyEvent copyWith({
-    Map? data,
-    MoekeyEventType? type,
-  }) {
-    return MoekeyEvent(
-      data: data ?? this.data,
-      type: type ?? this.type,
-    );
+  MoekeyEvent copyWith({Map? data, MoekeyEventType? type}) {
+    return MoekeyEvent(data: data ?? this.data, type: type ?? this.type);
   }
 }
 
@@ -60,7 +55,7 @@ enum MoekeyEventType {
   data,
 
   /// 重置事件
-  load;
+  load,
 }
 
 StreamController<MoekeyEvent> moekeyStreamController =
@@ -93,10 +88,9 @@ class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 60), (_) {
       sendString("h");
     });
-    moekeyStreamController.sink.add(MoekeyEvent(
-      type: MoekeyEventType.load,
-      data: {},
-    ));
+    moekeyStreamController.sink.add(
+      MoekeyEvent(type: MoekeyEventType.load, data: {}),
+    );
     _channelSubscription = channel.stream.listen(
       (data) {
         logger.d("=========emit moekeyEvent=======");
@@ -168,25 +162,23 @@ class MoekeyMainChannel extends _$MoekeyMainChannel {
       });
       listen?.cancel();
       listen = null;
-      listen = moekeyStreamController.stream.listen(
-        (event) async {
-          logger.d("========= event channel main===================");
-          logger.d(event);
-          if (event.type == MoekeyEventType.load) {
-            logger.d("========= NotesListener load ===================");
-            ref.read(moekeyGlobalEventProvider.notifier).send({
-              "type": "connect",
-              "body": {"channel": "main", "id": "1"}
-            });
-          }
-          if (event.type == MoekeyEventType.data &&
-              event.data["type"] == "channel" &&
-              event.data["body"]["id"] == "1") {
-            logger.d(event.data);
-            moekeyStreamMainChannelController.sink.add(event.data["body"]);
-          }
-        },
-      );
+      listen = moekeyStreamController.stream.listen((event) async {
+        logger.d("========= event channel main===================");
+        logger.d(event);
+        if (event.type == MoekeyEventType.load) {
+          logger.d("========= Main channel connected ===================");
+          ref.read(moekeyGlobalEventProvider.notifier).send({
+            "type": "connect",
+            "body": {"channel": "main", "id": "1"},
+          });
+        }
+        if (event.type == MoekeyEventType.data &&
+            event.data["type"] == "channel" &&
+            event.data["body"]["id"] == "1") {
+          logger.d(event.data);
+          moekeyStreamMainChannelController.sink.add(event.data["body"]);
+        }
+      });
     } catch (e) {
       logger.d(e);
     }

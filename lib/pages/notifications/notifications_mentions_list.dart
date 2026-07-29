@@ -23,6 +23,11 @@ class MentionsList extends HookConsumerWidget {
       onRefresh: () => ref.refresh(dataProvider.future),
       items: data.value?.list,
       hasMore: data.value?.hasMore,
+      initialLoading: data.isLoading && data.value == null,
+      initialError: data.hasError && data.value == null ? data.error : null,
+      onRetry: () => ref.invalidate(dataProvider),
+      loadMoreError: data.value?.loadMoreError,
+      onRetryLoadMore: () => ref.read(dataProvider.notifier).loadMore(),
     );
   }
 }

@@ -15,11 +15,15 @@ Future<TimelineDatabase> timelineDatabase(Ref ref) async {
   var user = ref.watch(currentLoginUserProvider);
   var instance = user?.serverUrl;
   return TimelineDatabase(
-      server: instance ?? "default", userId: user?.id ?? "default");
+    server: instance ?? "default",
+    userId: user?.id ?? "default",
+  );
 }
 
 @riverpod
 class Timeline extends _$Timeline {
+  bool _isLoadingMore = false;
+
   @override
   FutureOr<NoteListModel> build({String api = "timeline"}) async {
     List<NoteModel>? cache;
@@ -55,10 +59,14 @@ class Timeline extends _$Timeline {
   }
 
   Future<void> load() async {
-    if (state.isLoading) return;
+    if (state.isLoading || _isLoadingMore) return;
 
-    var model = state.value ?? NoteListModel();
-    state = const AsyncValue.loading();
+    final model = state.value;
+    if (model == null) return;
+
+    _isLoadingMore = true;
+    model.loadMoreError = null;
+    ref.notifyListeners();
     try {
       String? untilId = model.list.lastOrNull?.id;
 
@@ -68,10 +76,15 @@ class Timeline extends _$Timeline {
       if (notesList.isEmpty) {
         model.hasMore = false;
       }
-    } catch (e) {
-      logger.e(e);
+    } catch (error, stackTrace) {
+      logger.e(error);
+      logger.e(stackTrace);
+      model.loadMoreError = error;
+    } finally {
+      _isLoadingMore = false;
+      state = AsyncData(model);
+      ref.notifyListeners();
     }
-    state = AsyncData(model);
   }
 
   Future<void> cleanCache() async {

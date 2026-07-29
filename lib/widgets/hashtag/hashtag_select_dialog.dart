@@ -41,8 +41,11 @@ class HashtagSelectDialog extends HookConsumerWidget {
                 },
                 behavior: HitTestBehavior.opaque,
                 child: buildUserItem(
-                    themes, item, selectList.value.containsKey(item)),
-              )
+                  themes,
+                  item,
+                  selectList.value.containsKey(item),
+                ),
+              ),
           ],
         ),
       ),
@@ -57,43 +60,26 @@ class HashtagSelectDialog extends HookConsumerWidget {
         var data = ref.watch(hashtagSelectDialogStateProvider);
         return Row(
           children: [
-            const SizedBox(
-              width: 4,
-            ),
+            const SizedBox(width: 4),
             IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Icon(
-                TablerIcons.x,
-                size: 18,
-                color: themes.fgColor,
-              ),
+              icon: Icon(TablerIcons.x, size: 18, color: themes.fgColor),
             ),
-            const SizedBox(
-              width: 4,
-            ),
+            const SizedBox(width: 4),
             Text(S.current.selectHashtag),
             Text("(${selectList.length})"),
             const Spacer(),
             if (data.isLoading)
-              const LoadingCircularProgress(
-                size: 18,
-                strokeWidth: 4,
-              ),
+              const LoadingCircularProgress(size: 18, strokeWidth: 4),
             IconButton(
               onPressed: () {
                 Navigator.of(context).pop(selectList.values);
               },
-              icon: Icon(
-                TablerIcons.check,
-                size: 18,
-                color: themes.fgColor,
-              ),
+              icon: Icon(TablerIcons.check, size: 18, color: themes.fgColor),
             ),
-            const SizedBox(
-              width: 4,
-            ),
+            const SizedBox(width: 4),
           ],
         );
       },
@@ -104,14 +90,12 @@ class HashtagSelectDialog extends HookConsumerWidget {
     return HookConsumer(
       builder: (context, ref, child) {
         useEffect(() {
-          Future.delayed(
-            Duration.zero,
-            () {
-              ref
-                  .read(hashtagSelectDialogStateProvider.notifier)
-                  .search(query: "");
-            },
-          );
+          Future.delayed(Duration.zero, () {
+            if (!context.mounted) return;
+            ref
+                .read(hashtagSelectDialogStateProvider.notifier)
+                .search(query: "");
+          });
           return null;
         }, const []);
         return Padding(
@@ -126,7 +110,7 @@ class HashtagSelectDialog extends HookConsumerWidget {
                         .search(query: value);
                   },
                 ),
-              )
+              ),
             ],
           ),
         );
@@ -144,10 +128,7 @@ class HashtagSelectDialog extends HookConsumerWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         color: isActive ? themes.accentColor : themes.panelColor,
-        child: SizedBox(
-          width: double.infinity,
-          child: Text("#$item"),
-        ),
+        child: SizedBox(width: double.infinity, child: Text("#$item")),
       ),
     );
   }

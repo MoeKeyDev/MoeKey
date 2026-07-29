@@ -8,6 +8,7 @@ import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../status/misskey_api.dart';
+import '../../logger.dart';
 
 part 'hashtag_page.g.dart';
 
@@ -29,11 +30,7 @@ class HashtagPage extends HookConsumerWidget {
           onTap: () {
             controller.refresh();
           },
-          child: Text(
-            "#$name",
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          child: Text("#$name", maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
       ),
       body: Center(
@@ -43,6 +40,11 @@ class HashtagPage extends HookConsumerWidget {
           hasMore: data?.hasMore ?? true,
           items: data?.list,
           controller: controller,
+          initialLoading: state.isLoading && data == null,
+          initialError: state.hasError && data == null ? state.error : null,
+          onRetry: () => ref.invalidate(model),
+          loadMoreError: data?.loadMoreError,
+          onRetryLoadMore: () => ref.read(model.notifier).load(),
         ),
       ),
     );
@@ -51,6 +53,8 @@ class HashtagPage extends HookConsumerWidget {
 
 @riverpod
 class HashTagPage extends _$HashTagPage {
+  bool _isLoadingMore = false;
+
   @override
   FutureOr<NoteListModel> build(String tag) async {
     var model = NoteListModel();
@@ -65,22 +69,29 @@ class HashTagPage extends _$HashTagPage {
   }
 
   Future<void> load() async {
-    if (state.isLoading) return;
-    state = const AsyncValue.loading();
-    var model = state.value ?? NoteListModel();
+    if (state.isLoading || _isLoadingMore) return;
+    final model = state.value;
+    if (model == null) return;
+
+    _isLoadingMore = true;
+    model.loadMoreError = null;
+    ref.notifyListeners();
     try {
-      String? untilId;
-      if (state.value?.list.isNotEmpty ?? false) {
-        untilId = state.value?.list.last.id;
-      }
-      List<NoteModel> notesList = await notes(untilId: untilId);
+      final untilId = model.list.lastOrNull?.id;
+      final notesList = await notes(untilId: untilId);
 
       model.list += notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;
       }
+    } catch (error, stackTrace) {
+      logger.e(error);
+      logger.e(stackTrace);
+      model.loadMoreError = error;
     } finally {
+      _isLoadingMore = false;
       state = AsyncData(model);
+      ref.notifyListeners();
     }
   }
 }

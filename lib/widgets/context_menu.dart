@@ -10,6 +10,7 @@ import 'package:moekey/widgets/loading_weight.dart';
 
 import '../status/themes.dart';
 import 'hover_builder.dart';
+import 'keyboard_aware_bottom_sheet.dart';
 
 /// 上下文菜单的触发模式
 enum ContextMenuMode {
@@ -122,8 +123,13 @@ class ContextMenuBuilderState extends ConsumerState<ContextMenuBuilder>
       elevation: 0,
       useRootNavigator: true,
       isScrollControlled: true,
+      // Keep the composer focused so the keyboard stays geometrically stable
+      // while the sheet route is animating.
+      requestFocus: false,
       builder: (context) {
-        return ContextDraggableBottomSheet(menu: widget.menu);
+        return KeyboardAwareBottomSheet(
+          child: ContextDraggableBottomSheet(menu: widget.menu),
+        );
       },
     );
   }
@@ -309,9 +315,12 @@ class ContextDraggableBottomSheet extends HookConsumerWidget {
                                 elevation: 0,
                                 useRootNavigator: true,
                                 isScrollControlled: true,
+                                requestFocus: false,
                                 builder: (context) {
-                                  return ContextDraggableBottomSheet(
-                                    menu: item.child!,
+                                  return KeyboardAwareBottomSheet(
+                                    child: ContextDraggableBottomSheet(
+                                      menu: item.child!,
+                                    ),
                                   );
                                 },
                               );

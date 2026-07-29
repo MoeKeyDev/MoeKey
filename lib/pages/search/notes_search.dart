@@ -21,6 +21,16 @@ class NotesSearchPage extends HookConsumerWidget {
       hasMore: status.searched && status.hasMore,
       items: status.data,
       padding: const EdgeInsets.only(top: 8),
+      initialLoading:
+          status.loading &&
+          status.searched &&
+          status.data.isEmpty &&
+          status.initialError == null,
+      initialError: status.initialError,
+      onRetry: () => ref.read(notesSearchStatusProvider.notifier).search(),
+      loadMoreError: status.loadMoreError,
+      onRetryLoadMore: () =>
+          ref.read(notesSearchStatusProvider.notifier).load(),
     );
   }
 }
@@ -31,6 +41,8 @@ class NotesSearchStatusModel {
   bool loading = false;
   bool searched = false;
   bool hasMore = true;
+  Object? initialError;
+  Object? loadMoreError;
 }
 
 @riverpod
@@ -92,6 +104,8 @@ class NotesSearchStatus extends _$NotesSearchStatus {
       state.searched = false;
       state.hasMore = false;
       state.data = [];
+      state.initialError = null;
+      state.loadMoreError = null;
       ref.notifyListeners();
       return;
     }
@@ -99,21 +113,32 @@ class NotesSearchStatus extends _$NotesSearchStatus {
     state.searched = true;
     state.hasMore = true;
     state.data = [];
+    state.initialError = null;
+    state.loadMoreError = null;
     ref.notifyListeners();
     try {
       final data = await _request(query: query);
       state.data = data;
       state.hasMore = data.isNotEmpty;
-    } catch (e) {
-      logger.e(e);
+    } catch (error, stackTrace) {
+      logger.e(stackTrace);
+      state.initialError = error;
+      state.hasMore = false;
     }
     state.loading = false;
     ref.notifyListeners();
   }
 
   Future<void> load() async {
-    if (state.loading) return;
+    if (!state.searched ||
+        state.loading ||
+        !state.hasMore ||
+        state.data.isEmpty) {
+      return;
+    }
     state.loading = true;
+    state.loadMoreError = null;
+    ref.notifyListeners();
     try {
       final data = await _request(
         query: state.searchValue,
@@ -121,8 +146,9 @@ class NotesSearchStatus extends _$NotesSearchStatus {
       );
       state.data += data;
       state.hasMore = data.isNotEmpty;
-    } catch (e) {
-      logger.e(e);
+    } catch (error, stackTrace) {
+      logger.e(stackTrace);
+      state.loadMoreError = error;
     }
     state.loading = false;
     ref.notifyListeners();

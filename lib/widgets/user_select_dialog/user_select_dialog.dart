@@ -186,6 +186,7 @@ class UserSelectDialog extends HookConsumerWidget {
                     ),
                     child: MFMText(
                       text: name,
+                      emojis: item.emojis,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       bigEmojiCode: false,

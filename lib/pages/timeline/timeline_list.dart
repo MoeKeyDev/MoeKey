@@ -17,6 +17,11 @@ class TimeLineListPage extends HookConsumerWidget {
       onLoad: () => ref.read(dataProvider.notifier).load(),
       hasMore: data.value?.hasMore,
       items: data.value?.list,
+      initialLoading: data.isLoading && data.value == null,
+      initialError: data.hasError && data.value == null ? data.error : null,
+      onRetry: () => ref.invalidate(dataProvider),
+      loadMoreError: data.value?.loadMoreError,
+      onRetryLoadMore: () => ref.read(dataProvider.notifier).load(),
       onRefresh: () async {
         await ref.read(dataProvider.notifier).cleanCache();
         return await ref.refresh(dataProvider.future);

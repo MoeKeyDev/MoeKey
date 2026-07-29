@@ -86,6 +86,8 @@ class Notifications extends _$Notifications {
 
 @riverpod
 class MentionsNotifications extends _$MentionsNotifications {
+  bool _isLoadingMore = false;
+
   @override
   FutureOr<NoteListModel> build({bool specified = false}) async {
     var model = NoteListModel();
@@ -108,22 +110,29 @@ class MentionsNotifications extends _$MentionsNotifications {
   }
 
   Future<void> loadMore() async {
-    if (state.isLoading) return;
-    state = const AsyncValue.loading();
-    var model = state.value ?? NoteListModel();
+    if (state.isLoading || _isLoadingMore) return;
+    final model = state.value;
+    if (model == null) return;
+
+    _isLoadingMore = true;
+    model.loadMoreError = null;
+    ref.notifyListeners();
     try {
-      String? untilId;
-      if (state.value!.list.isNotEmpty) {
-        untilId = state.value?.list.last.id;
-      }
+      final untilId = model.list.lastOrNull?.id;
       List<NoteModel> notesList = await mentions(untilId: untilId);
 
       model.list += notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;
       }
+    } catch (error, stackTrace) {
+      logger.e(error);
+      logger.e(stackTrace);
+      model.loadMoreError = error;
     } finally {
+      _isLoadingMore = false;
       state = AsyncData(model);
+      ref.notifyListeners();
     }
   }
 }

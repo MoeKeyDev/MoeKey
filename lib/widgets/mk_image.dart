@@ -87,7 +87,14 @@ ImageProvider<Object> getExtendedResizeImage(
   int? cacheWidth,
   int? cacheHeight,
 }) {
-  final provider = ExtendedNetworkImageProvider(url, cache: true);
+  final provider = ExtendedNetworkImageProvider(
+    url,
+    cache: true,
+    // Failed external responses are represented by MkImage's placeholder.
+    // The package otherwise prints the same decode exception once for the
+    // disk cache attempt and again for the network retry.
+    printError: false,
+  );
   if (kIsWeb) {
     return provider;
   }

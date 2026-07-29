@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show OverflowBoxFit;
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -27,6 +28,7 @@ import '../driver/driver_select_dialog/driver_select_dialog.dart';
 import '../hashtag/hashtag_select_dialog.dart';
 import '../mk_switch.dart';
 import '../notes/note_card.dart';
+import 'mobile_composer_bottom_area.dart';
 
 class NoteCreateDialog extends HookConsumerWidget {
   const NoteCreateDialog({
@@ -52,23 +54,38 @@ class NoteCreateDialog extends HookConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         var isFullscreen = constraints.maxWidth < 580;
-        var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-        var queryPadding = MediaQuery.of(context).padding;
-        var topPadding = isFullscreen ? queryPadding.top : 0.0;
+        var topPadding = isFullscreen
+            ? MediaQuery.viewPaddingOf(context).top
+            : 0.0;
         Widget form = MkCard(
           key: myKey,
           padding: const EdgeInsets.all(8).copyWith(top: 8 + topPadding),
           borderRadius: isFullscreen
               ? const BorderRadius.all(Radius.zero)
-              : const BorderRadius.all(
-                  Radius.circular(12),
-                ),
-          child: buildWidget(themes, isFullscreen, keyboardHeight),
+              : const BorderRadius.all(Radius.circular(12)),
+          child: buildWidget(themes, isFullscreen),
         );
 
         // if (!isFullscreen) {
         //   form = IntrinsicHeight(child: form);
         // }
+        final dialog = GestureDetector(
+          onTap: () {},
+          child: SizedBox(
+            width: isFullscreen ? constraints.maxWidth : 560,
+            height: isFullscreen ? constraints.maxHeight : null,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: 0,
+                maxHeight: isFullscreen
+                    ? constraints.maxHeight
+                    : constraints.maxHeight - 80,
+              ),
+              child: form,
+            ),
+          ),
+        );
+
         return GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -76,30 +93,24 @@ class NoteCreateDialog extends HookConsumerWidget {
           behavior: HitTestBehavior.opaque,
           child: Scaffold(
             backgroundColor: Colors.transparent,
+            // The fullscreen composer owns the keyboard inset below. Letting
+            // Scaffold shrink as well makes the form resize twice and lag the
+            // platform keyboard animation.
+            resizeToAvoidBottomInset: false,
             body: SizedBox(
               width: constraints.maxWidth,
               height: constraints.maxHeight,
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: [
-                  AnimatedPositioned(
+                  if (isFullscreen)
+                    Positioned(top: 0, child: dialog)
+                  else
+                    AnimatedPositioned(
                       duration: const Duration(milliseconds: 500),
-                      top: isFullscreen ? 0 : 40,
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: SizedBox(
-                          width: isFullscreen ? constraints.maxWidth : 560,
-                          height: isFullscreen ? constraints.maxHeight : null,
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                                minHeight: 0,
-                                maxHeight: isFullscreen
-                                    ? constraints.maxHeight
-                                    : constraints.maxHeight - 80),
-                            child: form,
-                          ),
-                        ),
-                      ))
+                      top: 40,
+                      child: dialog,
+                    ),
                 ],
               ),
             ),
@@ -109,150 +120,279 @@ class NoteCreateDialog extends HookConsumerWidget {
     );
   }
 
-  Widget buildWidget(
-      ThemeColorModel themes, bool fullscreen, double keyboardHeight) {
+  Widget buildWidget(ThemeColorModel themes, bool fullscreen) {
     return HookConsumer(
       builder: (context, ref, child) {
         MetaDetailedModel? data = ref.watch(instanceMetaProvider).value;
-        var form = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
-        var contentController =
-            useTextEditingController(text: form.text ?? initText);
+        var provider = noteCreateDialogStateProvider(noteId, noteType);
+        var form = ref.watch(provider);
+        var contentController = useTextEditingController(
+          text: form.text ?? initText,
+        );
+        var contentFocusNode = useFocusNode();
+        var mobilePanel = useState(MobileComposerPanel.hidden);
+        var switchingToKeyboard = useState(false);
+        var keyboardMetrics = useMemoized(MobileComposerKeyboardMetrics.new);
+        var defaultPanelHeight = (MediaQuery.sizeOf(context).height * 0.36)
+            .clamp(260.0, 360.0)
+            .toDouble();
+        var maxMobilePanelHeight = (MediaQuery.sizeOf(context).height * 0.72)
+            .clamp(defaultPanelHeight, 620.0)
+            .toDouble();
+        var minMobilePanelHeight = useState(defaultPanelHeight);
+        var mobilePanelHeight = useState(defaultPanelHeight);
         if (note != null && note?.cw != null) {
           form.cw = note!.cw!;
           form.isCw = true;
         }
-        contentController.addListener(() {
-          ref
-              .read(noteCreateDialogStateProvider(noteId, noteType).notifier)
-              .setText(contentController.text);
-        });
-        return IntrinsicHeight(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(
-                      TablerIcons.x,
-                      size: 18,
-                      color: themes.fgColor,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    [
-                      if (noteType == NoteType.reply) S.current.replyNoteText,
-                      if (noteType == NoteType.reNote) S.current.reNoteText,
-                      S.current.createNote
-                    ][0],
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                  const Spacer(),
-                  buildVisibilityBottomList(themes),
-                  const SizedBox(width: 8),
-                  buildLocalOnlyBottom(themes),
-                  const SizedBox(width: 8),
-                  buildReactionAcceptanceBottom(themes),
-                  const SizedBox(width: 8),
-                  Tooltip(
-                    message: S.current.publish,
-                    child: FilledButton(
-                      onPressed: () async {
-                        var res = await ref
-                            .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
-                            .send(context);
-                        if (res != null) {
-                          contentController.text = initText ?? "";
-                          if (context.mounted) {
-                            Navigator.of(context).pop(res);
-                          }
+        useEffect(() {
+          void onTextChanged() {
+            ref.read(provider.notifier).setText(contentController.text);
+          }
+
+          contentController.addListener(onTextChanged);
+          return () => contentController.removeListener(onTextChanged);
+        }, [contentController, noteId, noteType]);
+
+        void hideMobilePanel() {
+          mobilePanel.value = MobileComposerPanel.hidden;
+          switchingToKeyboard.value = false;
+        }
+
+        void showMobilePanel(MobileComposerPanel panel) {
+          if (mobilePanel.value == panel && keyboardMetrics.inset == 0) {
+            hideMobilePanel();
+            return;
+          }
+          // Switching between app panels must keep the height chosen by the
+          // user. Only initialize the shared slot when opening it from the
+          // hidden/keyboard state.
+          if (mobilePanel.value == MobileComposerPanel.hidden) {
+            if (keyboardMetrics.inset > 0) {
+              minMobilePanelHeight.value = keyboardMetrics.inset;
+            } else if (keyboardMetrics.lastVisibleHeight > 0) {
+              minMobilePanelHeight.value = keyboardMetrics.lastVisibleHeight;
+            } else {
+              minMobilePanelHeight.value = defaultPanelHeight;
+            }
+            mobilePanelHeight.value = minMobilePanelHeight.value;
+          }
+          switchingToKeyboard.value = false;
+          mobilePanel.value = panel;
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
+
+        void requestKeyboard() {
+          if (mobilePanel.value != MobileComposerPanel.hidden) {
+            mobilePanelHeight.value = minMobilePanelHeight.value;
+            switchingToKeyboard.value = true;
+          }
+        }
+
+        void resizeMobilePanel(double delta) {
+          final effectiveMaxHeight = maxMobilePanelHeight
+              .clamp(minMobilePanelHeight.value, double.infinity)
+              .toDouble();
+          mobilePanelHeight.value = (mobilePanelHeight.value + delta)
+              .clamp(minMobilePanelHeight.value, effectiveMaxHeight)
+              .toDouble();
+        }
+
+        void settleMobilePanel(double expansionVelocity) {
+          const flingVelocity = 300.0;
+          final effectiveMaxHeight = maxMobilePanelHeight
+              .clamp(minMobilePanelHeight.value, double.infinity)
+              .toDouble();
+          final targetHeight = expansionVelocity.abs() >= flingVelocity
+              ? expansionVelocity > 0
+                    ? effectiveMaxHeight
+                    : minMobilePanelHeight.value
+              : mobilePanelHeight.value >=
+                    (minMobilePanelHeight.value + effectiveMaxHeight) / 2
+              ? effectiveMaxHeight
+              : minMobilePanelHeight.value;
+          mobilePanelHeight.value = targetHeight;
+        }
+
+        void popComposer([Object? result]) {
+          if (fullscreen && mobilePanel.value != MobileComposerPanel.hidden) {
+            hideMobilePanel();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) {
+                Navigator.of(context).pop(result);
+              }
+            });
+            return;
+          }
+          Navigator.of(context).pop(result);
+        }
+
+        Widget mobilePanelContent = switch (mobilePanel.value) {
+          MobileComposerPanel.attachments => DriverSelectPanel(
+            initialSelectedFiles: form.files,
+            onCancel: hideMobilePanel,
+            selectCallback: (files) {
+              ref.read(provider.notifier).setFileList(files);
+              hideMobilePanel();
+            },
+          ),
+          MobileComposerPanel.emoji => EmojiList(
+            tabDividerBleed: 8,
+            onInsert: (data) {
+              contentController.text =
+                  "${contentController.text}${data["name"]}";
+            },
+          ),
+          MobileComposerPanel.hidden => const SizedBox.shrink(),
+        };
+
+        Widget content = Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    popComposer();
+                  },
+                  icon: Icon(TablerIcons.x, size: 18, color: themes.fgColor),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  [
+                    if (noteType == NoteType.reply) S.current.replyNoteText,
+                    if (noteType == NoteType.reNote) S.current.reNoteText,
+                    S.current.createNote,
+                  ][0],
+                  style: const TextStyle(fontSize: 15),
+                ),
+                const Spacer(),
+                buildVisibilityBottomList(themes),
+                const SizedBox(width: 8),
+                buildLocalOnlyBottom(themes),
+                const SizedBox(width: 8),
+                buildReactionAcceptanceBottom(themes),
+                const SizedBox(width: 8),
+                Tooltip(
+                  message: S.current.publish,
+                  child: FilledButton(
+                    onPressed: () async {
+                      var res = await ref
+                          .read(
+                            noteCreateDialogStateProvider(
+                              noteId,
+                              noteType,
+                            ).notifier,
+                          )
+                          .send(context);
+                      if (res != null) {
+                        contentController.text = initText ?? "";
+                        if (context.mounted) {
+                          popComposer(res);
                         }
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStateProperty.all(themes.accentColor),
-                        shape: WidgetStateProperty.all(
-                          const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                          ),
-                        ),
-                        elevation: WidgetStateProperty.all(0),
-                        padding: WidgetStateProperty.all(
-                          const EdgeInsets.fromLTRB(12, 0, 12, 0),
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(
+                        themes.accentColor,
+                      ),
+                      shape: WidgetStateProperty.all(
+                        const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          Text(S.current.publish),
-                          const SizedBox(
-                            width: 2,
-                          ),
-                          const Icon(
-                            TablerIcons.send,
-                            size: 16,
-                          ),
-                        ],
+                      elevation: WidgetStateProperty.all(0),
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.fromLTRB(12, 0, 12, 0),
                       ),
                     ),
-                  )
-                ],
-              ),
-              if (form.visibility == NoteVisibility.specified) buildRecipient(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (note != null) buildNotePreview(themes),
-                      if (!form.preview)
-                        buildTextField(data, fullscreen, contentController)
-                      else
-                        buildPreview(),
-                      if (form.files.isNotEmpty) ...[
-                        buildDriverList(),
-                        const SizedBox(
-                          height: 8,
-                        )
+                    child: Row(
+                      children: [
+                        Text(S.current.publish),
+                        const SizedBox(width: 2),
+                        const Icon(TablerIcons.send, size: 16),
                       ],
-                      if (form.isNotePoll) buildPollCard(fullscreen),
-                    ],
+                    ),
                   ),
                 ),
+              ],
+            ),
+            if (form.visibility == NoteVisibility.specified) buildRecipient(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (note != null) buildNotePreview(themes),
+                    if (!form.preview)
+                      buildTextField(
+                        data,
+                        fullscreen,
+                        contentController,
+                        focusNode: contentFocusNode,
+                        onTextInputRequested: requestKeyboard,
+                      )
+                    else
+                      buildPreview(),
+                    if (form.files.isNotEmpty) ...[
+                      buildDriverList(),
+                      const SizedBox(height: 8),
+                    ],
+                    if (form.isNotePoll) buildPollCard(fullscreen),
+                  ],
+                ),
               ),
-              buildBottomBar(contentController, fullscreen, keyboardHeight),
-              if (!fullscreen)
-                AnimatedContainer(
-                  height:
-                      form.isShowEmoji ? form.emojiListHeight.toDouble() : 0,
-                  duration: const Duration(milliseconds: 300),
-                  child: EmojiList(
-                    onInsert: (data) {
-                      contentController.text =
-                          "${contentController.text}${data["name"]}";
-                    },
-                  ),
-                )
-              else
-                SizedBox(
-                  height: keyboardHeight + MediaQuery.of(context).viewPadding.bottom,
-                )
-            ],
-          ),
+            ),
+            buildBottomBar(
+              contentController,
+              fullscreen,
+              mobilePanel: mobilePanel.value,
+              onMobilePanelSelected: showMobilePanel,
+            ),
+            if (!fullscreen)
+              AnimatedContainer(
+                height: form.isShowEmoji ? form.emojiListHeight.toDouble() : 0,
+                duration: const Duration(milliseconds: 300),
+                child: EmojiList(
+                  onInsert: (data) {
+                    contentController.text =
+                        "${contentController.text}${data["name"]}";
+                  },
+                ),
+              )
+            else
+              MobileComposerBottomArea(
+                mode: mobilePanel.value,
+                panelHeight: mobilePanelHeight.value,
+                metrics: keyboardMetrics,
+                switchingToKeyboard: switchingToKeyboard.value,
+                onKeyboardSettled: hideMobilePanel,
+                onResize: resizeMobilePanel,
+                onResizeEnd: settleMobilePanel,
+                horizontalPaintOverflow: 8,
+                backgroundColor: themes.bgColor,
+                child: mobilePanelContent,
+              ),
+          ],
         );
+        // Desktop dialogs are content-sized. The fullscreen composer already
+        // receives a tight height, so an intrinsic pass only adds work while
+        // the keyboard is animating.
+        return fullscreen
+            ? PopScope(
+                canPop: mobilePanel.value == MobileComposerPanel.hidden,
+                onPopInvokedWithResult: (didPop, result) {
+                  if (!didPop) {
+                    hideMobilePanel();
+                  }
+                },
+                child: content,
+              )
+            : IntrinsicHeight(child: content);
       },
     );
   }
@@ -270,9 +410,7 @@ class NoteCreateDialog extends HookConsumerWidget {
             width: 48,
             height: 48,
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,17 +420,17 @@ class NoteCreateDialog extends HookConsumerWidget {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(child: UserNameRichText(data: note!.user)),
-                    Text(timeAgoSinceDate(note!.createdAt),
-                        style: const TextStyle(fontSize: 12)),
-                    const SizedBox(
-                      width: 6,
+                    Text(
+                      timeAgoSinceDate(note!.createdAt),
+                      style: const TextStyle(fontSize: 12),
                     ),
+                    const SizedBox(width: 6),
                     if (NoteVisibility.getIcon(note!.visibility) != null)
                       Icon(
                         NoteVisibility.getIcon(note!.visibility)!,
                         size: 14,
                         color: themes.fgColor,
-                      )
+                      ),
                   ],
                 ),
                 if (note!.cw != null)
@@ -314,7 +452,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -324,8 +462,12 @@ class NoteCreateDialog extends HookConsumerWidget {
     return HookConsumer(
       builder: (context, ref, child) {
         var themes = ref.watch(themeColorsProvider);
-        var data = ref.watch(noteCreateDialogStateProvider(noteId, noteType)
-            .select((value) => value.visibleUserIds));
+        var data = ref.watch(
+          noteCreateDialogStateProvider(
+            noteId,
+            noteType,
+          ).select((value) => value.visibleUserIds),
+        );
         logger.d(data);
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -339,16 +481,19 @@ class NoteCreateDialog extends HookConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      color: themes.mentionColor.withAlpha(25)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    color: themes.mentionColor.withAlpha(25),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
                         width: 22,
                         height: 22,
-                        child: MkImage(data[key]["avatarUrl"],
-                            shape: BoxShape.circle),
+                        child: MkImage(
+                          data[key]["avatarUrl"],
+                          shape: BoxShape.circle,
+                        ),
                       ),
                       const SizedBox(width: 2),
                       if (data[key]["username"] != null)
@@ -369,13 +514,19 @@ class NoteCreateDialog extends HookConsumerWidget {
                         child: GestureDetector(
                           onTap: () {
                             ref
-                                .read(noteCreateDialogStateProvider(
-                                        noteId, noteType)
-                                    .notifier)
+                                .read(
+                                  noteCreateDialogStateProvider(
+                                    noteId,
+                                    noteType,
+                                  ).notifier,
+                                )
                                 .removeVisibleUser(key);
                           },
-                          child: Icon(TablerIcons.x,
-                              size: 15, color: themes.mentionColor),
+                          child: Icon(
+                            TablerIcons.x,
+                            size: 15,
+                            color: themes.mentionColor,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 2),
@@ -398,19 +549,21 @@ class NoteCreateDialog extends HookConsumerWidget {
                       for (var item in list ?? []) {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
                             .addVisibleUser(item["id"], item);
                       }
                     },
                     style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all(themes.accentColor),
+                      backgroundColor: WidgetStateProperty.all(
+                        themes.accentColor,
+                      ),
                       shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8),
-                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                       ),
                       elevation: WidgetStateProperty.all(0),
@@ -425,7 +578,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         );
@@ -447,7 +600,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                 S.current.voteOptionAtLeastTwo,
                 style: TextStyle(color: themes.errorColor),
               ),
-              const SizedBox(height: 8)
+              const SizedBox(height: 8),
             ],
             for (var (index, (key, item))
                 in (form.poll?.choices ?? []).indexed) ...[
@@ -461,23 +614,27 @@ class NoteCreateDialog extends HookConsumerWidget {
                       onChanged: (value) {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
                             .setPollChoices(index, value);
                       },
                     ),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                  const SizedBox(width: 8),
                   HoverBuilder(
                     builder: (context, isHover) {
                       return GestureDetector(
                         onTap: () {
                           ref
-                              .read(noteCreateDialogStateProvider(
-                                      noteId, noteType)
-                                  .notifier)
+                              .read(
+                                noteCreateDialogStateProvider(
+                                  noteId,
+                                  noteType,
+                                ).notifier,
+                              )
                               .removePollChoices(index);
                         },
                         child: Icon(
@@ -488,12 +645,10 @@ class NoteCreateDialog extends HookConsumerWidget {
                       );
                     },
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                  const SizedBox(width: 8),
                 ],
               ),
-              const SizedBox(height: 8)
+              const SizedBox(height: 8),
             ],
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -503,19 +658,21 @@ class NoteCreateDialog extends HookConsumerWidget {
                       ? null
                       : () {
                           ref
-                              .read(noteCreateDialogStateProvider(
-                                      noteId, noteType)
-                                  .notifier)
+                              .read(
+                                noteCreateDialogStateProvider(
+                                  noteId,
+                                  noteType,
+                                ).notifier,
+                              )
                               .addPollChoices();
                         },
                   style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all(themes.buttonBgColor),
+                    backgroundColor: WidgetStateProperty.all(
+                      themes.buttonBgColor,
+                    ),
                     shape: WidgetStateProperty.all(
                       const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8),
-                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
                       ),
                     ),
                     elevation: WidgetStateProperty.all(0),
@@ -528,14 +685,10 @@ class NoteCreateDialog extends HookConsumerWidget {
                     style: TextStyle(color: themes.fgColor),
                   ),
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
+                const SizedBox(width: 8),
                 const Spacer(),
                 Text(S.current.voteEnableMultiChoice),
-                const SizedBox(
-                  width: 8,
-                ),
+                const SizedBox(width: 8),
                 SizedBox(
                   height: 32,
                   child: FittedBox(
@@ -545,8 +698,11 @@ class NoteCreateDialog extends HookConsumerWidget {
                       onChanged: (value) {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
                             .setPollMultiple(value);
                       },
                     ),
@@ -554,17 +710,13 @@ class NoteCreateDialog extends HookConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Text(S.current.voteDueDate),
                 const Spacer(),
                 Text(S.current.voteNoDueDate),
-                const SizedBox(
-                  width: 8,
-                ),
+                const SizedBox(width: 8),
                 SizedBox(
                   height: 32,
                   child: FittedBox(
@@ -573,166 +725,177 @@ class NoteCreateDialog extends HookConsumerWidget {
                       onChanged: (value) {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
                             .setPollNever(value);
                       },
                     ),
                   ),
-                )
+                ),
               ],
             ),
             if (!form.poll!.never) ...[
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               HookConsumer(
                 builder: (context, ref, child) {
-                  var form = ref
-                      .watch(noteCreateDialogStateProvider(noteId, noteType));
+                  var form = ref.watch(
+                    noteCreateDialogStateProvider(noteId, noteType),
+                  );
                   return Row(
                     children: [
                       Expanded(
-                          child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(S.current.day),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(S.current.day),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Expanded(
                                   child: TextFormField(
-                                decoration: inputDecoration(
-                                  themes,
-                                  S.current.day,
-                                ),
-                                style: const TextStyle(fontSize: 14),
-                                cursorWidth: 1,
-                                cursorColor: themes.fgColor,
-                                maxLines: 1,
-                                textAlignVertical: TextAlignVertical.center,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
+                                    decoration: inputDecoration(
+                                      themes,
+                                      S.current.day,
+                                    ),
+                                    style: const TextStyle(fontSize: 14),
+                                    cursorWidth: 1,
+                                    cursorColor: themes.fgColor,
+                                    maxLines: 1,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
 
-                                  // FilteringTextInputFormatter.allow(
-                                  //     RegExp(r'^([1-9]\d{0,3}|0)$')),
-                                ],
-                                onChanged: (value) {
-                                  ref
-                                      .read(noteCreateDialogStateProvider(
-                                              noteId, noteType)
-                                          .notifier)
-                                      .setPollTime(
-                                          days: int.tryParse(value) ?? 0);
-                                },
-                                initialValue: form.poll!.days.toString(),
-                              )),
-                            ],
-                          )
-                        ],
-                      )),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Expanded(
-                          child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(S.current.hour),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: TextFormField(
-                                decoration: inputDecoration(
-                                  themes,
-                                  S.current.hour,
-                                ),
-                                // style: const TextStyle(fontSize: 14),
-                                cursorWidth: 1,
-                                cursorColor: themes.fgColor,
-                                maxLines: 1,
-                                textAlignVertical: TextAlignVertical.center,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  FilteringTextInputFormatter(
-                                      RegExp(r'^([01]?[0-9]|2[0-4])$'),
-                                      allow: true)
-                                ],
-                                onChanged: (value) {
-                                  ref
-                                      .read(noteCreateDialogStateProvider(
-                                              noteId, noteType)
-                                          .notifier)
-                                      .setPollTime(
-                                          hours: int.tryParse(value) ?? 0);
-                                },
-                                initialValue: form.poll!.hours.toString(),
-                              )),
-                            ],
-                          )
-                        ],
-                      )),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Expanded(
-                          child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(S.current.minute),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  decoration: inputDecoration(
-                                    themes,
-                                    S.current.minute,
+                                      // FilteringTextInputFormatter.allow(
+                                      //     RegExp(r'^([1-9]\d{0,3}|0)$')),
+                                    ],
+                                    onChanged: (value) {
+                                      ref
+                                          .read(
+                                            noteCreateDialogStateProvider(
+                                              noteId,
+                                              noteType,
+                                            ).notifier,
+                                          )
+                                          .setPollTime(
+                                            days: int.tryParse(value) ?? 0,
+                                          );
+                                    },
+                                    initialValue: form.poll!.days.toString(),
                                   ),
-                                  style: const TextStyle(fontSize: 14),
-                                  cursorWidth: 1,
-                                  cursorColor: themes.fgColor,
-                                  maxLines: 1,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                    FilteringTextInputFormatter(
-                                        RegExp(r'^([0-5]?[0-9]|60)$'),
-                                        allow: true)
-                                  ],
-                                  onChanged: (value) {
-                                    ref
-                                        .read(noteCreateDialogStateProvider(
-                                                noteId, noteType)
-                                            .notifier)
-                                        .setPollTime(
-                                            minutes: int.tryParse(value) ?? 0);
-                                  },
-                                  initialValue: form.poll!.minutes.toString(),
                                 ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ))
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(S.current.hour),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    decoration: inputDecoration(
+                                      themes,
+                                      S.current.hour,
+                                    ),
+                                    // style: const TextStyle(fontSize: 14),
+                                    cursorWidth: 1,
+                                    cursorColor: themes.fgColor,
+                                    maxLines: 1,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      FilteringTextInputFormatter(
+                                        RegExp(r'^([01]?[0-9]|2[0-4])$'),
+                                        allow: true,
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      ref
+                                          .read(
+                                            noteCreateDialogStateProvider(
+                                              noteId,
+                                              noteType,
+                                            ).notifier,
+                                          )
+                                          .setPollTime(
+                                            hours: int.tryParse(value) ?? 0,
+                                          );
+                                    },
+                                    initialValue: form.poll!.hours.toString(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(S.current.minute),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    decoration: inputDecoration(
+                                      themes,
+                                      S.current.minute,
+                                    ),
+                                    style: const TextStyle(fontSize: 14),
+                                    cursorWidth: 1,
+                                    cursorColor: themes.fgColor,
+                                    maxLines: 1,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      FilteringTextInputFormatter(
+                                        RegExp(r'^([0-5]?[0-9]|60)$'),
+                                        allow: true,
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      ref
+                                          .read(
+                                            noteCreateDialogStateProvider(
+                                              noteId,
+                                              noteType,
+                                            ).notifier,
+                                          )
+                                          .setPollTime(
+                                            minutes: int.tryParse(value) ?? 0,
+                                          );
+                                    },
+                                    initialValue: form.poll!.minutes.toString(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   );
                 },
-              )
-            ]
+              ),
+            ],
           ],
         );
 
@@ -743,10 +906,7 @@ class NoteCreateDialog extends HookConsumerWidget {
         //   ),
         // );
 
-        return Padding(
-          padding: const EdgeInsets.all(8),
-          child: widget,
-        );
+        return Padding(padding: const EdgeInsets.all(8), child: widget);
       },
     );
   }
@@ -769,14 +929,17 @@ class NoteCreateDialog extends HookConsumerWidget {
                   clipBehavior: Clip.none,
                   children: [
                     Positioned.fill(
-                        child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
-                      child: DriverFileIcon(
-                        data: item,
-                        themes: themes,
-                        fit: BoxFit.cover,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(6),
+                        ),
+                        child: DriverFileIcon(
+                          data: item,
+                          themes: themes,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    )),
+                    ),
                     Positioned(
                       top: 4,
                       right: 4,
@@ -790,9 +953,11 @@ class NoteCreateDialog extends HookConsumerWidget {
                             width: 20,
                             height: 20,
                             decoration: BoxDecoration(
-                                color: Colors.black.withAlpha(100),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(15))),
+                              color: Colors.black.withAlpha(100),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
                             child: const Center(
                               child: Icon(
                                 TablerIcons.x,
@@ -803,211 +968,285 @@ class NoteCreateDialog extends HookConsumerWidget {
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
-              )
+              ),
           ],
         );
       },
     );
   }
 
-  Widget buildBottomBar(TextEditingController contentController,
-      bool isFullscreen, double keyboardHeight) {
+  Widget buildBottomBar(
+    TextEditingController contentController,
+    bool isFullscreen, {
+    required MobileComposerPanel mobilePanel,
+    required ValueChanged<MobileComposerPanel> onMobilePanelSelected,
+  }) {
     return HookConsumer(
       builder: (context, ref, child) {
         var form = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
         var themes = ref.watch(themeColorsProvider);
 
-        return Row(
+        final toolbar = Row(
           children: [
-            DriverSelectContextMenu(
-              builder: (context, open) {
-                return buildActionBottom(
+            if (isFullscreen)
+              buildActionBottom(
+                onPressed: () {
+                  onMobilePanelSelected(MobileComposerPanel.attachments);
+                },
+                context: context,
+                tooltip: S.current.insertDriverFile,
+                icon: TablerIcons.photo_plus,
+                color: mobilePanel == MobileComposerPanel.attachments
+                    ? themes.accentColor
+                    : null,
+              )
+            else
+              DriverSelectContextMenu(
+                builder: (context, open) {
+                  return buildActionBottom(
                     onPressed: () {
                       open();
                     },
                     context: context,
                     tooltip: S.current.insertDriverFile,
-                    icon: TablerIcons.photo_plus);
-              },
-              selectCallback: (List<DriveFileModel> files) {
-                ref
-                    .read(noteCreateDialogStateProvider(noteId, noteType)
-                        .notifier)
-                    .addFileList(files);
-              },
-            ),
-            const SizedBox(
-              width: 4,
-            ),
-            buildActionBottom(
-                onPressed: () {
-                  if (!form.isNotePoll) {
-                    ref
-                        .read(noteCreateDialogStateProvider(noteId, noteType)
-                            .notifier)
-                        .createPoll();
-                  } else {
-                    ref
-                        .read(noteCreateDialogStateProvider(noteId, noteType)
-                            .notifier)
-                        .removePoll();
-                  }
+                    icon: TablerIcons.photo_plus,
+                  );
                 },
-                context: context,
-                tooltip: S.current.vote,
-                icon: TablerIcons.chart_arrows,
-                color: form.isNotePoll ? themes.accentColor : null),
-            const SizedBox(
-              width: 4,
-            ),
-            buildActionBottom(
-                onPressed: () {
+                selectCallback: (List<DriveFileModel> files) {
                   ref
-                      .read(noteCreateDialogStateProvider(noteId, noteType)
-                          .notifier)
-                      .setIsCw(!form.isCw);
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
+                      .addFileList(files);
                 },
-                context: context,
-                tooltip: S.current.cw,
-                icon: TablerIcons.eye_off,
-                color: form.isCw ? themes.accentColor : null),
-            const SizedBox(
-              width: 4,
-            ),
+              ),
+            const SizedBox(width: 4),
             buildActionBottom(
-                onPressed: () async {
-                  var list = await showModel(
-                    context: context,
-                    builder: (context) {
-                      return const UserSelectDialog();
-                    },
-                  );
-                  if (list != null && list != []) {
-                    contentController.text = "${contentController.text} ${[
-                      for (var item in list ?? [])
-                        "@${item?.username}${item?.host != null ? "@${item?.host}" : ""}"
-                    ].join(" ")} ";
-                    ref
-                        .read(noteCreateDialogStateProvider(noteId, noteType)
-                            .notifier)
-                        .setText(contentController.text);
-                  }
-                },
-                context: context,
-                tooltip: S.current.mention,
-                icon: TablerIcons.at),
-            const SizedBox(
-              width: 4,
+              onPressed: () {
+                if (!form.isNotePoll) {
+                  ref
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
+                      .createPoll();
+                } else {
+                  ref
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
+                      .removePoll();
+                }
+              },
+              context: context,
+              tooltip: S.current.vote,
+              icon: TablerIcons.chart_arrows,
+              color: form.isNotePoll ? themes.accentColor : null,
             ),
+            const SizedBox(width: 4),
             buildActionBottom(
-                onPressed: () async {
-                  var list = await showModel(
-                    context: context,
-                    builder: (context) {
-                      return const HashtagSelectDialog();
-                    },
-                  );
-                  if (list != null && list != []) {
-                    contentController.text = "${contentController.text}${[
-                      for (var item in list ?? []) "#$item"
-                    ].join(" ")} ";
-                    ref
-                        .read(noteCreateDialogStateProvider(noteId, noteType)
-                            .notifier)
-                        .setText(contentController.text);
-                  }
-                },
-                context: context,
-                tooltip: S.current.hashtag,
-                icon: TablerIcons.hash),
-            const SizedBox(
-              width: 4,
+              onPressed: () {
+                ref
+                    .read(
+                      noteCreateDialogStateProvider(noteId, noteType).notifier,
+                    )
+                    .setIsCw(!form.isCw);
+              },
+              context: context,
+              tooltip: S.current.cw,
+              icon: TablerIcons.eye_off,
+              color: form.isCw ? themes.accentColor : null,
             ),
+            const SizedBox(width: 4),
             buildActionBottom(
-                onPressed: () {
-                  var maxSize = 350.0;
+              onPressed: () async {
+                var list = await showModel(
+                  context: context,
+                  builder: (context) {
+                    return const UserSelectDialog();
+                  },
+                );
+                if (list != null && list != []) {
+                  contentController.text =
+                      "${contentController.text} ${[for (var item in list ?? []) "@${item?.username}${item?.host != null ? "@${item?.host}" : ""}"].join(" ")} ";
+                  ref
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
+                      .setText(contentController.text);
+                }
+              },
+              context: context,
+              tooltip: S.current.mention,
+              icon: TablerIcons.at,
+            ),
+            const SizedBox(width: 4),
+            buildActionBottom(
+              onPressed: () async {
+                var list = await showModel(
+                  context: context,
+                  builder: (context) {
+                    return const HashtagSelectDialog();
+                  },
+                );
+                if (list != null && list != []) {
+                  contentController.text =
+                      "${contentController.text}${[for (var item in list ?? []) "#$item"].join(" ")} ";
+                  ref
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
+                      .setText(contentController.text);
+                }
+              },
+              context: context,
+              tooltip: S.current.hashtag,
+              icon: TablerIcons.hash,
+            ),
+            const SizedBox(width: 4),
+            buildActionBottom(
+              onPressed: () {
+                var maxSize = 350.0;
 
-                  if (!isFullscreen) {
-                    maxSize = MediaQuery.of(context).size.height -
-                        (myKey.currentContext?.size?.height ?? 0) -
-                        40;
-                    maxSize = maxSize.clamp(250, 350);
-                  }
-                  if (isFullscreen) {
-                    EmojiList.showBottomSheet(context,
-                        onInsert: (data, context) {
-                      contentController.text =
-                          "${contentController.text}${data["name"]}";
-                    });
-                  } else {
-                    ref
-                        .read(noteCreateDialogStateProvider(noteId, noteType)
-                            .notifier)
-                        .setEmojiListHeight(maxSize);
-                    ref
-                        .read(noteCreateDialogStateProvider(noteId, noteType)
-                            .notifier)
-                        .setIsShowEmoji(!form.isShowEmoji);
-                  }
-                },
-                context: context,
-                tooltip: S.current.emoji,
-                icon: TablerIcons.mood_happy,
-                color: form.isShowEmoji ? themes.accentColor : null),
+                if (isFullscreen) {
+                  onMobilePanelSelected(MobileComposerPanel.emoji);
+                } else {
+                  maxSize =
+                      MediaQuery.of(context).size.height -
+                      (myKey.currentContext?.size?.height ?? 0) -
+                      40;
+                  maxSize = maxSize.clamp(250, 350);
+                  ref
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
+                      .setEmojiListHeight(maxSize);
+                  ref
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
+                      .setIsShowEmoji(!form.isShowEmoji);
+                }
+              },
+              context: context,
+              tooltip: S.current.emoji,
+              icon: TablerIcons.mood_happy,
+              color: isFullscreen
+                  ? mobilePanel == MobileComposerPanel.emoji
+                        ? themes.accentColor
+                        : null
+                  : form.isShowEmoji
+                  ? themes.accentColor
+                  : null,
+            ),
             const Spacer(),
             buildActionBottom(
-                onPressed: () {
-                  ref
-                      .read(noteCreateDialogStateProvider(noteId, noteType)
-                          .notifier)
-                      .setPreview(!form.preview);
-                },
-                context: context,
-                tooltip: S.current.previewNote,
-                icon: TablerIcons.eye,
-                color: form.preview ? themes.accentColor : null),
+              onPressed: () {
+                ref
+                    .read(
+                      noteCreateDialogStateProvider(noteId, noteType).notifier,
+                    )
+                    .setPreview(!form.preview);
+              },
+              context: context,
+              tooltip: S.current.previewNote,
+              icon: TablerIcons.eye,
+              color: form.preview ? themes.accentColor : null,
+            ),
           ],
+        );
+        if (!isFullscreen) return toolbar;
+
+        // The fullscreen MkCard has 8 px content padding. Let the separator
+        // bleed through that padding while keeping the action icons aligned
+        // with the rest of the composer content.
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return OverflowBox(
+              alignment: Alignment.center,
+              minWidth: constraints.maxWidth + 16,
+              maxWidth: constraints.maxWidth + 16,
+              fit: OverflowBoxFit.deferToChild,
+              child: Container(
+                key: const ValueKey('mobile-composer-toolbar'),
+                padding: const EdgeInsets.fromLTRB(8, 5, 8, 2),
+                decoration: BoxDecoration(
+                  color: themes.bgColor,
+                  border: Border(
+                    top: BorderSide(color: themes.dividerColor, width: 1),
+                  ),
+                ),
+                child: toolbar,
+              ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget buildActionBottom(
-      {required BuildContext context,
-      required void Function()? onPressed,
-      required String tooltip,
-      required IconData icon,
-      Color? color}) {
-    return HookConsumer(builder: (context, ref, child) {
-      var themes = ref.watch(themeColorsProvider);
-      return Tooltip(
-        message: tooltip,
-        child: IconButton(
-          onPressed: onPressed,
-          style: ButtonStyle(
-            foregroundColor: WidgetStateProperty.all(themes.fgColor),
-            shape: WidgetStateProperty.all(
-              const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8),
+  Widget buildActionBottom({
+    required BuildContext context,
+    required void Function()? onPressed,
+    required String tooltip,
+    required IconData icon,
+    Color? color,
+  }) {
+    return HookConsumer(
+      builder: (context, ref, child) {
+        var themes = ref.watch(themeColorsProvider);
+        return Tooltip(
+          message: tooltip,
+          child: IconButton(
+            onPressed: onPressed,
+            style: ButtonStyle(
+              foregroundColor: WidgetStateProperty.all(themes.fgColor),
+              shape: WidgetStateProperty.all(
+                const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
               ),
+              padding: WidgetStateProperty.all(
+                const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              ),
             ),
-            padding: WidgetStateProperty.all(
-              const EdgeInsets.fromLTRB(0, 0, 0, 0),
-            ),
+            icon: Icon(icon, size: 16, color: color),
           ),
-          icon: Icon(icon, size: 16, color: color),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
-  Widget buildTextField(MetaDetailedModel? meta, bool isFullscreen,
-      TextEditingController contentController) {
+  Widget buildTextField(
+    MetaDetailedModel? meta,
+    bool isFullscreen,
+    TextEditingController contentController, {
+    FocusNode? focusNode,
+    VoidCallback? onTextInputRequested,
+  }) {
     return HookConsumer(
       builder: (context, ref, child) {
         var state = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
@@ -1019,18 +1258,24 @@ class NoteCreateDialog extends HookConsumerWidget {
               if (state.isCw) ...[
                 TextFormField(
                   key: const ValueKey("cw"),
+                  onTap: onTextInputRequested,
                   keyboardType: TextInputType.multiline,
                   decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: S.current.cw,
-                      isDense: true),
+                    border: InputBorder.none,
+                    hintText: S.current.cw,
+                    isDense: true,
+                  ),
                   maxLines: 1,
                   initialValue: state.cw,
                   style: DefaultTextStyle.of(context).style,
                   onChanged: (value) {
                     ref
-                        .read(noteCreateDialogStateProvider(noteId, noteType)
-                            .notifier)
+                        .read(
+                          noteCreateDialogStateProvider(
+                            noteId,
+                            noteType,
+                          ).notifier,
+                        )
                         .setCw(value);
                   },
                 ),
@@ -1038,14 +1283,16 @@ class NoteCreateDialog extends HookConsumerWidget {
               ],
               TextFormField(
                 controller: contentController,
+                focusNode: focusNode,
                 key: const ValueKey("text"),
+                onTap: onTextInputRequested,
                 keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: [
                     if (noteType == NoteType.reply) S.current.replyNoteHint,
                     if (noteType == NoteType.reNote) S.current.reNoteHint,
-                    S.current.createNoteHint
+                    S.current.createNoteHint,
                   ][0],
                   isDense: true,
                 ),
@@ -1056,11 +1303,15 @@ class NoteCreateDialog extends HookConsumerWidget {
                 // initialValue: state.text,
                 onChanged: (value) {
                   ref
-                      .read(noteCreateDialogStateProvider(noteId, noteType)
-                          .notifier)
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
                       .setText(value);
                 },
-              )
+              ),
             ],
           ),
         );
@@ -1069,123 +1320,154 @@ class NoteCreateDialog extends HookConsumerWidget {
   }
 
   Widget buildReactionAcceptanceBottom(ThemeColorModel themes) {
-    return HookConsumer(builder: (context, ref, child) {
-      var stats = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
-      return Tooltip(
-        message: S.current.reactionAccepting,
-        child: SizedBox(
-          width: 32,
-          child: ContextMenuBuilder(
-            maskColor: Colors.black.withAlpha(128),
-            menu: ContextMenuCard(
-              width: 250,
-              menuListBuilder: () {
-                return [
-                  ContextMenuItem(
+    return HookConsumer(
+      builder: (context, ref, child) {
+        var stats = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
+        return Tooltip(
+          message: S.current.reactionAccepting,
+          child: SizedBox(
+            width: 32,
+            child: ContextMenuBuilder(
+              maskColor: Colors.black.withAlpha(128),
+              menu: ContextMenuCard(
+                width: 250,
+                menuListBuilder: () {
+                  return [
+                    ContextMenuItem(
                       label: S.current.reactionAcceptingAll,
                       isActive: stats.reactionAcceptance == null,
                       onTap: () {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
                             .setReactionAcceptance(null);
                         return false;
-                      }),
-                  ContextMenuItem(
+                      },
+                    ),
+                    ContextMenuItem(
                       label: S.current.reactionAcceptingLikeOnlyRemote,
-                      isActive: stats.reactionAcceptance ==
+                      isActive:
+                          stats.reactionAcceptance ==
                           NoteReactionAcceptance.likeOnlyForRemote,
                       onTap: () {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
                             .setReactionAcceptance(
-                                NoteReactionAcceptance.likeOnlyForRemote);
+                              NoteReactionAcceptance.likeOnlyForRemote,
+                            );
                         return false;
-                      }),
-                  ContextMenuItem(
+                      },
+                    ),
+                    ContextMenuItem(
                       label: S.current.reactionAcceptingNoneSensitive,
-                      isActive: stats.reactionAcceptance ==
+                      isActive:
+                          stats.reactionAcceptance ==
                           NoteReactionAcceptance.nonSensitiveOnly,
                       onTap: () {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
                             .setReactionAcceptance(
-                                NoteReactionAcceptance.nonSensitiveOnly);
+                              NoteReactionAcceptance.nonSensitiveOnly,
+                            );
                         return false;
-                      }),
-                  ContextMenuItem(
+                      },
+                    ),
+                    ContextMenuItem(
                       label: S.current.reactionAcceptingNoneSensitiveOrLocal,
-                      isActive: stats.reactionAcceptance ==
+                      isActive:
+                          stats.reactionAcceptance ==
                           NoteReactionAcceptance
                               .nonSensitiveOnlyForLocalLikeOnlyForRemote,
                       onTap: () {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
-                            .setReactionAcceptance(NoteReactionAcceptance
-                                .nonSensitiveOnlyForLocalLikeOnlyForRemote);
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
+                            .setReactionAcceptance(
+                              NoteReactionAcceptance
+                                  .nonSensitiveOnlyForLocalLikeOnlyForRemote,
+                            );
                         return false;
-                      }),
-                  ContextMenuItem(
+                      },
+                    ),
+                    ContextMenuItem(
                       label: S.current.reactionAcceptingLikeOnly,
-                      isActive: stats.reactionAcceptance ==
+                      isActive:
+                          stats.reactionAcceptance ==
                           NoteReactionAcceptance.likeOnly,
                       onTap: () {
                         ref
                             .read(
-                                noteCreateDialogStateProvider(noteId, noteType)
-                                    .notifier)
+                              noteCreateDialogStateProvider(
+                                noteId,
+                                noteType,
+                              ).notifier,
+                            )
                             .setReactionAcceptance(
-                                NoteReactionAcceptance.likeOnly);
+                              NoteReactionAcceptance.likeOnly,
+                            );
                         return false;
-                      }),
-                ];
-              },
-            ),
-            child: Builder(
-              builder: (context) {
-                return TextButton(
-                  onPressed: () {
-                    RenderBox box = context.findRenderObject() as RenderBox;
-                    var y = box.localToGlobal(Offset.zero).dy + box.size.height;
-                    var x = box.localToGlobal(Offset.zero).dx -
-                        125 +
-                        box.size.width / 2;
-                    context
-                        .findAncestorStateOfType<ContextMenuBuilderState>()
-                        ?.show(Offset(x, y));
-                  },
-                  style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all(themes.fgColor),
-                    shape: WidgetStateProperty.all(
-                      const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8),
+                      },
+                    ),
+                  ];
+                },
+              ),
+              child: Builder(
+                builder: (context) {
+                  return TextButton(
+                    onPressed: () {
+                      RenderBox box = context.findRenderObject() as RenderBox;
+                      var y =
+                          box.localToGlobal(Offset.zero).dy + box.size.height;
+                      var x =
+                          box.localToGlobal(Offset.zero).dx -
+                          125 +
+                          box.size.width / 2;
+                      context
+                          .findAncestorStateOfType<ContextMenuBuilderState>()
+                          ?.show(Offset(x, y));
+                    },
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStateProperty.all(themes.fgColor),
+                      shape: WidgetStateProperty.all(
+                        const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                       ),
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      ),
                     ),
-                    padding: WidgetStateProperty.all(
-                      const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: Icon(
+                      TablerIcons.icons,
+                      color: themes.fgColor,
+                      size: 16,
                     ),
-                  ),
-                  child: Icon(
-                    TablerIcons.icons,
-                    color: themes.fgColor,
-                    size: 16,
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   Widget buildLocalOnlyBottom(ThemeColorModel themes) {
@@ -1200,18 +1482,18 @@ class NoteCreateDialog extends HookConsumerWidget {
               onPressed: () {
                 if (state.visibility == NoteVisibility.specified) return;
                 ref
-                    .read(noteCreateDialogStateProvider(noteId, noteType)
-                        .notifier)
+                    .read(
+                      noteCreateDialogStateProvider(noteId, noteType).notifier,
+                    )
                     .setLocalOnly(!state.localOnly);
               },
               style: ButtonStyle(
                 foregroundColor: WidgetStateProperty.all(
-                    state.localOnly ? themes.errorColor : themes.fgColor),
+                  state.localOnly ? themes.errorColor : themes.fgColor,
+                ),
                 shape: WidgetStateProperty.all(
                   const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8),
-                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
                 ),
                 padding: WidgetStateProperty.all(
@@ -1234,19 +1516,20 @@ class NoteCreateDialog extends HookConsumerWidget {
   }
 
   Widget buildVisibilityBottomList(ThemeColorModel themes) {
-    return HookConsumer(builder: (context, ref, child) {
-      var state = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
-      var icon = switch (state.visibility) {
-        NoteVisibility.public => TablerIcons.world,
-        NoteVisibility.home => TablerIcons.home,
-        NoteVisibility.followers => TablerIcons.lock,
-        NoteVisibility.specified => TablerIcons.mail,
-      };
-      return Tooltip(
-        message: S.current.noteVisibility,
-        child: SizedBox(
-          width: 32,
-          child: ContextMenuBuilder(
+    return HookConsumer(
+      builder: (context, ref, child) {
+        var state = ref.watch(noteCreateDialogStateProvider(noteId, noteType));
+        var icon = switch (state.visibility) {
+          NoteVisibility.public => TablerIcons.world,
+          NoteVisibility.home => TablerIcons.home,
+          NoteVisibility.followers => TablerIcons.lock,
+          NoteVisibility.specified => TablerIcons.mail,
+        };
+        return Tooltip(
+          message: S.current.noteVisibility,
+          child: SizedBox(
+            width: 32,
+            child: ContextMenuBuilder(
               maskColor: Colors.black.withAlpha(128),
               menu: ContextMenuCard(
                 width: 250,
@@ -1254,15 +1537,19 @@ class NoteCreateDialog extends HookConsumerWidget {
                   return HookConsumer(
                     builder: (context, ref, child) {
                       var state = ref.watch(
-                          noteCreateDialogStateProvider(noteId, noteType));
+                        noteCreateDialogStateProvider(noteId, noteType),
+                      );
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (!large)
                             Padding(
-                              padding:
-                                  EdgeInsets.only(left: 14, top: 8, bottom: 4),
+                              padding: EdgeInsets.only(
+                                left: 14,
+                                top: 8,
+                                bottom: 4,
+                              ),
                               child: Opacity(
                                 opacity: 0.7,
                                 child: Text(
@@ -1272,45 +1559,49 @@ class NoteCreateDialog extends HookConsumerWidget {
                               ),
                             ),
                           buildVisibilityBottom(
-                              state,
-                              themes,
-                              S.current.noteVisibilityPublic,
-                              S.current.noteVisibilityPublicText,
-                              TablerIcons.world,
-                              NoteVisibility.public,
-                              state.visibility,
-                              onHidden,
-                              large),
+                            state,
+                            themes,
+                            S.current.noteVisibilityPublic,
+                            S.current.noteVisibilityPublicText,
+                            TablerIcons.world,
+                            NoteVisibility.public,
+                            state.visibility,
+                            onHidden,
+                            large,
+                          ),
                           buildVisibilityBottom(
-                              state,
-                              themes,
-                              S.current.noteVisibilityHome,
-                              S.current.noteVisibilityHomeText,
-                              TablerIcons.home,
-                              NoteVisibility.home,
-                              state.visibility,
-                              onHidden,
-                              large),
+                            state,
+                            themes,
+                            S.current.noteVisibilityHome,
+                            S.current.noteVisibilityHomeText,
+                            TablerIcons.home,
+                            NoteVisibility.home,
+                            state.visibility,
+                            onHidden,
+                            large,
+                          ),
                           buildVisibilityBottom(
-                              state,
-                              themes,
-                              S.current.noteVisibilityFollowers,
-                              S.current.noteVisibilityFollowersText,
-                              TablerIcons.lock,
-                              NoteVisibility.followers,
-                              state.visibility,
-                              onHidden,
-                              large),
+                            state,
+                            themes,
+                            S.current.noteVisibilityFollowers,
+                            S.current.noteVisibilityFollowersText,
+                            TablerIcons.lock,
+                            NoteVisibility.followers,
+                            state.visibility,
+                            onHidden,
+                            large,
+                          ),
                           buildVisibilityBottom(
-                              state,
-                              themes,
-                              S.current.noteVisibilitySpecified,
-                              S.current.noteVisibilitySpecifiedText,
-                              TablerIcons.mail,
-                              NoteVisibility.specified,
-                              state.visibility,
-                              onHidden,
-                              large),
+                            state,
+                            themes,
+                            S.current.noteVisibilitySpecified,
+                            S.current.noteVisibilitySpecifiedText,
+                            TablerIcons.mail,
+                            NoteVisibility.specified,
+                            state.visibility,
+                            onHidden,
+                            large,
+                          ),
                         ],
                       );
                     },
@@ -1319,36 +1610,34 @@ class NoteCreateDialog extends HookConsumerWidget {
               ),
               mode: const [ContextMenuMode.onTap],
               alignmentChild: true,
-              child: Builder(builder: (context) {
-                return TextButton(
-                  style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all(themes.fgColor),
-                    shape: WidgetStateProperty.all(
-                      const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8),
+              child: Builder(
+                builder: (context) {
+                  return TextButton(
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStateProperty.all(themes.fgColor),
+                      shape: WidgetStateProperty.all(
+                        const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                       ),
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      ),
                     ),
-                    padding: WidgetStateProperty.all(
-                      const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    ),
-                  ),
-                  onPressed: () {
-                    context
-                        .findAncestorStateOfType<ContextMenuBuilderState>()
-                        ?.show(Offset.zero);
-                  },
-                  child: Icon(
-                    icon,
-                    size: 16,
-                    color: themes.fgColor,
-                  ),
-                );
-              })),
-        ),
-      );
-    });
+                    onPressed: () {
+                      context
+                          .findAncestorStateOfType<ContextMenuBuilderState>()
+                          ?.show(Offset.zero);
+                    },
+                    child: Icon(icon, size: 16, color: themes.fgColor),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget buildVisibilityBottom(
@@ -1368,23 +1657,31 @@ class NoteCreateDialog extends HookConsumerWidget {
           builder: (context, isHover) {
             return DefaultTextStyle(
               style: DefaultTextStyle.of(context).style.copyWith(
-                  color: value == currentValue
-                      ? themes.accentColor
-                      : themes.fgColor),
+                color: value == currentValue
+                    ? themes.accentColor
+                    : themes.fgColor,
+              ),
               child: GestureDetector(
                 onTap: () {
                   ref
-                      .read(noteCreateDialogStateProvider(noteId, noteType)
-                          .notifier)
+                      .read(
+                        noteCreateDialogStateProvider(
+                          noteId,
+                          noteType,
+                        ).notifier,
+                      )
                       .setVisibility(value);
                   onHidden();
                 },
                 behavior: HitTestBehavior.opaque,
                 child: Container(
-                  color:
-                      isHover ? Colors.black.withAlpha(12) : Colors.transparent,
+                  color: isHover
+                      ? Colors.black.withAlpha(12)
+                      : Colors.transparent,
                   padding: EdgeInsets.symmetric(
-                      horizontal: large ? 20 : 14, vertical: large ? 16 : 8),
+                    horizontal: large ? 20 : 14,
+                    vertical: large ? 16 : 8,
+                  ),
                   child: Row(
                     children: [
                       Icon(
@@ -1394,24 +1691,23 @@ class NoteCreateDialog extends HookConsumerWidget {
                             ? themes.accentColor
                             : themes.fgColor,
                       ),
-                      SizedBox(
-                        width: large ? 16 : 12,
-                      ),
+                      SizedBox(width: large ? 16 : 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             title,
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: large ? 14 : 12),
+                              fontWeight: FontWeight.bold,
+                              fontSize: large ? 14 : 12,
+                            ),
                           ),
                           Text(
                             desc,
                             style: TextStyle(fontSize: large ? 13 : 12),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -1431,8 +1727,13 @@ class NoteCreateDialog extends HookConsumerWidget {
     String? initText,
     List<DriveFileModel>? files,
   }) {
+    final isFullscreen = MediaQuery.sizeOf(context).width < 580;
     showModel(
       context: context,
+      // The mobile composer completely covers the screen. Marking its route
+      // opaque keeps the timeline and its image/layout-heavy widgets out of
+      // the keyboard inset animation behind it.
+      opaque: isFullscreen,
       builder: (p0) {
         return NoteCreateDialog(
           noteId: noteId,
@@ -1457,10 +1758,7 @@ class NoteCreateDialog extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              if (state.isCw) ...[
-                MFMText(text: state.cw),
-                const Divider(),
-              ],
+              if (state.isCw) ...[MFMText(text: state.cw), const Divider()],
               MFMText(text: state.text ?? ""),
             ],
           ),

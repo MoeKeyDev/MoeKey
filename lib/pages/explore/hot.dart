@@ -7,6 +7,7 @@ import 'package:moekey/widgets/notes/note_pagination_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../generated/l10n.dart';
+import '../../logger.dart';
 import '../../utils/get_padding_note.dart';
 import '../../widgets/mk_header.dart';
 import '../../widgets/mk_nav_button.dart';
@@ -36,6 +37,13 @@ class ExploreHotPage extends HookConsumerWidget {
               onRefresh: () => ref.refresh(dataProvider.future),
               hasMore: data.value?.hasMore,
               items: data.value?.list,
+              initialLoading: data.isLoading && data.value == null,
+              initialError: data.hasError && data.value == null
+                  ? data.error
+                  : null,
+              onRetry: () => ref.invalidate(dataProvider),
+              loadMoreError: data.value?.loadMoreError,
+              onRetryLoadMore: () => ref.read(dataProvider.notifier).load(),
             ),
             Positioned(
               top: mediaPadding.top - 8,
@@ -57,7 +65,7 @@ class ExploreHotPage extends HookConsumerWidget {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         );
       },
@@ -67,6 +75,8 @@ class ExploreHotPage extends HookConsumerWidget {
 
 @riverpod
 class ExploreHotPageStates extends _$ExploreHotPageStates {
+  bool _isLoadingMore = false;
+
   @override
   FutureOr<NoteListModel> build(int index) async {
     var apis = ref.watch(misskeyApisProvider);
@@ -82,19 +92,33 @@ class ExploreHotPageStates extends _$ExploreHotPageStates {
   }
 
   Future<void> load() async {
-    var model = state.value ?? NoteListModel();
-    var apis = ref.watch(misskeyApisProvider);
-    List<NoteModel> list = [];
-    if (index == 1) {
-      list = await apis.notes
-          .pollsRecommendation(untilId: model.list.lastOrNull?.id);
-    } else {
-      list = await apis.notes.featured(untilId: model.list.lastOrNull?.id);
+    if (state.isLoading || _isLoadingMore) return;
+
+    final model = state.value;
+    if (model == null) return;
+
+    _isLoadingMore = true;
+    model.loadMoreError = null;
+    ref.notifyListeners();
+    try {
+      final apis = ref.watch(misskeyApisProvider);
+      final list = index == 1
+          ? await apis.notes.pollsRecommendation(
+              untilId: model.list.lastOrNull?.id,
+            )
+          : await apis.notes.featured(untilId: model.list.lastOrNull?.id);
+      if (list.isEmpty) {
+        model.hasMore = false;
+      }
+      model.list += list;
+    } catch (error, stackTrace) {
+      logger.e(error);
+      logger.e(stackTrace);
+      model.loadMoreError = error;
+    } finally {
+      _isLoadingMore = false;
+      state = AsyncData(model);
+      ref.notifyListeners();
     }
-    if (list.isEmpty) {
-      model.hasMore = false;
-    }
-    model.list += list;
-    state = AsyncData(model);
   }
 }

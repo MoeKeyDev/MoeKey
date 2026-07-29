@@ -150,6 +150,8 @@ class UserInfo extends _$UserInfo {
 
 @riverpod
 class UserNotesList extends _$UserNotesList {
+  bool _isLoadingMore = false;
+
   @override
   FutureOr<NoteListModel> build({
     required String userId,
@@ -183,30 +185,37 @@ class UserNotesList extends _$UserNotesList {
   }
 
   Future<void> load() async {
-    if (state.isLoading) return;
-    state = const AsyncValue.loading();
-    var model = state.value ?? NoteListModel();
-    try {
-      String? untilId;
-      if (state.value?.list.isNotEmpty ?? false) {
-        untilId = state.value?.list.last.id;
-      }
-      List<NoteModel> notesList;
+    if (state.isLoading || _isLoadingMore) return;
+    final model = state.value;
+    if (model == null) return;
 
-      notesList = await notes(untilId: untilId);
+    _isLoadingMore = true;
+    model.loadMoreError = null;
+    ref.notifyListeners();
+    try {
+      final untilId = model.list.lastOrNull?.id;
+      final notesList = await notes(untilId: untilId);
 
       model.list += notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;
       }
+    } catch (error, stackTrace) {
+      logger.e(error);
+      logger.e(stackTrace);
+      model.loadMoreError = error;
     } finally {
+      _isLoadingMore = false;
       state = AsyncData(model);
+      ref.notifyListeners();
     }
   }
 }
 
 @riverpod
 class UserReactionsList extends _$UserReactionsList {
+  bool _isLoadingMore = false;
+
   @override
   FutureOr<NoteListModel> build({required String userId}) async {
     var note = NoteListModel();
@@ -223,22 +232,29 @@ class UserReactionsList extends _$UserReactionsList {
   }
 
   Future<void> load() async {
-    if (state.isLoading) return;
-    state = const AsyncValue.loading();
-    var model = state.value ?? NoteListModel();
+    if (state.isLoading || _isLoadingMore) return;
+    final model = state.value;
+    if (model == null) return;
+
+    _isLoadingMore = true;
+    model.loadMoreError = null;
+    ref.notifyListeners();
     try {
-      String? untilId;
-      if (state.value?.list.isNotEmpty ?? false) {
-        untilId = state.value?.list.last.id;
-      }
-      List<NoteModel> notesList = await reactions(untilId: untilId);
+      final untilId = model.list.lastOrNull?.id;
+      final notesList = await reactions(untilId: untilId);
 
       model.list += notesList;
       if (notesList.isEmpty) {
         model.hasMore = false;
       }
+    } catch (error, stackTrace) {
+      logger.e(error);
+      logger.e(stackTrace);
+      model.loadMoreError = error;
     } finally {
+      _isLoadingMore = false;
       state = AsyncData(model);
+      ref.notifyListeners();
     }
   }
 }

@@ -13,6 +13,7 @@ part 'note.g.dart';
 class MkLoadMoreListModel<T> {
   List<T> list = [];
   bool hasMore = true;
+  Object? loadMoreError;
 }
 
 class NoteListModel extends MkLoadMoreListModel<NoteModel> {}
@@ -94,7 +95,8 @@ enum NoteReactionAcceptance {
   likeOnlyForRemote("likeOnlyForRemote"),
   nonSensitiveOnly("nonSensitiveOnly"),
   nonSensitiveOnlyForLocalLikeOnlyForRemote(
-      "nonSensitiveOnlyForLocalLikeOnlyForRemote"),
+    "nonSensitiveOnlyForLocalLikeOnlyForRemote",
+  ),
   likeOnly("likeOnly");
 
   const NoteReactionAcceptance(this.value);

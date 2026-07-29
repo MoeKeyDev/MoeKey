@@ -47,13 +47,15 @@ class DefaultMkRefreshLoadListController<T> extends InheritedWidget {
   static MkRefreshLoadListController? of<T>(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<
-            DefaultMkRefreshLoadListController>()
+          DefaultMkRefreshLoadListController
+        >()
         ?.controller;
   }
 
   @override
   bool updateShouldNotify(
-      covariant DefaultMkRefreshLoadListController oldWidget) {
+    covariant DefaultMkRefreshLoadListController oldWidget,
+  ) {
     return oldWidget.controller != controller;
   }
 }
@@ -68,6 +70,11 @@ class MkRefreshLoadList<T> extends StatelessWidget {
     required this.hasMore,
     required this.empty,
     this.controller,
+    this.initialLoading = false,
+    this.initialError,
+    this.onRetry,
+    this.loadMoreError,
+    this.onRetryLoadMore,
   });
 
   final Future Function() onLoad;
@@ -77,6 +84,11 @@ class MkRefreshLoadList<T> extends StatelessWidget {
   final bool? empty;
   final bool? hasMore;
   final MkRefreshLoadListController? controller;
+  final bool initialLoading;
+  final Object? initialError;
+  final VoidCallback? onRetry;
+  final Object? loadMoreError;
+  final VoidCallback? onRetryLoadMore;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +98,9 @@ class MkRefreshLoadList<T> extends StatelessWidget {
         controller ?? DefaultMkRefreshLoadListController.of(context);
     var refreshController = defaultController?.refreshController;
     var scrollController = defaultController?.scrollController;
+
+    final isInitialError = initialError != null;
+    final isInitialState = initialLoading || isInitialError;
 
     Widget child = CustomScrollView(
       primary: true,
@@ -97,18 +112,32 @@ class MkRefreshLoadList<T> extends StatelessWidget {
           padding: mediaPadding.add(padding),
           sliver: SliverMainAxisGroup(
             slivers: [
-              ...slivers,
-              if (isEmpty)
-                SliverToBoxAdapter(
-                  child: _Empty(
-                    height: 300,
-                    onTap: onRefresh,
+              if (isInitialState)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: initialLoading
+                      ? const Center(child: LoadingCircularProgress(size: 28))
+                      : MkErrorState(onRetry: onRetry),
+                )
+              else ...[
+                ...slivers,
+                if (isEmpty)
+                  SliverToBoxAdapter(
+                    child: _Empty(height: 300, onTap: onRefresh),
                   ),
-                ),
-              SliverLoadMore(hasMore: hasMore, onLoad: onLoad)
+                if (loadMoreError != null)
+                  SliverToBoxAdapter(
+                    child: MkErrorState(
+                      compact: true,
+                      onRetry: onRetryLoadMore,
+                    ),
+                  )
+                else
+                  SliverLoadMore(hasMore: hasMore, onLoad: onLoad),
+              ],
             ],
           ),
-        )
+        ),
       ],
     );
 
@@ -132,10 +161,7 @@ class MkRefreshLoadList<T> extends StatelessWidget {
 }
 
 class _Empty extends ConsumerWidget {
-  const _Empty({
-    required this.height,
-    this.onTap,
-  });
+  const _Empty({required this.height, this.onTap});
 
   final double height;
   final Future Function()? onTap;
@@ -147,10 +173,7 @@ class _Empty extends ConsumerWidget {
     // ));
     return GestureDetector(
       onTap: onTap,
-      child: SizedBox(
-        height: height,
-        child: const EmptyWidget(),
-      ),
+      child: SizedBox(height: height, child: const EmptyWidget()),
     );
   }
 }
