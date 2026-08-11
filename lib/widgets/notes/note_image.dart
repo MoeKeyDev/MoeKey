@@ -137,7 +137,10 @@ class NoteImage extends HookConsumerWidget {
                           fit: fit,
                         ),
                     ] else if (isVideo)
-                      VideoPlayerComponent(url: imageFile.url),
+                      VideoPlayerComponent(
+                        key: ValueKey(imageFile.id),
+                        url: imageFile.url,
+                      ),
                   if (!isHidden.value && showHideButton)
                     Positioned(
                       right: 8,

@@ -22,7 +22,9 @@ class UserSelectDialog extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     var userList = ref.watch(userSelectDialogStateProvider);
-    var selectList = useState({});
+    var selectList = useState<Map<String, UserFullModel>>(
+      <String, UserFullModel>{},
+    );
 
     return MkModal(
       body: buildUserListView(userList, selectList, themes),
@@ -35,7 +37,7 @@ class UserSelectDialog extends HookConsumerWidget {
 
   SingleChildScrollView buildUserListView(
     AsyncValue<List<UserFullModel>> userList,
-    ValueNotifier<Map<dynamic, dynamic>> selectList,
+    ValueNotifier<Map<String, UserFullModel>> selectList,
     ThemeColorModel themes,
   ) {
     return SingleChildScrollView(
@@ -47,19 +49,19 @@ class UserSelectDialog extends HookConsumerWidget {
           for (var item in userList.value ?? [])
             GestureDetector(
               onTap: () {
-                if (selectList.value.containsKey(item.id)) {
-                  selectList.value.remove(item.id);
+                final updated = Map<String, UserFullModel>.of(selectList.value);
+                if (updated.containsKey(item.id)) {
+                  updated.remove(item.id);
                 } else {
                   if (maxSelect == 1) {
-                    selectList.value.clear();
+                    updated.clear();
                   } else if (maxSelect != null &&
-                      selectList.value.length >= maxSelect!) {
+                      updated.length >= maxSelect!) {
                     return;
                   }
-                  selectList.value[item.id] = item;
+                  updated[item.id] = item;
                 }
-
-                selectList.value = Map.from(selectList.value);
+                selectList.value = updated;
               },
               behavior: HitTestBehavior.opaque,
               child: buildUserItem(
@@ -73,7 +75,7 @@ class UserSelectDialog extends HookConsumerWidget {
     );
   }
 
-  Widget buildHeader(Map selectList) {
+  Widget buildHeader(Map<String, UserFullModel> selectList) {
     return HookConsumer(
       builder: (context, ref, child) {
         var themes = ref.watch(themeColorsProvider);
@@ -83,7 +85,7 @@ class UserSelectDialog extends HookConsumerWidget {
             const SizedBox(width: 4),
             IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(context).pop<List<UserFullModel>>();
               },
               icon: Icon(TablerIcons.x, size: 18, color: themes.fgColor),
             ),
@@ -95,7 +97,9 @@ class UserSelectDialog extends HookConsumerWidget {
               const LoadingCircularProgress(size: 18, strokeWidth: 4),
             IconButton(
               onPressed: () {
-                Navigator.of(context).pop(selectList.values);
+                Navigator.of(context).pop<List<UserFullModel>>(
+                  selectList.values.toList(growable: false),
+                );
               },
               icon: Icon(TablerIcons.check, size: 18, color: themes.fgColor),
             ),
@@ -148,7 +152,11 @@ class UserSelectDialog extends HookConsumerWidget {
     );
   }
 
-  Widget buildUserItem(ThemeColorModel themes, item, isActive) {
+  Widget buildUserItem(
+    ThemeColorModel themes,
+    UserFullModel item,
+    bool isActive,
+  ) {
     var name = item.name ?? item.name ?? "";
     var color = isActive ? themes.fgOnAccentColor : themes.fgColor;
     var style = TextStyle(color: color);

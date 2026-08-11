@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,17 +8,50 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/drive.dart';
 import '../../apis/models/note.dart';
+import '../../apis/models/user_full.dart';
 import '../../generated/l10n.dart';
 import '../../logger.dart';
 import '../../status/dio.dart';
+import '../../status/misskey_api.dart';
+import '../../status/note_posted.dart';
 import '../../status/server.dart';
 import '../mk_info_dialog.dart';
 
 part 'note_create_dialog_state.g.dart';
 
+NoteModel decodeCreatedNoteResponse(Object? responseData) {
+  if (responseData is! Map || responseData['createdNote'] is! Map) {
+    throw const FormatException('notes/create did not return createdNote');
+  }
+  return NoteModel.fromJson(
+    jsonDecode(jsonEncode(responseData['createdNote'])) as Map<String, dynamic>,
+  );
+}
+
+NoteVisibility resolveReplyVisibility(
+  NoteVisibility selected,
+  NoteVisibility target,
+) {
+  return switch (target) {
+    NoteVisibility.public => selected,
+    NoteVisibility.home => switch (selected) {
+      NoteVisibility.followers => NoteVisibility.followers,
+      NoteVisibility.specified => NoteVisibility.specified,
+      _ => NoteVisibility.home,
+    },
+    NoteVisibility.followers =>
+      selected == NoteVisibility.specified
+          ? NoteVisibility.specified
+          : NoteVisibility.followers,
+    NoteVisibility.specified => NoteVisibility.specified,
+  };
+}
+
 class NoteCreateDialogStateModel {
   NoteVisibility visibility = NoteVisibility.public; // 可见性
-  LinkedHashMap visibleUserIds = LinkedHashMap(); // 当 可见性为specified 时的可见用户列表
+  LinkedHashSet<String> visibleUserIds = LinkedHashSet<String>();
+  LinkedHashMap<String, UserFullModel> visibleUsers =
+      LinkedHashMap<String, UserFullModel>(); // 当 可见性为specified 时的可见用户列表
   String? text; // 文本
   String cw = ''; //敏感内容
   bool isCw = false;
@@ -33,15 +67,16 @@ class NoteCreateDialogStateModel {
   bool isShowEmoji = false;
   bool preview = false;
   num emojiListHeight = 0;
+  bool sendLoading = false;
 
   Map<String, dynamic> toMap() {
     return {
       'visibility': visibility.value,
       if (visibility == NoteVisibility.specified)
-        'visibleUserIds': visibleUserIds.keys.toList(),
+        'visibleUserIds': visibleUserIds.toList(),
       'text': text ?? "",
       if (isCw) 'cw': cw,
-      'localOnly': localOnly,
+      'localOnly': visibility == NoteVisibility.specified ? false : localOnly,
       if (reactionAcceptance != null && visibility != NoteVisibility.specified)
         'reactionAcceptance': reactionAcceptance?.value,
       if (fileIds.isNotEmpty) 'fileIds': fileIds,
@@ -70,8 +105,11 @@ class NotePollModel {
       'choices': choices1,
       'multiple': multiple,
       if (!never)
-        'expiredAfter':
-            Duration(hours: hours, days: days, minutes: minutes).inMilliseconds,
+        'expiredAfter': Duration(
+          hours: hours,
+          days: days,
+          minutes: minutes,
+        ).inMilliseconds,
     };
   }
 }
@@ -88,13 +126,18 @@ enum NoteType {
   reNote,
 
   /// 频道
-  channel
+  channel,
 }
 
 @Riverpod(keepAlive: true)
 class NoteCreateDialogState extends _$NoteCreateDialogState {
+  NoteVisibility? _replyTargetVisibility;
+  bool _replyInitialized = false;
+
   @override
   NoteCreateDialogStateModel build(String? noteId, NoteType type) {
+    _replyTargetVisibility = null;
+    _replyInitialized = false;
     var state = NoteCreateDialogStateModel();
     if (type != NoteType.note) {
       assert(noteId != null);
@@ -118,8 +161,48 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
   }
 
   void setVisibility(NoteVisibility visibility) {
-    state.visibility = visibility;
+    state.visibility = _replyTargetVisibility == null
+        ? visibility
+        : resolveReplyVisibility(visibility, _replyTargetVisibility!);
     ref.notifyListeners();
+  }
+
+  Future<void> initializeReply(NoteModel targetNote) async {
+    if (type != NoteType.reply || _replyInitialized) return;
+    _replyInitialized = true;
+    _replyTargetVisibility = targetNote.visibility;
+    state.visibility = resolveReplyVisibility(
+      state.visibility,
+      targetNote.visibility,
+    );
+
+    if (state.visibility != NoteVisibility.specified) {
+      ref.notifyListeners();
+      return;
+    }
+
+    state.localOnly = false;
+    final currentUserId = ref.read(currentLoginUserProvider)?.id;
+    final recipientIds = LinkedHashSet<String>.from(targetNote.visibleUserIds)
+      ..remove(currentUserId);
+    if (targetNote.userId != currentUserId) {
+      recipientIds.add(targetNote.userId);
+    }
+    state.visibleUserIds = recipientIds;
+    ref.notifyListeners();
+
+    final api = ref.read(misskeyApisProvider);
+    try {
+      final users = await api.user.showMany(userIds: recipientIds);
+      if (!ref.mounted) return;
+      state.visibleUsers = LinkedHashMap<String, UserFullModel>.fromEntries(
+        users.map((user) => MapEntry(user.id, user)),
+      );
+      ref.notifyListeners();
+    } catch (error, stackTrace) {
+      logger.e(error);
+      logger.e(stackTrace);
+    }
   }
 
   void setLocalOnly(bool localOnly) {
@@ -224,14 +307,20 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     ref.notifyListeners();
   }
 
-  void addVisibleUser(String id, data) {
-    state.visibleUserIds[id] = data;
+  void addVisibleUser(String id, UserFullModel data) {
+    state.visibleUserIds.add(id);
+    state.visibleUsers = LinkedHashMap<String, UserFullModel>.of(
+      state.visibleUsers,
+    )..[id] = data;
     ref.notifyListeners();
   }
 
   void removeVisibleUser(String id) {
-    if (state.visibleUserIds[id] != null) {
+    if (state.visibleUsers[id] != null || state.visibleUserIds.contains(id)) {
       state.visibleUserIds.remove(id);
+      state.visibleUsers = LinkedHashMap<String, UserFullModel>.of(
+        state.visibleUsers,
+      )..remove(id);
       ref.notifyListeners();
     }
   }
@@ -262,11 +351,10 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     }
   }
 
-  bool sendLoading = false;
-
-  Future<dynamic> send(BuildContext context) async {
-    if (sendLoading) return;
-    sendLoading = true;
+  Future<NoteModel?> send(BuildContext context) async {
+    if (state.sendLoading) return null;
+    state.sendLoading = true;
+    ref.notifyListeners();
     try {
       var http = await ref.read(httpProvider.future);
       var user = ref.read(currentLoginUserProvider);
@@ -276,9 +364,6 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
       }
 
       // 参数验证
-      if (state.text != null && state.text!.isEmpty) {
-        throw Exception(S.current.exceptionContentNull);
-      }
       if (state.isCw && state.cw.isEmpty) {
         throw Exception(S.current.exceptionCwNull);
       }
@@ -299,29 +384,31 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
       var data = state.toMap();
       data['i'] = user?.token ?? "";
       var res = await http.post("/notes/create", data: data);
+      final createdNote = decodeCreatedNoteResponse(res.data);
+      emitNotePosted(createdNote);
       state = NoteCreateDialogStateModel();
       ref.invalidate(driverSelectDialogStateProvider);
       ref.invalidate(noteCreateDialogStateProvider);
       ref.notifyListeners();
-      sendLoading = false;
-      return res.data;
+      return createdNote;
     } on DioException catch (e) {
       logger.d(e.response);
-      if (!context.mounted) return;
+      if (!context.mounted) return null;
       MkInfoDialog.show(
-          info: S.current
-              .exceptionSendNote(e.response?.data.toString() ?? e.toString()),
-          isError: true,
-          context: context);
-    } catch (e) {
-      if (!context.mounted) return;
-      MkInfoDialog.show(
-        info: "$e",
+        info: S.current.exceptionSendNote(
+          e.response?.data.toString() ?? e.toString(),
+        ),
         isError: true,
         context: context,
       );
+    } catch (e) {
+      if (!context.mounted) return null;
+      MkInfoDialog.show(info: "$e", isError: true, context: context);
     } finally {
-      sendLoading = false;
+      if (ref.mounted) {
+        state.sendLoading = false;
+        ref.notifyListeners();
+      }
     }
 
     return null;

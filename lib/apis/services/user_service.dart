@@ -44,6 +44,17 @@ class UserService extends MisskeyApiServices {
     return UserFullModel.fromJson(res);
   }
 
+  Future<List<UserFullModel>> showMany({
+    required Iterable<String> userIds,
+  }) async {
+    final ids = userIds.toList(growable: false);
+    if (ids.isEmpty) return const [];
+
+    final res = await client.post<List?>("/users/show", data: {"userIds": ids});
+    if (res == null) return const [];
+    return [for (final user in res) UserFullModel.fromJson(user)];
+  }
+
   Future<List<NoteModel>> notes({
     required String userId,
     bool withRenotes = false,

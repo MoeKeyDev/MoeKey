@@ -75,6 +75,8 @@ class MkRefreshLoadList<T> extends StatelessWidget {
     this.onRetry,
     this.loadMoreError,
     this.onRetryLoadMore,
+    this.scrollPhysics,
+    this.scrollViewWrapper,
   });
 
   final Future Function() onLoad;
@@ -89,6 +91,8 @@ class MkRefreshLoadList<T> extends StatelessWidget {
   final VoidCallback? onRetry;
   final Object? loadMoreError;
   final VoidCallback? onRetryLoadMore;
+  final ScrollPhysics? scrollPhysics;
+  final Widget Function(Widget scrollView)? scrollViewWrapper;
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +108,7 @@ class MkRefreshLoadList<T> extends StatelessWidget {
 
     Widget child = CustomScrollView(
       primary: true,
+      physics: scrollPhysics,
       scrollCacheExtent: (Platform.isAndroid || Platform.isIOS)
           ? null
           : const ScrollCacheExtent.pixels(4000),
@@ -140,6 +145,8 @@ class MkRefreshLoadList<T> extends StatelessWidget {
         ),
       ],
     );
+
+    child = scrollViewWrapper?.call(child) ?? child;
 
     if (refreshController != null) {
       child = MkRefreshIndicator(

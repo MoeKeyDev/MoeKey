@@ -34,8 +34,11 @@ class HttpProxy extends HttpOverrides {
 Future initApp(BuildContext context, WidgetRef ref) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 视频初始化
-  MediaKit.ensureInitialized();
+  // Windows and Linux have no endorsed implementation in Flutter's official
+  // video_player, so only those platforms initialize the media_kit fallback.
+  if (Platform.isWindows || Platform.isLinux) {
+    MediaKit.ensureInitialized();
+  }
 
   // 代理配置
   HttpOverrides.global = HttpProxy();

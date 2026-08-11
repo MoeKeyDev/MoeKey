@@ -55,10 +55,11 @@ class _MkRefreshIndicatorState extends State<MkRefreshIndicator> {
 
   void _updateController() {
     MkRefreshController? oldController = _controller;
-    _controller = widget.controller ?? DefaultMkRefreshController.of(context);
-    if (oldController != _controller) {
-      oldController?.removeListener(_show);
-    }
+    final newController =
+        widget.controller ?? DefaultMkRefreshController.of(context);
+    if (oldController == newController) return;
+    oldController?.removeListener(_show);
+    _controller = newController;
     _controller?.addListener(_show);
   }
 
@@ -81,10 +82,7 @@ class _MkRefreshIndicatorState extends State<MkRefreshIndicator> {
       edgeOffset: mediaPadding.top + (widget.edgeOffset ?? 0),
       child: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-          },
+          dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
         ),
         child: widget.child,
       ),
@@ -99,7 +97,7 @@ class _MkRefreshIndicatorState extends State<MkRefreshIndicator> {
 
   @override
   void dispose() {
-    _controller?.addListener(_show);
+    _controller?.removeListener(_show);
     super.dispose();
   }
 

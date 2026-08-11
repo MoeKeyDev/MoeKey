@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../apis/models/note.dart';
 import '../database/notes.dart';
 import '../logger.dart';
+import 'note_posted.dart';
 
 part 'notes_listener.g.dart';
 
@@ -48,7 +49,7 @@ class NotesListener extends _$NotesListener {
     if (!ref.mounted) return;
     ref.read(moekeyGlobalEventProvider.notifier).send({
       "type": "s",
-      "body": {"id": id}
+      "body": {"id": id},
     });
   }
 
@@ -56,14 +57,16 @@ class NotesListener extends _$NotesListener {
     if (!ref.mounted) return;
     ref.read(moekeyGlobalEventProvider.notifier).send({
       "type": "un",
-      "body": {"id": id}
+      "body": {"id": id},
     });
   }
 
   Object subNote(String noteId) {
     final subscription = Object();
-    final subscriptions =
-        _noteSubscriptions.putIfAbsent(noteId, () => <Object>{});
+    final subscriptions = _noteSubscriptions.putIfAbsent(
+      noteId,
+      () => <Object>{},
+    );
     final shouldSubscribe = subscriptions.isEmpty;
     subscriptions.add(subscription);
     if (shouldSubscribe) {
@@ -107,9 +110,7 @@ class NoteIdListener extends _$NoteIdListener {
     ref.onDispose(() {
       eventSubscription.cancel();
       streamController.close();
-      scheduleMicrotask(
-        () => listener.unsubNote(noteId, noteSubscription),
-      );
+      scheduleMicrotask(() => listener.unsubNote(noteId, noteSubscription));
     });
 
     return streamController.stream;
@@ -176,8 +177,18 @@ class NoteListener extends _$NoteListener {
       }
       ref.notifyListeners();
     });
+    final locallyCountedReplyIds = <String>{};
+    final notePostedSubscription = notePostedStream.listen((postedNote) {
+      if (postedNote.replyId != noteModel.id ||
+          !locallyCountedReplyIds.add(postedNote.id)) {
+        return;
+      }
+      noteModel.repliesCount += 1;
+      ref.notifyListeners();
+    });
     ref.onDispose(() {
       eventSubscription.cancel();
+      notePostedSubscription.cancel();
     });
     return noteModel;
   }

@@ -16,7 +16,7 @@ class NotesService extends MisskeyApiServices {
   }) async {
     var res = await client.post<List?>(
       "/notes/$api",
-      data: {"limit": 10, "untilId": ?untilId, "sinceId": ?sinceId},
+      data: {"limit": limit, "untilId": ?untilId, "sinceId": ?sinceId},
     );
     if (res == null) {
       return [];

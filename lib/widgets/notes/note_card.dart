@@ -39,6 +39,7 @@ import '../mk_card.dart';
 import '../mk_image.dart';
 import '../reactions.dart';
 import 'note_image.dart';
+import 'timeline_fade_in.dart';
 
 List<String> extractLinksFromMarkdown(String markdownText) {
   final RegExp linkRegex = RegExp(
@@ -425,6 +426,7 @@ class _TimeLineNoteCardContent extends StatelessWidget {
             if ((data.text ?? "") != "")
               MFMText(
                 text: data.text ?? "",
+                ast: data.textAst,
                 emojis: data.emojis,
                 currentServerHost: data.user.host,
               ),
@@ -522,6 +524,7 @@ class _NoteCardContentCw extends HookConsumerWidget {
         const SizedBox(height: 4),
         MFMText(
           text: data.cw ?? "",
+          ast: data.cwAst,
           currentServerHost: data.user.host,
           emojis: data.emojis,
         ),
@@ -585,7 +588,7 @@ class _NoteCardContentUerHeader extends StatelessWidget {
   }
 }
 
-class NoteLinkPreview extends HookConsumerWidget {
+class NoteLinkPreview extends ConsumerStatefulWidget {
   const NoteLinkPreview({
     super.key,
     required this.link,
@@ -596,116 +599,150 @@ class NoteLinkPreview extends HookConsumerWidget {
   final double fontsize;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<NoteLinkPreview> createState() => _NoteLinkPreviewState();
+}
+
+class _NoteLinkPreviewState extends ConsumerState<NoteLinkPreview> {
+  LinkPreview? data;
+  Object? loadError;
+
+  @override
+  void initState() {
+    super.initState();
+    loadPreview();
+  }
+
+  @override
+  void didUpdateWidget(NoteLinkPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.link == widget.link) return;
+    data = null;
+    loadError = null;
+    loadPreview();
+  }
+
+  Future<void> loadPreview() async {
+    final requestedLink = widget.link;
+    try {
+      final result = await ref.read(getUriInfoProvider(requestedLink).future);
+      if (!mounted || widget.link != requestedLink || result == null) return;
+
+      setState(() => data = result);
+    } catch (error) {
+      if (!mounted || widget.link != requestedLink) return;
+      setState(() => loadError = error);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var themes = ref.watch(themeColorsProvider);
-    var res = ref.watch(getUriInfoProvider(link));
     var serverUrl = ref.watch(currentLoginUserProvider)?.serverUrl ?? "";
 
-    var data = res.value;
-
-    if (data == null) {
+    if (data == null || loadError != null) {
       return const SizedBox();
     }
 
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      decoration: BoxDecoration(
+    // The note-level size observer handles the one outer layout change. The
+    // transition below only affects paint opacity.
+    return TimelineFadeIn(
+      key: ValueKey('link-preview-${widget.link}'),
+      duration: const Duration(milliseconds: 200),
+      child: Container(
+        margin: const EdgeInsets.only(top: 8),
+        decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(5)),
-          border: Border.all(
-            color: themes.dividerColor,
-            width: 1,
-          )),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            openMisskeyLink(
-              context,
-              url: link,
-              instanceUrl: serverUrl,
-            );
-          },
-          child: Row(
-            children: [
-              if (data.thumbnail != null)
-                ClipRRect(
-                  clipBehavior: Clip.hardEdge,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    bottomLeft: Radius.circular(5),
-                  ),
-                  child: SizedBox(
-                    width: fontsize * 7,
-                    height: fontsize * 7,
-                    child: MkImage(
-                      data.thumbnail!,
-                      height: fontsize * 7,
-                      width: fontsize * 7,
+          border: Border.all(color: themes.dividerColor, width: 1),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              openMisskeyLink(
+                context,
+                url: widget.link,
+                instanceUrl: serverUrl,
+              );
+            },
+            child: Row(
+              children: [
+                if (data!.thumbnail != null)
+                  ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(5),
+                      bottomLeft: Radius.circular(5),
                     ),
-                  ),
-                )
-              else
-                SizedBox(
-                  height: fontsize * 7,
-                ),
-              Expanded(
+                    child: SizedBox(
+                      width: widget.fontsize * 7,
+                      height: widget.fontsize * 7,
+                      child: MkImage(
+                        data!.thumbnail!,
+                        height: widget.fontsize * 7,
+                        width: widget.fontsize * 7,
+                      ),
+                    ),
+                  )
+                else
+                  SizedBox(height: widget.fontsize * 7),
+                Expanded(
                   child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      data.title ?? "...",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: fontsize,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                    Text(
-                      data.description ?? "...",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: fontsize * 0.9,
-                      ),
-                    ),
-                    Row(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (data.icon != null) ...[
-                          SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: MkImage(
-                              data.icon!,
-                              height: 16,
-                              width: 16,
-                            ),
+                        Text(
+                          data!.title ?? "...",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: widget.fontsize,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(
-                            width: 4,
-                          )
-                        ],
-                        Expanded(
-                          child: Text(
-                            data.sitename ?? "...",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: fontsize * 0.9,
+                        ),
+                        Text(
+                          data!.description ?? "...",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: widget.fontsize * 0.9),
+                        ),
+                        Row(
+                          children: [
+                            if (data!.icon != null) ...[
+                              SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: MkImage(
+                                  data!.icon!,
+                                  height: 16,
+                                  width: 16,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                            ],
+                            Expanded(
+                              child: Text(
+                                data!.sitename ?? "...",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: widget.fontsize * 0.9,
+                                ),
+                              ),
                             ),
-                          ),
-                        )
+                          ],
+                        ),
                       ],
-                    )
-                  ],
+                    ),
+                  ),
                 ),
-              ))
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -20,15 +20,33 @@ import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart'
 import 'package:moekey/widgets/user_select_dialog/user_select_dialog.dart';
 
 import '../../apis/models/note.dart';
+import '../../apis/models/user_full.dart';
 import '../../generated/l10n.dart';
-import '../../logger.dart';
 import '../../utils/time_ago_since_date.dart';
 import '../driver/drive_thumbnail.dart';
 import '../driver/driver_select_dialog/driver_select_dialog.dart';
 import '../hashtag/hashtag_select_dialog.dart';
+import '../loading_weight.dart';
 import '../mk_switch.dart';
 import '../notes/note_card.dart';
 import 'mobile_composer_bottom_area.dart';
+
+void insertTextAtSelection(
+  TextEditingController controller,
+  String insertedText,
+) {
+  final value = controller.value;
+  final selection = value.selection;
+  final start = selection.isValid ? selection.start : value.text.length;
+  final end = selection.isValid ? selection.end : value.text.length;
+  final text = value.text.replaceRange(start, end, insertedText);
+
+  controller.value = value.copyWith(
+    text: text,
+    selection: TextSelection.collapsed(offset: start + insertedText.length),
+    composing: TextRange.empty,
+  );
+}
 
 class NoteCreateDialog extends HookConsumerWidget {
   const NoteCreateDialog({
@@ -154,6 +172,14 @@ class NoteCreateDialog extends HookConsumerWidget {
           return () => contentController.removeListener(onTextChanged);
         }, [contentController, noteId, noteType]);
 
+        useEffect(() {
+          if (noteType != NoteType.reply || note == null) return null;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(provider.notifier).initializeReply(note!);
+          });
+          return null;
+        }, [provider, note?.id, noteType]);
+
         void hideMobilePanel() {
           mobilePanel.value = MobileComposerPanel.hidden;
           switchingToKeyboard.value = false;
@@ -239,8 +265,10 @@ class NoteCreateDialog extends HookConsumerWidget {
           MobileComposerPanel.emoji => EmojiList(
             tabDividerBleed: 8,
             onInsert: (data) {
-              contentController.text =
-                  "${contentController.text}${data["name"]}";
+              insertTextAtSelection(
+                contentController,
+                data["name"]?.toString() ?? "",
+              );
             },
           ),
           MobileComposerPanel.hidden => const SizedBox.shrink(),
@@ -278,25 +306,31 @@ class NoteCreateDialog extends HookConsumerWidget {
                 Tooltip(
                   message: S.current.publish,
                   child: FilledButton(
-                    onPressed: () async {
-                      var res = await ref
-                          .read(
-                            noteCreateDialogStateProvider(
-                              noteId,
-                              noteType,
-                            ).notifier,
-                          )
-                          .send(context);
-                      if (res != null) {
-                        contentController.text = initText ?? "";
-                        if (context.mounted) {
-                          popComposer(res);
-                        }
-                      }
-                    },
+                    onPressed:
+                        form.sendLoading ||
+                            contentController.text.trim().isEmpty
+                        ? null
+                        : () async {
+                            final notifier = ref.read(provider.notifier);
+                            notifier.setText(contentController.text);
+                            var res = await notifier.send(context);
+                            if (res != null) {
+                              contentController.text = initText ?? "";
+                              if (context.mounted) {
+                                popComposer(res);
+                              }
+                            }
+                          },
                     style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                        themes.accentColor,
+                      backgroundColor: WidgetStateProperty.resolveWith(
+                        (states) => states.contains(WidgetState.disabled)
+                            ? themes.accentColor.withValues(
+                                alpha: themes.accentColor.a * 0.5,
+                              )
+                            : themes.accentColor,
+                      ),
+                      foregroundColor: WidgetStateProperty.all(
+                        themes.fgOnAccentColor,
                       ),
                       shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
@@ -308,13 +342,21 @@ class NoteCreateDialog extends HookConsumerWidget {
                         const EdgeInsets.fromLTRB(12, 0, 12, 0),
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Text(S.current.publish),
-                        const SizedBox(width: 2),
-                        const Icon(TablerIcons.send, size: 16),
-                      ],
-                    ),
+                    child: form.sendLoading
+                        ? LoadingCircularProgress(
+                            size: 16,
+                            strokeWidth: 2,
+                            color: Colors.white,
+                            backgroundColor: Colors.white.withAlpha(48),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(S.current.publish),
+                              const SizedBox(width: 6),
+                              const Icon(TablerIcons.send, size: 16),
+                            ],
+                          ),
                   ),
                 ),
               ],
@@ -359,8 +401,10 @@ class NoteCreateDialog extends HookConsumerWidget {
                 duration: const Duration(milliseconds: 300),
                 child: EmojiList(
                   onInsert: (data) {
-                    contentController.text =
-                        "${contentController.text}${data["name"]}";
+                    insertTextAtSelection(
+                      contentController,
+                      data["name"]?.toString() ?? "",
+                    );
                   },
                 ),
               )
@@ -379,9 +423,6 @@ class NoteCreateDialog extends HookConsumerWidget {
               ),
           ],
         );
-        // Desktop dialogs are content-sized. The fullscreen composer already
-        // receives a tight height, so an intrinsic pass only adds work while
-        // the keyboard is animating.
         return fullscreen
             ? PopScope(
                 canPop: mobilePanel.value == MobileComposerPanel.hidden,
@@ -466,9 +507,8 @@ class NoteCreateDialog extends HookConsumerWidget {
           noteCreateDialogStateProvider(
             noteId,
             noteType,
-          ).select((value) => value.visibleUserIds),
+          ).select((value) => value.visibleUsers),
         );
-        logger.d(data);
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Wrap(
@@ -477,7 +517,7 @@ class NoteCreateDialog extends HookConsumerWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(S.current.recipient),
-              for (var key in data.keys)
+              for (var entry in data.entries)
                 Container(
                   padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
@@ -491,19 +531,20 @@ class NoteCreateDialog extends HookConsumerWidget {
                         width: 22,
                         height: 22,
                         child: MkImage(
-                          data[key]["avatarUrl"],
+                          entry.value.avatarUrl ?? "",
+                          width: 22,
+                          height: 22,
                           shape: BoxShape.circle,
                         ),
                       ),
                       const SizedBox(width: 2),
-                      if (data[key]["username"] != null)
+                      Text(
+                        "@${entry.value.username}",
+                        style: TextStyle(color: themes.mentionColor),
+                      ),
+                      if (entry.value.host != null)
                         Text(
-                          "@${data[key]["username"]}",
-                          style: TextStyle(color: themes.mentionColor),
-                        ),
-                      if (data[key]["host"] != null)
-                        Text(
-                          "@${data[key]["host"]}",
+                          "@${entry.value.host}",
                           style: TextStyle(
                             color: themes.mentionColor.withAlpha(178),
                           ),
@@ -520,7 +561,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                                     noteType,
                                   ).notifier,
                                 )
-                                .removeVisibleUser(key);
+                                .removeVisibleUser(entry.key);
                           },
                           child: Icon(
                             TablerIcons.x,
@@ -540,13 +581,13 @@ class NoteCreateDialog extends HookConsumerWidget {
                   message: S.current.add,
                   child: IconButton(
                     onPressed: () async {
-                      var list = await showModel(
+                      var list = await showModel<List<UserFullModel>>(
                         context: context,
                         builder: (context) {
                           return const UserSelectDialog();
                         },
                       );
-                      for (var item in list ?? []) {
+                      for (final item in list ?? const <UserFullModel>[]) {
                         ref
                             .read(
                               noteCreateDialogStateProvider(
@@ -554,7 +595,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                                 noteType,
                               ).notifier,
                             )
-                            .addVisibleUser(item["id"], item);
+                            .addVisibleUser(item.id, item);
                       }
                     },
                     style: ButtonStyle(
@@ -1071,15 +1112,15 @@ class NoteCreateDialog extends HookConsumerWidget {
             const SizedBox(width: 4),
             buildActionBottom(
               onPressed: () async {
-                var list = await showModel(
+                var list = await showModel<List<UserFullModel>>(
                   context: context,
                   builder: (context) {
                     return const UserSelectDialog();
                   },
                 );
-                if (list != null && list != []) {
+                if (list != null && list.isNotEmpty) {
                   contentController.text =
-                      "${contentController.text} ${[for (var item in list ?? []) "@${item?.username}${item?.host != null ? "@${item?.host}" : ""}"].join(" ")} ";
+                      "${contentController.text} ${[for (final item in list) "@${item.username}${item.host != null ? "@${item.host}" : ""}"].join(" ")} ";
                   ref
                       .read(
                         noteCreateDialogStateProvider(
@@ -1719,7 +1760,7 @@ class NoteCreateDialog extends HookConsumerWidget {
     );
   }
 
-  static void open({
+  static Future<NoteModel?> open({
     required BuildContext context,
     String? noteId,
     NoteType type = NoteType.note,
@@ -1728,7 +1769,7 @@ class NoteCreateDialog extends HookConsumerWidget {
     List<DriveFileModel>? files,
   }) {
     final isFullscreen = MediaQuery.sizeOf(context).width < 580;
-    showModel(
+    return showModel<NoteModel>(
       context: context,
       // The mobile composer completely covers the screen. Marking its route
       // opaque keeps the timeline and its image/layout-heavy widgets out of

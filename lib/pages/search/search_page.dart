@@ -348,7 +348,7 @@ class _SearchOverlay extends HookConsumerWidget {
     }
 
     Future<void> selectUser() async {
-      final selected = await showModel<Iterable<dynamic>>(
+      final selected = await showModel<List<UserFullModel>>(
         context: context,
         useRootNavigator: false,
         builder: (context) => const UserSelectDialog(maxSelect: 1),
@@ -356,9 +356,8 @@ class _SearchOverlay extends HookConsumerWidget {
       if (selected == null || !context.mounted) {
         return;
       }
-      final users = selected.whereType<UserFullModel>();
-      if (users.isNotEmpty) {
-        user.value = users.first;
+      if (selected.isNotEmpty) {
+        user.value = selected.first;
       }
     }
 

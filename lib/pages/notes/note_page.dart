@@ -50,145 +50,142 @@ class NotesPage extends HookConsumerWidget {
       builder: (context, constraints) {
         double padding = getPaddingForNote(constraints);
         return MkScaffold(
-            header: MkAppbar(
-              showBack: true,
-              content: Row(
-                children: [
-                  if (!dataProvider.isLoading || data != null) ...[
-                    GestureDetector(
-                      child: MkImage(
-                        data?.user.avatarUrl ?? "",
-                        blurHash: data?.user.avatarBlurhash,
-                        shape: BoxShape.circle,
-                        width: 32,
-                        height: 32,
-                      ),
-                      onTap: () {
-                        context.push(
-                          "/user/${data?.userId}",
-                        );
-                        // MainRouterDelegate.of(context)
-                        //     .setNewRoutePath(RouterItem(
-                        //   path: "user/${data?.userId}",
-                        //   page: () {
-                        //     return UserPage(userId: data?.userId ?? "0");
-                        //   },
-                        // ));
-                      },
+          header: MkAppbar(
+            showBack: true,
+            content: Row(
+              children: [
+                if (!dataProvider.isLoading || data != null) ...[
+                  GestureDetector(
+                    child: MkImage(
+                      data?.user.avatarUrl ?? "",
+                      blurHash: data?.user.avatarBlurhash,
+                      shape: BoxShape.circle,
+                      width: 32,
+                      height: 32,
                     ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          MFMText(
-                            text: data?.user.name ?? data?.user.username ?? "",
-                            emojis: data?.user.emojis,
-                            bigEmojiCode: false,
-                            feature: const [MFMFeature.emojiCode],
-                            after: [TextSpan(text: S.current.somebodyNote)],
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          if (data?.createdAt != null)
-                            Opacity(
-                              opacity: 0.6,
-                              child: Text(
-                                timeAgoSinceDate(data!.createdAt),
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            )
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              // trailing: TextButton(onPressed: () {}, child: const Text("关注")),
-            ),
-            body: CustomScrollView(
-              slivers: [
-                if (data != null)
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(
-                        padding, 56 + mediaPadding.top, padding, 0),
-                    sliver: SliverToBoxAdapter(
-                      child: MkCard(
-                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                        shadow: false,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (conversation.isNotEmpty &&
-                                conversation.first.replyId != null) ...[
-                              Align(
-                                alignment: Alignment.center,
-                                child: loadConversationSnapshot
-                                            .connectionState ==
-                                        ConnectionState.waiting
-                                    ? TextButton(
-                                        onPressed: () {},
-                                        child: const LoadingCircularProgress(
-                                            size: 16, strokeWidth: 4),
-                                      )
-                                    : TextButton(
-                                        onPressed: () {
-                                          loadConversation.value = ref
-                                              .read(notes.notifier)
-                                              .loadConversation();
-                                        },
-                                        child: Text(S.current.showConversation),
-                                      ),
-                              )
-                            ],
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            // 聊天
-                            for (var item in conversation)
-                              TimeLineNoteCardComponent(
-                                data: item,
-                                reply: true,
-                                disableReactions: true,
-                              ),
-                            NotesPageNoteCard(data: data)
-                          ],
+                    onTap: () {
+                      context.push("/user/${data?.userId}");
+                      // MainRouterDelegate.of(context)
+                      //     .setNewRoutePath(RouterItem(
+                      //   path: "user/${data?.userId}",
+                      //   page: () {
+                      //     return UserPage(userId: data?.userId ?? "0");
+                      //   },
+                      // ));
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MFMText(
+                          text: data?.user.name ?? data?.user.username ?? "",
+                          emojis: data?.user.emojis,
+                          bigEmojiCode: false,
+                          feature: const [MFMFeature.emojiCode],
+                          after: [TextSpan(text: S.current.somebodyNote)],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
+                        if (data?.createdAt != null)
+                          Opacity(
+                            opacity: 0.6,
+                            child: Text(
+                              timeAgoSinceDate(data!.createdAt),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
+                ],
+              ],
+            ),
+            // trailing: TextButton(onPressed: () {}, child: const Text("关注")),
+          ),
+          body: CustomScrollView(
+            slivers: [
+              if (data != null)
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
+                  padding: EdgeInsets.fromLTRB(
+                    padding,
+                    56 + mediaPadding.top,
+                    padding,
+                    0,
+                  ),
                   sliver: SliverToBoxAdapter(
                     child: MkCard(
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
                       shadow: false,
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-                      borderRadius: BorderRadius.zero,
-                      child: Container(
-                        decoration: BoxDecoration(color: themes.dividerColor),
-                        height: 1,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (conversation.isNotEmpty &&
+                              conversation.first.replyId != null) ...[
+                            Align(
+                              alignment: Alignment.center,
+                              child:
+                                  loadConversationSnapshot.connectionState ==
+                                      ConnectionState.waiting
+                                  ? TextButton(
+                                      onPressed: () {},
+                                      child: const LoadingCircularProgress(
+                                        size: 16,
+                                        strokeWidth: 4,
+                                      ),
+                                    )
+                                  : TextButton(
+                                      onPressed: () {
+                                        loadConversation.value = ref
+                                            .read(notes.notifier)
+                                            .loadConversation();
+                                      },
+                                      child: Text(S.current.showConversation),
+                                    ),
+                            ),
+                          ],
+                          const SizedBox(height: 16),
+                          // 聊天
+                          for (var item in conversation)
+                            TimeLineNoteCardComponent(
+                              data: item,
+                              reply: true,
+                              disableReactions: true,
+                            ),
+                          NotesPageNoteCard(data: data),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(padding, 0, padding, 16),
-                  sliver: NoteChildren(
-                    noteId: noteId,
-                    deep: 0,
-                    first: false,
-                    last: true,
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
+                sliver: SliverToBoxAdapter(
+                  child: MkCard(
+                    shadow: false,
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                    borderRadius: BorderRadius.zero,
+                    child: Container(
+                      decoration: BoxDecoration(color: themes.dividerColor),
+                      height: 1,
+                    ),
                   ),
-                )
-              ],
-            ));
+                ),
+              ),
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(padding, 0, padding, 16),
+                sliver: NoteChildren(noteId: noteId),
+              ),
+            ],
+          ),
+        );
       },
     );
   }
@@ -220,7 +217,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
         return ContextMenuBuilder(
           mode: const [
             ContextMenuMode.onSecondaryTap,
-            ContextMenuMode.onLongPress
+            ContextMenuMode.onLongPress,
           ],
           menu: buildNoteContextMenu(serverUrl, meta, data, ref, context),
           child: Column(
@@ -242,6 +239,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
               if (data.cw != null) ...[
                 MFMText(
                   text: data.cw ?? "",
+                  ast: data.cwAst,
                   emojis: data.emojis,
                   currentServerHost: data.user.host,
                 ),
@@ -253,19 +251,22 @@ class NotesPageNoteCard extends HookConsumerWidget {
                       isHiddenCw.value = !isHiddenCw.value;
                     },
                     style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStateProperty.resolveWith((states) {
-                          if (states.contains(WidgetState.hovered)) {
-                            return themes.buttonHoverBgColor;
-                          }
-                          return themes.buttonBgColor;
-                        }),
-                        foregroundColor:
-                            WidgetStateProperty.all(themes.fgColor),
-                        elevation: WidgetStateProperty.all(0)),
-                    child: Text(isHiddenCw.value
-                        ? S.current.noteCwShow
-                        : S.current.noteCwHide),
+                      backgroundColor: WidgetStateProperty.resolveWith((
+                        states,
+                      ) {
+                        if (states.contains(WidgetState.hovered)) {
+                          return themes.buttonHoverBgColor;
+                        }
+                        return themes.buttonBgColor;
+                      }),
+                      foregroundColor: WidgetStateProperty.all(themes.fgColor),
+                      elevation: WidgetStateProperty.all(0),
+                    ),
+                    child: Text(
+                      isHiddenCw.value
+                          ? S.current.noteCwShow
+                          : S.current.noteCwHide,
+                    ),
                   ),
                 ),
               ],
@@ -274,6 +275,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
                 if (data.text != null)
                   MFMText(
                     text: data.text ?? "",
+                    ast: data.textAst,
                     emojis: data.emojis,
                     currentServerHost: data.user.host,
                     isSelection: true,
@@ -302,12 +304,12 @@ class NotesPageNoteCard extends HookConsumerWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       border: Border.all(color: themes.dividerColor, width: 1),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(6),
-                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
                     ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
                     margin: const EdgeInsets.only(top: 8, bottom: 2),
                     child: [
                       if (data.noteTranslate!.loading)
@@ -326,10 +328,13 @@ class NotesPageNoteCard extends HookConsumerWidget {
                           currentServerHost: data.user.host,
                           before: [
                             TextSpan(
-                                text: S.current.noteFormLanguageTranslation(
-                                    data.noteTranslate!.sourceLang),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold))
+                              text: S.current.noteFormLanguageTranslation(
+                                data.noteTranslate!.sourceLang,
+                              ),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                           text: data.noteTranslate!.text,
                         ),
@@ -339,29 +344,32 @@ class NotesPageNoteCard extends HookConsumerWidget {
                 // 投票
                 if (data.poll != null) NotePoll(data: data),
                 TimeLineImage(
-                    files: data.files,
-                    mainAxisExtent: constraints.maxWidth * 0.7),
+                  files: data.files,
+                  mainAxisExtent: constraints.maxWidth * 0.7,
+                ),
                 for (var link in links)
                   NoteLinkPreview(
-                      link: link,
-                      fontsize: DefaultTextStyle.of(context).style.fontSize!),
+                    link: link,
+                    fontsize: DefaultTextStyle.of(context).style.fontSize!,
+                  ),
               ],
-              if (data.reactions.isNotEmpty)
-                const SizedBox(
-                  height: 8,
-                ),
+              if (data.reactions.isNotEmpty) const SizedBox(height: 8),
               if (data.renote != null)
                 Container(
                   margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
                   decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1, color: themes.fgColor.withValues(alpha: 0.6)),
-                      borderRadius: const BorderRadius.all(Radius.circular(8))),
+                    border: Border.all(
+                      width: 1,
+                      color: themes.fgColor.withValues(alpha: 0.6),
+                    ),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
                   padding: const EdgeInsets.all(12),
                   child: TimeLineNoteCardComponent(
-                      data: data.renote!,
-                      isShowAction: false,
-                      disableReactions: true),
+                    data: data.renote!,
+                    isShowAction: false,
+                    disableReactions: true,
+                  ),
                 ),
               // 发布日期
               Padding(
@@ -377,13 +385,8 @@ class NotesPageNoteCard extends HookConsumerWidget {
                 id: data.id,
                 myReaction: data.myReaction,
               ),
-              const SizedBox(
-                height: 4,
-              ),
-              TimeLineActions(
-                fontsize: 14,
-                data: data,
-              )
+              const SizedBox(height: 4),
+              TimeLineActions(fontsize: 14, data: data),
             ],
           ),
         );
@@ -393,11 +396,7 @@ class NotesPageNoteCard extends HookConsumerWidget {
 }
 
 class UserInfo extends HookConsumerWidget {
-  const UserInfo({
-    super.key,
-    required this.data,
-    this.suffix,
-  });
+  const UserInfo({super.key, required this.data, this.suffix});
 
   final UserLiteModel data;
   final Widget? suffix;
@@ -422,14 +421,10 @@ class UserInfo extends HookConsumerWidget {
             //     return UserPage(userId: data.id);
             //   },
             // ));
-            context.push(
-              "/user/${data.id}",
-            );
+            context.push("/user/${data.id}");
           },
         ),
-        const SizedBox(
-          width: 8,
-        ),
+        const SizedBox(width: 8),
         Expanded(
           child: GestureDetector(
             child: Column(
@@ -445,9 +440,7 @@ class UserInfo extends HookConsumerWidget {
                 Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(
-                        text: "@${data.username}",
-                      ),
+                      TextSpan(text: "@${data.username}"),
                       if (data.host != null)
                         TextSpan(
                           text: "@${data.host}",
@@ -458,10 +451,8 @@ class UserInfo extends HookConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 2,
-                ),
-                if (data.instance != null) UserInstanceBar(data: data)
+                const SizedBox(height: 2),
+                if (data.instance != null) UserInstanceBar(data: data),
               ],
             ),
             onTap: () {
@@ -471,9 +462,7 @@ class UserInfo extends HookConsumerWidget {
               //     return UserPage(userId: data.id);
               //   },
               // ));
-              context.push(
-                "/user/${data.id}",
-              );
+              context.push("/user/${data.id}");
             },
           ),
         ),

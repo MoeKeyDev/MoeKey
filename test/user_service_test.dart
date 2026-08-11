@@ -35,4 +35,17 @@ void main() {
     expect(client.data?['withFiles'], isTrue);
     expect(client.data?['limit'], 10);
   });
+
+  test('user details can be requested in one batch', () async {
+    final client = _TestClient();
+    final service = UserService(client: client);
+
+    final users = await service.showMany(userIds: ['user-a', 'user-b']);
+
+    expect(client.path, '/users/show');
+    expect(client.data, {
+      'userIds': ['user-a', 'user-b'],
+    });
+    expect(users, isEmpty);
+  });
 }

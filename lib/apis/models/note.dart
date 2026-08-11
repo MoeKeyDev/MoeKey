@@ -1,6 +1,9 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mfm_parser/mfm_parser.dart';
 import 'package:moekey/apis/models/translate.dart';
 import 'package:moekey/apis/models/user_lite.dart';
 
@@ -16,7 +19,9 @@ class MkLoadMoreListModel<T> {
   Object? loadMoreError;
 }
 
-class NoteListModel extends MkLoadMoreListModel<NoteModel> {}
+class NoteListModel extends MkLoadMoreListModel<NoteModel> {
+  bool isLatestLoaded = false;
+}
 
 @unfreezed
 abstract class NoteModel with _$NoteModel {
@@ -43,12 +48,31 @@ abstract class NoteModel with _$NoteModel {
     required UserLiteModel user,
     required String userId,
     required NoteVisibility visibility,
+    @Default([]) List<String> visibleUserIds,
     NotePollModel? poll,
     NoteTranslate? noteTranslate,
+    @JsonKey(
+      readValue: _readNoteText,
+      fromJson: _parseMfm,
+      includeToJson: false,
+    )
+    List<MfmNode>? textAst,
+    @JsonKey(readValue: _readNoteCw, fromJson: _parseMfm, includeToJson: false)
+    List<MfmNode>? cwAst,
   }) = _NoteModel;
 
   factory NoteModel.fromJson(Map<String, dynamic> json) =>
       _$NoteModelFromJson(json);
+}
+
+Object? _readNoteText(Map<dynamic, dynamic> json, String _) => json['text'];
+
+Object? _readNoteCw(Map<dynamic, dynamic> json, String _) => json['cw'];
+
+List<MfmNode> _parseMfm(Object? value) {
+  final text = value as String?;
+  if (text == null || text.isEmpty) return const [];
+  return const MfmParser().parse(text);
 }
 
 extension NoteModelExtension on NoteModel {

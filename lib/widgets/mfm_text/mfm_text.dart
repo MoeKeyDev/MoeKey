@@ -32,6 +32,7 @@ class MFMText extends HookConsumerWidget {
   final List<MFMFeature>? feature;
   final String? currentServerHost;
   final TextAlign? textAlign;
+  final List<MfmNode>? ast;
 
   const MFMText({
     super.key,
@@ -47,6 +48,7 @@ class MFMText extends HookConsumerWidget {
     this.isSelection = false,
     this.currentServerHost,
     this.textAlign,
+    this.ast,
   });
 
   @override
@@ -55,12 +57,11 @@ class MFMText extends HookConsumerWidget {
     var meta = ref.watch(instanceMetaProvider);
     var currentUser = ref.watch(currentLoginUserProvider);
     var emoji = ref.watch(apiEmojisProvider);
-    var lastText = useState<String?>(null);
-    var mfmParse = useState<List<MfmNode>>([]);
+    final mfmParse = useMemoized(
+      () => ast ?? const MfmParser().parse(text),
+      [ast, text],
+    );
     var textStyle = DefaultTextStyle.of(context).style;
-    if (lastText.value != text) {
-      mfmParse.value = const MfmParser().parse(text);
-    }
     var parse = _getParse(
       feature: feature,
       emojis: emojis,
@@ -74,7 +75,7 @@ class MFMText extends HookConsumerWidget {
     );
 
     var textSpan = [
-      for (var item in mfmParse.value)
+      for (var item in mfmParse)
         if (parse[item.type] != null)
           parse[item.type](
             item,
@@ -95,7 +96,6 @@ class MFMText extends HookConsumerWidget {
         textAlign: textAlign,
       ),
     );
-    lastText.value = text;
     if (isSelection) {
       rich = SelectionArea(
         child: rich,

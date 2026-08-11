@@ -5,14 +5,90 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/models/drive.dart';
 import 'package:moekey/apis/models/emojis.dart';
+import 'package:moekey/apis/models/login_user.dart';
+import 'package:moekey/apis/models/note.dart';
+import 'package:moekey/apis/models/user_lite.dart';
 import 'package:moekey/generated/l10n.dart';
 import 'package:moekey/status/apis.dart';
+import 'package:moekey/status/server.dart';
 import 'package:moekey/widgets/driver/drive.dart';
 import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog.dart';
 import 'package:moekey/widgets/note_create_dialog/mobile_composer_bottom_area.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog.dart';
+import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart';
+
+class _TestCurrentLoginUser extends CurrentLoginUser {
+  @override
+  LoginUser? build() => null;
+}
 
 void main() {
+  testWidgets('desktop reply composer keeps intrinsic sizing', (tester) async {
+    tester.view.physicalSize = const Size(1000, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    const user = UserLiteModel(
+      avatarBlurhash: null,
+      avatarDecorations: [],
+      avatarUrl: 'https://example.invalid/avatar.png',
+      emojis: {},
+      host: null,
+      id: 'user-id',
+      makeNotesFollowersOnlyBefore: null,
+      makeNotesHiddenBefore: null,
+      name: 'User',
+      onlineStatus: OnlineStatus.unknown,
+      username: 'user',
+    );
+    final note = NoteModel(
+      id: 'note-id',
+      createdAt: DateTime.utc(2026),
+      files: [],
+      localOnly: false,
+      reactionEmojis: {},
+      reactions: {},
+      text: 'reply target',
+      user: user,
+      userId: user.id,
+      visibility: NoteVisibility.public,
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          currentLoginUserProvider.overrideWith(_TestCurrentLoginUser.new),
+          instanceMetaProvider.overrideWith((ref) async => null),
+          apiEmojisProvider.overrideWith(
+            (ref) async => <String, EmojiSimple>{},
+          ),
+          apiEmojisByCategoryProvider.overrideWith((ref) => {}),
+        ],
+        child: MaterialApp(
+          locale: const Locale('zh', 'CN'),
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: NoteCreateDialog(
+            noteId: note.id,
+            noteType: NoteType.reply,
+            note: note,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(IntrinsicHeight), findsOneWidget);
+    expect(find.text('reply target'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('attachment panel replaces the mobile keyboard slot', (
     tester,
   ) async {

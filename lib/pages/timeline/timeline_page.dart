@@ -57,8 +57,9 @@ class TimelinePage extends HookConsumerWidget {
                 ),
                 child: TimeLineListPage(
                   api: element['api'],
+                  active: currentIndex.value == index,
                 ),
-              )
+              ),
           ],
           onIndexUpdate: (index) {
             currentIndex.value = index;
@@ -75,12 +76,13 @@ class TabItem extends ConsumerWidget {
   final int id;
   final int current;
 
-  const TabItem(
-      {super.key,
-      required this.icon,
-      required this.label,
-      required this.id,
-      required this.current});
+  const TabItem({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.id,
+    required this.current,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -91,22 +93,21 @@ class TabItem extends ConsumerWidget {
           Icon(
             icon,
             size: 14,
-            color:
-                current == id ? themes.fgColor : themes.fgColor.withAlpha(179),
+            color: current == id
+                ? themes.fgColor
+                : themes.fgColor.withAlpha(179),
           ),
-          const SizedBox(
-            width: 4,
-          ),
+          const SizedBox(width: 4),
           AnimatedSize(
             duration: const Duration(milliseconds: 200),
             child: Text(
               current == id ? label : "",
               style: TextStyle(
-                  fontSize: 12,
-                  color:
-                      0 == id ? themes.fgColor : themes.fgColor.withAlpha(179)),
+                fontSize: 12,
+                color: 0 == id ? themes.fgColor : themes.fgColor.withAlpha(179),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

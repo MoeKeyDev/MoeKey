@@ -169,27 +169,39 @@ class MkImage extends ConsumerWidget {
       filterQuality: FilterQuality.medium,
       shape: shape,
       loadStateChanged: (state) {
-        Widget child = LayoutBuilder(
-          builder: (context, constraints) {
-            var constraintsHeight = constraints.maxHeight;
-            var constraintsWidth = constraints.maxWidth;
-            if (constraints.maxHeight == double.infinity) {
-              constraintsHeight = constraints.minHeight;
-            }
-            if (constraints.maxWidth == double.infinity) {
-              constraintsWidth = constraints.minWidth;
-            }
-            Widget child = ColoredBox(color: const Color.fromARGB(40, 0, 0, 0));
-            if (blurHash != null && blurHash!.isNotEmpty) {
-              child = BlurHash(blurHash!);
-            }
-            return SizedBox(
-              width: width ?? height ?? constraintsWidth,
-              height: height ?? constraintsHeight,
-              child: child,
-            );
-          },
+        Widget placeholder = ColoredBox(
+          color: const Color.fromARGB(40, 0, 0, 0),
         );
+        if (blurHash != null && blurHash!.isNotEmpty) {
+          placeholder = BlurHash(blurHash!);
+        }
+
+        Widget child;
+        if (width != null || height != null) {
+          child = SizedBox(
+            width: width ?? height,
+            height: height ?? width,
+            child: placeholder,
+          );
+        } else {
+          child = LayoutBuilder(
+            builder: (context, constraints) {
+              var constraintsHeight = constraints.maxHeight;
+              var constraintsWidth = constraints.maxWidth;
+              if (constraints.maxHeight == double.infinity) {
+                constraintsHeight = constraints.minHeight;
+              }
+              if (constraints.maxWidth == double.infinity) {
+                constraintsWidth = constraints.minWidth;
+              }
+              return SizedBox(
+                width: constraintsWidth,
+                height: constraintsHeight,
+                child: placeholder,
+              );
+            },
+          );
+        }
 
         if (state.extendedImageLoadState == LoadState.completed) {
           child = state.completedWidget;
