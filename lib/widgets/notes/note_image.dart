@@ -22,7 +22,6 @@ class NoteImage extends HookConsumerWidget {
     required this.heroKey,
     this.fit = BoxFit.contain,
     this.showHideButton = true,
-    this.onClickForVideo = false,
   });
 
   final num? maxHeight;
@@ -32,7 +31,6 @@ class NoteImage extends HookConsumerWidget {
   final void Function()? onClick;
   final BoxFit fit;
   final bool showHideButton;
-  final bool onClickForVideo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,7 +69,7 @@ class NoteImage extends HookConsumerWidget {
               if (isHidden.value) {
                 isHidden.value = false;
               } else {
-                if (onClick != null && (isImage || onClickForVideo)) {
+                if (onClick != null && (isImage || isVideo)) {
                   onClick!();
                 }
               }

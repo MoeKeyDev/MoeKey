@@ -164,10 +164,14 @@ GoRouter router(Ref ref) {
           ),
           GoRoute(
             path: "/notes/:id",
-            builder: (_, status) => NotesPage(
-              noteId: status.pathParameters['id']!,
-              previewNote: status.extra as NoteModel?,
-            ),
+            builder: (_, status) {
+              final noteId = status.pathParameters['id']!;
+              return NotesPage(
+                key: ValueKey('note-page-$noteId'),
+                noteId: noteId,
+                previewNote: status.extra as NoteModel?,
+              );
+            },
           ),
           GoRoute(
             path: "/user/:id",
@@ -216,15 +220,25 @@ GoRouter router(Ref ref) {
         pageBuilder: (_, status) {
           var params = status.extra as Map<String, dynamic>;
           return CustomTransitionPage(
+            transitionDuration: const Duration(milliseconds: 320),
+            reverseTransitionDuration: const Duration(milliseconds: 260),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: const Cubic(0.2, 0, 0, 1),
+                      reverseCurve: Curves.easeInCubic,
+                    ),
+                    child: child,
+                  );
                 },
             opaque: false,
             child: ImagePreviewPage(
               initialIndex: params['initialIndex'],
               galleryItems: params['galleryItems'],
               heroKeys: params['heroKeys'],
+              note: params['note'],
               backgroundDecoration: null,
             ),
           );

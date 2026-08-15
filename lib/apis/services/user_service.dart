@@ -63,7 +63,9 @@ class UserService extends MisskeyApiServices {
     bool withFiles = false,
     bool withFeatured = false,
     int limit = 30,
+    String? sinceId,
     String? untilId,
+    bool? allowPartial,
   }) async {
     var res = await client.post<List?>(
       withFeatured ? "/users/featured-notes" : "/users/notes",
@@ -74,7 +76,9 @@ class UserService extends MisskeyApiServices {
         "withChannelNotes": withChannelNotes,
         "withFiles": withFiles,
         "limit": limit,
+        "sinceId": ?sinceId,
         "untilId": ?untilId,
+        "allowPartial": ?allowPartial,
       },
     );
 

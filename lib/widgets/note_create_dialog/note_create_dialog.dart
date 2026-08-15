@@ -54,6 +54,8 @@ class NoteCreateDialog extends HookConsumerWidget {
     this.noteId,
     this.noteType = NoteType.note,
     this.note,
+    this.initialNote,
+    this.deleteOnPostId,
     this.initText,
     this.files,
   });
@@ -62,6 +64,8 @@ class NoteCreateDialog extends HookConsumerWidget {
   final String? noteId;
   final NoteType noteType;
   final NoteModel? note;
+  final NoteModel? initialNote;
+  final String? deleteOnPostId;
   final String? initText;
   final List<DriveFileModel>? files;
 
@@ -144,8 +148,14 @@ class NoteCreateDialog extends HookConsumerWidget {
         MetaDetailedModel? data = ref.watch(instanceMetaProvider).value;
         var provider = noteCreateDialogStateProvider(noteId, noteType);
         var form = ref.watch(provider);
+        var initialNoteApplied = useRef(false);
+        if (!initialNoteApplied.value && initialNote != null) {
+          form.applyInitialNote(initialNote!);
+          form.deleteOnPostId = deleteOnPostId;
+          initialNoteApplied.value = true;
+        }
         var contentController = useTextEditingController(
-          text: form.text ?? initText,
+          text: form.text ?? initText ?? initialNote?.text,
         );
         var contentFocusNode = useFocusNode();
         var mobilePanel = useState(MobileComposerPanel.hidden);
@@ -159,10 +169,6 @@ class NoteCreateDialog extends HookConsumerWidget {
             .toDouble();
         var minMobilePanelHeight = useState(defaultPanelHeight);
         var mobilePanelHeight = useState(defaultPanelHeight);
-        if (note != null && note?.cw != null) {
-          form.cw = note!.cw!;
-          form.isCw = true;
-        }
         useEffect(() {
           void onTextChanged() {
             ref.read(provider.notifier).setText(contentController.text);
@@ -179,6 +185,16 @@ class NoteCreateDialog extends HookConsumerWidget {
           });
           return null;
         }, [provider, note?.id, noteType]);
+
+        useEffect(() {
+          if (initialNote == null || initialNote!.visibleUserIds.isEmpty) {
+            return null;
+          }
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(provider.notifier).loadVisibleUsers();
+          });
+          return null;
+        }, [provider, initialNote?.id]);
 
         void hideMobilePanel() {
           mobilePanel.value = MobileComposerPanel.hidden;
@@ -292,6 +308,7 @@ class NoteCreateDialog extends HookConsumerWidget {
                   [
                     if (noteType == NoteType.reply) S.current.replyNoteText,
                     if (noteType == NoteType.reNote) S.current.reNoteText,
+                    if (noteType == NoteType.edit) S.current.edit,
                     S.current.createNote,
                   ][0],
                   style: const TextStyle(fontSize: 15),
@@ -313,7 +330,10 @@ class NoteCreateDialog extends HookConsumerWidget {
                         : () async {
                             final notifier = ref.read(provider.notifier);
                             notifier.setText(contentController.text);
-                            var res = await notifier.send(context);
+                            var res = await notifier.send(
+                              context,
+                              editingNote: initialNote,
+                            );
                             if (res != null) {
                               contentController.text = initText ?? "";
                               if (context.mounted) {
@@ -1765,6 +1785,8 @@ class NoteCreateDialog extends HookConsumerWidget {
     String? noteId,
     NoteType type = NoteType.note,
     NoteModel? note,
+    NoteModel? initialNote,
+    String? deleteOnPostId,
     String? initText,
     List<DriveFileModel>? files,
   }) {
@@ -1780,6 +1802,8 @@ class NoteCreateDialog extends HookConsumerWidget {
           noteId: noteId,
           noteType: type,
           note: note,
+          initialNote: initialNote,
+          deleteOnPostId: deleteOnPostId,
           initText: initText,
           files: files,
         );

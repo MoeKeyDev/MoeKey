@@ -184,6 +184,7 @@ class _SentFollowRequestsListState
           onRefresh: _refresh,
           hasMore: _hasMore,
           empty: _requests.isEmpty,
+          loading: _loading,
           slivers: [
             SliverList.separated(
               itemCount: _requests.length,

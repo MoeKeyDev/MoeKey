@@ -48,4 +48,21 @@ void main() {
     });
     expect(users, isEmpty);
   });
+
+  test('user notes support pagination in both directions', () async {
+    final client = _TestClient();
+    final service = UserService(client: client);
+
+    await service.notes(
+      userId: 'target',
+      sinceId: 'newer-than-this',
+      untilId: 'older-than-this',
+      allowPartial: true,
+      limit: 10,
+    );
+
+    expect(client.data?['sinceId'], 'newer-than-this');
+    expect(client.data?['untilId'], 'older-than-this');
+    expect(client.data?['allowPartial'], isTrue);
+  });
 }

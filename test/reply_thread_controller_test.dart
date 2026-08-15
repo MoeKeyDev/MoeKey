@@ -122,6 +122,34 @@ void main() {
   );
 
   test(
+    'deleted reply subtrees are removed by the thread data controller',
+    () async {
+      final posted = StreamController<NoteModel>.broadcast(sync: true);
+      addTearDown(posted.close);
+      final controller = ReplyThreadController(
+        rootNoteId: 'root',
+        postedNotes: posted.stream,
+        loadChildren: (noteId, limit, untilId) async => switch (noteId) {
+          'root' => [
+            _note('parent', replyId: 'root', repliesCount: 1),
+            _note('sibling', replyId: 'root'),
+          ],
+          'parent' => [_note('child', replyId: 'parent')],
+          _ => [],
+        },
+      );
+      addTearDown(controller.dispose);
+      await controller.loadInitial();
+
+      final entries = controller.entriesExcluding({'parent'});
+
+      expect(entries.map((entry) => entry.note.id), ['sibling']);
+      expect(entries.single.isFirstSibling, isTrue);
+      expect(entries.single.isLastSibling, isTrue);
+    },
+  );
+
+  test(
     'paginates only root replies with the last remote reply as cursor',
     () async {
       final posted = StreamController<NoteModel>.broadcast(sync: true);

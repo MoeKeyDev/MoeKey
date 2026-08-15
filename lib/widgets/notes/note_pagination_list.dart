@@ -8,8 +8,10 @@ import 'package:moekey/utils/get_padding_note.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 
 import '../../apis/models/note.dart';
+import '../../status/note_deletion_registry.dart';
 import '../mk_refresh_load.dart';
 import 'note_card.dart';
+import 'timeline_insert_transition.dart';
 import 'timeline_note_size_observer.dart';
 
 class MkPaginationNoteList extends ConsumerStatefulWidget {
@@ -22,12 +24,14 @@ class MkPaginationNoteList extends ConsumerStatefulWidget {
     required this.hasMore,
     this.items,
     this.controller,
+    this.loading = false,
     this.initialLoading = false,
     this.initialError,
     this.onRetry,
     this.loadMoreError,
     this.onRetryLoadMore,
     this.onReachTop,
+    this.showRefreshIndicatorOnInitialLoad = false,
   });
 
   final Future Function() onLoad;
@@ -38,12 +42,14 @@ class MkPaginationNoteList extends ConsumerStatefulWidget {
 
   final List<NoteModel>? items;
   final MkRefreshLoadListController? controller;
+  final bool loading;
   final bool initialLoading;
   final Object? initialError;
   final VoidCallback? onRetry;
   final Object? loadMoreError;
   final VoidCallback? onRetryLoadMore;
   final Future<void> Function()? onReachTop;
+  final bool showRefreshIndicatorOnInitialLoad;
 
   @override
   ConsumerState<MkPaginationNoteList> createState() =>
@@ -55,7 +61,7 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
   late final ChatScrollObserver chatObserver;
   BuildContext? noteSliverContext;
   bool wasAtTop = false;
-  String? animatedInsertNoteId;
+  Set<String> animatedInsertNoteIds = const {};
   String? firstVisibleNoteId;
   final layoutCorrection = TimelineLayoutCorrection();
 
@@ -85,29 +91,40 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
     super.didUpdateWidget(oldWidget);
     final previous = oldWidget.items;
     final current = widget.items;
-    if (_isSinglePrepend(previous, current)) {
-      animatedInsertNoteId = current!.first.id;
-      final capturedId = animatedInsertNoteId;
+    final prependedIds = isAtTop
+        ? _prependedIds(previous, current)
+        : const <String>{};
+    if (prependedIds.isNotEmpty) {
+      animatedInsertNoteIds = prependedIds;
+      final capturedIds = animatedInsertNoteIds;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (animatedInsertNoteId == capturedId) {
-          animatedInsertNoteId = null;
+        if (identical(animatedInsertNoteIds, capturedIds)) {
+          animatedInsertNoteIds = const {};
         }
       });
     } else {
-      animatedInsertNoteId = null;
+      animatedInsertNoteIds = const {};
     }
   }
 
-  bool _isSinglePrepend(List<NoteModel>? previous, List<NoteModel>? current) {
+  Set<String> _prependedIds(
+    List<NoteModel>? previous,
+    List<NoteModel>? current,
+  ) {
     if (previous == null ||
         current == null ||
-        current.length != previous.length + 1) {
-      return false;
+        current.length <= previous.length) {
+      return const {};
     }
+    final prependCount = current.length - previous.length;
     for (var index = 0; index < previous.length; index++) {
-      if (previous[index].id != current[index + 1].id) return false;
+      if (previous[index].id != current[index + prependCount].id) {
+        return const {};
+      }
     }
-    return true;
+    return {
+      for (var index = 0; index < prependCount; index++) current[index].id,
+    };
   }
 
   Future<void> preservePrependedEntries(int changeCount) async {
@@ -135,6 +152,7 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
     final anchorId = firstVisibleNoteId;
     if (controller == null ||
         !controller.hasClients ||
+        controller.position.isScrollingNotifier.value ||
         items == null ||
         anchorId == null ||
         isAtTop) {
@@ -150,8 +168,6 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
     final delta = newSize.height - oldSize.height;
     if (delta.abs() < precisionErrorTolerance) return;
 
-    // ScrollPhysics consumes all deltas after the viewport has measured its
-    // new content dimensions and asks Flutter to rerun layout before paint.
     layoutCorrection.add(delta);
     observerController.clearScrollIndexCache();
   }
@@ -202,7 +218,11 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
         var padding = EdgeInsets.symmetric(
           horizontal: getPaddingForNote(constraints),
         ).add(widget.padding);
-        final items = widget.items ?? const <NoteModel>[];
+        final deletedNoteIds = ref.watch(deletedNoteIdsProvider);
+        final items = excludeDeletedNotes(
+          widget.items ?? const <NoteModel>[],
+          deletedNoteIds,
+        );
 
         return NotificationListener<ScrollNotification>(
           onNotification: _handleScrollNotification,
@@ -211,7 +231,10 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
             onRefresh: widget.onRefresh,
             padding: padding,
             controller: widget.controller,
+            loading: widget.loading,
             initialLoading: widget.initialLoading,
+            showRefreshIndicatorOnInitialLoad:
+                widget.showRefreshIndicatorOnInitialLoad,
             initialError: widget.initialError,
             onRetry: widget.onRetry,
             loadMoreError: widget.loadMoreError,
@@ -264,8 +287,10 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
                     child: TimelineNoteSizeObserver(
                       noteId: items[noteIndex].id,
                       onSizeChanged: _handleNoteSizeChanged,
-                      child: _TimelineInsertTransition(
-                        animate: items[noteIndex].id == animatedInsertNoteId,
+                      child: TimelineInsertTransition(
+                        animate: animatedInsertNoteIds.contains(
+                          items[noteIndex].id,
+                        ),
                         child: NoteCard(
                           borderRadius: borderRadius,
                           data: items[noteIndex],
@@ -287,7 +312,7 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
               ),
             ],
             hasMore: widget.hasMore,
-            empty: widget.items?.isEmpty,
+            empty: items.isEmpty,
           ),
         );
       },
@@ -299,93 +324,4 @@ class _TimelineNoteKey extends ValueKey<String> {
   const _TimelineNoteKey(this.noteId) : super(noteId);
 
   final String noteId;
-}
-
-class _TimelineInsertTransition extends StatefulWidget {
-  const _TimelineInsertTransition({required this.animate, required this.child});
-
-  final bool animate;
-  final Widget child;
-
-  @override
-  State<_TimelineInsertTransition> createState() =>
-      _TimelineInsertTransitionState();
-}
-
-class _TimelineInsertTransitionState extends State<_TimelineInsertTransition>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController controller;
-  late final Animation<double> opacity;
-  late final Animation<Offset> offset;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 220),
-      value: widget.animate ? 0 : 1,
-    );
-    final curved = CurvedAnimation(
-      parent: controller,
-      curve: Curves.easeOutCubic,
-    );
-    opacity = curved;
-    offset = Tween<Offset>(
-      begin: const Offset(0, -0.04),
-      end: Offset.zero,
-    ).animate(curved);
-    if (widget.animate) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        if (_intersectsViewport()) {
-          controller.forward();
-        } else {
-          controller.value = 1;
-        }
-      });
-    }
-  }
-
-  @override
-  void didUpdateWidget(_TimelineInsertTransition oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (!oldWidget.animate && widget.animate && controller.value == 1) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || !_intersectsViewport()) return;
-        controller.forward(from: 0);
-      });
-    }
-  }
-
-  bool _intersectsViewport() {
-    final itemBox = context.findRenderObject();
-    final scrollable = Scrollable.maybeOf(context);
-    final viewportBox = scrollable?.context.findRenderObject();
-    if (itemBox is! RenderBox ||
-        viewportBox is! RenderBox ||
-        !itemBox.hasSize ||
-        !viewportBox.hasSize) {
-      return false;
-    }
-    final itemTop = itemBox.localToGlobal(Offset.zero).dy;
-    final itemBottom = itemTop + itemBox.size.height;
-    final viewportTop = viewportBox.localToGlobal(Offset.zero).dy;
-    final viewportBottom = viewportTop + viewportBox.size.height;
-    return itemBottom > viewportTop && itemTop < viewportBottom;
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: opacity,
-      child: SlideTransition(position: offset, child: widget.child),
-    );
-  }
 }

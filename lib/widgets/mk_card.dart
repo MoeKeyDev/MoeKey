@@ -7,12 +7,14 @@ class MkCard extends ConsumerWidget {
   final EdgeInsetsGeometry? padding;
   final bool shadow;
   final BorderRadius borderRadius;
+  final Clip clipBehavior;
 
   const MkCard(
       {super.key,
       required this.child,
       this.padding,
       this.shadow = true,
+      this.clipBehavior = Clip.antiAlias,
       this.borderRadius = const BorderRadius.all(
         Radius.circular(12),
       )});
@@ -22,6 +24,7 @@ class MkCard extends ConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     return ClipRRect(
       borderRadius: borderRadius,
+      clipBehavior: clipBehavior,
       child: AnimatedContainer(
         decoration: BoxDecoration(
           borderRadius: borderRadius,

@@ -1,4 +1,5 @@
 import 'package:moekey/status/misskey_api.dart';
+import 'package:moekey/status/note_deletion_registry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../apis/models/clips.dart';
@@ -33,17 +34,33 @@ class ClipsNoteListState {
 class ClipsNotesList extends _$ClipsNotesList {
   @override
   FutureOr<ClipsNoteListState> build(String clipId) async {
-    var state = ClipsNoteListState();
-    state.list = await clipsNotesList(clipId: clipId);
-    return state;
+    ref.listen(deletedNoteIdsProvider, (_, deletedNoteIds) {
+      final model = state.value;
+      if (model == null) return;
+      final filtered = excludeDeletedNotes(model.list, deletedNoteIds);
+      if (filtered.length == model.list.length) return;
+      model.list = filtered;
+      state = AsyncData(model);
+      ref.notifyListeners();
+    });
+    var model = ClipsNoteListState();
+    model.list = await clipsNotesList(clipId: clipId);
+    return model;
   }
 
-  Future<List<NoteModel>> clipsNotesList(
-      {required String clipId, int limit = 10, String? untilId}) async {
+  Future<List<NoteModel>> clipsNotesList({
+    required String clipId,
+    int limit = 10,
+    String? untilId,
+  }) async {
     try {
       var apis = ref.read(misskeyApisProvider);
-      return await apis.clips
-          .notes(clipId: clipId, untilId: untilId, limit: limit);
+      final notes = await apis.clips.notes(
+        clipId: clipId,
+        untilId: untilId,
+        limit: limit,
+      );
+      return excludeDeletedNotes(notes, ref.read(deletedNoteIdsProvider));
     } finally {}
   }
 

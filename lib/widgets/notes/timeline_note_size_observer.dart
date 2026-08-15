@@ -18,9 +18,11 @@ class TimelineLayoutCorrection {
   }
 }
 
-/// Applies accumulated note-height deltas through Flutter's official
-/// new-content-dimensions correction phase. The viewport reruns layout before
-/// painting whenever this returns a different pixel offset.
+/// Keeps the visible content stationary when a note above it changes height.
+///
+/// Corrections are only applied while the list is idle. Applying one during a
+/// drag or ballistic scroll would compete with the user's movement and can
+/// visibly push the viewport in the opposite direction.
 class TimelineSizeMaintainingScrollPhysics extends ScrollPhysics {
   const TimelineSizeMaintainingScrollPhysics({
     required this.correction,
@@ -50,15 +52,11 @@ class TimelineSizeMaintainingScrollPhysics extends ScrollPhysics {
       isScrolling: isScrolling,
       velocity: velocity,
     );
-    return base + correction.take();
+    final pendingCorrection = correction.take();
+    return isScrolling ? base : base + pendingCorrection;
   }
 }
 
-/// Reports changes to a note's outer size during layout.
-///
-/// Descendants do not need to know about the timeline. Images, emoji wraps,
-/// previews, and expanded content can lay themselves out normally; the list
-/// receives one delta for the final outer note size.
 class TimelineNoteSizeObserver extends SingleChildRenderObjectWidget {
   const TimelineNoteSizeObserver({
     super.key,

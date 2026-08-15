@@ -57,7 +57,8 @@ class UserFilesPage extends HookConsumerWidget {
       onLoad: () => ref.read(provider.notifier).load(),
       onRefresh: () => ref.refresh(provider.future),
       hasMore: state.value?.hasMore ?? true,
-      empty: !state.isLoading && media.isEmpty,
+      empty: media.isEmpty,
+      loading: state.isLoading,
       initialLoading: state.isLoading && state.value == null,
       initialError: state.hasError && state.value == null ? state.error : null,
       onRetry: () => ref.invalidate(provider),
@@ -99,7 +100,6 @@ class UserMediaTile extends StatelessWidget {
       heroKey: null,
       fit: BoxFit.cover,
       showHideButton: false,
-      onClickForVideo: true,
       onClick: () => context.push('/notes/${media.noteId}'),
     );
   }

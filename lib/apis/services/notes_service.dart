@@ -58,6 +58,21 @@ class NotesService extends MisskeyApiServices {
     return NoteModel.fromJson(data);
   }
 
+  Future<void> delete({required String noteId}) async {
+    await client.post("/notes/delete", data: {"noteId": noteId});
+  }
+
+  Future<List<NoteModel>> conversation({required String noteId}) async {
+    var data = await client.post<List?>(
+      "/notes/conversation",
+      data: {"noteId": noteId},
+    );
+    if (data == null) {
+      return [];
+    }
+    return List<NoteModel>.from(data.map((e) => NoteModel.fromJson(e)));
+  }
+
   Future<List<NoteModel>> children({
     required String noteId,
     int limit = 30,

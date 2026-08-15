@@ -1,27 +1,21 @@
 PODS:
   - Flutter (1.0.0)
-  - media_kit_libs_ios_video (1.0.4):
-    - Flutter
   - media_kit_video (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - media_kit_libs_ios_video (from `.symlinks/plugins/media_kit_libs_ios_video/ios`)
   - media_kit_video (from `.symlinks/plugins/media_kit_video/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  media_kit_libs_ios_video:
-    :path: ".symlinks/plugins/media_kit_libs_ios_video/ios"
   media_kit_video:
     :path: ".symlinks/plugins/media_kit_video/ios"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  media_kit_libs_ios_video: 5a18affdb97d1f5d466dc79988b13eff6c5e2854
-  media_kit_video: 1746e198cb697d1ffb734b1d05ec429d1fcd1474
+  media_kit_video: f3b0d035d89def15cfbbcf7dc2ae278f201e2f83
 
 PODFILE CHECKSUM: ade96bceabe3919b69c16573938e4268fe3a6c9d
 

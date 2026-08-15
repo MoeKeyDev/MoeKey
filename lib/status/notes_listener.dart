@@ -11,14 +11,23 @@ import 'note_posted.dart';
 
 part 'notes_listener.g.dart';
 
+void applyEditableNoteFields(NoteModel target, NoteModel updated) {
+  target.text = updated.text;
+  target.textAst = updated.textAst;
+  target.cw = updated.cw;
+  target.cwAst = updated.cwAst;
+  target.files = updated.files;
+}
+
 /// NotesListener 负责保存当前需要更新状态的note id列表，并且从ws中拉取Note的更新，并且调用NoteListener更新Note
 @Riverpod(keepAlive: true)
 class NotesListener extends _$NotesListener {
   final Map<String, Set<Object>> _noteSubscriptions = {};
+  late StreamController<Map> _noteEvents;
 
   @override
   Raw<Stream<Map>> build() {
-    StreamController<Map> stream = StreamController.broadcast();
+    _noteEvents = StreamController<Map>.broadcast(sync: true);
     for (var item in _noteSubscriptions.keys) {
       _s(item);
     }
@@ -27,7 +36,7 @@ class NotesListener extends _$NotesListener {
         if (event.data["type"] == "noteUpdated") {
           logger.d("Notes Listener");
           logger.d(event.data["body"]);
-          stream.add(event.data["body"]);
+          _noteEvents.add(event.data["body"]);
         }
       }
       if (event.type == MoekeyEventType.load) {
@@ -40,9 +49,16 @@ class NotesListener extends _$NotesListener {
     });
     ref.onDispose(() {
       eventSubscription.cancel();
-      stream.close();
+      _noteEvents.close();
     });
-    return stream.stream;
+    return _noteEvents.stream;
+  }
+
+  /// Routes a successful local edit through the same per-note event pipeline
+  /// used by WebSocket updates.
+  void emitNoteUpdated(NoteModel note) {
+    if (!ref.mounted) return;
+    _noteEvents.add({"id": note.id, "type": "localNoteUpdated", "body": note});
   }
 
   void _s(String id) {
@@ -99,7 +115,12 @@ class NoteIdListener extends _$NoteIdListener {
   @override
   Raw<Stream<Map>> build(String noteId) {
     var listener = ref.read(notesListenerProvider.notifier);
-    StreamController<Map> streamController = StreamController.broadcast();
+    // Local edits must reach the active NoteListener before the composer
+    // route is popped. Keeping both routing stages synchronous also avoids
+    // losing an edit when the originating card is disposed immediately.
+    StreamController<Map> streamController = StreamController.broadcast(
+      sync: true,
+    );
     var event = ref.watch(notesListenerProvider);
     final eventSubscription = event.listen((event) {
       if (noteId == event["id"]) {
@@ -125,7 +146,17 @@ class NoteListener extends _$NoteListener {
     var user = ref.watch(currentLoginUserProvider);
     final eventSubscription = stream.listen((event) {
       var type = event["type"];
-      var reactions = this.noteModel.reactions;
+      if (type == "localNoteUpdated") {
+        final updatedNote = event["body"];
+        if (updatedNote is NoteModel) {
+          updateNote((noteModel) {
+            applyEditableNoteFields(noteModel, updatedNote);
+          });
+        }
+        return;
+      }
+      final currentNote = state;
+      var reactions = currentNote.reactions;
       if (type == "reacted") {
         var reaction = event["body"]["reaction"];
         var userId = event["body"]["userId"];
@@ -135,11 +166,11 @@ class NoteListener extends _$NoteListener {
         }
         reactions[reaction] = reactions[reaction]! + 1;
         if (emoji != null) {
-          noteModel.reactionEmojis[emoji["name"]] = emoji["url"];
+          currentNote.reactionEmojis[emoji["name"]] = emoji["url"];
         }
         // 处理用户
         if (userId == user?.id) {
-          noteModel.myReaction = reaction;
+          currentNote.myReaction = reaction;
         }
       }
       // 取消反应
@@ -154,13 +185,13 @@ class NoteListener extends _$NoteListener {
         }
         // 处理用户
         if (userId == user?.id) {
-          noteModel.myReaction = null;
+          currentNote.myReaction = null;
         }
       }
-      if (type == "pollVoted" && noteModel.poll != null) {
+      if (type == "pollVoted" && currentNote.poll != null) {
         final choice = event["body"]["choice"];
         final userId = event["body"]["userId"];
-        final choices = [...noteModel.poll!.choices];
+        final choices = [...currentNote.poll!.choices];
         if (choice is int && choice >= 0 && choice < choices.length) {
           final currentChoice = choices[choice];
           final votedByCurrentUser = userId == user?.id;
@@ -171,7 +202,7 @@ class NoteListener extends _$NoteListener {
               votes: currentChoice.votes + 1,
               isVoted: currentChoice.isVoted || votedByCurrentUser,
             );
-            noteModel.poll = noteModel.poll!.copyWith(choices: choices);
+            currentNote.poll = currentNote.poll!.copyWith(choices: choices);
           }
         }
       }
@@ -179,11 +210,11 @@ class NoteListener extends _$NoteListener {
     });
     final locallyCountedReplyIds = <String>{};
     final notePostedSubscription = notePostedStream.listen((postedNote) {
-      if (postedNote.replyId != noteModel.id ||
+      if (postedNote.replyId != state.id ||
           !locallyCountedReplyIds.add(postedNote.id)) {
         return;
       }
-      noteModel.repliesCount += 1;
+      state.repliesCount += 1;
       ref.notifyListeners();
     });
     ref.onDispose(() {
@@ -194,7 +225,7 @@ class NoteListener extends _$NoteListener {
   }
 
   void updateNote(void Function(NoteModel noteModel) update) {
-    update(noteModel);
+    update(state);
     ref.notifyListeners();
   }
 }

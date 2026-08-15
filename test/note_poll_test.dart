@@ -112,6 +112,14 @@ Future<void> _confirmVote(WidgetTester tester, String choice) async {
 }
 
 void main() {
+  test('delete sends the Misskey endpoint payload', () async {
+    final client = _TestClient();
+    await NotesService(client: client).delete(noteId: 'note-id');
+
+    expect(client.path, '/notes/delete');
+    expect(client.data, {'noteId': 'note-id'});
+  });
+
   test('votePoll sends the Misskey endpoint payload', () async {
     final client = _TestClient();
     await NotesService(client: client).votePoll(noteId: 'note-id', choice: 1);

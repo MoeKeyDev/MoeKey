@@ -131,15 +131,19 @@ class MoekeyGlobalEvent extends _$MoekeyGlobalEvent {
   }
 
   Future<void> send(Map data) async {
+    if (!ref.mounted) return;
     var json = jsonEncode(data);
-    sendString(json);
+    await sendString(json);
   }
 
   Future<void> sendString(String data) async {
+    if (!ref.mounted) return;
     try {
       var channel = await ref.read(moekeyWebSocketProvider.future);
+      if (!ref.mounted) return;
       channel?.sink.add(data);
     } catch (e) {
+      if (!ref.mounted) return;
       logger.d(e);
       _scheduleReconnect();
     }

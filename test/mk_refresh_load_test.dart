@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +11,46 @@ import 'package:moekey/widgets/mk_refresh_load.dart';
 import 'package:moekey/widgets/sliver_load_more.dart';
 
 void main() {
+  testWidgets('initial loading can use the pull-to-refresh indicator', (
+    tester,
+  ) async {
+    final refreshCompleter = Completer<void>();
+    final controller = MkRefreshLoadListController();
+    addTearDown(controller.dispose);
+    var refreshCount = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DefaultMkRefreshLoadListController(
+            controller: controller,
+            child: MkRefreshLoadList<String>(
+              onLoad: () async {},
+              onRefresh: () {
+                refreshCount++;
+                return refreshCompleter.future;
+              },
+              hasMore: true,
+              empty: true,
+              initialLoading: true,
+              showRefreshIndicatorOnInitialLoad: true,
+              slivers: const [],
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 250));
+
+    expect(refreshCount, 1);
+    expect(find.byType(RefreshProgressIndicator), findsOneWidget);
+    expect(find.byType(LoadingCircularProgress), findsNothing);
+
+    refreshCompleter.complete();
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('initial list errors replace the pagination spinner with retry', (
     tester,
   ) async {
@@ -120,6 +162,36 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(loadCount, 1);
+  });
+
+  testWidgets('empty loading lists hide the load-more action', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('zh', 'CN'),
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        home: Scaffold(
+          body: MkRefreshLoadList<String>(
+            onLoad: () async {},
+            onRefresh: () async {},
+            hasMore: true,
+            empty: true,
+            loading: true,
+            slivers: const [],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(LoadingCircularProgress), findsOneWidget);
+    expect(find.byType(SliverLoadMore), findsNothing);
+    expect(find.text('查看更多'), findsNothing);
   });
 
   testWidgets('short lists provide a manual load-more action', (tester) async {

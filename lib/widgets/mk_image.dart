@@ -109,6 +109,13 @@ ImageProvider<Object> getExtendedResizeImage(
   );
 }
 
+/// Loads an image at its original resolution while retaining the shared
+/// network/disk cache. Full-screen media preview uses this after showing the
+/// already-cached thumbnail.
+ImageProvider<Object> getExtendedOriginalImage(String url) {
+  return ExtendedNetworkImageProvider(url, cache: true, printError: false);
+}
+
 class MkImage extends ConsumerWidget {
   final String url;
   final double? width;
@@ -120,6 +127,7 @@ class MkImage extends ConsumerWidget {
   final MkImageProxyOptions? proxy;
   final int? cacheWidth;
   final int? cacheHeight;
+  final Widget? placeholder;
 
   const MkImage(
     this.url, {
@@ -133,6 +141,7 @@ class MkImage extends ConsumerWidget {
     this.proxy,
     this.cacheWidth,
     this.cacheHeight,
+    this.placeholder,
   });
 
   @override
@@ -154,6 +163,13 @@ class MkImage extends ConsumerWidget {
           width: width,
           height: height,
           fit: fit,
+          placeholderBuilder: placeholder == null
+              ? null
+              : (context) => SizedBox(
+                  width: width ?? height,
+                  height: height ?? width,
+                  child: placeholder,
+                ),
         ),
       );
     }
@@ -169,11 +185,10 @@ class MkImage extends ConsumerWidget {
       filterQuality: FilterQuality.medium,
       shape: shape,
       loadStateChanged: (state) {
-        Widget placeholder = ColoredBox(
-          color: const Color.fromARGB(40, 0, 0, 0),
-        );
-        if (blurHash != null && blurHash!.isNotEmpty) {
-          placeholder = BlurHash(blurHash!);
+        Widget loadingPlaceholder =
+            placeholder ?? const ColoredBox(color: Color.fromARGB(40, 0, 0, 0));
+        if (placeholder == null && blurHash != null && blurHash!.isNotEmpty) {
+          loadingPlaceholder = BlurHash(blurHash!);
         }
 
         Widget child;
@@ -181,7 +196,7 @@ class MkImage extends ConsumerWidget {
           child = SizedBox(
             width: width ?? height,
             height: height ?? width,
-            child: placeholder,
+            child: loadingPlaceholder,
           );
         } else {
           child = LayoutBuilder(
@@ -197,7 +212,7 @@ class MkImage extends ConsumerWidget {
               return SizedBox(
                 width: constraintsWidth,
                 height: constraintsHeight,
-                child: placeholder,
+                child: loadingPlaceholder,
               );
             },
           );

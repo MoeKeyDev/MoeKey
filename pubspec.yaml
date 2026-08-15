@@ -57,7 +57,11 @@ dependencies:
   twemoji_v2: ^0.6.0
   media_kit: ^1.1.10
   media_kit_video: ^2.0.1
-  media_kit_libs_video: ^1.0.4
+  # mpv is only used as the Linux/Windows fallback. Depending on the
+  # all-platform media_kit_libs_video bundle also packages mpv on Android and
+  # Apple platforms, even though those platforms use video_player below.
+  media_kit_libs_linux: ^1.2.1
+  media_kit_libs_windows_video: ^1.0.11
   video_player: ^2.13.0
   scrollview_observer: ^1.18.0
   flutter_constraintlayout: ^1.7.0-stable

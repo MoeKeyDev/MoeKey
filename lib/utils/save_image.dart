@@ -24,14 +24,61 @@ const Map<String, String> defaultExtensionMap = {
   'image/bmp': 'bmp',
 };
 
+Future<bool> saveMedia({
+  required Dio http,
+  required String url,
+  required String mimeType,
+  String? name,
+  String album = 'moekey',
+}) async {
+  if (mimeType.startsWith('image/')) {
+    return saveImage(http: http, url: url, name: name, album: album);
+  }
+
+  try {
+    final response = await http.get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes),
+    );
+    final bytes = response.data;
+    if (bytes == null) return false;
+
+    final safeName = basename(name ?? Uri.parse(url).path);
+    final outputName = safeName.isEmpty
+        ? '${md5.convert(utf8.encode(url))}.mp4'
+        : safeName;
+
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      final prefs = await SharedPreferences.getInstance();
+      final outputPath = await FilePicker.saveFile(
+        dialogTitle: 'Please select an output file:',
+        fileName: outputName,
+        type: FileType.any,
+        initialDirectory: prefs.getString('saveInitialDirectory'),
+      );
+      if (outputPath == null) return false;
+      await prefs.setString('saveInitialDirectory', dirname(outputPath));
+      await File(outputPath).writeAsBytes(bytes);
+    } else if (Platform.isAndroid || Platform.isIOS) {
+      final path = '${(await getTemporaryDirectory()).path}/$outputName';
+      await File(path).writeAsBytes(bytes);
+      await Gal.putVideo(path, album: album);
+    }
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 Future<bool> saveImage({
   required Dio http,
   required String url,
   String? name,
   String album = "moekey",
 }) async {
-  name =
-      name != null ? basename(name) : md5.convert(utf8.encode(url)).toString();
+  name = name != null
+      ? basename(name)
+      : md5.convert(utf8.encode(url)).toString();
 
   var ext = extension(name).substring(1);
   var fileBasename = basenameWithoutExtension(name);
@@ -64,10 +111,11 @@ Future<bool> saveImage({
     var prefs = await SharedPreferences.getInstance();
     var initialDirectory = prefs.getString("saveInitialDirectory");
     String? outputFile = await FilePicker.saveFile(
-        dialogTitle: 'Please select an output file:',
-        fileName: name,
-        type: FileType.image,
-        initialDirectory: initialDirectory);
+      dialogTitle: 'Please select an output file:',
+      fileName: name,
+      type: FileType.image,
+      initialDirectory: initialDirectory,
+    );
     if (outputFile == null) {
       return false;
     }

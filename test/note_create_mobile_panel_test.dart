@@ -23,7 +23,9 @@ class _TestCurrentLoginUser extends CurrentLoginUser {
 }
 
 void main() {
-  testWidgets('desktop reply composer keeps intrinsic sizing', (tester) async {
+  testWidgets('reply composer does not inherit the target content warning', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1000, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -47,6 +49,7 @@ void main() {
       createdAt: DateTime.utc(2026),
       files: [],
       localOnly: false,
+      cw: 'target content warning',
       reactionEmojis: {},
       reactions: {},
       text: 'reply target',
@@ -86,6 +89,7 @@ void main() {
 
     expect(find.byType(IntrinsicHeight), findsOneWidget);
     expect(find.text('reply target'), findsOneWidget);
+    expect(find.byKey(const ValueKey('cw')), findsNothing);
     expect(tester.takeException(), isNull);
   });
 

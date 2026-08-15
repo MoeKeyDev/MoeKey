@@ -78,6 +78,7 @@ class UserFollowList extends HookConsumerWidget {
           onLoad: () => ref.read(provider.notifier).load(),
           onRefresh: () => ref.refresh(provider.future),
           hasMore: follow.value?.hasMore,
+          loading: follow.isLoading,
           padding: EdgeInsets.symmetric(horizontal: paddingH),
           slivers: [
             SliverGrid.builder(

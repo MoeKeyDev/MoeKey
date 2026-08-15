@@ -133,6 +133,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "day": MessageLookupByLibrary.simpleMessage("Day"),
     "daysAgo": m2,
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "deleteAndEdit": MessageLookupByLibrary.simpleMessage("Delete and edit"),
+    "deleteAndEditConfirm": MessageLookupByLibrary.simpleMessage(
+      "Do you want to redraft this note? The original will be deleted when you publish, along with its reactions, renotes, and replies.",
+    ),
     "deleteConfirm": m3,
     "deleteFileConfirmation": m4,
     "deleteFolderConfirmation": m5,
@@ -250,6 +254,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noteCwHide": MessageLookupByLibrary.simpleMessage("Hide"),
     "noteCwShow": MessageLookupByLibrary.simpleMessage("Show more"),
+    "noteDeleteConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to delete this note?",
+    ),
     "noteFormLanguageTranslation": m15,
     "noteLocalOnly": MessageLookupByLibrary.simpleMessage(
       "Non-participation in joint",

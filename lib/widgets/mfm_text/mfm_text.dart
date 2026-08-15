@@ -17,6 +17,7 @@ import '../../status/themes.dart';
 import '../../utils/time_to_desired_format.dart';
 import '../hover_builder.dart';
 import '../mk_image.dart';
+import '../mk_skeleton_block.dart';
 import 'animate/spin.dart';
 
 class MFMText extends HookConsumerWidget {
@@ -57,10 +58,10 @@ class MFMText extends HookConsumerWidget {
     var meta = ref.watch(instanceMetaProvider);
     var currentUser = ref.watch(currentLoginUserProvider);
     var emoji = ref.watch(apiEmojisProvider);
-    final mfmParse = useMemoized(
-      () => ast ?? const MfmParser().parse(text),
-      [ast, text],
-    );
+    final mfmParse = useMemoized(() => ast ?? const MfmParser().parse(text), [
+      ast,
+      text,
+    ]);
     var textStyle = DefaultTextStyle.of(context).style;
     var parse = _getParse(
       feature: feature,
@@ -77,10 +78,7 @@ class MFMText extends HookConsumerWidget {
     var textSpan = [
       for (var item in mfmParse)
         if (parse[item.type] != null)
-          parse[item.type](
-            item,
-            textStyle,
-          )
+          parse[item.type](item, textStyle)
         else
           TextSpan(text: item.toString()),
     ];
@@ -97,9 +95,7 @@ class MFMText extends HookConsumerWidget {
       ),
     );
     if (isSelection) {
-      rich = SelectionArea(
-        child: rich,
-      );
+      rich = SelectionArea(child: rich);
     }
     return rich;
   }
@@ -157,9 +153,7 @@ Map<String, dynamic> _getParse({
           children: [
             TextSpan(
               text: item.props?["url"],
-              style: textStyle.copyWith(
-                color: themes.accentColor,
-              ),
+              style: textStyle.copyWith(color: themes.accentColor),
               mouseCursor: SystemMouseCursors.click,
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
@@ -171,12 +165,13 @@ Map<String, dynamic> _getParse({
                 },
             ),
             WidgetSpan(
-                child: Icon(
-                  TablerIcons.external_link,
-                  color: themes.accentColor,
-                  size: textStyle.fontSize! + 2,
-                ),
-                alignment: PlaceholderAlignment.middle)
+              child: Icon(
+                TablerIcons.external_link,
+                color: themes.accentColor,
+                size: textStyle.fontSize! + 2,
+              ),
+              alignment: PlaceholderAlignment.middle,
+            ),
           ],
         );
       } else {
@@ -186,9 +181,7 @@ Map<String, dynamic> _getParse({
     "link": (MfmLink item, TextStyle textStyle) {
       var a = item.children;
       if (a != null) {
-        textStyle = textStyle.copyWith(
-          color: themes.accentColor,
-        );
+        textStyle = textStyle.copyWith(color: themes.accentColor);
         var parse = _getParse(
           themes: themes,
           loginServerUrl: loginServerUrl,
@@ -214,9 +207,7 @@ Map<String, dynamic> _getParse({
               child: Text.rich(
                 TextSpan(
                   // text: item.url,
-                  style: textStyle.copyWith(
-                    color: themes.accentColor,
-                  ),
+                  style: textStyle.copyWith(color: themes.accentColor),
                   children: [
                     for (var item1 in a)
                       if (parse[item1.type] != null)
@@ -239,7 +230,7 @@ Map<String, dynamic> _getParse({
                         ),
                       ),
                       alignment: PlaceholderAlignment.middle,
-                    )
+                    ),
                   ],
                   mouseCursor: SystemMouseCursors.click,
                 ),
@@ -261,6 +252,9 @@ Map<String, dynamic> _getParse({
               } else if (emojis?[item.props!["name"]] != null) {
                 url = emojis?[item.props!["name"]];
               }
+              final emojiHeight = bigEmojiCode
+                  ? textStyle.fontSize! * 2
+                  : textStyle.fontSize! + 1;
               return HoverBuilder(
                 builder: (context, isHover) {
                   return Tooltip(
@@ -269,16 +263,17 @@ Map<String, dynamic> _getParse({
                       scale: isHover ? 1.3 : 1,
                       duration: const Duration(milliseconds: 100),
                       child: SizedBox(
-                        height: bigEmojiCode
-                            ? textStyle.fontSize! * 2
-                            : textStyle.fontSize! + 1,
+                        height: emojiHeight,
                         child: MkImage(
                           url,
-                          height: bigEmojiCode
-                              ? textStyle.fontSize! * 2
-                              : textStyle.fontSize! + 1,
+                          height: emojiHeight,
                           proxy: const MkImageProxyOptions(
                             type: MkImageProxyType.emoji,
+                          ),
+                          placeholder: MkSkeletonBlock(
+                            width: emojiHeight,
+                            height: emojiHeight,
+                            borderRadius: BorderRadius.zero,
                           ),
                         ),
                       ),
@@ -297,71 +292,76 @@ Map<String, dynamic> _getParse({
       if (feature!.contains(MFMFeature.mention)) {
         var currentHost = Uri.parse(loginServerUrl).host;
         return WidgetSpan(
-            alignment: PlaceholderAlignment.middle,
-            child: Builder(
-              builder: (context) {
-                String user = item.props?["username"]!;
-                var host = item.props?["host"] ?? currentServerHost;
-                return GestureDetector(
-                  onTap: () {
-                    logger.d('/user/$host/$user');
-                    // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
-                    //   path: "user/@$user${host != null ? "@$host" : ""}",
-                    //   page: () {
-                    //     return UserPage(username: user, host: host);
-                    //   },
-                    // ));
-                    context.push('/user/$host/$user');
-                  },
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: themes.mentionColor.withValues(alpha: 0.1),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(100)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          MkImage(
-                            "$loginServerUrl/avatar/@$user${host != null ? "@$host" : ""}",
-                            height: textStyle.fontSize! * 1.5,
-                            width: textStyle.fontSize! * 1.5,
-                            shape: BoxShape.circle,
-                          ),
-                          Text.rich(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            TextSpan(
-                              children: [
+          alignment: PlaceholderAlignment.middle,
+          child: Builder(
+            builder: (context) {
+              String user = item.props?["username"]!;
+              var host = item.props?["host"] ?? currentServerHost;
+              return GestureDetector(
+                onTap: () {
+                  logger.d('/user/$host/$user');
+                  // MainRouterDelegate.of(context).setNewRoutePath(RouterItem(
+                  //   path: "user/@$user${host != null ? "@$host" : ""}",
+                  //   page: () {
+                  //     return UserPage(username: user, host: host);
+                  //   },
+                  // ));
+                  context.push('/user/$host/$user');
+                },
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: themes.mentionColor.withValues(alpha: 0.1),
+                    borderRadius: const BorderRadius.all(Radius.circular(100)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MkImage(
+                          "$loginServerUrl/avatar/@$user${host != null ? "@$host" : ""}",
+                          height: textStyle.fontSize! * 1.5,
+                          width: textStyle.fontSize! * 1.5,
+                          shape: BoxShape.circle,
+                        ),
+                        Text.rich(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "@$user",
+                                style: textStyle.copyWith(
+                                  color: themes.mentionColor,
+                                ),
+                              ),
+                              if (host != null && host != currentHost)
                                 TextSpan(
-                                    text: "@$user",
-                                    style: textStyle.copyWith(
-                                        color: themes.mentionColor)),
-                                if (host != null && host != currentHost)
-                                  TextSpan(
-                                      text: "@$host",
-                                      style: textStyle.copyWith(
-                                        color: themes.mentionColor
-                                            .withValues(alpha: 0.5),
-                                      )),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                                  text: "@$host",
+                                  style: textStyle.copyWith(
+                                    color: themes.mentionColor.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
-            ));
+                ),
+              );
+            },
+          ),
+        );
       } else {
         return TextSpan(
-            text:
-                "@${item.props?["username"]!}${item.props?["host"] != null ? "@${item.props?["host"]}" : ""}");
+          text:
+              "@${item.props?["username"]!}${item.props?["host"] != null ? "@${item.props?["host"]}" : ""}",
+        );
       }
     },
     "bold": (MfmBold item, TextStyle textStyle) {
@@ -379,13 +379,15 @@ Map<String, dynamic> _getParse({
       var a = item.children;
       if (a != null) {
         textStyle = textStyle.copyWith(fontWeight: FontWeight.bold);
-        return TextSpan(children: [
-          for (var item in a)
-            if (parse[item.type] != null)
-              parse[item.type](item, textStyle)
-            else
-              TextSpan(text: item.toString(), style: textStyle),
-        ]);
+        return TextSpan(
+          children: [
+            for (var item in a)
+              if (parse[item.type] != null)
+                parse[item.type](item, textStyle)
+              else
+                TextSpan(text: item.toString(), style: textStyle),
+          ],
+        );
       }
     },
     "strike": (MfmStrike item, TextStyle textStyle) {
@@ -403,27 +405,35 @@ Map<String, dynamic> _getParse({
       var a = item.children;
       if (a != null) {
         textStyle = textStyle.copyWith(decoration: TextDecoration.lineThrough);
-        return TextSpan(children: [
-          for (var item in a)
-            if (parse[item.type] != null)
-              parse[item.type](item, textStyle)
-            else
-              TextSpan(text: item.toString(), style: textStyle),
-        ]);
+        return TextSpan(
+          children: [
+            for (var item in a)
+              if (parse[item.type] != null)
+                parse[item.type](item, textStyle)
+              else
+                TextSpan(text: item.toString(), style: textStyle),
+          ],
+        );
       }
     },
     "inlineCode": (MfmInlineCode item, TextStyle textStyle) {
       return WidgetSpan(
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 1),
-            decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 30, 30, 30),
-                borderRadius: BorderRadius.all(Radius.circular(4))),
-            child: Text(item.code,
-                style: textStyle.copyWith(
-                    color: Colors.white, fontFamily: "Consolas")),
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 1),
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 30, 30, 30),
+            borderRadius: BorderRadius.all(Radius.circular(4)),
           ),
-          alignment: PlaceholderAlignment.middle);
+          child: Text(
+            item.code,
+            style: textStyle.copyWith(
+              color: Colors.white,
+              fontFamily: "Consolas",
+            ),
+          ),
+        ),
+        alignment: PlaceholderAlignment.middle,
+      );
     },
     "quote": (MfmQuote item, TextStyle textStyle) {
       var parse = _getParse(
@@ -439,13 +449,17 @@ Map<String, dynamic> _getParse({
       );
       var a = item.children;
       if (a != null) {
-        var text = Text.rich(TextSpan(children: [
-          for (var item in a)
-            if (parse[item.type] != null)
-              parse[item.type](item, textStyle)
-            else
-              TextSpan(text: item.toString(), style: textStyle),
-        ]));
+        var text = Text.rich(
+          TextSpan(
+            children: [
+              for (var item in a)
+                if (parse[item.type] != null)
+                  parse[item.type](item, textStyle)
+                else
+                  TextSpan(text: item.toString(), style: textStyle),
+            ],
+          ),
+        );
         return WidgetSpan(
           child: Opacity(
             opacity: 0.7,
@@ -455,8 +469,10 @@ Map<String, dynamic> _getParse({
                 width: double.infinity,
                 padding: const EdgeInsets.fromLTRB(8, 6, 0, 6),
                 decoration: BoxDecoration(
-                    border: Border(
-                        left: BorderSide(color: themes.fgColor, width: 3))),
+                  border: Border(
+                    left: BorderSide(color: themes.fgColor, width: 3),
+                  ),
+                ),
                 child: text,
               ),
             ),
@@ -473,11 +489,16 @@ Map<String, dynamic> _getParse({
             width: double.infinity,
             padding: const EdgeInsets.all(14),
             decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 30, 30, 30),
-                borderRadius: BorderRadius.all(Radius.circular(6))),
-            child: Text(item.code,
-                style: textStyle.copyWith(
-                    color: Colors.white, fontFamily: "Consolas")),
+              color: Color.fromARGB(255, 30, 30, 30),
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+            ),
+            child: Text(
+              item.code,
+              style: textStyle.copyWith(
+                color: Colors.white,
+                fontFamily: "Consolas",
+              ),
+            ),
           ),
         ),
       );
@@ -497,19 +518,19 @@ Map<String, dynamic> _getParse({
       var a = item.children;
       if (a != null) {
         var text = Text.rich(
-            TextSpan(children: [
+          TextSpan(
+            children: [
               for (var item in a)
                 if (parse[item.type] != null)
                   parse[item.type](item, textStyle)
                 else
                   TextSpan(text: item.toString(), style: textStyle),
-            ]),
-            textAlign: TextAlign.center);
-        return WidgetSpan(
-          child: SizedBox(
-            width: double.infinity,
-            child: text,
+            ],
           ),
+          textAlign: TextAlign.center,
+        );
+        return WidgetSpan(
+          child: SizedBox(width: double.infinity, child: text),
         );
       }
       return const TextSpan();
@@ -532,15 +553,19 @@ Map<String, dynamic> _getParse({
           textStyle = textStyle.copyWith(fontStyle: FontStyle.italic);
         } else {
           textStyle = textStyle.copyWith(
-              fontSize: 12, color: textStyle.color?.withValues(alpha: 0.7));
+            fontSize: 12,
+            color: textStyle.color?.withValues(alpha: 0.7),
+          );
         }
-        return TextSpan(children: [
-          for (var item in a)
-            if (parse[item.type] != null)
-              parse[item.type](item, textStyle)
-            else
-              TextSpan(text: item.toString(), style: textStyle),
-        ]);
+        return TextSpan(
+          children: [
+            for (var item in a)
+              if (parse[item.type] != null)
+                parse[item.type](item, textStyle)
+              else
+                TextSpan(text: item.toString(), style: textStyle),
+          ],
+        );
       }
     },
     "search": (MfmSearch item, TextStyle textStyle) {
@@ -554,14 +579,15 @@ Map<String, dynamic> _getParse({
               Text(
                 item.query,
                 style: textStyle.copyWith(
-                    color: themes.accentColor,
-                    decoration: TextDecoration.underline),
+                  color: themes.accentColor,
+                  decoration: TextDecoration.underline,
+                ),
               ),
               Icon(
                 TablerIcons.search,
                 size: textStyle.fontSize,
                 color: themes.accentColor,
-              )
+              ),
             ],
           ),
         ),
@@ -581,29 +607,33 @@ Map<String, dynamic> _getParse({
         currentServerHost: currentServerHost,
         context: context,
       );
-      var child = TextSpan(children: [
-        for (var item in item.children ?? [])
-          if (parse[item.type] != null)
-            parse[item.type](item, textStyle)
-          else
-            TextSpan(text: item.toString(), style: textStyle),
-      ]);
+      var child = TextSpan(
+        children: [
+          for (var item in item.children ?? [])
+            if (parse[item.type] != null)
+              parse[item.type](item, textStyle)
+            else
+              TextSpan(text: item.toString(), style: textStyle),
+        ],
+      );
       switch (item.props?["name"]) {
         case "flip":
           return WidgetSpan(
-              child: Transform.flip(
-            flipX: item.args["h"] != null || item.args.isEmpty,
-            flipY: item.args["v"] != null,
-            child: Text.rich(child),
-          ));
+            child: Transform.flip(
+              flipX: item.args["h"] != null || item.args.isEmpty,
+              flipY: item.args["v"] != null,
+              child: Text.rich(child),
+            ),
+          );
         case "jelly":
           return WidgetSpan(
-              child: MfmJellyCode(
-                speed: parseDuration(item.args["speed"]),
-                child: Text.rich(child),
-              ),
-              style: textStyle,
-              alignment: PlaceholderAlignment.middle);
+            child: MfmJellyCode(
+              speed: parseDuration(item.args["speed"]),
+              child: Text.rich(child),
+            ),
+            style: textStyle,
+            alignment: PlaceholderAlignment.middle,
+          );
         case "tada":
           return child;
         case "jump":
@@ -616,42 +646,43 @@ Map<String, dynamic> _getParse({
           return child;
         case "spin":
           return WidgetSpan(
-              child: MfmSpinCode(
-                x: item.args["x"] != null,
-                y: item.args["y"] != null,
-                speed: parseDuration(item.args["speed"]),
-                left: item.args["left"] != null,
-                alternate: item.args["alternate"] != null,
-                child: Text.rich(child),
-              ),
-              style: textStyle,
-              alignment: PlaceholderAlignment.middle);
-        case "x2":
-          var child = getTextSpan(item, parse,
-              textStyle.copyWith(fontSize: textStyle.fontSize! * 2));
-          return WidgetSpan(
-            child: SizedBox(
-              width: double.infinity,
+            child: MfmSpinCode(
+              x: item.args["x"] != null,
+              y: item.args["y"] != null,
+              speed: parseDuration(item.args["speed"]),
+              left: item.args["left"] != null,
+              alternate: item.args["alternate"] != null,
               child: Text.rich(child),
             ),
+            style: textStyle,
+            alignment: PlaceholderAlignment.middle,
+          );
+        case "x2":
+          var child = getTextSpan(
+            item,
+            parse,
+            textStyle.copyWith(fontSize: textStyle.fontSize! * 2),
+          );
+          return WidgetSpan(
+            child: SizedBox(width: double.infinity, child: Text.rich(child)),
           );
         case "x3":
-          var child = getTextSpan(item, parse,
-              textStyle.copyWith(fontSize: textStyle.fontSize! * 4));
+          var child = getTextSpan(
+            item,
+            parse,
+            textStyle.copyWith(fontSize: textStyle.fontSize! * 4),
+          );
           return WidgetSpan(
-            child: SizedBox(
-              width: double.infinity,
-              child: Text.rich(child),
-            ),
+            child: SizedBox(width: double.infinity, child: Text.rich(child)),
           );
         case "x4":
-          var child = getTextSpan(item, parse,
-              textStyle.copyWith(fontSize: textStyle.fontSize! * 6));
+          var child = getTextSpan(
+            item,
+            parse,
+            textStyle.copyWith(fontSize: textStyle.fontSize! * 6),
+          );
           return WidgetSpan(
-            child: SizedBox(
-              width: double.infinity,
-              child: Text.rich(child),
-            ),
+            child: SizedBox(width: double.infinity, child: Text.rich(child)),
           );
         case "position":
           return child;
@@ -676,50 +707,44 @@ Map<String, dynamic> _getParse({
           unixtime = int.parse(unixtime) * 1000;
           var date = DateTime.fromMillisecondsSinceEpoch(unixtime);
           return WidgetSpan(
-              alignment: PlaceholderAlignment.middle,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                decoration: BoxDecoration(
-                  color: themes.accentColor.withAlpha(25),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      TablerIcons.clock,
-                      size: 14,
-                      color: themes.accentColor,
-                    ),
-                    Text(
-                      timeToDesiredFormat(date),
-                      style: textStyle.copyWith(color: themes.accentColor),
-                    )
-                  ],
-                ),
-              ));
+            alignment: PlaceholderAlignment.middle,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: BoxDecoration(
+                color: themes.accentColor.withAlpha(25),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(TablerIcons.clock, size: 14, color: themes.accentColor),
+                  Text(
+                    timeToDesiredFormat(date),
+                    style: textStyle.copyWith(color: themes.accentColor),
+                  ),
+                ],
+              ),
+            ),
+          );
       }
       return TextSpan(text: item.toString(), style: textStyle);
-    }
+    },
   };
 }
 
 TextSpan getTextSpan(MfmFn item, parse, TextStyle textStyle) {
-  return TextSpan(children: [
-    for (var item in item.children ?? [])
-      if (parse[item.type] != null)
-        parse[item.type](item, textStyle)
-      else
-        TextSpan(text: item.toString(), style: textStyle),
-  ]);
+  return TextSpan(
+    children: [
+      for (var item in item.children ?? [])
+        if (parse[item.type] != null)
+          parse[item.type](item, textStyle)
+        else
+          TextSpan(text: item.toString(), style: textStyle),
+    ],
+  );
 }
 
-enum MFMFeature {
-  hashtag,
-  url,
-  emojiCode,
-  mention,
-}
+enum MFMFeature { hashtag, url, emojiCode, mention }
 
 Duration parseDuration(String? input) {
   if (input == null) {
@@ -728,9 +753,10 @@ Duration parseDuration(String? input) {
   Duration duration;
   try {
     duration = Duration(
-        milliseconds:
-            (double.parse(input.replaceAll(RegExp(r'[^\d\.]'), '')) * 1000)
-                .toInt());
+      milliseconds:
+          (double.parse(input.replaceAll(RegExp(r'[^\d\.]'), '')) * 1000)
+              .toInt(),
+    );
   } catch (e) {
     duration = const Duration(milliseconds: 1500);
   }

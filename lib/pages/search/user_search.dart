@@ -54,6 +54,7 @@ class UserSearchPage extends HookConsumerWidget {
           hasMore: status.searched && status.hasMore,
           empty: status.data.isEmpty,
           padding: padding,
+          loading: status.loading,
           initialLoading:
               status.loading &&
               status.searched &&

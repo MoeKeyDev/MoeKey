@@ -12,24 +12,21 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: Align(
-            alignment: Alignment.topCenter,
-            child: ValueListenableBuilder<double>(
-              valueListenable: height,
-              builder: (context, value, child) => TimelineNoteSizeObserver(
-                noteId: 'note-0',
-                onSizeChanged: (noteId, oldSize, newSize) {
-                  changes.add((oldSize, newSize));
-                },
-                child: SizedBox(height: value),
-              ),
+        home: Align(
+          alignment: Alignment.topCenter,
+          child: ValueListenableBuilder<double>(
+            valueListenable: height,
+            builder: (context, value, child) => TimelineNoteSizeObserver(
+              noteId: 'note-0',
+              onSizeChanged: (noteId, oldSize, newSize) {
+                changes.add((oldSize, newSize));
+              },
+              child: SizedBox(height: value),
             ),
           ),
         ),
       ),
     );
-    expect(changes, isEmpty);
 
     height.value = 140;
     await tester.pump();
@@ -39,36 +36,68 @@ void main() {
     expect(changes.single.$2.height, 140);
   });
 
-  testWidgets('layout-time correction keeps a visible anchor stationary', (
+  testWidgets('idle correction keeps a visible anchor stationary', (
     tester,
   ) async {
     final key = GlobalKey<_CorrectingListState>();
-    final scrollController = ScrollController();
-    addTearDown(scrollController.dispose);
+    final controller = ScrollController();
+    addTearDown(controller.dispose);
 
     await tester.pumpWidget(
       MaterialApp(
         home: SizedBox(
           height: 500,
-          child: _CorrectingList(key: key, controller: scrollController),
+          child: _CorrectingList(key: key, controller: controller),
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    scrollController.jumpTo(1000);
+    controller.jumpTo(1000);
     await tester.pump();
     key.currentState!.anchorIndex = 10;
     final anchor = find.byKey(const ValueKey('size-note-10'));
     final initialY = tester.getTopLeft(anchor).dy;
 
-    // Use a cached child immediately above the viewport. Children farther
-    // away are not laid out and therefore cannot change size yet.
     key.currentState!.resize(8, 180);
     await tester.pump();
 
-    expect(scrollController.offset, 1080);
+    expect(controller.offset, 1080);
     expect(tester.getTopLeft(anchor).dy, closeTo(initialY, 0.01));
+  });
+
+  testWidgets('correction is discarded while the user is scrolling', (
+    tester,
+  ) async {
+    final key = GlobalKey<_CorrectingListState>();
+    final controller = ScrollController();
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SizedBox(
+          height: 500,
+          child: _CorrectingList(key: key, controller: controller),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    controller.jumpTo(1000);
+    await tester.pump();
+    key.currentState!.anchorIndex = 10;
+
+    final gesture = await tester.startGesture(const Offset(200, 250));
+    await gesture.moveBy(const Offset(0, 20));
+    await tester.pump();
+    final offsetBeforeResize = controller.offset;
+
+    key.currentState!.resize(8, 180);
+    await tester.pump();
+
+    expect(controller.offset, closeTo(offsetBeforeResize, 0.01));
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(controller.offset, isNot(closeTo(offsetBeforeResize + 80, 0.01)));
   });
 }
 

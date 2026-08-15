@@ -120,6 +120,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "day": MessageLookupByLibrary.simpleMessage("天"),
     "daysAgo": m2,
     "delete": MessageLookupByLibrary.simpleMessage("删除"),
+    "deleteAndEdit": MessageLookupByLibrary.simpleMessage("删除并编辑"),
+    "deleteAndEditConfirm": MessageLookupByLibrary.simpleMessage(
+      "要重新编辑此帖吗？原帖将在发布时删除，它收到的所有回应、转发和回复也会消失。",
+    ),
     "deleteConfirm": m3,
     "deleteFileConfirmation": m4,
     "deleteFolderConfirmation": m5,
@@ -207,6 +211,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noteCopyLocalLink": MessageLookupByLibrary.simpleMessage("复制本站链接"),
     "noteCwHide": MessageLookupByLibrary.simpleMessage("收起"),
     "noteCwShow": MessageLookupByLibrary.simpleMessage("显示内容"),
+    "noteDeleteConfirm": MessageLookupByLibrary.simpleMessage("要删除该帖子吗？"),
     "noteFormLanguageTranslation": m15,
     "noteLocalOnly": MessageLookupByLibrary.simpleMessage("不参与联合"),
     "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("转到所在服务器显示"),

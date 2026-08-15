@@ -47,6 +47,7 @@ class NotificationsGroupList extends HookConsumerWidget {
           onLoad: () => ref.read(notificationsProvider.notifier).loadMore(),
           onRefresh: () => ref.refresh(notificationsProvider.future),
           hasMore: data.value?.hasMore,
+          loading: data.isLoading,
           slivers: [
             SliverList.separated(
               itemCount: list.length,

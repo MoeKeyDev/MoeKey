@@ -70,6 +70,7 @@ class MkRefreshLoadList<T> extends StatelessWidget {
     required this.hasMore,
     required this.empty,
     this.controller,
+    this.loading = false,
     this.initialLoading = false,
     this.initialError,
     this.onRetry,
@@ -77,6 +78,7 @@ class MkRefreshLoadList<T> extends StatelessWidget {
     this.onRetryLoadMore,
     this.scrollPhysics,
     this.scrollViewWrapper,
+    this.showRefreshIndicatorOnInitialLoad = false,
   });
 
   final Future Function() onLoad;
@@ -86,6 +88,7 @@ class MkRefreshLoadList<T> extends StatelessWidget {
   final bool? empty;
   final bool? hasMore;
   final MkRefreshLoadListController? controller;
+  final bool loading;
   final bool initialLoading;
   final Object? initialError;
   final VoidCallback? onRetry;
@@ -93,6 +96,7 @@ class MkRefreshLoadList<T> extends StatelessWidget {
   final VoidCallback? onRetryLoadMore;
   final ScrollPhysics? scrollPhysics;
   final Widget Function(Widget scrollView)? scrollViewWrapper;
+  final bool showRefreshIndicatorOnInitialLoad;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +108,8 @@ class MkRefreshLoadList<T> extends StatelessWidget {
     var scrollController = defaultController?.scrollController;
 
     final isInitialError = initialError != null;
-    final isInitialState = initialLoading || isInitialError;
+    final isEmptyLoading = loading && empty != false;
+    final isInitialState = initialLoading || isEmptyLoading || isInitialError;
 
     Widget child = CustomScrollView(
       primary: true,
@@ -120,8 +125,12 @@ class MkRefreshLoadList<T> extends StatelessWidget {
               if (isInitialState)
                 SliverFillRemaining(
                   hasScrollBody: false,
-                  child: initialLoading
-                      ? const Center(child: LoadingCircularProgress(size: 28))
+                  child: initialLoading || isEmptyLoading
+                      ? showRefreshIndicatorOnInitialLoad
+                            ? const SizedBox.expand()
+                            : const Center(
+                                child: LoadingCircularProgress(size: 28),
+                              )
                       : MkErrorState(onRetry: onRetry),
                 )
               else ...[
@@ -152,6 +161,9 @@ class MkRefreshLoadList<T> extends StatelessWidget {
       child = MkRefreshIndicator(
         controller: refreshController,
         onRefresh: onRefresh,
+        show:
+            showRefreshIndicatorOnInitialLoad &&
+            (initialLoading || isEmptyLoading),
         child: child,
       );
     }

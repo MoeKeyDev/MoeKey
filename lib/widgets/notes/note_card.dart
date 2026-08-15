@@ -10,6 +10,7 @@ import 'package:moekey/apis/models/meta.dart';
 import 'package:moekey/generated/l10n.dart';
 import 'package:moekey/pages/clips/clips.dart';
 import 'package:moekey/status/apis.dart';
+import 'package:moekey/status/note_deletion_registry.dart';
 import 'package:moekey/status/notes_listener.dart';
 import 'package:moekey/status/server.dart';
 import 'package:moekey/status/themes.dart';
@@ -19,6 +20,7 @@ import 'package:moekey/widgets/context_menu.dart';
 import 'package:moekey/widgets/emoji_list.dart';
 import 'package:moekey/widgets/loading_weight.dart';
 import 'package:moekey/widgets/mk_modal.dart';
+import 'package:moekey/widgets/mk_info_dialog.dart';
 import 'package:moekey/widgets/mk_overflow_show.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog.dart';
 import 'package:moekey/widgets/note_create_dialog/note_create_dialog_state.dart';
@@ -37,13 +39,15 @@ import '../hover_builder.dart';
 import '../mfm_text/mfm_text.dart';
 import '../mk_card.dart';
 import '../mk_image.dart';
+import '../mk_skeleton_block.dart';
 import '../reactions.dart';
 import 'note_image.dart';
 import 'timeline_fade_in.dart';
 
 List<String> extractLinksFromMarkdown(String markdownText) {
   final RegExp linkRegex = RegExp(
-      r'(http|https)://[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&:/~+#]*[\w\-@?^=%&/~+#])?');
+    r'(http|https)://[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&:/~+#]*[\w\-@?^=%&/~+#])?',
+  );
 
   final Set<String> links = {};
   final Iterable<RegExpMatch> matches = linkRegex.allMatches(markdownText);
@@ -58,7 +62,7 @@ List<String> extractLinksFromMarkdown(String markdownText) {
   return links.toList();
 }
 
-class NoteCard extends ConsumerWidget {
+class NoteCard extends HookConsumerWidget {
   final NoteModel data;
   final BorderRadius borderRadius;
   final bool pined;
@@ -101,9 +105,7 @@ class NoteCard extends ConsumerWidget {
                 disableReactions: true,
               ),
             if (isReNote) ReNoteUserInfo(data: data),
-            const SizedBox(
-              height: 4,
-            ),
+            const SizedBox(height: 4),
             TimeLineNoteCardComponent(
               data: thisData,
               isShowUrlPreview: true,
@@ -112,10 +114,14 @@ class NoteCard extends ConsumerWidget {
                   ? Container(
                       margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
                       decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 1, color: themes.fgColor.withValues(alpha: 0.6)),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8))),
+                        border: Border.all(
+                          width: 1,
+                          color: themes.fgColor.withValues(alpha: 0.6),
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                      ),
                       padding: const EdgeInsets.all(12),
                       child: TimeLineNoteCardComponent(
                         data: thisData.renote!,
@@ -143,11 +149,7 @@ class _NotePined extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          const Icon(
-            TablerIcons.pin,
-            size: 17,
-            color: Colors.orangeAccent,
-          ),
+          const Icon(TablerIcons.pin, size: 17, color: Colors.orangeAccent),
           Text(
             S.current.notePined,
             style: const TextStyle(color: Colors.orangeAccent, fontSize: 13.5),
@@ -171,6 +173,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     this.limit = 1000,
     this.height = 400,
     this.customMenuItem,
+    this.replyLineBottomPadding = 4,
   });
 
   final NoteModel data;
@@ -185,6 +188,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
   final double limit;
   final double height;
   final List<ContextMenuItem>? customMenuItem;
+  final double replyLineBottomPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -192,7 +196,6 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var noteListener = noteListenerProvider(this.data);
     var data = ref.watch(noteListener);
-
     var links = extractLinksFromMarkdown(data.text ?? "");
     var serverUrl = ref.watch(currentLoginUserProvider)!.serverUrl;
     var meta = ref.watch(instanceMetaProvider).value;
@@ -217,10 +220,16 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
             child: ContextMenuBuilder(
               mode: const [
                 ContextMenuMode.onSecondaryTap,
-                ContextMenuMode.onLongPress
+                ContextMenuMode.onLongPress,
               ],
-              menu: buildNoteContextMenu(serverUrl, meta, data, ref, context,
-                  customMenuItem: customMenuItem),
+              menu: buildNoteContextMenu(
+                serverUrl,
+                meta,
+                data,
+                ref,
+                context,
+                customMenuItem: customMenuItem,
+              ),
               child: Container(
                 color: Colors.transparent,
                 child: ConstraintLayout(
@@ -233,9 +242,10 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                     ),
                     Padding(
                       padding: EdgeInsets.only(
-                          left: isSmall
-                              ? 8.5 * (fontsize - 8)
-                              : 10 * (fontsize - 8)),
+                        left: isSmall
+                            ? 8.5 * (fontsize - 8)
+                            : 10 * (fontsize - 8),
+                      ),
                       child: _NoteCardContent(
                         data: data,
                         fontsize: fontsize,
@@ -251,23 +261,26 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
                         constraints: constraints,
                       ),
                     ).applyConstraint(
-                        top: parent.top,
-                        width: matchParent,
-                        height: wrapContent,
-                        id: content),
+                      top: parent.top,
+                      width: matchParent,
+                      height: wrapContent,
+                      id: content,
+                    ),
                     if (reply)
                       Padding(
-                        padding: const EdgeInsets.only(top: 4, bottom: 4),
-                        child: Container(
-                          color: themes.dividerColor,
+                        padding: EdgeInsets.only(
+                          top: 4,
+                          bottom: replyLineBottomPadding,
                         ),
+                        child: Container(color: themes.dividerColor),
                       ).applyConstraint(
-                          width: 2,
-                          top: avatar.bottom,
-                          bottom: parent.bottom,
-                          left: avatar.left,
-                          right: avatar.right,
-                          height: matchConstraint)
+                        width: 2,
+                        top: avatar.bottom,
+                        bottom: parent.bottom,
+                        left: avatar.left,
+                        right: avatar.right,
+                        height: matchConstraint,
+                      ),
                   ],
                 ),
               ),
@@ -280,9 +293,7 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
 }
 
 class _TimeLineNoteCardAvatar extends StatelessWidget {
-  const _TimeLineNoteCardAvatar({
-    required this.data,
-  });
+  const _TimeLineNoteCardAvatar({required this.data});
 
   final NoteModel data;
 
@@ -309,19 +320,20 @@ class _TimeLineNoteCardAvatar extends StatelessWidget {
 }
 
 class _NoteCardContent extends HookConsumerWidget {
-  const _NoteCardContent(
-      {required this.data,
-      required this.fontsize,
-      required this.isShowUrlPreview,
-      required this.links,
-      required this.innerWidget,
-      required this.limit,
-      required this.height,
-      required this.isShowReactions,
-      required this.disableReactions,
-      required this.isShowAction,
-      required this.customMenuItem,
-      required this.constraints});
+  const _NoteCardContent({
+    required this.data,
+    required this.fontsize,
+    required this.isShowUrlPreview,
+    required this.links,
+    required this.innerWidget,
+    required this.limit,
+    required this.height,
+    required this.isShowReactions,
+    required this.disableReactions,
+    required this.isShowAction,
+    required this.customMenuItem,
+    required this.constraints,
+  });
 
   final NoteModel data;
   final double fontsize;
@@ -345,7 +357,10 @@ class _NoteCardContent extends HookConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         _NoteCardContentUerHeader(
-            data: data, fontsize: fontsize, themes: themes),
+          data: data,
+          fontsize: fontsize,
+          themes: themes,
+        ),
         if (data.user.instance != null) ...[
           const SizedBox(height: 4),
           RepaintBoundary(child: UserInstanceBar(data: data.user)),
@@ -353,33 +368,35 @@ class _NoteCardContent extends HookConsumerWidget {
 
         // start
         _TimeLineNoteCardContent(
-            data: data,
-            isHiddenCw: isHiddenCw,
-            themes: themes,
-            constraints: constraints,
-            isShowUrlPreview: isShowUrlPreview,
-            links: links,
-            fontsize: fontsize,
-            innerWidget: innerWidget,
-            limit: limit,
-            height: height),
+          data: data,
+          isHiddenCw: isHiddenCw,
+          themes: themes,
+          constraints: constraints,
+          isShowUrlPreview: isShowUrlPreview,
+          links: links,
+          fontsize: fontsize,
+          innerWidget: innerWidget,
+          limit: limit,
+          height: height,
+        ),
 
         // end
         if (isShowReactions) ...[
           const SizedBox(height: 8),
           ReactionsListComponent(
-              emojis: data.reactionEmojis,
-              reactionsList: data.reactions,
-              id: data.id,
-              myReaction: data.myReaction,
-              disableReactions: disableReactions),
+            emojis: data.reactionEmojis,
+            reactionsList: data.reactions,
+            id: data.id,
+            myReaction: data.myReaction,
+            disableReactions: disableReactions,
+          ),
         ],
         if (isShowAction)
           TimeLineActions(
             fontsize: fontsize,
             data: data,
             customMenuItem: customMenuItem,
-          )
+          ),
       ],
     );
   }
@@ -420,7 +437,10 @@ class _TimeLineNoteCardContent extends StatelessWidget {
         children: [
           if (data.cw != null)
             _NoteCardContentCw(
-                data: data, isHiddenCw: isHiddenCw, themes: themes),
+              data: data,
+              isHiddenCw: isHiddenCw,
+              themes: themes,
+            ),
           if (!isHiddenCw.value || data.cw == null) ...[
             const SizedBox(height: 4),
             if ((data.text ?? "") != "")
@@ -436,11 +456,14 @@ class _TimeLineNoteCardContent extends StatelessWidget {
             if (data.poll != null) NotePoll(data: data),
             // 图片
             TimeLineImage(
-                files: data.files, mainAxisExtent: constraints.maxWidth * 0.7),
+              files: data.files,
+              note: data,
+              mainAxisExtent: constraints.maxWidth * 0.7,
+            ),
             // 链接预览
             if (isShowUrlPreview)
               for (var link in links) ...[
-                NoteLinkPreview(link: link, fontsize: fontsize)
+                NoteLinkPreview(link: link, fontsize: fontsize),
               ],
             ?innerWidget,
           ],
@@ -456,10 +479,7 @@ class _TimeLineNoteCardContent extends StatelessWidget {
 }
 
 class NoteCardTranslate extends HookConsumerWidget {
-  const NoteCardTranslate({
-    super.key,
-    required this.data,
-  });
+  const NoteCardTranslate({super.key, required this.data});
 
   final NoteModel data;
 
@@ -470,9 +490,7 @@ class NoteCardTranslate extends HookConsumerWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         border: Border.all(color: themes.dividerColor, width: 1),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(6),
-        ),
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
       ),
       padding: const EdgeInsets.all(4),
       margin: const EdgeInsets.only(top: 6, bottom: 2),
@@ -481,10 +499,7 @@ class NoteCardTranslate extends HookConsumerWidget {
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Center(
-              child: LoadingCircularProgress(
-                size: 22,
-                strokeWidth: 4,
-              ),
+              child: LoadingCircularProgress(size: 22, strokeWidth: 4),
             ),
           )
         else
@@ -493,9 +508,11 @@ class NoteCardTranslate extends HookConsumerWidget {
             currentServerHost: data.user.host,
             before: [
               TextSpan(
-                  text: S.current.noteFormLanguageTranslation(
-                      data.noteTranslate!.sourceLang),
-                  style: const TextStyle(fontWeight: FontWeight.bold))
+                text: S.current.noteFormLanguageTranslation(
+                  data.noteTranslate!.sourceLang,
+                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
             text: data.noteTranslate?.text ?? "",
           ),
@@ -536,16 +553,18 @@ class _NoteCardContentCw extends HookConsumerWidget {
               isHiddenCw.value = !isHiddenCw.value;
             },
             style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.hovered)) {
-                    return themes.buttonHoverBgColor;
-                  }
-                  return themes.buttonBgColor;
-                }),
-                foregroundColor: WidgetStateProperty.all(themes.fgColor),
-                elevation: WidgetStateProperty.all(0)),
+              backgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.hovered)) {
+                  return themes.buttonHoverBgColor;
+                }
+                return themes.buttonBgColor;
+              }),
+              foregroundColor: WidgetStateProperty.all(themes.fgColor),
+              elevation: WidgetStateProperty.all(0),
+            ),
             child: Text(
-                isHiddenCw.value ? S.current.noteCwShow : S.current.noteCwHide),
+              isHiddenCw.value ? S.current.noteCwShow : S.current.noteCwHide,
+            ),
           ),
         ),
       ],
@@ -570,19 +589,19 @@ class _NoteCardContentUerHeader extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         Expanded(child: UserNameRichText(data: data.user)),
-        Text(timeAgoSinceDate(data.createdAt),
-            style: TextStyle(fontSize: fontsize * 0.9),
-            maxLines: 1,
-            overflow: TextOverflow.fade),
-        const SizedBox(
-          width: 6,
+        Text(
+          timeAgoSinceDate(data.createdAt),
+          style: TextStyle(fontSize: fontsize * 0.9),
+          maxLines: 1,
+          overflow: TextOverflow.fade,
         ),
+        const SizedBox(width: 6),
         if (NoteVisibility.getIcon(data.visibility) != null)
           Icon(
             NoteVisibility.getIcon(data.visibility)!,
             size: fontsize,
             color: themes.fgColor,
-          )
+          ),
       ],
     );
   }
@@ -625,9 +644,15 @@ class _NoteLinkPreviewState extends ConsumerState<NoteLinkPreview> {
     final requestedLink = widget.link;
     try {
       final result = await ref.read(getUriInfoProvider(requestedLink).future);
-      if (!mounted || widget.link != requestedLink || result == null) return;
+      if (!mounted || widget.link != requestedLink) return;
 
-      setState(() => data = result);
+      setState(() {
+        if (result == null) {
+          loadError = StateError('Link preview is unavailable');
+        } else {
+          data = result;
+        }
+      });
     } catch (error) {
       if (!mounted || widget.link != requestedLink) return;
       setState(() => loadError = error);
@@ -638,123 +663,201 @@ class _NoteLinkPreviewState extends ConsumerState<NoteLinkPreview> {
   Widget build(BuildContext context) {
     var themes = ref.watch(themeColorsProvider);
     var serverUrl = ref.watch(currentLoginUserProvider)?.serverUrl ?? "";
+    final preview = data;
+    final previewHeight = widget.fontsize * 7;
 
-    if (data == null || loadError != null) {
-      return const SizedBox();
-    }
-
-    // The note-level size observer handles the one outer layout change. The
-    // transition below only affects paint opacity.
-    return TimelineFadeIn(
-      key: ValueKey('link-preview-${widget.link}'),
-      duration: const Duration(milliseconds: 200),
-      child: Container(
-        margin: const EdgeInsets.only(top: 8),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: themes.dividerColor, width: 1),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              openMisskeyLink(
-                context,
-                url: widget.link,
-                instanceUrl: serverUrl,
-              );
-            },
-            child: Row(
-              children: [
-                if (data!.thumbnail != null)
-                  ClipRRect(
-                    clipBehavior: Clip.hardEdge,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(5),
-                      bottomLeft: Radius.circular(5),
-                    ),
-                    child: SizedBox(
-                      width: widget.fontsize * 7,
-                      height: widget.fontsize * 7,
-                      child: MkImage(
-                        data!.thumbnail!,
-                        height: widget.fontsize * 7,
-                        width: widget.fontsize * 7,
+    Widget content;
+    if (preview == null && loadError == null) {
+      content = _LinkPreviewPlaceholder(height: previewHeight);
+    } else if (preview == null) {
+      content = _LinkPreviewUnavailable(
+        link: widget.link,
+        fontsize: widget.fontsize,
+        color: themes.fgColor.withValues(alpha: 0.65),
+      );
+    } else {
+      content = TimelineFadeIn(
+        key: ValueKey('link-preview-${widget.link}'),
+        duration: const Duration(milliseconds: 200),
+        child: Row(
+          children: [
+            if (preview.thumbnail != null)
+              ClipRRect(
+                clipBehavior: Clip.hardEdge,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(5),
+                  bottomLeft: Radius.circular(5),
+                ),
+                child: SizedBox(
+                  width: widget.fontsize * 7,
+                  height: widget.fontsize * 7,
+                  child: MkImage(
+                    preview.thumbnail!,
+                    height: widget.fontsize * 7,
+                    width: widget.fontsize * 7,
+                  ),
+                ),
+              )
+            else
+              SizedBox(height: widget.fontsize * 7),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      preview.title ?? "...",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: widget.fontsize,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
-                else
-                  SizedBox(height: widget.fontsize * 7),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                    Text(
+                      preview.description ?? "...",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: widget.fontsize * 0.9),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Row(
                       children: [
-                        Text(
-                          data!.title ?? "...",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: widget.fontsize,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          data!.description ?? "...",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: widget.fontsize * 0.9),
-                        ),
-                        Row(
-                          children: [
-                            if (data!.icon != null) ...[
-                              SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: MkImage(
-                                  data!.icon!,
-                                  height: 16,
-                                  width: 16,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                            ],
-                            Expanded(
-                              child: Text(
-                                data!.sitename ?? "...",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: widget.fontsize * 0.9,
-                                ),
-                              ),
+                        if (preview.icon != null) ...[
+                          SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: MkImage(
+                              preview.icon!,
+                              height: 16,
+                              width: 16,
                             ),
-                          ],
+                          ),
+                          const SizedBox(width: 4),
+                        ],
+                        Expanded(
+                          child: Text(
+                            preview.sitename ?? "...",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: widget.fontsize * 0.9),
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
+        ),
+      );
+    }
+
+    // Loading, success, and failure share one fixed-height frame. In
+    // particular, resolving a preview must not push MkOverflowShow across its
+    // collapse threshold and suddenly shrink a timeline item.
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        border: Border.all(color: themes.dividerColor, width: 1),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: preview == null && loadError == null
+              ? null
+              : () {
+                  openMisskeyLink(
+                    context,
+                    url: widget.link,
+                    instanceUrl: serverUrl,
+                  );
+                },
+          child: SizedBox(height: previewHeight, child: content),
         ),
       ),
     );
   }
 }
 
-class ReNoteUserInfo extends HookConsumerWidget {
-  const ReNoteUserInfo({
-    super.key,
-    required this.data,
+class _LinkPreviewPlaceholder extends StatelessWidget {
+  const _LinkPreviewPlaceholder({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        MkSkeletonBlock(
+          width: height,
+          height: height,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(5),
+            bottomLeft: Radius.circular(5),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MkSkeletonBlock(height: 10, widthFactor: 0.62),
+                MkSkeletonBlock(height: 10, widthFactor: 0.9),
+                MkSkeletonBlock(height: 10, widthFactor: 0.42),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LinkPreviewUnavailable extends StatelessWidget {
+  const _LinkPreviewUnavailable({
+    required this.link,
+    required this.fontsize,
+    required this.color,
   });
+
+  final String link;
+  final double fontsize;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Icon(Icons.link, size: fontsize * 1.5, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              link,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: fontsize * 0.9, color: color),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ReNoteUserInfo extends HookConsumerWidget {
+  const ReNoteUserInfo({super.key, required this.data});
 
   final NoteModel data;
 
@@ -763,87 +866,98 @@ class ReNoteUserInfo extends HookConsumerWidget {
     var themes = ref.watch(themeColorsProvider);
     var fontsize = DefaultTextStyle.of(context).style.fontSize!;
 
-    return LayoutBuilder(builder: (context, constraints) {
-      var isSmall = constraints.maxWidth < 400;
-      return Row(
-        children: [
-          SizedBox(
-            width: isSmall ? 7 * (fontsize - 8) - 29 : 8 * (fontsize - 8) - 29,
-          ),
-          GestureDetector(
-            onTap: () {
-              // main_router.MainRouterDelegate.of(context)
-              //     .setNewRoutePath(main_router.RouterItem(
-              //   path: "user/${data.user.id}",
-              //   page: () {
-              //     return UserPage(userId: data.user.id);
-              //   },
-              // ));
-              context.push('/user/${data.user.id}');
-            },
-            child: SizedBox(
-              width: 28,
-              height: 28,
-              child: MkImage(
-                data.user.avatarUrl ?? "",
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var isSmall = constraints.maxWidth < 400;
+        return Row(
+          children: [
+            SizedBox(
+              width: isSmall
+                  ? 7 * (fontsize - 8) - 29
+                  : 8 * (fontsize - 8) - 29,
+            ),
+            GestureDetector(
+              onTap: () {
+                // main_router.MainRouterDelegate.of(context)
+                //     .setNewRoutePath(main_router.RouterItem(
+                //   path: "user/${data.user.id}",
+                //   page: () {
+                //     return UserPage(userId: data.user.id);
+                //   },
+                // ));
+                context.push('/user/${data.user.id}');
+              },
+              child: SizedBox(
                 width: 28,
                 height: 28,
-                shape: BoxShape.circle,
-                blurHash: data.user.avatarBlurhash,
+                child: MkImage(
+                  data.user.avatarUrl ?? "",
+                  width: 28,
+                  height: 28,
+                  shape: BoxShape.circle,
+                  blurHash: data.user.avatarBlurhash,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            width: isSmall ? 1.5 * (fontsize - 8) : 2 * (fontsize - 8),
-          ),
-          Icon(
-            TablerIcons.repeat,
-            color: themes.reNoteColor,
-            size: fontsize * 1.2,
-          ),
-          const SizedBox(
-            width: 8,
-          ),
-          Expanded(
-            child: DefaultTextStyle(
-              style: TextStyle(
+            SizedBox(
+              width: isSmall ? 1.5 * (fontsize - 8) : 2 * (fontsize - 8),
+            ),
+            Icon(
+              TablerIcons.repeat,
+              color: themes.reNoteColor,
+              size: fontsize * 1.2,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: DefaultTextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: fontsize,
-                  color: themes.reNoteColor),
-              child: MFMText(
-                text: data.user.name ?? data.user.username,
-                after: [
-                  TextSpan(
+                  color: themes.reNoteColor,
+                ),
+                child: MFMText(
+                  text: data.user.name ?? data.user.username,
+                  after: [
+                    TextSpan(
                       text: S.current.noteReNoteByUser,
                       style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: fontsize,
-                          color: themes.reNoteColor)),
-                ],
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                emojis: data.user.emojis,
-                bigEmojiCode: false,
-                feature: const [MFMFeature.emojiCode],
+                        fontWeight: FontWeight.w700,
+                        fontSize: fontsize,
+                        color: themes.reNoteColor,
+                      ),
+                    ),
+                  ],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  emojis: data.user.emojis,
+                  bigEmojiCode: false,
+                  feature: const [MFMFeature.emojiCode],
+                ),
               ),
             ),
-          ),
-          RepaintBoundary(
-            child: Text(timeAgoSinceDate(data.createdAt),
+            RepaintBoundary(
+              child: Text(
+                timeAgoSinceDate(data.createdAt),
                 style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: fontsize,
-                    color: themes.reNoteColor)),
-          )
-        ],
-      );
-    });
+                  fontWeight: FontWeight.w700,
+                  fontSize: fontsize,
+                  color: themes.reNoteColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
 class UserNameRichText extends HookConsumerWidget {
-  const UserNameRichText(
-      {super.key, required this.data, this.navigator = true});
+  const UserNameRichText({
+    super.key,
+    required this.data,
+    this.navigator = true,
+  });
 
   final UserLiteModel data;
   final bool navigator;
@@ -868,20 +982,16 @@ class UserNameRichText extends HookConsumerWidget {
               text: data.host != null ? "@${data.host}" : "",
               style: textStyle.copyWith(color: themes.fgColor.withAlpha(128)),
             ),
-            const TextSpan(
-              text: "  ",
-            ),
+            const TextSpan(text: "  "),
             for (var badge in data.badgeRoles)
               if (badge.iconUrl != null)
                 WidgetSpan(
-                    child: Tooltip(
-                      message: badge.name,
-                      child: MkImage(
-                        badge.iconUrl ?? '',
-                        height: 16,
-                      ),
-                    ),
-                    alignment: PlaceholderAlignment.middle)
+                  child: Tooltip(
+                    message: badge.name,
+                    child: MkImage(badge.iconUrl ?? '', height: 16),
+                  ),
+                  alignment: PlaceholderAlignment.middle,
+                ),
           ],
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -895,10 +1005,7 @@ class UserNameRichText extends HookConsumerWidget {
 }
 
 class UserInstanceBar extends HookConsumerWidget {
-  const UserInstanceBar({
-    super.key,
-    required this.data,
-  });
+  const UserInstanceBar({super.key, required this.data});
 
   final UserLiteModel data;
 
@@ -906,17 +1013,19 @@ class UserInstanceBar extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
     return ClipRRect(
-      borderRadius: const BorderRadius.all(
-        Radius.circular(4),
-      ),
+      borderRadius: const BorderRadius.all(Radius.circular(4)),
       child: SizedBox(
         width: double.infinity,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              parseColor(data.instance?.themeColor ?? "#66ccff"),
-              themes.panelColor,
-            ], end: FractionalOffset.centerRight, begin: Alignment.centerLeft),
+            gradient: LinearGradient(
+              colors: [
+                parseColor(data.instance?.themeColor ?? "#66ccff"),
+                themes.panelColor,
+              ],
+              end: FractionalOffset.centerRight,
+              begin: Alignment.centerLeft,
+            ),
           ),
           child: Row(
             children: [
@@ -928,32 +1037,38 @@ class UserInstanceBar extends HookConsumerWidget {
                   height: 16,
                 ),
               Expanded(
-                  child: Text(
-                data.instance?.name ?? "",
-                style: const TextStyle(
+                child: Text(
+                  data.instance?.name ?? "",
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
                     shadows: [
                       Shadow(
-                          color: Colors.black,
-                          offset: Offset(1, 0),
-                          blurRadius: 1),
+                        color: Colors.black,
+                        offset: Offset(1, 0),
+                        blurRadius: 1,
+                      ),
                       Shadow(
-                          color: Colors.black,
-                          offset: Offset(0, 1),
-                          blurRadius: 1),
+                        color: Colors.black,
+                        offset: Offset(0, 1),
+                        blurRadius: 1,
+                      ),
                       Shadow(
-                          color: Colors.black,
-                          offset: Offset(-1, 0),
-                          blurRadius: 1),
+                        color: Colors.black,
+                        offset: Offset(-1, 0),
+                        blurRadius: 1,
+                      ),
                       Shadow(
-                          color: Colors.black,
-                          offset: Offset(0, -1),
-                          blurRadius: 1),
-                    ]),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ))
+                        color: Colors.black,
+                        offset: Offset(0, -1),
+                        blurRadius: 1,
+                      ),
+                    ],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -964,10 +1079,15 @@ class UserInstanceBar extends HookConsumerWidget {
 
 class TimeLineImage extends StatefulWidget {
   final List<DriveFileModel> files;
+  final NoteModel note;
   final double mainAxisExtent;
 
-  const TimeLineImage(
-      {super.key, this.mainAxisExtent = 0, required this.files});
+  const TimeLineImage({
+    super.key,
+    this.mainAxisExtent = 0,
+    required this.files,
+    required this.note,
+  });
 
   @override
   State<TimeLineImage> createState() => _TimeLineImageState();
@@ -975,14 +1095,20 @@ class TimeLineImage extends StatefulWidget {
 
 class _TimeLineImageState extends State<TimeLineImage> {
   void open(int index) {
-    context.push('/image-preview', extra: {
-      'initialIndex': index,
-      'galleryItems': [
-        for (var value in widget.files)
-          if (value.type.startsWith("image")) value
-      ],
-      'heroKeys': heroKeys
-    });
+    context.push(
+      '/image-preview',
+      extra: {
+        'initialIndex': index,
+        'galleryItems': [
+          for (var value in widget.files)
+            if (value.type.startsWith("image") ||
+                value.type.startsWith("video"))
+              value,
+        ],
+        'heroKeys': heroKeys,
+        'note': widget.note,
+      },
+    );
   }
 
   List<UniqueKey> heroKeys = [];
@@ -1008,25 +1134,27 @@ class _TimeLineImageState extends State<TimeLineImage> {
       if (item.type.startsWith("image") || item.type.startsWith("video")) {
         media.add(item);
       } else {
-        filesWidget.add(GestureDetector(
-          onTap: () {
-            launchUrlString(item.url);
-          },
-          child: Tooltip(
-            message: item.url,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  TablerIcons.download,
-                  size: 18,
-                  color: DefaultTextStyle.of(context).style.color,
-                ),
-                Text(item.name)
-              ],
+        filesWidget.add(
+          GestureDetector(
+            onTap: () {
+              launchUrlString(item.url);
+            },
+            child: Tooltip(
+              message: item.url,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    TablerIcons.download,
+                    size: 18,
+                    color: DefaultTextStyle.of(context).style.color,
+                  ),
+                  Text(item.name),
+                ],
+              ),
             ),
           ),
-        ));
+        );
       }
     }
     Widget? imageListWidget;
@@ -1060,11 +1188,12 @@ class _TimeLineImageState extends State<TimeLineImage> {
             mainAxisExtent: widget.mainAxisExtent / 2,
             crossAxisCellCount: 1,
             child: NoteImage(
-                imageFile: media[1],
-                heroKey: heroKeys[1],
-                onClick: () {
-                  open(1);
-                }),
+              imageFile: media[1],
+              heroKey: heroKeys[1],
+              onClick: () {
+                open(1);
+              },
+            ),
           ),
         ],
       );
@@ -1075,33 +1204,37 @@ class _TimeLineImageState extends State<TimeLineImage> {
         crossAxisSpacing: 8,
         children: [
           StaggeredGridTile.extent(
-              mainAxisExtent: widget.mainAxisExtent / 1.5 + 8,
-              crossAxisCellCount: 2,
-              child: NoteImage(
-                  imageFile: media[0],
-                  heroKey: heroKeys[0],
-                  onClick: () {
-                    open(0);
-                  })),
-          StaggeredGridTile.extent(
-            mainAxisExtent: widget.mainAxisExtent / 3,
-            crossAxisCellCount: 1,
+            mainAxisExtent: widget.mainAxisExtent / 1.5 + 8,
+            crossAxisCellCount: 2,
             child: NoteImage(
-                imageFile: media[1],
-                heroKey: heroKeys[1],
-                onClick: () {
-                  open(1);
-                }),
+              imageFile: media[0],
+              heroKey: heroKeys[0],
+              onClick: () {
+                open(0);
+              },
+            ),
           ),
           StaggeredGridTile.extent(
             mainAxisExtent: widget.mainAxisExtent / 3,
             crossAxisCellCount: 1,
             child: NoteImage(
-                imageFile: media[2],
-                heroKey: heroKeys[2],
-                onClick: () {
-                  open(2);
-                }),
+              imageFile: media[1],
+              heroKey: heroKeys[1],
+              onClick: () {
+                open(1);
+              },
+            ),
+          ),
+          StaggeredGridTile.extent(
+            mainAxisExtent: widget.mainAxisExtent / 3,
+            crossAxisCellCount: 1,
+            child: NoteImage(
+              imageFile: media[2],
+              heroKey: heroKeys[2],
+              onClick: () {
+                open(2);
+              },
+            ),
           ),
         ],
       );
@@ -1116,136 +1249,257 @@ class _TimeLineImageState extends State<TimeLineImage> {
               mainAxisExtent: widget.mainAxisExtent / 2.5,
               crossAxisCellCount: 1,
               child: NoteImage(
-                  imageFile: file,
-                  heroKey: heroKeys[index],
-                  onClick: () {
-                    open(index);
-                  }),
+                imageFile: file,
+                heroKey: heroKeys[index],
+                onClick: () {
+                  open(index);
+                },
+              ),
             ),
         ],
       );
     }
     return Column(
       children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: filesWidget,
-        ),
+        Wrap(spacing: 8, runSpacing: 8, children: filesWidget),
         ?imageListWidget,
       ],
     );
   }
 }
 
-ContextMenuCard buildNoteContextMenu(String serverUrl, MetaDetailedModel? meta,
-    NoteModel data, WidgetRef ref, BuildContext context,
-    {List<ContextMenuItem>? customMenuItem}) {
+ContextMenuCard buildNoteContextMenu(
+  String serverUrl,
+  MetaDetailedModel? meta,
+  NoteModel data,
+  WidgetRef ref,
+  BuildContext context, {
+  List<ContextMenuItem>? customMenuItem,
+  VoidCallback? onDeleted,
+  ValueChanged<NoteModel>? onRedrafted,
+}) {
   return ContextMenuCard(
-      menuListBuilder: () {
-        return [
-          ...?customMenuItem,
+    menuListBuilder: () {
+      return [
+        ...?customMenuItem,
+        ContextMenuItem(
+          icon: TablerIcons.copy,
+          label: S.current.copyContent,
+          onTap: () {
+            Clipboard.setData(ClipboardData(text: data.text ?? ""));
+            return false;
+          },
+        ),
+        ContextMenuItem(
+          icon: TablerIcons.link,
+          label: S.current.noteCopyLocalLink,
+          onTap: () {
+            Clipboard.setData(
+              ClipboardData(text: "$serverUrl/notes/${data.id}"),
+            );
+            return false;
+          },
+        ),
+        ContextMenuItem(
+          icon: TablerIcons.share,
+          label: S.current.share,
+          onTap: () {
+            // ref.read(noteApisProvider.notifier).reNote(data.id);
+            SharePlus.instance.share(
+              ShareParams(uri: Uri.parse("$serverUrl/notes/${data.id}")),
+            );
+            return false;
+          },
+        ),
+        if (data.user.host != null)
           ContextMenuItem(
-            icon: TablerIcons.copy,
-            label: S.current.copyContent,
+            icon: TablerIcons.external_link,
+            label: S.current.noteOpenRemoteLink,
             onTap: () {
-              Clipboard.setData(
-                ClipboardData(text: data.text ?? ""),
-              );
-              return false;
-            },
-          ),
-          ContextMenuItem(
-            icon: TablerIcons.link,
-            label: S.current.noteCopyLocalLink,
-            onTap: () {
-              Clipboard.setData(
-                ClipboardData(text: "$serverUrl/notes/${data.id}"),
-              );
-              return false;
-            },
-          ),
-          ContextMenuItem(
-            icon: TablerIcons.share,
-            label: S.current.share,
-            onTap: () {
+              if (data.uri != null) {
+                launchUrlString(data.uri!);
+              }
               // ref.read(noteApisProvider.notifier).reNote(data.id);
-              SharePlus.instance.share(
-                ShareParams(uri: Uri.parse("$serverUrl/notes/${data.id}")),
-              );
               return false;
             },
           ),
-          if (data.user.host != null)
-            ContextMenuItem(
-              icon: TablerIcons.external_link,
-              label: S.current.noteOpenRemoteLink,
-              onTap: () {
-                if (data.uri != null) {
-                  launchUrlString(data.uri!);
-                }
-                // ref.read(noteApisProvider.notifier).reNote(data.id);
-                return false;
-              },
-            ),
-          if (meta != null && meta.translatorAvailable)
-            ContextMenuItem(
-              divider: true,
-              icon: TablerIcons.language_hiragana,
-              label: S.current.translate,
-              onTap: () {
-                translateNote(data, ref);
-                return false;
-              },
-            ),
+        if (meta != null && meta.translatorAvailable)
           ContextMenuItem(
-            icon: TablerIcons.paperclip,
-            label: S.current.clip,
-            child: ContextMenuCard(
-              menuListBuilder: () async {
-                var list = await ref.read(clipsProvider.future);
-                return [
-                  for (var item in list.indexed)
-                    ContextMenuItem(
-                      icon: TablerIcons.paperclip,
-                      label: item.$2.name,
-                      divider: item.$1 == (list.length - 1),
-                      onTap: () {
-                        ref
-                            .read(misskeyApisProvider)
-                            .clips
-                            .addNote(clipId: item.$2.id, noteId: data.id);
-
-                        return false;
-                      },
-                    ),
+            divider: true,
+            icon: TablerIcons.language_hiragana,
+            label: S.current.translate,
+            onTap: () {
+              translateNote(data, ref);
+              return false;
+            },
+          ),
+        ContextMenuItem(
+          icon: TablerIcons.paperclip,
+          label: S.current.clip,
+          child: ContextMenuCard(
+            menuListBuilder: () async {
+              var list = await ref.read(clipsProvider.future);
+              return [
+                for (var item in list.indexed)
                   ContextMenuItem(
-                    label: S.current.clipCreate,
-                    icon: TablerIcons.plus,
+                    icon: TablerIcons.paperclip,
+                    label: item.$2.name,
+                    divider: item.$1 == (list.length - 1),
                     onTap: () {
-                      Future.delayed(Duration.zero).then(
-                        (value) {
-                          if (!context.mounted) return;
-                          showModel(
-                            context: context,
-                            builder: (context) {
-                              return const ClipCreateDialog();
-                            },
-                          );
-                        },
-                      );
+                      ref
+                          .read(misskeyApisProvider)
+                          .clips
+                          .addNote(clipId: item.$2.id, noteId: data.id);
 
                       return false;
                     },
-                  )
-                ];
-              },
-            ),
-          )
-        ];
-      },
-      initialChildSize: 0.6,
-      maxChildSize: 0.7);
+                  ),
+                ContextMenuItem(
+                  label: S.current.clipCreate,
+                  icon: TablerIcons.plus,
+                  onTap: () {
+                    Future.delayed(Duration.zero).then((value) {
+                      if (!context.mounted) return;
+                      showModel(
+                        context: context,
+                        builder: (context) {
+                          return const ClipCreateDialog();
+                        },
+                      );
+                    });
+
+                    return false;
+                  },
+                ),
+              ];
+            },
+          ),
+        ),
+        if (ref.read(currentLoginUserProvider)?.id == data.userId) ...[
+          ContextMenuItem(
+            divider: true,
+            icon: TablerIcons.pencil,
+            label: S.current.edit,
+            onTap: () {
+              Future<void>.delayed(Duration.zero, () async {
+                if (!context.mounted) return;
+                await _openNoteEditor(context, data);
+              });
+              return false;
+            },
+          ),
+          ContextMenuItem(
+            icon: TablerIcons.edit,
+            label: S.current.deleteAndEdit,
+            onTap: () {
+              Future<void>.delayed(Duration.zero, () async {
+                if (!context.mounted) return;
+                await _openDeleteAndEdit(
+                  context: context,
+                  ref: ref,
+                  note: data,
+                  onRedrafted: onRedrafted,
+                );
+              });
+              return false;
+            },
+          ),
+          ContextMenuItem(
+            icon: TablerIcons.trash,
+            label: S.current.delete,
+            danger: true,
+            onTap: () {
+              Future<void>.delayed(Duration.zero, () async {
+                if (!context.mounted) return;
+                await _deleteNote(
+                  context: context,
+                  ref: ref,
+                  note: data,
+                  onDeleted: onDeleted,
+                );
+              });
+              return false;
+            },
+          ),
+        ],
+      ];
+    },
+    initialChildSize: 0.6,
+    maxChildSize: 0.7,
+  );
+}
+
+Future<NoteModel?> _openNoteEditor(BuildContext context, NoteModel note) {
+  return NoteCreateDialog.open(
+    context: context,
+    noteId: note.id,
+    type: NoteType.edit,
+    note: note.renote ?? note.reply,
+    initialNote: note,
+  );
+}
+
+Future<void> _deleteNote({
+  required BuildContext context,
+  required WidgetRef ref,
+  required NoteModel note,
+  VoidCallback? onDeleted,
+}) async {
+  final themes = ref.read(themeColorsProvider);
+  final confirmed =
+      await MkConfirm.show(
+        context: context,
+        children: [
+          Icon(TablerIcons.alert_triangle, size: 36, color: themes.warnColor),
+          const SizedBox(height: 12),
+          Text(S.current.noteDeleteConfirm, textAlign: TextAlign.center),
+        ],
+      ) ??
+      false;
+  if (!confirmed || !context.mounted) return;
+
+  try {
+    await ref.read(misskeyApisProvider).notes.delete(noteId: note.id);
+    ref.read(deletedNoteIdsProvider.notifier).markDeleted(note.id);
+    onDeleted?.call();
+  } catch (error) {
+    if (!context.mounted) return;
+    MkInfoDialog.show(
+      context: context,
+      isError: true,
+      info: '${S.current.notifyActionFailed}\n\n$error',
+    );
+  }
+}
+
+Future<void> _openDeleteAndEdit({
+  required BuildContext context,
+  required WidgetRef ref,
+  required NoteModel note,
+  ValueChanged<NoteModel>? onRedrafted,
+}) async {
+  final themes = ref.read(themeColorsProvider);
+  final confirmed =
+      await MkConfirm.show(
+        context: context,
+        children: [
+          Icon(TablerIcons.alert_triangle, size: 36, color: themes.warnColor),
+          const SizedBox(height: 12),
+          Text(S.current.deleteAndEditConfirm, textAlign: TextAlign.center),
+        ],
+      ) ??
+      false;
+  if (!confirmed || !context.mounted) return;
+
+  final createdNote = await NoteCreateDialog.open(
+    context: context,
+    noteId: note.id,
+    type: NoteType.note,
+    note: note.renote ?? note.reply,
+    initialNote: note,
+    deleteOnPostId: note.id,
+  );
+  if (createdNote != null) onRedrafted?.call(createdNote);
 }
 
 /// 翻译Note
@@ -1265,11 +1519,12 @@ Future<void> translateNote(NoteModel data, WidgetRef ref) async {
 }
 
 class TimeLineActions extends HookConsumerWidget {
-  const TimeLineActions(
-      {super.key,
-      required this.fontsize,
-      required this.data,
-      this.customMenuItem});
+  const TimeLineActions({
+    super.key,
+    required this.fontsize,
+    required this.data,
+    this.customMenuItem,
+  });
 
   final NoteModel data;
   final double fontsize;
@@ -1296,9 +1551,7 @@ class TimeLineActions extends HookConsumerWidget {
             );
           },
         ),
-        const SizedBox(
-          width: 28,
-        ),
+        const SizedBox(width: 28),
         ContextMenuBuilder(
           menu: _buildNoteRepeatContextMenu(ref, context),
           mode: const [ContextMenuMode.onTap],
@@ -1309,9 +1562,7 @@ class TimeLineActions extends HookConsumerWidget {
             count: data.renoteCount,
           ),
         ),
-        const SizedBox(
-          width: 28,
-        ),
+        const SizedBox(width: 28),
         TimelineActionButton(
           fontsize: fontsize,
           icon: TablerIcons.plus,
@@ -1328,13 +1579,17 @@ class TimeLineActions extends HookConsumerWidget {
             );
           },
         ),
-        const SizedBox(
-          width: 28,
-        ),
+        const SizedBox(width: 28),
         ContextMenuBuilder(
           mode: const [ContextMenuMode.onTap],
-          menu: buildNoteContextMenu(serverUrl, meta, data, ref, context,
-              customMenuItem: customMenuItem),
+          menu: buildNoteContextMenu(
+            serverUrl,
+            meta,
+            data,
+            ref,
+            context,
+            customMenuItem: customMenuItem,
+          ),
           child: TimelineActionButton(
             fontsize: fontsize,
             icon: TablerIcons.dots,
@@ -1345,7 +1600,9 @@ class TimeLineActions extends HookConsumerWidget {
   }
 
   ContextMenuCard _buildNoteRepeatContextMenu(
-      WidgetRef ref, BuildContext context) {
+    WidgetRef ref,
+    BuildContext context,
+  ) {
     return ContextMenuCard(
       initialChildSize: 0.3,
       maxChildSize: 0.4,
@@ -1365,13 +1622,14 @@ class TimeLineActions extends HookConsumerWidget {
             label: S.current.noteQuote,
             onTap: () {
               NoteCreateDialog.open(
-                  type: NoteType.reNote,
-                  noteId: data.id,
-                  note: data,
-                  context: context);
+                type: NoteType.reNote,
+                noteId: data.id,
+                note: data,
+                context: context,
+              );
               return false;
             },
-          )
+          ),
         ];
       },
     );
@@ -1408,24 +1666,14 @@ class TimelineActionButton extends HookConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Icon(
-                    icon,
-                    size: fontsize * 1.3,
-                    color: color,
-                  ),
-                  if (count != 0)
-                    const SizedBox(
-                      width: 4,
-                    ),
+                  Icon(icon, size: fontsize * 1.3, color: color),
+                  if (count != 0) const SizedBox(width: 4),
                   if (count != 0)
                     Text(
                       "$count",
-                      style: TextStyle(
-                        color: color,
-                        fontSize: fontsize,
-                      ),
+                      style: TextStyle(color: color, fontSize: fontsize),
                       textAlign: TextAlign.left,
-                    )
+                    ),
                 ],
               ),
             ),
@@ -1446,9 +1694,7 @@ class FFTransparentPageRoute<T> extends PageRouteBuilder<T> {
     super.barrierColor,
     super.barrierLabel,
     super.maintainState,
-  }) : super(
-          opaque: false,
-        );
+  }) : super(opaque: false);
 }
 
 Widget _defaultTransitionsBuilder(
@@ -1458,10 +1704,7 @@ Widget _defaultTransitionsBuilder(
   Widget child,
 ) {
   return FadeTransition(
-    opacity: CurvedAnimation(
-      parent: animation,
-      curve: Curves.easeOut,
-    ),
+    opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
     child: child,
   );
 }

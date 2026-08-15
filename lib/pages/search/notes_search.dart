@@ -21,6 +21,7 @@ class NotesSearchPage extends HookConsumerWidget {
       hasMore: status.searched && status.hasMore,
       items: status.data,
       padding: const EdgeInsets.only(top: 8),
+      loading: status.loading,
       initialLoading:
           status.loading &&
           status.searched &&

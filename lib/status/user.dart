@@ -8,6 +8,7 @@ import '../apis/models/note.dart';
 import '../apis/models/user_full.dart';
 import '../logger.dart';
 import 'misskey_api.dart';
+import 'note_deletion_registry.dart';
 
 part 'user.g.dart';
 
@@ -37,10 +38,35 @@ class UserInfo extends _$UserInfo {
     String? userId,
     UserFullModel? userModel,
   }) async {
+    ref.listen(deletedNoteIdsProvider, (_, deletedNoteIds) {
+      final current = state.value;
+      if (current == null) return;
+      final pinnedNotes = excludeDeletedNotes(
+        current.pinnedNotes,
+        deletedNoteIds,
+      );
+      if (pinnedNotes.length == current.pinnedNotes.length) return;
+      state = AsyncData(
+        current.copyWith(
+          pinnedNotes: pinnedNotes,
+          pinnedNotesIds: pinnedNotes.map((note) => note.id).toList(),
+        ),
+      );
+    });
     var apis = ref.read(misskeyApisProvider);
     var model =
         userModel ??
         await apis.user.show(username: username, host: host, userId: userId);
+    if (model != null) {
+      final pinnedNotes = excludeDeletedNotes(
+        model.pinnedNotes,
+        ref.read(deletedNoteIdsProvider),
+      );
+      model = model.copyWith(
+        pinnedNotes: pinnedNotes,
+        pinnedNotesIds: pinnedNotes.map((note) => note.id).toList(),
+      );
+    }
     // 如果服务端没有返回用户名HOST，默认使用本示例的地址
     model?.host ??= Uri.parse(apis.instance).host;
     ref.onDispose(() {
@@ -162,6 +188,15 @@ class UserNotesList extends _$UserNotesList {
     bool withFeatured = false,
     int key = 0,
   }) async {
+    ref.listen(deletedNoteIdsProvider, (_, deletedNoteIds) {
+      final model = state.value;
+      if (model == null) return;
+      final filtered = excludeDeletedNotes(model.list, deletedNoteIds);
+      if (filtered.length == model.list.length) return;
+      model.list = filtered;
+      state = AsyncData(model);
+      ref.notifyListeners();
+    });
     var note = NoteListModel();
 
     note.list = await notes();
@@ -181,7 +216,7 @@ class UserNotesList extends _$UserNotesList {
       withRenotes: withRenotes,
       withReplies: withReplies,
     );
-    return list;
+    return excludeDeletedNotes(list, ref.read(deletedNoteIdsProvider));
   }
 
   Future<void> load() async {

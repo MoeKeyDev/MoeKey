@@ -1,9 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../apis/models/note.dart';
-import 'dio.dart';
 import 'misskey_api.dart';
-import 'server.dart';
+import 'note_deletion_registry.dart';
 
 part 'notes.g.dart';
 
@@ -16,36 +15,53 @@ class NotesState {
 class Notes extends _$Notes {
   @override
   FutureOr<NotesState> build(String noteId) async {
+    ref.listen(deletedNoteIdsProvider, (_, deletedNoteIds) {
+      final notes = state.value;
+      if (notes == null) return;
+      final filtered = excludeDeletedNotes(notes.conversation, deletedNoteIds);
+      if (filtered.length == notes.conversation.length) return;
+      notes.conversation = filtered;
+      state = AsyncData(notes);
+      ref.notifyListeners();
+    });
     var apis = ref.watch(misskeyApisProvider);
     var data = await apis.notes.show(noteId: noteId);
     var note = NotesState();
     note.data = data!;
     if (data.reply != null) {
-      note.conversation.add(data.reply!);
+      note.conversation = await _loadFullConversation(
+        data.reply!,
+        loadAncestors: (noteId) => apis.notes.conversation(noteId: noteId),
+      );
+      note.conversation = excludeDeletedNotes(
+        note.conversation,
+        ref.read(deletedNoteIdsProvider),
+      );
     }
     return note;
   }
+}
 
-  ///notes/conversation
-  Future<AsyncData<NotesState?>?> loadConversation() async {
-    var http = await ref.read(httpProvider.future);
-    var user = ref.read(currentLoginUserProvider);
-    if (state.value!.conversation.firstOrNull?.id == null) return null;
-    var data = await http.post(
-      "/notes/conversation",
-      data: {
-        "i": user!.token,
-        "noteId": state.value!.conversation.firstOrNull!.id,
-      },
-    );
-    List<NoteModel> list = [];
-    for (var item in data.data.reversed) {
-      var note = NoteModel.fromJson(item);
-      list.add(note);
-    }
-    state.value?.conversation = list + state.value!.conversation;
-    return AsyncData(state.value);
+Future<List<NoteModel>> _loadFullConversation(
+  NoteModel directReply, {
+  required Future<List<NoteModel>> Function(String noteId) loadAncestors,
+}) async {
+  final conversation = <NoteModel>[directReply];
+  final knownIds = <String>{directReply.id};
+  var oldestNote = directReply;
+
+  while (oldestNote.replyId != null) {
+    final batch = await loadAncestors(oldestNote.id);
+    final newAncestors = batch
+        .where((ancestor) => knownIds.add(ancestor.id))
+        .toList();
+    if (newAncestors.isEmpty) break;
+
+    conversation.insertAll(0, newAncestors.reversed);
+    oldestNote = conversation.first;
   }
+
+  return conversation;
 }
 
 // @riverpod

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:moekey/widgets/video_player.dart';
 
@@ -27,5 +27,13 @@ void main() {
       videoPlaybackBackend(TargetPlatform.linux),
       VideoPlaybackBackend.mediaKit,
     );
+  });
+
+  test('window fullscreen control is only available on desktop', () {
+    expect(supportsVideoWindowFullscreen(TargetPlatform.macOS), isTrue);
+    expect(supportsVideoWindowFullscreen(TargetPlatform.windows), isTrue);
+    expect(supportsVideoWindowFullscreen(TargetPlatform.linux), isTrue);
+    expect(supportsVideoWindowFullscreen(TargetPlatform.android), isFalse);
+    expect(supportsVideoWindowFullscreen(TargetPlatform.iOS), isFalse);
   });
 }

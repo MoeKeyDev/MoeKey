@@ -66,8 +66,12 @@ class ReplyThreadController extends ChangeNotifier {
   Object? get rootPaginationError => _rootPaginationError;
 
   List<ReplyThreadEntry> get entries {
+    return entriesExcluding(const <String>{});
+  }
+
+  List<ReplyThreadEntry> entriesExcluding(Set<String> deletedNoteIds) {
     final result = <ReplyThreadEntry>[];
-    _appendEntries(result, rootNoteId, 0);
+    _appendEntries(result, rootNoteId, 0, deletedNoteIds);
     return result;
   }
 
@@ -209,12 +213,18 @@ class ReplyThreadController extends ChangeNotifier {
     List<ReplyThreadEntry> result,
     String parentId,
     int depth,
+    Set<String> deletedNoteIds,
   ) {
     if (depth >= maxDepth) return;
-    final children = _childrenByParent[parentId] ?? const <NoteModel>[];
+    final children = (_childrenByParent[parentId] ?? const <NoteModel>[])
+        .where((note) => !deletedNoteIds.contains(note.id))
+        .toList();
     for (var index = 0; index < children.length; index++) {
       final note = children[index];
-      final visibleChildren = _childrenByParent[note.id] ?? const <NoteModel>[];
+      final visibleChildren =
+          (_childrenByParent[note.id] ?? const <NoteModel>[])
+              .where((child) => !deletedNoteIds.contains(child.id))
+              .toList();
       result.add(
         ReplyThreadEntry(
           note: note,
@@ -227,7 +237,7 @@ class ReplyThreadController extends ChangeNotifier {
           childLoadError: _loadErrors[note.id],
         ),
       );
-      _appendEntries(result, note.id, depth + 1);
+      _appendEntries(result, note.id, depth + 1, deletedNoteIds);
     }
   }
 

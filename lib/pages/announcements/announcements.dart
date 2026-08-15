@@ -244,6 +244,7 @@ class AnnouncementsList extends HookConsumerWidget {
           onLoad: () => ref.read(provider.notifier).loadMore(),
           onRefresh: () => ref.refresh(provider.future),
           hasMore: data.value?.hasMore,
+          loading: data.isLoading,
           padding: EdgeInsets.symmetric(horizontal: padding),
           slivers: [
             SliverList.separated(

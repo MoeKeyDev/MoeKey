@@ -126,6 +126,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "day": MessageLookupByLibrary.simpleMessage("日"),
     "daysAgo": m2,
     "delete": MessageLookupByLibrary.simpleMessage("削除"),
+    "deleteAndEdit": MessageLookupByLibrary.simpleMessage("削除して編集"),
+    "deleteAndEditConfirm": MessageLookupByLibrary.simpleMessage(
+      "このノートをもう一度編集しますか？元のノートは公開時に削除され、リアクション、リノート、返信もすべて失われます。",
+    ),
     "deleteConfirm": m3,
     "deleteFileConfirmation": m4,
     "deleteFolderConfirmation": m5,
@@ -220,6 +224,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noteCwHide": MessageLookupByLibrary.simpleMessage("折りたたむ"),
     "noteCwShow": MessageLookupByLibrary.simpleMessage("もっと見る"),
+    "noteDeleteConfirm": MessageLookupByLibrary.simpleMessage("このノートを削除しますか？"),
     "noteFormLanguageTranslation": m15,
     "noteLocalOnly": MessageLookupByLibrary.simpleMessage("連合なし"),
     "noteOpenRemoteLink": MessageLookupByLibrary.simpleMessage("リモートで表示"),

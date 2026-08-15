@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mfm_parser/mfm_parser.dart';
 import 'package:moekey/widgets/driver/driver_select_dialog/driver_select_dialog_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -13,7 +14,9 @@ import '../../generated/l10n.dart';
 import '../../logger.dart';
 import '../../status/dio.dart';
 import '../../status/misskey_api.dart';
+import '../../status/note_deletion_registry.dart';
 import '../../status/note_posted.dart';
+import '../../status/notes_listener.dart';
 import '../../status/server.dart';
 import '../mk_info_dialog.dart';
 
@@ -26,6 +29,63 @@ NoteModel decodeCreatedNoteResponse(Object? responseData) {
   return NoteModel.fromJson(
     jsonDecode(jsonEncode(responseData['createdNote'])) as Map<String, dynamic>,
   );
+}
+
+NoteModel decodeUpdatedNoteResponse(
+  Object? responseData, {
+  NoteModel? fallback,
+}) {
+  if (responseData is! Map || responseData['updatedNote'] is! Map) {
+    if (fallback != null) return fallback;
+    throw const FormatException('notes/update did not return updatedNote');
+  }
+  return NoteModel.fromJson(
+    jsonDecode(jsonEncode(responseData['updatedNote'])) as Map<String, dynamic>,
+  );
+}
+
+/// Applies the fields accepted by notes/update from the submitted form.
+///
+/// Some Misskey forks return no note, or return a packed pre-update object.
+/// Once the update request succeeds, the submitted values are authoritative.
+NoteModel applySubmittedEditFields(
+  NoteModel note,
+  NoteCreateDialogStateModel state,
+) {
+  final text = state.text ?? '';
+  final cw = state.isCw ? state.cw : null;
+  note.text = text;
+  note.textAst = const MfmParser().parse(text);
+  note.cw = cw;
+  note.cwAst = cw == null || cw.isEmpty
+      ? const []
+      : const MfmParser().parse(cw);
+  note.files = List<DriveFileModel>.from(state.files);
+  return note;
+}
+
+Map<String, dynamic> buildNoteUpdateData(NoteCreateDialogStateModel state) {
+  final noteId = state.editId;
+  if (noteId == null) {
+    throw StateError('Cannot build notes/update data without a note id');
+  }
+  return {
+    'noteId': noteId,
+    'text': state.text ?? '',
+    'cw': state.isCw ? state.cw : null,
+    if (state.fileIds.isNotEmpty) 'fileIds': state.fileIds,
+  };
+}
+
+Future<T> publishAfterDeletingOriginal<T>({
+  required String? deleteOnPostId,
+  required Future<void> Function(String noteId) deleteOriginal,
+  required Future<T> Function() publish,
+}) async {
+  if (deleteOnPostId != null) {
+    await deleteOriginal(deleteOnPostId);
+  }
+  return publish();
 }
 
 NoteVisibility resolveReplyVisibility(
@@ -62,12 +122,42 @@ class NoteCreateDialogStateModel {
   String? replyId; // 回复
   String? renoteId; // 转发/引用
   String? channelId; // 频道id
+  String? editId; // 编辑的帖子 id（Misskey notes/update）
+  String? deleteOnPostId; // 点击发布时先删除的原帖 id（删除并编辑）
   NotePollModel? poll;
   bool isNotePoll = false;
   bool isShowEmoji = false;
   bool preview = false;
   num emojiListHeight = 0;
   bool sendLoading = false;
+
+  void applyInitialNote(NoteModel note) {
+    visibility = note.visibility;
+    visibleUserIds = LinkedHashSet<String>.from(note.visibleUserIds);
+    text = note.text ?? '';
+    cw = note.cw ?? '';
+    isCw = note.cw != null;
+    localOnly = note.localOnly;
+    reactionAcceptance = note.reactionAcceptance;
+    files = List<DriveFileModel>.from(note.files);
+    replyId = note.replyId;
+    renoteId = note.renoteId;
+
+    final sourcePoll = note.poll;
+    if (sourcePoll == null) {
+      poll = null;
+      isNotePoll = false;
+    } else {
+      poll = NotePollModel()
+        ..choices = [
+          for (final choice in sourcePoll.choices) (UniqueKey(), choice.text),
+        ]
+        ..multiple = sourcePoll.multiple
+        ..never = sourcePoll.expiresAt == null
+        ..expiresAt = sourcePoll.expiresAt?.millisecondsSinceEpoch;
+      isNotePoll = true;
+    }
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -92,6 +182,7 @@ class NotePollModel {
   List<(LocalKey, String)> choices = [(UniqueKey(), ""), (UniqueKey(), "")];
   bool multiple = false;
   bool never = false;
+  int? expiresAt;
   int days = 0;
   int hours = 0;
   int minutes = 1;
@@ -104,7 +195,8 @@ class NotePollModel {
     return {
       'choices': choices1,
       'multiple': multiple,
-      if (!never)
+      if (!never && expiresAt != null) 'expiresAt': expiresAt,
+      if (!never && expiresAt == null)
         'expiredAfter': Duration(
           hours: hours,
           days: days,
@@ -127,6 +219,9 @@ enum NoteType {
 
   /// 频道
   channel,
+
+  /// 编辑现有帖子
+  edit,
 }
 
 @Riverpod(keepAlive: true)
@@ -155,6 +250,9 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
         break;
       case NoteType.channel:
         state.channelId = noteId;
+        break;
+      case NoteType.edit:
+        state.editId = noteId;
         break;
     }
     return state;
@@ -263,12 +361,14 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
   void setPollNever(bool never) {
     if (state.poll != null) {
       state.poll?.never = never;
+      if (never) state.poll?.expiresAt = null;
       ref.notifyListeners();
     }
   }
 
   void setPollTime({int? days, int? hours, int? minutes}) {
     if (state.poll != null) {
+      state.poll!.expiresAt = null;
       if (days != null) {
         state.poll!.days = days;
       }
@@ -344,6 +444,25 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     ref.notifyListeners();
   }
 
+  Future<void> loadVisibleUsers() async {
+    final ids = LinkedHashSet<String>.from(state.visibleUserIds);
+    if (ids.isEmpty) return;
+    try {
+      final users = await ref
+          .read(misskeyApisProvider)
+          .user
+          .showMany(userIds: ids);
+      if (!ref.mounted) return;
+      state.visibleUsers = LinkedHashMap<String, UserFullModel>.fromEntries(
+        users.map((user) => MapEntry(user.id, user)),
+      );
+      ref.notifyListeners();
+    } catch (error, stackTrace) {
+      logger.e(error);
+      logger.e(stackTrace);
+    }
+  }
+
   void removeFile(int index) {
     if (state.files.length > index) {
       state.files.removeAt(index);
@@ -351,7 +470,10 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
     }
   }
 
-  Future<NoteModel?> send(BuildContext context) async {
+  Future<NoteModel?> send(
+    BuildContext context, {
+    NoteModel? editingNote,
+  }) async {
     if (state.sendLoading) return null;
     state.sendLoading = true;
     ref.notifyListeners();
@@ -381,16 +503,41 @@ class NoteCreateDialogState extends _$NoteCreateDialogState {
       }
 
       // 用户token
-      var data = state.toMap();
+      final isEditing = state.editId != null;
+      var data = isEditing ? buildNoteUpdateData(state) : state.toMap();
       data['i'] = user?.token ?? "";
-      var res = await http.post("/notes/create", data: data);
-      final createdNote = decodeCreatedNoteResponse(res.data);
-      emitNotePosted(createdNote);
+      final res = isEditing
+          ? await http.post("/notes/update", data: data)
+          : await publishAfterDeletingOriginal(
+              deleteOnPostId: state.deleteOnPostId,
+              deleteOriginal: (noteId) async {
+                await http.post(
+                  "/notes/delete",
+                  data: {"noteId": noteId, "i": user?.token ?? ""},
+                );
+                ref.read(deletedNoteIdsProvider.notifier).markDeleted(noteId);
+                // If creating the replacement fails, a retry must not try to
+                // delete the already removed original again.
+                state.deleteOnPostId = null;
+              },
+              publish: () => http.post("/notes/create", data: data),
+            );
+      final resultNote = isEditing
+          ? applySubmittedEditFields(
+              decodeUpdatedNoteResponse(res.data, fallback: editingNote),
+              state,
+            )
+          : decodeCreatedNoteResponse(res.data);
+      if (isEditing) {
+        ref.read(notesListenerProvider.notifier).emitNoteUpdated(resultNote);
+      } else {
+        emitNotePosted(resultNote);
+      }
       state = NoteCreateDialogStateModel();
       ref.invalidate(driverSelectDialogStateProvider);
       ref.invalidate(noteCreateDialogStateProvider);
       ref.notifyListeners();
-      return createdNote;
+      return resultNote;
     } on DioException catch (e) {
       logger.d(e.response);
       if (!context.mounted) return null;

@@ -40,6 +40,7 @@ class TimelinePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var currentIndex = useState(0);
+    final pageVisible = TickerMode.valuesOf(context).enabled;
     return LayoutBuilder(
       builder: (context, constraints) {
         var padding = getPaddingForNote(constraints);
@@ -57,11 +58,11 @@ class TimelinePage extends HookConsumerWidget {
                 ),
                 child: TimeLineListPage(
                   api: element['api'],
-                  active: currentIndex.value == index,
+                  active: pageVisible && currentIndex.value == index,
                 ),
               ),
           ],
-          onIndexUpdate: (index) {
+          onIndexSettled: (index) {
             currentIndex.value = index;
           },
         );
@@ -87,29 +88,51 @@ class TabItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var themes = ref.watch(themeColorsProvider);
-    return Tab(
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 14,
-            color: current == id
-                ? themes.fgColor
-                : themes.fgColor.withAlpha(179),
-          ),
-          const SizedBox(width: 4),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 200),
-            child: Text(
-              current == id ? label : "",
-              style: TextStyle(
-                fontSize: 12,
-                color: 0 == id ? themes.fgColor : themes.fgColor.withAlpha(179),
+    final controller = MkTabControllerScope.maybeOf(context);
+
+    Widget buildTab(double selectionProgress) {
+      final progress = selectionProgress.clamp(0.0, 1.0);
+      final inactiveColor = themes.fgColor.withAlpha(179);
+      final color = Color.lerp(inactiveColor, themes.fgColor, progress)!;
+      return Tab(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: color),
+            ClipRect(
+              child: Align(
+                key: ValueKey('timeline-tab-label-$id'),
+                alignment: Alignment.centerLeft,
+                widthFactor: progress,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Opacity(
+                    opacity: progress,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(fontSize: 12, color: color),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      );
+    }
+
+    final animation = controller?.animation;
+    if (animation == null) {
+      return buildTab(current == id ? 1 : 0);
+    }
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, _) {
+        final progress = 1 - (animation.value - id).abs();
+        return buildTab(progress);
+      },
     );
   }
 }

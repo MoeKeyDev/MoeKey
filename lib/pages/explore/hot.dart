@@ -37,6 +37,7 @@ class ExploreHotPage extends HookConsumerWidget {
               onRefresh: () => ref.refresh(dataProvider.future),
               hasMore: data.value?.hasMore,
               items: data.value?.list,
+              loading: data.isLoading,
               initialLoading: data.isLoading && data.value == null,
               initialError: data.hasError && data.value == null
                   ? data.error

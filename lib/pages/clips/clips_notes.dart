@@ -39,8 +39,8 @@ class ClipsNotes extends HookConsumerWidget {
 
       return MkScaffold(
           header: buildMkAppbar(themes, showDate.value, context, ref),
-          body: buildBody(
-              ref, dataProvider, padding, showDate.value, themes, data.value));
+          body: buildBody(ref, dataProvider, padding, showDate.value, themes,
+              data.value, data.isLoading));
     });
   }
 
@@ -50,7 +50,8 @@ class ClipsNotes extends HookConsumerWidget {
       double padding,
       ClipsModel? showDate,
       ThemeColorModel themes,
-      ClipsNoteListState? data) {
+      ClipsNoteListState? data,
+      bool loading) {
     return Builder(
       builder: (context) {
         return MkRefreshLoadList(
@@ -58,6 +59,7 @@ class ClipsNotes extends HookConsumerWidget {
           onLoad: () => ref.read(dataProvider.notifier).load(),
           onRefresh: () => ref.refresh(dataProvider.future),
           hasMore: data?.haveMore,
+          loading: loading,
           slivers: [
             if (showDate != null)
               SliverToBoxAdapter(

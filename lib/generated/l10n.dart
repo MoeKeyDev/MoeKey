@@ -369,6 +369,31 @@ class S {
     return Intl.message('删除', name: 'delete', desc: '', args: []);
   }
 
+  /// `删除并编辑`
+  String get deleteAndEdit {
+    return Intl.message('删除并编辑', name: 'deleteAndEdit', desc: '', args: []);
+  }
+
+  /// `要重新编辑此帖吗？原帖将在发布时删除，它收到的所有回应、转发和回复也会消失。`
+  String get deleteAndEditConfirm {
+    return Intl.message(
+      '要重新编辑此帖吗？原帖将在发布时删除，它收到的所有回应、转发和回复也会消失。',
+      name: 'deleteAndEditConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `要删除该帖子吗？`
+  String get noteDeleteConfirm {
+    return Intl.message(
+      '要删除该帖子吗？',
+      name: 'noteDeleteConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `标记为敏感内容`
   String get markAsSensitive {
     return Intl.message('标记为敏感内容', name: 'markAsSensitive', desc: '', args: []);

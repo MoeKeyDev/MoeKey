@@ -36,12 +36,14 @@ class MkRefreshIndicator extends StatefulWidget {
     required this.onRefresh,
     this.edgeOffset,
     this.controller,
+    this.show = false,
   });
 
   final Widget child;
   final Future<void> Function() onRefresh;
   final int? edgeOffset;
   final MkRefreshController? controller;
+  final bool show;
 
   @override
   State<MkRefreshIndicator> createState() => _MkRefreshIndicatorState();
@@ -52,6 +54,7 @@ class _MkRefreshIndicatorState extends State<MkRefreshIndicator> {
       GlobalKey<RefreshIndicatorState>();
 
   MkRefreshController? _controller;
+  bool _showScheduled = false;
 
   void _updateController() {
     MkRefreshController? oldController = _controller;
@@ -64,13 +67,29 @@ class _MkRefreshIndicatorState extends State<MkRefreshIndicator> {
   }
 
   void _show() {
-    _indicatorKey.currentState?.show();
+    final indicator = _indicatorKey.currentState;
+    if (indicator == null) return;
+    indicator.show();
+    // A programmatic show can start after this subtree's build has completed.
+    // Rebuilding once makes the indicator's snap state visible immediately,
+    // even when the surrounding tab has just become active and is otherwise
+    // static.
+    if (mounted) setState(() {});
+  }
+
+  void _scheduleShow() {
+    if (!widget.show || _showScheduled) return;
+    _showScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showScheduled = false;
+      if (mounted && widget.show) _show();
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    // _updateController();
+    _scheduleShow();
   }
 
   @override
@@ -93,6 +112,7 @@ class _MkRefreshIndicatorState extends State<MkRefreshIndicator> {
   void didUpdateWidget(MkRefreshIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateController();
+    if (widget.show && !oldWidget.show) _scheduleShow();
   }
 
   @override

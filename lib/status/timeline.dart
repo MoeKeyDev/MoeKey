@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:moekey/status/server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -8,6 +9,7 @@ import '../apis/models/note.dart';
 import '../database/timeline.dart';
 import '../logger.dart';
 import 'misskey_api.dart';
+import 'note_deletion_registry.dart';
 import 'websocket.dart';
 
 part 'timeline.g.dart';
@@ -24,6 +26,8 @@ Future<TimelineDatabase> timelineDatabase(Ref ref) async {
 
 @riverpod
 class Timeline extends _$Timeline {
+  static const _catchUpPageSize = 100;
+
   bool _isLoadingMore = false;
   Future<void>? _refreshLatestOperation;
   Future<void>? _replaceLatestOperation;
@@ -34,6 +38,9 @@ class Timeline extends _$Timeline {
   StreamSubscription<MoekeyEvent>? _streamSubscription;
 
   String get _streamId => 'timeline-$api';
+
+  @visibleForTesting
+  bool get debugStreamActive => _streamActive;
 
   String get _streamChannel => switch (api) {
     'local-timeline' => 'localTimeline',
@@ -48,6 +55,9 @@ class Timeline extends _$Timeline {
     _streamSubscription = moekeyStreamController.stream.listen(
       _handleStreamEvent,
     );
+    ref.listen(deletedNoteIdsProvider, (_, deletedNoteIds) {
+      _removeDeletedNotes(deletedNoteIds);
+    });
     ref.onDispose(() {
       if (_streamConnected) {
         final streamId = _streamId;
@@ -76,16 +86,32 @@ class Timeline extends _$Timeline {
       db?.cleanTimeline(api);
     }
     var model = NoteListModel();
+    final deletedNoteIds = ref.read(deletedNoteIdsProvider);
     if (cache != null && cache.notes.isNotEmpty) {
-      model.list = cache.notes;
+      model.list = excludeDeletedNotes(cache.notes, deletedNoteIds);
     } else {
       var list = await timeline();
       model.list = list;
-      model.isLatestLoaded = true;
-      db?.setTimeline(api, list);
+      model.isLatestLoaded = _streamActive;
+      db?.setTimeline(api, model.list);
     }
+    model.list = excludeDeletedNotes(
+      model.list,
+      ref.read(deletedNoteIdsProvider),
+    );
 
     return model;
+  }
+
+  void _removeDeletedNotes(Set<String> deletedNoteIds) {
+    final model = state.value;
+    if (model == null) return;
+    final previousLength = model.list.length;
+    model.list.removeWhere((note) => isDeletedNoteEntry(note, deletedNoteIds));
+    if (model.list.length == previousLength) return;
+    state = AsyncData(model);
+    ref.notifyListeners();
+    unawaited(_saveCache(model));
   }
 
   Future<List<NoteModel>> timeline({
@@ -100,18 +126,20 @@ class Timeline extends _$Timeline {
       api: api,
       sinceId: sinceId,
     );
-    return list;
+    return excludeDeletedNotes(list, ref.read(deletedNoteIdsProvider));
   }
 
   void setStreamActive(bool active) {
     _streamActive = active;
     if (active) {
-      if (state.value?.isLatestLoaded == true) {
-        _connectStream();
+      // Subscribe first so notes created during the HTTP catch-up request are
+      // delivered through the stream and merged into the refreshed result.
+      _connectStream();
+    } else {
+      if (_streamConnected) {
+        _sendStreamCommand('disconnect');
+        _streamConnected = false;
       }
-    } else if (_streamConnected) {
-      _sendStreamCommand('disconnect');
-      _streamConnected = false;
     }
   }
 
@@ -173,6 +201,7 @@ class Timeline extends _$Timeline {
   }
 
   Future<void> _insertStreamNote(NoteModel note) async {
+    if (isDeletedNoteEntry(note, ref.read(deletedNoteIdsProvider))) return;
     var model = state.value;
     if (model == null) return;
     if (model.list.any((item) => item.id == note.id)) {
@@ -196,12 +225,13 @@ class Timeline extends _$Timeline {
 
   Future<void> refreshLatest({
     Future<void> Function(int changeCount)? beforePrepend,
+    bool force = false,
   }) {
     final activeOperation = _refreshLatestOperation;
     if (activeOperation != null) return activeOperation;
 
     final model = state.value;
-    if (model == null || model.isLatestLoaded) {
+    if (model == null || (!force && model.isLatestLoaded)) {
       return Future.value();
     }
 
@@ -224,7 +254,10 @@ class Timeline extends _$Timeline {
     state = AsyncData(model);
     ref.notifyListeners();
     try {
-      final latest = await timeline();
+      // Catch-up is deliberately bounded to one request. Hidden timeline tabs
+      // unsubscribe from the stream to avoid background traffic, so activation
+      // reconciles only the newest page instead of following an unbounded gap.
+      final latest = await timeline(limit: _catchUpPageSize);
       if (latest.isEmpty) {
         model.isLatestLoaded = true;
         return;
@@ -240,9 +273,13 @@ class Timeline extends _$Timeline {
           await beforePrepend?.call(prependedEntryCount);
         }
       }
+      // A streamed note may arrive while the scroll observer is preserving
+      // the visible anchor. Re-read the current list after that async gap so
+      // the HTTP catch-up cannot overwrite the streamed insertion.
+      final currentAfterPreserving = state.value?.list ?? model.list;
       // Even when ids are unchanged, prefer the freshly fetched Note objects
       // so edited text and server-side counters are refreshed.
-      model.list = merged;
+      model.list = _deduplicate([...latest, ...currentAfterPreserving]);
       model.isLatestLoaded = true;
       await _saveCache(model);
     } catch (error, stackTrace) {
@@ -252,7 +289,6 @@ class Timeline extends _$Timeline {
     } finally {
       state = AsyncData(model);
       ref.notifyListeners();
-      if (_streamActive && model.isLatestLoaded) _connectStream();
     }
   }
 
@@ -307,17 +343,18 @@ class Timeline extends _$Timeline {
       if (ref.mounted) {
         state = AsyncData(model);
         ref.notifyListeners();
-        if (_streamActive && model.isLatestLoaded) _connectStream();
+        if (_streamActive) _connectStream();
       }
     }
   }
 
   List<NoteModel> _deduplicate(Iterable<NoteModel> notes) {
     final ids = <String>{};
-    return [
+    final deduplicated = [
       for (final note in notes)
         if (ids.add(note.id)) note,
     ];
+    return excludeDeletedNotes(deduplicated, ref.read(deletedNoteIdsProvider));
   }
 
   bool _sameIds(List<NoteModel> left, List<NoteModel> right) {

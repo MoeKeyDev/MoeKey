@@ -57,7 +57,7 @@ class MkInfoDialog extends HookConsumerWidget {
     showModel(
       context: context,
       builder: (context) {
-        return MkInfoDialog(info: info);
+        return MkInfoDialog(info: info, isError: isError);
       },
     );
   }

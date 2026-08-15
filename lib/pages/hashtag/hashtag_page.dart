@@ -40,6 +40,7 @@ class HashtagPage extends HookConsumerWidget {
           hasMore: data?.hasMore ?? true,
           items: data?.list,
           controller: controller,
+          loading: state.isLoading,
           initialLoading: state.isLoading && data == null,
           initialError: state.hasError && data == null ? state.error : null,
           onRetry: () => ref.invalidate(model),
