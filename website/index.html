@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MoeKey，一款使用 Flutter 开发的跨平台 Misskey 客户端。查看应用截图、功能与下载。">
+  <meta name="theme-color" content="#fff5fa">
+  <title>MoeKey — Misskey 客户端</title>
+  <link rel="icon" href="assets/icon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="motion.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="navigation-shell">
+  <header class="header wrap">
+    <a class="brand" href="#" aria-label="MoeKey 首页"><img src="assets/icon.png" width="32" height="32" alt="">MoeKey</a>
+    <nav aria-label="主要导航"><a href="#features">功能</a><a href="#preview">应用截图</a><a href="#download">下载</a></nav>
+    <a class="github-nav" href="https://github.com/MoeKeyDev/MoeKey" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  </header>
+  </div>
+  <main id="main">
+    <div class="hero-panel">
+      <section class="intro wrap" aria-labelledby="title">
+        <div class="intro-copy"><h1 id="title">浏览。<br>分享。<br>用 <span>MoeKey</span>。</h1><p class="description">一个使用 Flutter 开发的跨平台 Misskey 客户端。</p>
+        <a class="status" href="https://github.com/MoeKeyDev/MoeKey/releases/latest" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↓</span> 查看最新发布 <span aria-hidden="true">→</span></a>
+        <div class="actions"><a class="button" href="#download">下载 MoeKey</a><a class="button secondary" href="#features">了解更多</a></div></div>
+        <div class="hero-art"><img class="app-icon" src="assets/icon-large.png" width="512" height="512" alt="MoeKey 应用图标"></div>
+      </section>
+      <div class="highlights wrap">
+        <article><span class="highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M13 13h4M13 16h3"/></svg></span><h2>熟悉的界面</h2><p>延续原版 Misskey 的 UI 风格，<br>用熟悉的方式浏览和分享。</p></article>
+        <article><span class="highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="2" y="3" width="14" height="12" rx="2"/><path d="M6 20h6M9 15v5"/><rect x="15" y="9" width="7" height="12" rx="1.5"/><path d="M18 18h1"/></svg></span><h2>跨平台</h2><p>基于 Flutter 开发，<br>让 Misskey 陪伴不同设备上的你。</p></article>
+        <article><span class="highlight-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 7v10M18 7v2a6 6 0 0 1-6 6H6"/></svg></span><h2>开放源代码</h2><p>在 GitHub 查看源代码，<br>了解进展，参与 MoeKey 的开发。</p></article>
+      </div>
+    </div>
+    <a class="scroll-cue" href="#preview">向下探索 <span aria-hidden="true">↓</span></a>
+    <div class="page-content wrap">
+    <div class="preview-heading"><h2>这就是 MoeKey</h2><p>时间线、个人主页、帖子与通知，一起来看看。</p></div>
+    <figure class="preview" id="preview"><a href="assets/app-preview.png" target="_blank" rel="noopener" aria-label="打开完整应用截图"><img src="assets/app-preview.png" width="1920" height="892" alt="MoeKey 的服务器登录、时间线、用户主页、帖子发布、网盘和通知界面" fetchpriority="high"></a><figcaption>应用界面 <a href="assets/app-preview.png" target="_blank" rel="noopener">查看原图 ↗</a></figcaption></figure>
+    <section class="content-section" id="features" aria-labelledby="features-title">
+      <div class="section-label"><h2 id="features-title">目前能做什么</h2><p>从浏览、发布到互动，一站完成。</p></div>
+      <div class="section-body"><dl class="feature-list">
+        <div><dt>四种实时动态</dt><dd>首页、本地、社交与全局时间线，支持分页加载和实时更新。</dd></div>
+        <div><dt>发布与互动</dt><dd>附件、回复、引用、投票、内容警告与可见范围；支持转发、表情回应和自己的帖子管理。</dd></div>
+        <div><dt>个人资料与账号</dt><dd>编辑头像、横幅、简介和自定义资料，登录并切换多个账号。</dd></div>
+        <div><dt>关注与通知</dt><dd>查看用户与关注列表，处理关注请求，浏览分组通知、提及和成就获得通知。</dd></div>
+        <div><dt>网盘与便签</dt><dd>上传、整理和管理文件；创建、编辑与收藏便签，收集感兴趣的帖子。</dd></div>
+        <div><dt>搜索与发现</dt><dd>搜索帖子与用户，浏览热门内容、话题标签和系统公告。</dd></div>
+      </dl><p class="aside-note"><a href="https://github.com/MoeKeyDev/MoeKey#features" target="_blank" rel="noopener noreferrer">探索更多功能 ↗</a></p></div>
+    </section>
+    <section class="content-section download" id="download" aria-labelledby="download-title">
+      <div class="section-label"><h2 id="download-title">下载</h2><p>安装包发布在 GitHub。</p></div>
+      <div class="section-body"><h3>选择你的平台</h3><p>下载 MoeKey，在你的设备上开始使用。</p><div class="platform-downloads"><a class="platform-download" href="https://github.com/MoeKeyDev/MoeKey/releases/download/0.9.0%2B59/MoeKey-0.9.0%2B59-Android-arm64-v8a-release.apk" aria-label="下载 Android 版 MoeKey（ARM64 · APK）"><img src="assets/platform-android.svg" width="28" height="28" alt=""><span><strong>Android</strong><small>ARM64 · APK</small></span><span class="download-arrow" aria-hidden="true">↓</span></a><a class="platform-download" href="https://github.com/MoeKeyDev/MoeKey/releases/download/0.9.0%2B59/MoeKey-0.9.0%2B59-iOS-release.ipa" aria-label="下载 iOS 版 MoeKey（IPA）"><img src="assets/platform-apple.svg" width="28" height="28" alt=""><span><strong>iOS</strong><small>IPA</small></span><span class="download-arrow" aria-hidden="true">↓</span></a><a class="platform-download" href="https://github.com/MoeKeyDev/MoeKey/releases/download/0.9.0%2B59/MoeKey-0.9.0%2B59-windows-x86_64-release.zip" aria-label="下载 Windows 版 MoeKey（x64 · ZIP）"><img src="assets/platform-windows.svg" width="28" height="28" alt=""><span><strong>Windows</strong><small>x64 · ZIP</small></span><span class="download-arrow" aria-hidden="true">↓</span></a><a class="platform-download" href="https://github.com/MoeKeyDev/MoeKey/releases/download/0.9.0%2B59/MoeKey-0.9.0%2B59-macOS-universal-release.zip" aria-label="下载 macOS 版 MoeKey（Universal · ZIP）"><img src="assets/platform-apple.svg" width="28" height="28" alt=""><span><strong>macOS</strong><small>Universal · ZIP</small></span><span class="download-arrow" aria-hidden="true">↓</span></a><a class="platform-download" href="https://github.com/MoeKeyDev/MoeKey/releases/download/0.9.0%2B59/MoeKey-0.9.0%2B59-linux-x86_64-release.tar.gz" aria-label="下载 Linux 版 MoeKey（x64 · TAR.GZ）"><img src="assets/platform-linux.svg" width="28" height="28" alt=""><span><strong>Linux</strong><small>x64 · TAR.GZ</small></span><span class="download-arrow" aria-hidden="true">↓</span></a></div><div class="release-meta"><span>v0.9.0+59</span><a href="https://github.com/MoeKeyDev/MoeKey/releases" target="_blank" rel="noopener noreferrer">所有版本与其他架构 ↗</a></div></div>
+    </section>
+    </div>
+  </main>
+  <a class="back-top" href="#main" aria-label="回到顶部">↑</a>
+  <footer class="footer wrap"><span>MoeKey</span><p>使用 Flutter 构建的 Misskey 客户端</p><a href="https://github.com/MoeKeyDev/MoeKey" target="_blank" rel="noopener noreferrer">GitHub ↗</a></footer>
+</body>
+</html>
