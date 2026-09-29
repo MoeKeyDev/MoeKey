@@ -13,7 +13,6 @@ import '../../apis/models/meta.dart';
 import '../../apis/models/note.dart';
 import '../../apis/models/user_lite.dart';
 import '../../generated/l10n.dart';
-import '../../hook/use_extended_page_controller.dart';
 import '../../status/apis.dart';
 import '../../status/dio.dart';
 import '../../utils/custom_rect_tween.dart';
@@ -57,9 +56,7 @@ class ImagePreviewPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final safeInitialIndex = initialIndex.clamp(0, galleryItems.length - 1);
-    final pageController = useExtendedPageController(
-      initialPage: safeInitialIndex,
-    );
+    final pageController = usePageController(initialPage: safeInitialIndex);
     final currentIndex = useState(safeInitialIndex);
     final chromeVisible = useState(true);
     final mediaZoomed = useState(false);
@@ -169,7 +166,12 @@ class ImagePreviewPage extends HookConsumerWidget {
                   onPointerMove: pointerMove,
                   onPointerUp: (_) => finishVerticalDismiss(),
                   onPointerCancel: (_) => finishVerticalDismiss(),
-                  child: ExtendedImageGesturePageView.builder(
+                  child: PageView.builder(
+                    // Let InteractiveViewer own drags while zoomed; restore
+                    // page swipes when the media returns to its original size.
+                    physics: mediaZoomed.value
+                        ? const NeverScrollableScrollPhysics()
+                        : null,
                     itemCount: galleryItems.length,
                     controller: pageController,
                     scrollDirection: Axis.horizontal,
@@ -419,7 +421,6 @@ class _PreviewImageState extends State<_PreviewImage> {
 
   @override
   void dispose() {
-    if (_zoomed) widget.onZoomChanged?.call(false);
     _transformationController.removeListener(_transformationChanged);
     _transformationController.dispose();
     super.dispose();

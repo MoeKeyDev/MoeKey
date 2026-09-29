@@ -18,7 +18,6 @@ class TimelineInsertTransition extends StatefulWidget {
 class _TimelineInsertTransitionState extends State<TimelineInsertTransition>
     with SingleTickerProviderStateMixin {
   late final AnimationController controller;
-  late final Animation<double> size;
   late final Animation<double> opacity;
   late final Animation<Offset> offset;
 
@@ -30,7 +29,6 @@ class _TimelineInsertTransitionState extends State<TimelineInsertTransition>
       duration: const Duration(milliseconds: 320),
       value: widget.animate ? 0 : 1,
     );
-    size = CurvedAnimation(parent: controller, curve: Curves.easeOutCubic);
     opacity = CurvedAnimation(
       parent: controller,
       curve: const Interval(0, 0.9, curve: Curves.easeOutCubic),
@@ -92,13 +90,12 @@ class _TimelineInsertTransitionState extends State<TimelineInsertTransition>
 
   @override
   Widget build(BuildContext context) {
-    return SizeTransition(
-      sizeFactor: size,
-      alignment: Alignment.topCenter,
-      child: FadeTransition(
-        opacity: opacity,
-        child: SlideTransition(position: offset, child: widget.child),
-      ),
+    // Keep the final extent even on the first frame. Collapsing inserted rows
+    // to zero makes a lazy sliver build the whole batch to fill the viewport,
+    // then repeatedly lay it out as every row expands.
+    return FadeTransition(
+      opacity: opacity,
+      child: SlideTransition(position: offset, child: widget.child),
     );
   }
 }
