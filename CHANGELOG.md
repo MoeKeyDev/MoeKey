@@ -1,6 +1,38 @@
 # Changelog
-# 0.9.1
-- update flutter 3.32
+## 0.10.0
+
+### Added
+
+- Edit, delete, and delete-and-redraft your own notes.
+- Vote in polls and accept or reject follow requests from notifications.
+- View and cancel sent follow requests.
+- Search notes with server, user, and date filters; browse trending content.
+- Open links to local Misskey notes and users directly in the app.
+- View announcement details and mark announcements as read.
+- Add and reorder custom profile fields.
+- Add the MoeKey website with screenshots and downloads for all five platforms.
+
+### Improved
+
+- Refresh timelines on reconnect and propagate new, edited, and deleted notes across views.
+- Improve reply composition, conversation navigation, and reaction acceptance options.
+- Improve mobile composer layout, keyboard handling, and drive attachment selection.
+- Improve notification grouping, unread indicators, reaction displays, and achievement notifications.
+- Improve user profiles, media browsing, image previews and saving, and video playback.
+- Improve emoji picker scrolling, reaction performance, and MFM rendering.
+- Update Japanese translations and mobile bottom spacing.
+
+### Fixed
+
+- Handle unknown notification types from newer servers without breaking notification decoding.
+- Fix Riverpod lifecycle updates and improve WebSocket reconnect and HTTP retry behavior.
+- Improve loading placeholders, pagination, and layout stability.
+
+### Maintenance
+
+- Upgrade Flutter to 3.44.8 and update dependencies and deprecated APIs.
+- Publish Android, iOS, Windows, macOS, and Linux packages automatically when a version tag is pushed.
+- Include the matching changelog section in each GitHub Release.
 
 # 0.9.0
 - Add ios ipa releases

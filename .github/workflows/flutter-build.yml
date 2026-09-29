@@ -1,37 +1,39 @@
 name: 正式发布Flutter应用
 
-#on:
-#  push:
-
 on:
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
+      - 'v[0-9]*.[0-9]*.[0-9]*'
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   pre-build:
-    name: 预构建
+    name: 校验发布版本
     runs-on: ubuntu-latest
     outputs:
-      APP_VERSION: ${{ steps.output-version.outputs.APP_VERSION }}
-      APP_LAST_VERSION: ${{ steps.output-tag-version.outputs.APP_VERSION }}
+      APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
+      BUILD_NAME: ${{ steps.version.outputs.BUILD_NAME }}
+      BUILD_NUMBER: ${{ steps.version.outputs.BUILD_NUMBER }}
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: 校验 tag、版本号和更新记录
+        id: version
+        run: python3 scripts/prepare_release.py
+      - name: 保存发布说明
+        uses: actions/upload-artifact@v4
         with:
-          sparse-checkout: |
-            pubspec.yaml
-          sparse-checkout-cone-mode: false
-          fetch-depth: 0
-      - name: 读取当前版本号
-        id: output-version
-        run: |
-          VERSION=`grep -iE --regexp="version: ([0-9\.+]*)" pubspec.yaml | grep -io "[0-9\.+]*"`
-          echo "Version: $VERSION"
-          echo "APP_VERSION=$VERSION" >> $GITHUB_OUTPUT
-      - name: 获取最新的TAG
-        id: output-tag-version
-        run: |
-          LAST_VERSION=`git tag --sort=-creatordate | head -1`
-          echo "Version: $LAST_VERSION"
-          echo "APP_LAST_VERSION=$LAST_VERSION" >> $GITHUB_OUTPUT
+          name: release-notes
+          path: release-notes.md
+          if-no-files-found: error
   build-apk:
     name: 编译android
     runs-on: ubuntu-latest
@@ -66,7 +68,7 @@ jobs:
           echo storeFile='./key.jks' >> ./android/key.properties
           echo ${{ secrets.KEY_STORE }} | base64 --decode > ./android/app/key.jks
       - name: 编译apk
-        run: flutter build apk --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols/release
+        run: flutter build apk --build-name=${{ needs.pre-build.outputs.BUILD_NAME }} --build-number=${{ needs.pre-build.outputs.BUILD_NUMBER }} --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols/release
 
       - name: 上传apk到工作流程
         uses: actions/upload-artifact@v4
@@ -102,7 +104,7 @@ jobs:
         run: dart run build_runner build
 
       - name: 编译linux
-        run: flutter build linux
+        run: flutter build linux --build-name=${{ needs.pre-build.outputs.BUILD_NAME }} --build-number=${{ needs.pre-build.outputs.BUILD_NUMBER }}
 
       - name: 压缩生成的文件
         run: tar -zcvf "MoeKey-${{ needs.pre-build.outputs.APP_VERSION }}-linux-x86_64-release.tar.gz" --directory=build/linux/x64/release/bundle .
@@ -136,7 +138,7 @@ jobs:
         run: dart run build_runner build
 
       - name: 编译windows
-        run: flutter build windows
+        run: flutter build windows --build-name=${{ needs.pre-build.outputs.BUILD_NAME }} --build-number=${{ needs.pre-build.outputs.BUILD_NUMBER }}
 
       - name: 压缩生成的文件
         run: |
@@ -173,7 +175,7 @@ jobs:
         run: dart run build_runner build
 
       - name: 编译macOS
-        run: flutter build macos
+        run: flutter build macos --build-name=${{ needs.pre-build.outputs.BUILD_NAME }} --build-number=${{ needs.pre-build.outputs.BUILD_NUMBER }}
 
       - name: 压缩生成的文件
         run: |
@@ -208,7 +210,7 @@ jobs:
         run: dart run build_runner build
 
       - name: 编译iOS
-        run: flutter build ios --release --no-codesign
+        run: flutter build ios --build-name=${{ needs.pre-build.outputs.BUILD_NAME }} --build-number=${{ needs.pre-build.outputs.BUILD_NUMBER }} --release --no-codesign
       
       - name: Copy Runner.app
         run: |
@@ -233,6 +235,12 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: 下载发布说明
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+          path: notes
+
       - name: 下载apk
         uses: actions/download-artifact@v4
         with:
@@ -267,6 +275,8 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ needs.pre-build.outputs.APP_VERSION }}
+          tag_name: ${{ github.ref_name }}
+          name: ${{ needs.pre-build.outputs.APP_VERSION }}
           files: ./artifact/*
-          body: "[CHANGELOG.md](CHANGELOG.md)"
+          body_path: notes/release-notes.md
+          fail_on_unmatched_files: true
