@@ -28,7 +28,24 @@ body{background-image:radial-gradient(#eacbda 1px,transparent 1px);background-si
 .platform-downloads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.platform-download{display:flex;align-items:center;gap:13px;padding:17px 16px;background:#fff;border:1px solid #efd4e2;border-radius:16px;transition:transform .2s,box-shadow .2s,border-color .2s;min-width:0}.platform-download img{flex-shrink:0;opacity:.72}.platform-download strong{display:block;font-size:16px;font-weight:600;color:#513546}.platform-download small{display:block;font-size:12px;line-height:1.5;color:#826a79;margin-top:4px}.download-arrow{margin-left:auto;color:#c6397e;font-size:21px}.platform-download:hover{transform:translateY(-3px);border-color:#dc8eb6;box-shadow:0 8px 20px #b75a8820}.platform-download:hover .download-arrow{transform:translateY(2px)}.release-meta{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:#806c78}.release-meta a{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:800px) and (min-width:541px){.download{grid-template-columns:1fr;gap:28px}.platform-downloads{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:540px){.platform-download{padding:14px 11px;gap:9px}.platform-download img{width:24px;height:24px}.platform-download strong{font-size:14px}.platform-download small{font-size:12px}.download-arrow{font-size:18px}}
-@media(max-width:370px){.platform-downloads{grid-template-columns:1fr}}
+@media(max-width:540px){.platform-downloads{grid-template-columns:1fr}}
 
 .highlight-icon svg{display:block;margin-inline:auto;width:40px;height:40px}
 @media(max-width:540px){.highlight-icon svg{width:33px;height:33px}}
+
+/* Language controls retain native language names in every locale. */
+.language-switch{position:relative;margin-left:auto;flex-shrink:0}.language-switch[hidden]{display:none}.header{gap:20px}.github-nav{margin-left:0;white-space:nowrap}.header nav a{white-space:nowrap}html:lang(ja){font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif}html:lang(en) .scroll-cue{letter-spacing:1px}
+@media(max-width:1000px){.header{height:auto;min-height:72px;flex-wrap:wrap;padding-block:12px;gap:12px}.header nav{order:3;width:100%;justify-content:center;border:0;padding:0;gap:24px}.header nav a{padding-block:5px}html{scroll-padding-top:125px}}
+@media(max-width:540px){.language-trigger{padding:7px 9px;font-size:12px}.header{gap:8px}.header .github-nav{padding:7px 9px;font-size:12px}.header nav{gap:18px;font-size:13px}.brand{font-size:19px}.brand img{width:26px;height:26px}html:lang(en) .actions,html:lang(ja) .actions{flex-wrap:wrap}}
+@media(max-width:380px){.header .github-nav{order:4;margin-inline:auto}.header nav{gap:14px}html{scroll-padding-top:160px}}
+
+.github-nav{display:inline-flex;align-items:center;gap:7px}.github-nav svg{flex-shrink:0}
+
+.language-trigger{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #ead5e0;border-radius:24px;background:#fff8fc;color:var(--muted);font:inherit;font-size:13px;font-weight:600;cursor:pointer}.language-trigger:hover,.language-trigger[aria-expanded="true"]{background:#fbe5f0;color:var(--accent);border-color:#e6a5c4}.language-chevron{transition:transform .18s}.language-trigger[aria-expanded="true"] .language-chevron{transform:rotate(180deg)}.language-menu{position:absolute;top:calc(100% + 9px);right:0;min-width:150px;padding:6px;background:#fffafd;border:1px solid #efd4e2;border-radius:16px;box-shadow:0 12px 32px #78485d26;z-index:30}.language-menu[hidden]{display:none}.language-menu button{display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%;padding:11px 12px;border:0;border-radius:11px;background:transparent;color:#624c59;font:inherit;font-size:14px;text-align:left;cursor:pointer}.language-menu button:hover,.language-menu button:focus-visible{background:#fbe5f0;color:#b62c70}.language-menu button[aria-checked="true"]{color:var(--accent);font-weight:600}.language-menu button span{visibility:hidden}.language-menu button[aria-checked="true"] span{visibility:visible}.language-switch button:focus-visible{outline:2px solid #c9377f;outline-offset:2px}
+@media(max-width:540px){.language-trigger{padding:7px 9px;font-size:12px}}
+
+.app-icon{border-radius:22%}
+
+@media(max-width:540px){.hero-art{transform:none!important}.app-icon{animation:none;transform:none!important}}
+
+.platform-download>span:not(.download-arrow){min-width:0}.platform-download small{overflow-wrap:anywhere}.download-arrow{flex-shrink:0}
