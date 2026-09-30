@@ -8,6 +8,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:moekey/apis/dio.dart';
 import 'package:moekey/apis/index.dart';
 import 'package:moekey/apis/models/note.dart';
+import 'package:moekey/apis/models/login_user.dart';
+import 'package:moekey/status/server.dart';
+import 'package:moekey/status/apis.dart';
 import 'package:moekey/apis/models/user_lite.dart';
 import 'package:moekey/apis/services/notes_service.dart';
 import 'package:moekey/database/timeline.dart';
@@ -18,6 +21,11 @@ import 'package:moekey/status/note_deletion_registry.dart';
 import 'package:moekey/status/timeline.dart';
 import 'package:moekey/status/websocket.dart';
 import 'package:moekey/widgets/mk_tabbar_list.dart';
+
+class _NoLoginUser extends CurrentLoginUser {
+  @override
+  LoginUser? build() => null;
+}
 
 class _TestTimelineDatabase extends TimelineDatabase {
   _TestTimelineDatabase() : super(server: 'test', userId: 'test');
@@ -132,6 +140,9 @@ void main() {
     final notes = _TestNotesService();
     final container = ProviderContainer(
       overrides: [
+        currentLoginUserProvider.overrideWith(_NoLoginUser.new),
+        instanceMetaProvider.overrideWith((ref) async => null),
+        apiEmojisListProvider.overrideWith((ref) async => []),
         timelineDatabaseProvider.overrideWith(
           (ref) async => _TestTimelineDatabase(),
         ),
@@ -205,6 +216,9 @@ void main() {
     final notes = _TestNotesService();
     final container = ProviderContainer(
       overrides: [
+        currentLoginUserProvider.overrideWith(_NoLoginUser.new),
+        instanceMetaProvider.overrideWith((ref) async => null),
+        apiEmojisListProvider.overrideWith((ref) async => []),
         timelineDatabaseProvider.overrideWith(
           (ref) async => _TestTimelineDatabase(),
         ),
@@ -238,6 +252,9 @@ void main() {
     final notes = _TestNotesService();
     final container = ProviderContainer(
       overrides: [
+        currentLoginUserProvider.overrideWith(_NoLoginUser.new),
+        instanceMetaProvider.overrideWith((ref) async => null),
+        apiEmojisListProvider.overrideWith((ref) async => []),
         timelineDatabaseProvider.overrideWith(
           (ref) async => _TestTimelineDatabase(),
         ),
@@ -272,6 +289,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          currentLoginUserProvider.overrideWith(_NoLoginUser.new),
+          instanceMetaProvider.overrideWith((ref) async => null),
+          apiEmojisListProvider.overrideWith((ref) async => []),
           timelineDatabaseProvider.overrideWith(
             (ref) async => _TestTimelineDatabase(),
           ),
@@ -308,6 +328,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          currentLoginUserProvider.overrideWith(_NoLoginUser.new),
+          instanceMetaProvider.overrideWith((ref) async => null),
+          apiEmojisListProvider.overrideWith((ref) async => []),
           timelineDatabaseProvider.overrideWith(
             (ref) async => _TestTimelineDatabase(),
           ),
@@ -359,6 +382,9 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          currentLoginUserProvider.overrideWith(_NoLoginUser.new),
+          instanceMetaProvider.overrideWith((ref) async => null),
+          apiEmojisListProvider.overrideWith((ref) async => []),
           timelineDatabaseProvider.overrideWith(
             (ref) async => _TestTimelineDatabase(),
           ),

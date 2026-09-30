@@ -1,3 +1,5 @@
+import '../../video/app_video_pool.dart';
+import 'package:moekey_video_pool/moekey_video_pool.dart';
 import 'dart:async';
 
 import 'package:blurhash_shader/blurhash_shader.dart';
@@ -14,6 +16,7 @@ import '../../apis/models/note.dart';
 import '../../apis/models/user_lite.dart';
 import '../../generated/l10n.dart';
 import '../../status/apis.dart';
+import '../../status/server.dart';
 import '../../status/dio.dart';
 import '../../utils/custom_rect_tween.dart';
 import '../../utils/save_image.dart';
@@ -30,8 +33,14 @@ class ImagePreviewPage extends HookConsumerWidget {
     required this.note,
     this.onPageChanged,
     this.backgroundDecoration,
+    this.videoContext,
+    this.videoSubIndexes,
+    this.initialVideoPlaying = true,
   });
 
+  final bool initialVideoPlaying;
+  final NoteVideoContext? videoContext;
+  final List<int>? videoSubIndexes;
   final List<DriveFileModel> galleryItems;
   final NoteModel note;
   final ValueChanged<int>? onPageChanged;
@@ -42,13 +51,21 @@ class ImagePreviewPage extends HookConsumerWidget {
   bool _isImage(DriveFileModel file) => file.type.startsWith('image/');
   bool _isVideo(DriveFileModel file) => file.type.startsWith('video/');
 
-  void _preloadImage(int index, BuildContext context) {
+  void _preloadImage(int index, BuildContext context, WidgetRef ref) {
     if (index < 0 || index >= galleryItems.length) return;
     final file = galleryItems[index];
     if (_isImage(file)) {
       final thumbnailUrl = file.thumbnailUrl;
       if (thumbnailUrl != null && thumbnailUrl.isNotEmpty) {
-        precacheImage(getExtendedResizeImage(thumbnailUrl), context);
+        precacheImage(
+          getExtendedResizeImage(
+            resolvePostMediaUrl(
+              thumbnailUrl,
+              serverUrl: ref.read(currentLoginUserProvider)?.serverUrl,
+            ),
+          ),
+          context,
+        );
       }
     }
   }
@@ -69,33 +86,18 @@ class ImagePreviewPage extends HookConsumerWidget {
     final pointerStart = useRef<Offset?>(null);
     final pointerPrevious = useRef<Offset?>(null);
     final verticalDismissStarted = useRef(false);
+    final currentFile = galleryItems[currentIndex.value];
     final http = ref.watch(httpProvider);
     final meta = ref.watch(instanceMetaProvider);
-    final currentFile = galleryItems[currentIndex.value];
 
     useEffect(() {
       Future.microtask(() {
         if (!context.mounted) return;
-        _preloadImage(safeInitialIndex - 1, context);
-        _preloadImage(safeInitialIndex + 1, context);
+        _preloadImage(safeInitialIndex - 1, context, ref);
+        _preloadImage(safeInitialIndex + 1, context, ref);
       });
       return null;
     }, const []);
-
-    useEffect(() {
-      if (!_isVideo(currentFile)) return null;
-      final controller = ref.read(
-        sharedVideoControllerProvider(currentFile.url),
-      );
-      var cancelled = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!cancelled) unawaited(controller.setMuted(false));
-      });
-      return () {
-        cancelled = true;
-        unawaited(controller.restoreAfterPreview());
-      };
-    }, [currentFile.url]);
 
     void toggleChrome() => chromeVisible.value = !chromeVisible.value;
 
@@ -139,122 +141,149 @@ class ImagePreviewPage extends HookConsumerWidget {
       pointerPrevious.value = event.position;
     }
 
-    return ExtendedImageSlidePage(
-      key: slidePageKey,
-      slideAxis: SlideAxis.vertical,
-      slideType: SlideType.onlyImage,
-      onSlidingPage: (state) {
-        mediaSlideOffset.value = state.offset;
-        mediaSlideScale.value = state.scale;
-      },
-      slidePageBackgroundHandler: (offset, pageSize) {
-        final opacity = (1 - offset.dy.abs() / pageSize.height).clamp(0.0, 1.0);
-        return Colors.black.withValues(alpha: opacity);
-      },
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Transform.translate(
-              offset: mediaSlideOffset.value,
-              child: Transform.scale(
-                scale: mediaSlideScale.value,
-                child: Listener(
-                  behavior: HitTestBehavior.translucent,
-                  onPointerDown: pointerDown,
-                  onPointerMove: pointerMove,
-                  onPointerUp: (_) => finishVerticalDismiss(),
-                  onPointerCancel: (_) => finishVerticalDismiss(),
-                  child: PageView.builder(
-                    // Let InteractiveViewer own drags while zoomed; restore
-                    // page swipes when the media returns to its original size.
-                    physics: mediaZoomed.value
-                        ? const NeverScrollableScrollPhysics()
-                        : null,
-                    itemCount: galleryItems.length,
-                    controller: pageController,
-                    scrollDirection: Axis.horizontal,
-                    onPageChanged: (index) {
-                      mediaZoomed.value = false;
-                      currentIndex.value = index;
-                      _preloadImage(index - 1, context);
-                      _preloadImage(index + 1, context);
-                      onPageChanged?.call(index);
-                    },
-                    itemBuilder: (context, index) {
-                      final file = galleryItems[index];
-                      if (_isVideo(file)) {
-                        return VideoPlayerComponent(
-                          key: ValueKey(file.id),
-                          url: file.url,
-                          presentation: VideoPlayerPresentation.preview,
-                          controlsVisible:
-                              chromeVisible.value &&
-                              currentIndex.value == index,
-                          onSurfaceTap: toggleChrome,
-                          onZoomChanged: index == currentIndex.value
-                              ? (value) => mediaZoomed.value = value
-                              : null,
+    return AppVideoViewport(
+      origin: videoContext,
+      observeScroll: false,
+      child: ExtendedImageSlidePage(
+        key: slidePageKey,
+        slideAxis: SlideAxis.vertical,
+        slideType: SlideType.onlyImage,
+        onSlidingPage: (state) {
+          mediaSlideOffset.value = state.offset;
+          mediaSlideScale.value = state.scale;
+        },
+        slidePageBackgroundHandler: (offset, pageSize) {
+          final opacity = (1 - offset.dy.abs() / pageSize.height).clamp(
+            0.0,
+            1.0,
+          );
+          return Colors.black.withValues(alpha: opacity);
+        },
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              Transform.translate(
+                offset: mediaSlideOffset.value,
+                child: Transform.scale(
+                  scale: mediaSlideScale.value,
+                  child: Listener(
+                    behavior: HitTestBehavior.translucent,
+                    onPointerDown: pointerDown,
+                    onPointerMove: pointerMove,
+                    onPointerUp: (_) => finishVerticalDismiss(),
+                    onPointerCancel: (_) => finishVerticalDismiss(),
+                    child: PageView.builder(
+                      // Let InteractiveViewer own drags while zoomed; restore
+                      // page swipes when the media returns to its original size.
+                      physics: mediaZoomed.value
+                          ? const NeverScrollableScrollPhysics()
+                          : null,
+                      itemCount: galleryItems.length,
+                      controller: pageController,
+                      scrollDirection: Axis.horizontal,
+                      onPageChanged: (index) {
+                        mediaZoomed.value = false;
+                        currentIndex.value = index;
+                        _preloadImage(index - 1, context, ref);
+                        _preloadImage(index + 1, context, ref);
+                        onPageChanged?.call(index);
+                      },
+                      itemBuilder: (context, index) {
+                        final file = galleryItems[index];
+                        if (_isVideo(file)) {
+                          final identity =
+                              videoContext ??
+                              NoteVideoContext.of(context, note.id);
+                          final subIndex =
+                              videoSubIndexes?[index] ??
+                              note.files.indexWhere(
+                                (item) => item.id == file.id,
+                              );
+                          return VideoFeedView(
+                            key: ValueKey(file.id),
+                            scope: identity.listKey,
+                            videoKey: identity.attachmentKey(file.id),
+                            noteId: note.id,
+                            listIndex: identity.listIndex,
+                            listSubIndex: subIndex < 0 ? index : subIndex,
+                            url: file.url,
+                            enable: currentIndex.value == index,
+                            builder: (_, video) => PreviewVideoPlayerComponent(
+                              video: video,
+                              active: currentIndex.value == index,
+                              startPlaying:
+                                  index != safeInitialIndex ||
+                                  initialVideoPlaying,
+                              controlsVisible:
+                                  chromeVisible.value &&
+                                  currentIndex.value == index,
+                              onSurfaceTap: toggleChrome,
+                              onZoomChanged: index == currentIndex.value
+                                  ? (value) => mediaZoomed.value = value
+                                  : null,
+                            ),
+                          );
+                        }
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: toggleChrome,
+                          child: _PreviewImage(
+                            file: file,
+                            heroKey:
+                                currentIndex.value == index &&
+                                    index < heroKeys.length
+                                ? heroKeys[index]
+                                : null,
+                            onZoomChanged: index == currentIndex.value
+                                ? (value) => mediaZoomed.value = value
+                                : null,
+                          ),
                         );
-                      }
-                      return GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: toggleChrome,
-                        child: _PreviewImage(
-                          file: file,
-                          heroKey:
-                              currentIndex.value == index &&
-                                  index < heroKeys.length
-                              ? heroKeys[index]
-                              : null,
-                          onZoomChanged: index == currentIndex.value
-                              ? (value) => mediaZoomed.value = value
-                              : null,
-                        ),
-                      );
-                    },
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (supportsVideoWindowFullscreen(defaultTargetPlatform) &&
-                galleryItems.length > 1)
-              _DesktopPageNavigation(
+              if (supportsVideoWindowFullscreen(defaultTargetPlatform) &&
+                  galleryItems.length > 1)
+                _DesktopPageNavigation(
+                  visible: chromeVisible.value,
+                  onPrevious: currentIndex.value > 0
+                      ? () => pageController.animateToPage(
+                          currentIndex.value - 1,
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeOutCubic,
+                        )
+                      : null,
+                  onNext: currentIndex.value < galleryItems.length - 1
+                      ? () => pageController.animateToPage(
+                          currentIndex.value + 1,
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeOutCubic,
+                        )
+                      : null,
+                ),
+              _PreviewChrome(
                 visible: chromeVisible.value,
-                onPrevious: currentIndex.value > 0
-                    ? () => pageController.animateToPage(
-                        currentIndex.value - 1,
-                        duration: const Duration(milliseconds: 220),
-                        curve: Curves.easeOutCubic,
-                      )
-                    : null,
-                onNext: currentIndex.value < galleryItems.length - 1
-                    ? () => pageController.animateToPage(
-                        currentIndex.value + 1,
-                        duration: const Duration(milliseconds: 220),
-                        curve: Curves.easeOutCubic,
-                      )
-                    : null,
+                index: currentIndex.value,
+                itemCount: galleryItems.length,
+                note: note,
+                reserveVideoControls: _isVideo(currentFile),
+                onBack: () =>
+                    Navigator.of(context, rootNavigator: true).maybePop(),
+                onDownload: http.value == null
+                    ? null
+                    : () => _downloadCurrent(
+                        context,
+                        http.value!,
+                        meta,
+                        currentFile,
+                      ),
               ),
-            _PreviewChrome(
-              visible: chromeVisible.value,
-              index: currentIndex.value,
-              itemCount: galleryItems.length,
-              note: note,
-              reserveVideoControls: _isVideo(currentFile),
-              onBack: () =>
-                  Navigator.of(context, rootNavigator: true).maybePop(),
-              onDownload: http.value == null
-                  ? null
-                  : () => _downloadCurrent(
-                      context,
-                      http.value!,
-                      meta,
-                      currentFile,
-                    ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -268,7 +297,13 @@ class ImagePreviewPage extends HookConsumerWidget {
   ) async {
     final success = await saveMedia(
       http: http,
-      url: file.url,
+      url: resolvePostMediaUrl(
+        file.url,
+        serverUrl: ProviderScope.containerOf(
+          context,
+          listen: false,
+        ).read(currentLoginUserProvider)?.serverUrl,
+      ),
       mimeType: file.type,
       album: meta.value?.name ?? 'MoeKey',
       name: file.name,
@@ -362,7 +397,7 @@ class _PreviewPageButton extends StatelessWidget {
   }
 }
 
-class _PreviewImage extends StatefulWidget {
+class _PreviewImage extends ConsumerStatefulWidget {
   const _PreviewImage({required this.file, this.heroKey, this.onZoomChanged});
 
   final DriveFileModel file;
@@ -370,10 +405,10 @@ class _PreviewImage extends StatefulWidget {
   final ValueChanged<bool>? onZoomChanged;
 
   @override
-  State<_PreviewImage> createState() => _PreviewImageState();
+  ConsumerState<_PreviewImage> createState() => _PreviewImageState();
 }
 
-class _PreviewImageState extends State<_PreviewImage> {
+class _PreviewImageState extends ConsumerState<_PreviewImage> {
   final TransformationController _transformationController =
       TransformationController();
   bool _zoomed = false;
@@ -444,7 +479,12 @@ class _PreviewImageState extends State<_PreviewImage> {
             children: [
               _ProgressiveImagePlaceholder(file: file),
               ExtendedImage(
-                image: getExtendedOriginalImage(file.url),
+                image: getExtendedOriginalImage(
+                  resolvePostMediaUrl(
+                    file.url,
+                    serverUrl: ref.watch(currentLoginUserProvider)?.serverUrl,
+                  ),
+                ),
                 fit: BoxFit.contain,
                 filterQuality: FilterQuality.high,
                 loadStateChanged: (state) {
@@ -477,13 +517,13 @@ class _PreviewImageState extends State<_PreviewImage> {
   }
 }
 
-class _ProgressiveImagePlaceholder extends StatelessWidget {
+class _ProgressiveImagePlaceholder extends ConsumerWidget {
   const _ProgressiveImagePlaceholder({required this.file});
 
   final DriveFileModel file;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final thumbnailUrl = file.thumbnailUrl;
     final blurhash = file.blurhash;
     return Stack(
@@ -502,7 +542,12 @@ class _ProgressiveImagePlaceholder extends StatelessWidget {
             thumbnailUrl.isNotEmpty &&
             thumbnailUrl != file.url)
           ExtendedImage(
-            image: getExtendedResizeImage(thumbnailUrl),
+            image: getExtendedResizeImage(
+              resolvePostMediaUrl(
+                thumbnailUrl,
+                serverUrl: ref.watch(currentLoginUserProvider)?.serverUrl,
+              ),
+            ),
             fit: BoxFit.contain,
             filterQuality: FilterQuality.medium,
             loadStateChanged: (state) {

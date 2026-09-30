@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:moekey/status/apis.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -33,12 +32,6 @@ class HttpProxy extends HttpOverrides {
 
 Future initApp(BuildContext context, WidgetRef ref) async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Windows and Linux have no endorsed implementation in Flutter's official
-  // video_player, so only those platforms initialize the media_kit fallback.
-  if (Platform.isWindows || Platform.isLinux) {
-    MediaKit.ensureInitialized();
-  }
 
   // 代理配置
   HttpOverrides.global = HttpProxy();

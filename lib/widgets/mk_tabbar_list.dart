@@ -1,3 +1,4 @@
+import '../video/app_video_pool.dart';
 import 'package:flutter/material.dart';
 import 'keep_alive_wrapper.dart';
 import 'mk_header.dart';
@@ -154,7 +155,16 @@ class MkTabBarRefreshScrollState extends State<MkTabBarRefreshScroll>
                   KeepAliveWrapper(
                     child: DefaultMkRefreshLoadListController(
                       controller: loadControllers[index],
-                      child: item.child,
+                      child: AnimatedBuilder(
+                        animation: tabController.animation!,
+                        child: item.child,
+                        builder: (_, child) => AppVideoActivity(
+                          active:
+                              (tabController.animation!.value - index).abs() <
+                              0.001,
+                          child: child!,
+                        ),
+                      ),
                     ),
                   ),
               ],

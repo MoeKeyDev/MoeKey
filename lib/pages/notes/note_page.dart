@@ -1,3 +1,4 @@
+import '../../video/app_video_pool.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -63,10 +64,16 @@ ValueNotifier<T> _useKeyedState<T>(T initialValue, List<Object?> keys) {
 }
 
 class NotesPage extends HookConsumerWidget {
-  const NotesPage({super.key, required this.noteId, this.previewNote});
+  const NotesPage({
+    super.key,
+    required this.noteId,
+    this.previewNote,
+    this.videoContext,
+  });
 
   final String noteId;
   final NoteModel? previewNote;
+  final NoteVideoContext? videoContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,7 +84,7 @@ class NotesPage extends HookConsumerWidget {
 
     var conversation = dataProvider.value?.conversation ?? [];
     var data = dataProvider.value?.data ?? previewNote;
-    final replyContentVisible = useState<bool?>(null);
+    final replyContentVisible = _useKeyedState<bool?>(null, [noteId]);
     final currentNoteSliverKey = useMemoized(GlobalKey.new, [noteId]);
     final newerAuthorNotes = _useKeyedState<List<NoteModel>>(const [], [
       noteId,
@@ -336,164 +343,176 @@ class NotesPage extends HookConsumerWidget {
             ),
             // trailing: TextButton(onPressed: () {}, child: const Text("关注")),
           ),
-          body: Listener(
-            onPointerUp: (_) => finishAuthorTimelinePull(),
-            onPointerCancel: (_) => finishAuthorTimelinePull(load: false),
-            child: NotificationListener<ScrollNotification>(
-              onNotification: handleAuthorTimelinePull,
-              child: CustomScrollView(
-                center: data == null ? null : currentNoteSliverKey,
-                anchor: data == null ? 0.0 : scrollAnchor,
-                physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
-                ),
-                slivers: [
-                  if (data != null)
-                    SliverToBoxAdapter(child: SizedBox(height: headerExtent)),
-                  if (data != null)
-                    _AuthorNotesLoadButtonSliver(
-                      direction: AxisDirection.up,
-                      visible: canLoadNewerAuthorNotes.value,
-                      loading: loadingNewerAuthorNotes.value,
-                      stretch: topPullDistance,
-                      triggerDistance: authorNotesPullThreshold,
-                      onPressed: loadNewerAuthorNotes,
-                      topPadding: 16,
-                      bottomPadding: 16,
-                    ),
-                  if (newerAuthorNotes.value.isNotEmpty)
-                    _AuthorNotesSliver(
-                      notes: newerAuthorNotes.value,
-                      horizontalPadding: padding,
-                      bottomPadding: 16,
-                      growsUp: true,
-                    ),
-                  if (data != null &&
-                      (conversation.isNotEmpty || data.replyId != null))
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
-                      sliver: SliverToBoxAdapter(
-                        child: MkCard(
-                          padding: EdgeInsets.fromLTRB(
-                            conversationLeftPadding,
-                            16,
-                            24,
-                            0,
-                          ),
-                          shadow: false,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          ),
-                          child: conversation.isEmpty
-                              ? _ConversationNotePlaceholder(
-                                  color: themes.fgColor.withValues(alpha: 0.1),
-                                  lineColor: themes.dividerColor,
-                                  avatarSize: conversationAvatarSize,
-                                )
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 16),
-                                    for (var (index, item)
-                                        in conversation.indexed)
-                                      TimeLineNoteCardComponent(
-                                        data: item,
-                                        reply: true,
-                                        disableReactions: true,
-                                        replyLineBottomPadding:
-                                            index == conversation.length - 1
-                                            ? 0
-                                            : 4,
-                                      ),
-                                  ],
-                                ),
-                        ),
-                      ),
-                    ),
-                  if (data != null)
-                    SliverPadding(
-                      key: currentNoteSliverKey,
-                      padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
-                      sliver: SliverToBoxAdapter(
-                        child: MkCard(
-                          padding: EdgeInsets.fromLTRB(
-                            24,
-                            data.replyId != null ? 0 : 16,
-                            24,
-                            24,
-                          ),
-                          shadow: false,
-                          clipBehavior: data.replyId != null
-                              ? Clip.none
-                              : Clip.antiAlias,
-                          borderRadius: BorderRadius.only(
-                            topLeft: data.replyId == null
-                                ? const Radius.circular(12)
-                                : Radius.zero,
-                            topRight: data.replyId == null
-                                ? const Radius.circular(12)
-                                : Radius.zero,
-                            bottomLeft: showReplyContent
-                                ? Radius.zero
-                                : const Radius.circular(12),
-                            bottomRight: showReplyContent
-                                ? Radius.zero
-                                : const Radius.circular(12),
-                          ),
-                          child: NotesPageNoteCard(data: data),
-                        ),
-                      ),
-                    ),
-                  if (showReplyContent)
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
-                      sliver: SliverToBoxAdapter(
-                        child: MkCard(
-                          shadow: false,
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-                          borderRadius: BorderRadius.zero,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: themes.dividerColor,
-                            ),
-                            height: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(horizontal: padding),
-                    sliver: NoteChildren(
-                      noteId: noteId,
-                      repliesCount: data?.repliesCount ?? 0,
-                      onContentVisibilityChanged: (visible) {
-                        if (replyContentVisible.value != visible) {
-                          replyContentVisible.value = visible;
-                        }
-                      },
-                    ),
+          body: AppVideoViewport(
+            origin: videoContext,
+            child: Listener(
+              onPointerUp: (_) => finishAuthorTimelinePull(),
+              onPointerCancel: (_) => finishAuthorTimelinePull(load: false),
+              child: NotificationListener<ScrollNotification>(
+                onNotification: handleAuthorTimelinePull,
+                child: CustomScrollView(
+                  center: data == null ? null : currentNoteSliverKey,
+                  anchor: data == null ? 0.0 : scrollAnchor,
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
                   ),
-                  if (olderAuthorNotes.value.isNotEmpty)
-                    _AuthorNotesSliver(
-                      notes: olderAuthorNotes.value,
-                      horizontalPadding: padding,
-                      topPadding: 16,
-                      bottomPadding: canLoadOlderAuthorNotes.value ? 0 : 16,
+                  slivers: [
+                    if (data != null)
+                      SliverToBoxAdapter(child: SizedBox(height: headerExtent)),
+                    if (data != null)
+                      _AuthorNotesLoadButtonSliver(
+                        direction: AxisDirection.up,
+                        visible: canLoadNewerAuthorNotes.value,
+                        loading: loadingNewerAuthorNotes.value,
+                        stretch: topPullDistance,
+                        triggerDistance: authorNotesPullThreshold,
+                        onPressed: loadNewerAuthorNotes,
+                        topPadding: 16,
+                        bottomPadding: 16,
+                      ),
+                    if (newerAuthorNotes.value.isNotEmpty)
+                      _AuthorNotesSliver(
+                        notes: newerAuthorNotes.value,
+                        baseIndex: videoContext?.listIndex ?? 0,
+                        horizontalPadding: padding,
+                        bottomPadding: 16,
+                        growsUp: true,
+                      ),
+                    if (data != null &&
+                        (conversation.isNotEmpty || data.replyId != null))
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
+                        sliver: SliverToBoxAdapter(
+                          child: MkCard(
+                            padding: EdgeInsets.fromLTRB(
+                              conversationLeftPadding,
+                              16,
+                              24,
+                              0,
+                            ),
+                            shadow: false,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            child: conversation.isEmpty
+                                ? _ConversationNotePlaceholder(
+                                    color: themes.fgColor.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    lineColor: themes.dividerColor,
+                                    avatarSize: conversationAvatarSize,
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 16),
+                                      for (var (index, item)
+                                          in conversation.indexed)
+                                        TimeLineNoteCardComponent(
+                                          data: item,
+                                          reply: true,
+                                          disableReactions: true,
+                                          replyLineBottomPadding:
+                                              index == conversation.length - 1
+                                              ? 0
+                                              : 4,
+                                        ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+                    if (data != null)
+                      SliverPadding(
+                        key: currentNoteSliverKey,
+                        padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
+                        sliver: SliverToBoxAdapter(
+                          child: MkCard(
+                            padding: EdgeInsets.fromLTRB(
+                              24,
+                              data.replyId != null ? 0 : 16,
+                              24,
+                              24,
+                            ),
+                            shadow: false,
+                            clipBehavior: data.replyId != null
+                                ? Clip.none
+                                : Clip.antiAlias,
+                            borderRadius: BorderRadius.only(
+                              topLeft: data.replyId == null
+                                  ? const Radius.circular(12)
+                                  : Radius.zero,
+                              topRight: data.replyId == null
+                                  ? const Radius.circular(12)
+                                  : Radius.zero,
+                              bottomLeft: showReplyContent
+                                  ? Radius.zero
+                                  : const Radius.circular(12),
+                              bottomRight: showReplyContent
+                                  ? Radius.zero
+                                  : const Radius.circular(12),
+                            ),
+                            child: NotesPageNoteCard(data: data),
+                          ),
+                        ),
+                      ),
+                    if (showReplyContent)
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(padding, 0, padding, 0),
+                        sliver: SliverToBoxAdapter(
+                          child: MkCard(
+                            shadow: false,
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                            borderRadius: BorderRadius.zero,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: themes.dividerColor,
+                              ),
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Keep the reply controller mounted when the divider above
+                    // is inserted/removed after an empty reply response.
+                    SliverPadding(
+                      key: ValueKey('replies-$noteId'),
+                      padding: EdgeInsets.symmetric(horizontal: padding),
+                      sliver: NoteChildren(
+                        noteId: noteId,
+                        repliesCount: data?.repliesCount ?? 0,
+                        onContentVisibilityChanged: (visible) {
+                          if (replyContentVisible.value != visible) {
+                            replyContentVisible.value = visible;
+                          }
+                        },
+                      ),
                     ),
-                  if (data != null)
-                    _AuthorNotesLoadButtonSliver(
-                      direction: AxisDirection.down,
-                      visible: canLoadOlderAuthorNotes.value,
-                      loading: loadingOlderAuthorNotes.value,
-                      stretch: bottomPullDistance,
-                      triggerDistance: authorNotesPullThreshold,
-                      onPressed: loadOlderAuthorNotes,
-                      topPadding: 16,
-                      bottomPadding: 16,
-                    ),
-                ],
+                    if (olderAuthorNotes.value.isNotEmpty)
+                      _AuthorNotesSliver(
+                        notes: olderAuthorNotes.value,
+                        baseIndex: videoContext?.listIndex ?? 0,
+                        horizontalPadding: padding,
+                        topPadding: 16,
+                        bottomPadding: canLoadOlderAuthorNotes.value ? 0 : 16,
+                      ),
+                    if (data != null)
+                      _AuthorNotesLoadButtonSliver(
+                        key: ValueKey('older-author-notes-$noteId'),
+                        direction: AxisDirection.down,
+                        visible: canLoadOlderAuthorNotes.value,
+                        loading: loadingOlderAuthorNotes.value,
+                        stretch: bottomPullDistance,
+                        triggerDistance: authorNotesPullThreshold,
+                        onPressed: loadOlderAuthorNotes,
+                        topPadding: 16,
+                        bottomPadding: 16,
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -505,6 +524,7 @@ class NotesPage extends HookConsumerWidget {
 
 class _AuthorNotesLoadButtonSliver extends ConsumerWidget {
   const _AuthorNotesLoadButtonSliver({
+    super.key,
     required this.direction,
     required this.visible,
     required this.loading,
@@ -628,6 +648,7 @@ class _AuthorNotesSliver extends ConsumerWidget {
     this.topPadding = 0,
     this.bottomPadding = 0,
     this.growsUp = false,
+    this.baseIndex = 0,
   });
 
   final List<NoteModel> notes;
@@ -635,6 +656,7 @@ class _AuthorNotesSliver extends ConsumerWidget {
   final double topPadding;
   final double bottomPadding;
   final bool growsUp;
+  final int baseIndex;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -667,7 +689,13 @@ class _AuthorNotesSliver extends ConsumerWidget {
             key: ValueKey('note-page-author-${notes[index].id}'),
             child: ClipRRect(
               borderRadius: borderRadius,
-              child: NoteCard(data: notes[index], borderRadius: borderRadius),
+              child: NoteCard(
+                data: notes[index],
+                borderRadius: borderRadius,
+                videoListIndex: growsUp
+                    ? baseIndex - index - 1
+                    : baseIndex + index + 1,
+              ),
             ),
           );
         },

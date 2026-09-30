@@ -1,3 +1,4 @@
+import '../../video/app_video_pool.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,21 +20,37 @@ final userRecentMediaFilesProvider = FutureProvider.autoDispose
     });
 
 class UserMediaFile {
-  const UserMediaFile({required this.noteId, required this.file});
+  const UserMediaFile({
+    required this.noteId,
+    required this.file,
+    this.noteIndex = 0,
+    this.attachmentIndex = 0,
+  });
 
   final String noteId;
   final DriveFileModel file;
+  final int noteIndex;
+  final int attachmentIndex;
 }
 
 Iterable<UserMediaFile> mediaFilesFromNotes(Iterable<NoteModel> notes) {
-  return notes.expand(
-    (note) => note.files
+  return notes.indexed.expand((entry) {
+    final (noteIndex, note) = entry;
+    return note.files.indexed
         .where(
           (file) =>
-              file.type.startsWith('image/') || file.type.startsWith('video/'),
+              file.$2.type.startsWith('image/') ||
+              file.$2.type.startsWith('video/'),
         )
-        .map((file) => UserMediaFile(noteId: note.id, file: file)),
-  );
+        .map(
+          (file) => UserMediaFile(
+            noteId: note.id,
+            file: file.$2,
+            noteIndex: noteIndex,
+            attachmentIndex: file.$1,
+          ),
+        );
+  });
 }
 
 class UserFilesPage extends HookConsumerWidget {
@@ -53,6 +70,7 @@ class UserFilesPage extends HookConsumerWidget {
     final media = files.toList();
 
     return MkRefreshLoadList<UserMediaFile>(
+      videoEnabled: true,
       padding: const EdgeInsets.all(16),
       onLoad: () => ref.read(provider.notifier).load(),
       onRefresh: () => ref.refresh(provider.future),
@@ -95,12 +113,23 @@ class UserMediaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final identity = NoteVideoContext.of(context, media.noteId);
+    final origin = NoteVideoContext(
+      listKey: identity.listKey,
+      noteId: media.noteId,
+      listIndex: media.noteIndex,
+    );
     return NoteImage(
+      videoContext: origin,
+      videoSubIndex: media.attachmentIndex,
       imageFile: media.file,
       heroKey: null,
       fit: BoxFit.cover,
       showHideButton: false,
-      onClick: () => context.push('/notes/${media.noteId}'),
+      onClick: () => context.push(
+        '/notes/${media.noteId}',
+        extra: {'videoContext': origin},
+      ),
     );
   }
 }

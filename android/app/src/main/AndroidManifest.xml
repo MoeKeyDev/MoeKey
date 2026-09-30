@@ -12,6 +12,9 @@
             android:label="MoeKey"
             android:name="${applicationName}"
             android:icon="@mipmap/ic_launcher">
+        <!-- Use the rendering path validated by the FVP comparison demo. -->
+        <meta-data android:name="io.flutter.embedding.android.EnableImpeller" android:value="true"/>
+        <meta-data android:name="io.flutter.embedding.android.ImpellerBackend" android:value="vulkan"/>
         <activity
                 android:name=".MainActivity"
                 android:exported="true"

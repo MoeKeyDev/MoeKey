@@ -41,6 +41,27 @@ void main() {
     );
   });
 
+  test('post media proxy forwards original video without image flags', () {
+    const video = 'https://video.twimg.com/path/video.mp4?token=a%2Bb';
+    final resolved = Uri.parse(
+      resolvePostMediaUrl(video, serverUrl: serverUrl),
+    );
+    expect(resolved.path, '/proxy/image.webp');
+    expect(resolved.queryParameters, {'url': video});
+  });
+
+  test('preserves an existing external proxy and its host parameter', () {
+    const proxied =
+        'https://r.n1mp.org/image.webp?url=https%3A%2F%2Fvideo.twimg.com%2Fvideo.mp4&host=bird.makeup';
+    expect(resolvePostMediaUrl(proxied, serverUrl: serverUrl), proxied);
+  });
+
+  test('local media and missing login retain original URL', () {
+    const local = 'https://dvd.chat/files/video.mp4';
+    expect(resolvePostMediaUrl(local, serverUrl: serverUrl), local);
+    expect(resolvePostMediaUrl(remoteEmojiUrl), remoteEmojiUrl);
+  });
+
   test('handles failed external image decoding without console spam', () {
     final resized = getExtendedResizeImage(remoteEmojiUrl);
     final network =

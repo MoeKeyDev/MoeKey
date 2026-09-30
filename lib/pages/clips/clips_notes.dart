@@ -55,6 +55,7 @@ class ClipsNotes extends HookConsumerWidget {
     return Builder(
       builder: (context) {
         return MkRefreshLoadList(
+          videoEnabled: true,
           padding: EdgeInsets.symmetric(horizontal: padding),
           onLoad: () => ref.read(dataProvider.notifier).load(),
           onRefresh: () => ref.refresh(dataProvider.future),
@@ -85,6 +86,7 @@ class ClipsNotes extends HookConsumerWidget {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: NoteCard(
                       key: ValueKey(item.id),
+                      videoListIndex: i,
                       borderRadius: borderRadius,
                       data: item,
                       customContextmenu: [

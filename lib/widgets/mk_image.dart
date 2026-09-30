@@ -54,6 +54,17 @@ String resolveMkImageUrl(
     return url;
   }
 
+  // API responses may already use an external media proxy. Preserve its URL,
+  // including instance-specific parameters such as host and signatures.
+  if (source.queryParameters.containsKey('url') &&
+      (source.path.endsWith('/image.webp') ||
+          source.path.endsWith('/preview.webp') ||
+          source.path.endsWith('/static.webp') ||
+          source.path.endsWith('/avatar.webp') ||
+          source.path.endsWith('/emoji.webp'))) {
+    return url;
+  }
+
   final queryParameters = <String, String>{'url': url};
   switch (proxy.type) {
     case MkImageProxyType.emoji:
@@ -81,6 +92,15 @@ String resolveMkImageUrl(
       )
       .toString();
 }
+
+/// Original media forwarding, with no image conversion or fallback parameters.
+/// The instance can redirect /proxy to its configured external media proxy.
+String resolvePostMediaUrl(String url, {String? serverUrl}) =>
+    resolveMkImageUrl(
+      url,
+      serverUrl: serverUrl,
+      proxy: const MkImageProxyOptions(),
+    );
 
 ImageProvider<Object> getExtendedResizeImage(
   String url, {

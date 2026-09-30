@@ -7,6 +7,7 @@ import 'package:moekey/widgets/sliver_load_more.dart';
 
 import 'loading_weight.dart';
 import 'mk_refresh_indicator.dart';
+import '../video/app_video_pool.dart';
 
 class MkRefreshLoadListController extends ChangeNotifier {
   MkRefreshController refreshController = MkRefreshController();
@@ -78,6 +79,8 @@ class MkRefreshLoadList<T> extends StatelessWidget {
     this.onRetryLoadMore,
     this.scrollPhysics,
     this.scrollViewWrapper,
+    this.videoActive = true,
+    this.videoEnabled = false,
     this.showRefreshIndicatorOnInitialLoad = false,
   });
 
@@ -97,6 +100,8 @@ class MkRefreshLoadList<T> extends StatelessWidget {
   final ScrollPhysics? scrollPhysics;
   final Widget Function(Widget scrollView)? scrollViewWrapper;
   final bool showRefreshIndicatorOnInitialLoad;
+  final bool videoActive;
+  final bool videoEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +180,9 @@ class MkRefreshLoadList<T> extends StatelessWidget {
       );
     }
 
-    return child;
+    return videoEnabled
+        ? AppVideoViewport(active: videoActive, child: child)
+        : child;
   }
 }
 

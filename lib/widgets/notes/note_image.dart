@@ -11,6 +11,8 @@ import '../../apis/models/drive.dart';
 import '../../generated/l10n.dart';
 import '../mk_image.dart';
 import '../video_player.dart';
+import '../../video/app_video_pool.dart';
+import 'package:moekey_video_pool/moekey_video_pool.dart';
 
 class NoteImage extends HookConsumerWidget {
   const NoteImage({
@@ -22,6 +24,8 @@ class NoteImage extends HookConsumerWidget {
     required this.heroKey,
     this.fit = BoxFit.contain,
     this.showHideButton = true,
+    this.videoContext,
+    this.videoSubIndex = 0,
   });
 
   final num? maxHeight;
@@ -31,17 +35,17 @@ class NoteImage extends HookConsumerWidget {
   final void Function()? onClick;
   final BoxFit fit;
   final bool showHideButton;
+  final NoteVideoContext? videoContext;
+  final int videoSubIndex;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var theme = ref.watch(themeColorsProvider);
-    var isHidden = useState(false);
+    var isHidden = useState(imageFile.isSensitive);
     useEffect(() {
-      if (imageFile.isSensitive) {
-        isHidden.value = true;
-      }
+      isHidden.value = imageFile.isSensitive;
       return null;
-    }, const []);
+    }, [imageFile.id, imageFile.isSensitive]);
     var isImage = false;
     var isVideo = false;
     if (imageFile.type.startsWith("image")) {
@@ -50,7 +54,7 @@ class NoteImage extends HookConsumerWidget {
     if (imageFile.type.startsWith("video")) {
       isVideo = true;
     }
-    return LayoutBuilder(
+    Widget buildImage(FeedVideo? video) => LayoutBuilder(
       builder: (context, constraints) {
         var width = constraints.maxWidth;
         var height = maxHeight != null
@@ -85,6 +89,46 @@ class NoteImage extends HookConsumerWidget {
                   _NoteImageBlurredBackground(imageFile: imageFile),
                   Container(color: Colors.black.withValues(alpha: 0.2)),
                   // ),
+                  // Keep the foreground image mounted so both network loading
+                  // and decoding finish beneath the sensitive-content mask.
+                  // Opacity 0 suppresses painting without stopping image loading.
+                  if (isImage)
+                    ExcludeSemantics(
+                      excluding: isHidden.value,
+                      child: IgnorePointer(
+                        ignoring: isHidden.value,
+                        child: Opacity(
+                          opacity: isHidden.value ? 0 : 1,
+                          child: MkImage(
+                            imageFile.thumbnailUrl ?? imageFile.url,
+                            proxy: const MkImageProxyOptions(),
+                            heroKey: heroKey,
+                            blurHash: imageFile.blurhash,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: fit,
+                          ),
+                        ),
+                      ),
+                    )
+                  else if (isVideo && !isHidden.value)
+                    VideoPlayerComponent(
+                      key: ValueKey(imageFile.id),
+                      video: video!,
+                      placeholder: imageFile.blurhash?.isNotEmpty == true
+                          ? RepaintBoundary(
+                              child: BlurHash(imageFile.blurhash!),
+                            )
+                          : null,
+                      cover: imageFile.thumbnailUrl == null
+                          ? null
+                          : MkImage(
+                              imageFile.thumbnailUrl!,
+                              blurHash: imageFile.blurhash,
+                              fit: fit,
+                              proxy: const MkImageProxyOptions(),
+                            ),
+                    ),
                   if (isHidden.value)
                     DefaultTextStyle(
                       style: DefaultTextStyle.of(
@@ -116,29 +160,6 @@ class NoteImage extends HookConsumerWidget {
                         ],
                       ),
                     ),
-                  if (!isHidden.value)
-                    if (isImage) ...[
-                      if (imageFile.thumbnailUrl != null)
-                        MkImage(
-                          heroKey: heroKey,
-                          imageFile.thumbnailUrl!,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: fit,
-                        )
-                      else
-                        MkImage(
-                          heroKey: heroKey,
-                          imageFile.url,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: fit,
-                        ),
-                    ] else if (isVideo)
-                      VideoPlayerComponent(
-                        key: ValueKey(imageFile.id),
-                        url: imageFile.url,
-                      ),
                   if (!isHidden.value && showHideButton)
                     Positioned(
                       right: 8,
@@ -170,6 +191,28 @@ class NoteImage extends HookConsumerWidget {
         );
       },
     );
+    if (!isVideo) return buildImage(null);
+    Widget feed(BuildContext context) {
+      final identity =
+          videoContext ?? NoteVideoContext.of(context, imageFile.id);
+      return VideoFeedView(
+        scope: identity.listKey,
+        videoKey: identity.attachmentKey(imageFile.id),
+        noteId: identity.noteId,
+        listIndex: identity.listIndex,
+        listSubIndex: videoSubIndex,
+        url: imageFile.url,
+        enable: !isHidden.value,
+        builder: (_, video) => buildImage(video),
+      );
+    }
+
+    return AppVideoViewport.hasOf(context)
+        ? feed(context)
+        : AppVideoViewport(
+            origin: videoContext,
+            child: Builder(builder: feed),
+          );
   }
 
   num getHeight(num w, num h, num ww, num wh) {
@@ -205,6 +248,10 @@ class _NoteImageBlurredBackground extends StatelessWidget {
       return RepaintBoundary(child: BlurHash(blurhash));
     }
 
+    if (imageFile.type.startsWith("video") && imageFile.thumbnailUrl == null) {
+      return const SizedBox.expand();
+    }
+
     return RepaintBoundary(
       child: ImageFiltered(
         // Reuse the same native filter object. Recreating it during a keyboard
@@ -212,6 +259,7 @@ class _NoteImageBlurredBackground extends StatelessWidget {
         imageFilter: _blurFilter,
         child: MkImage(
           imageFile.thumbnailUrl ?? imageFile.url,
+          proxy: const MkImageProxyOptions(),
           width: double.infinity,
           height: double.infinity,
           fit: BoxFit.fill,

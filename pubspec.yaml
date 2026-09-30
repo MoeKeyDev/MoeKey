@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.10.0+60
+version: 0.10.1+61
 
 environment:
   sdk: ^3.12.2
@@ -29,6 +29,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  moekey_video_pool:
+    path: packages/moekey_video_pool
   flutter:
     sdk: flutter
 
@@ -55,19 +57,15 @@ dependencies:
   flutter_tabler_icons: ^1.7.0
   mfm_parser: ^1.0.5
   twemoji_v2: ^0.6.0
-  media_kit: ^1.1.10
-  media_kit_video: ^2.0.1
-  # mpv is only used as the Linux/Windows fallback. Depending on the
-  # all-platform media_kit_libs_video bundle also packages mpv on Android and
-  # Apple platforms, even though those platforms use video_player below.
-  media_kit_libs_linux: ^1.2.1
-  media_kit_libs_windows_video: ^1.0.11
+  fvp: 0.39.0
+  window_manager: ^0.5.1
   video_player: ^2.13.0
   scrollview_observer: ^1.18.0
   flutter_constraintlayout: ^1.7.0-stable
   file_picker: ^11.0.2
   gal: ^2.1.3
   path: ^1.8.3
+  image: ^4.8.0
   image_compression: ^1.0.4
   flutter_launcher_icons: ^0.14.1
   web_socket_channel: ^3.0.0

@@ -172,6 +172,7 @@ class TimeLineListPage extends HookConsumerWidget {
     }
 
     return MkPaginationNoteList(
+      active: active,
       key: listKey,
       onLoad: () => ref.read(dataProvider.notifier).load(),
       hasMore: data.value?.hasMore,

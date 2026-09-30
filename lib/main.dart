@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:fvp/fvp.dart' as fvp;
+import 'package:window_manager/window_manager.dart';
 import 'package:blurhash_shader/blurhash_shader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,6 +10,19 @@ import 'package:moekey/status/themes.dart';
 import 'generated/l10n.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Register once before any controller exists. FVP keeps the video_player API
+  // while providing MDK playback on Android, Apple and desktop platforms.
+  fvp.registerWith(
+    options: {
+      // Apply before prepare(), including players warmed by VideoPool.
+      // Packet queue duration, not a limit on decoded frames or GPU memory.
+      'player': <String, String>{'buffer': '200+2000'},
+    },
+  );
+  if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+    await windowManager.ensureInitialized();
+  }
   // 初始化BlurHash
   await BlurHash.loadShader();
   runApp(const ProviderScope(child: MyApp()));

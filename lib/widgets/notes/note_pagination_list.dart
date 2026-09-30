@@ -10,6 +10,7 @@ import 'package:scrollview_observer/scrollview_observer.dart';
 import '../../apis/models/note.dart';
 import '../../status/note_deletion_registry.dart';
 import '../mk_refresh_load.dart';
+import '../../video/app_video_pool.dart';
 import 'note_card.dart';
 import 'timeline_insert_transition.dart';
 import 'timeline_note_size_observer.dart';
@@ -20,6 +21,7 @@ class MkPaginationNoteList extends ConsumerStatefulWidget {
     required this.onLoad,
     required this.onRefresh,
     this.slivers,
+    this.active = true,
     this.padding = EdgeInsets.zero,
     required this.hasMore,
     this.items,
@@ -34,6 +36,7 @@ class MkPaginationNoteList extends ConsumerStatefulWidget {
     this.showRefreshIndicatorOnInitialLoad = false,
   });
 
+  final bool active;
   final Future Function() onLoad;
   final Future Function() onRefresh;
   final EdgeInsetsGeometry padding;
@@ -227,6 +230,8 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
         return NotificationListener<ScrollNotification>(
           onNotification: _handleScrollNotification,
           child: MkRefreshLoadList<NoteModel>(
+            videoEnabled: true,
+            videoActive: widget.active,
             onLoad: widget.onLoad,
             onRefresh: widget.onRefresh,
             padding: padding,
@@ -291,9 +296,12 @@ class MkPaginationNoteListState extends ConsumerState<MkPaginationNoteList> {
                         animate: animatedInsertNoteIds.contains(
                           items[noteIndex].id,
                         ),
-                        child: NoteCard(
-                          borderRadius: borderRadius,
-                          data: items[noteIndex],
+                        child: AppVideoPosition(
+                          index: noteIndex,
+                          child: NoteCard(
+                            borderRadius: borderRadius,
+                            data: items[noteIndex],
+                          ),
                         ),
                       ),
                     ),

@@ -1,3 +1,4 @@
+import '../../video/app_video_pool.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_constraintlayout/flutter_constraintlayout.dart';
@@ -66,6 +67,7 @@ class NoteCard extends HookConsumerWidget {
   final NoteModel data;
   final BorderRadius borderRadius;
   final bool pined;
+  final int? videoListIndex;
   final List<ContextMenuItem>? customContextmenu;
 
   const NoteCard({
@@ -73,6 +75,7 @@ class NoteCard extends HookConsumerWidget {
     required this.data,
     required this.borderRadius,
     this.pined = false,
+    this.videoListIndex,
     this.customContextmenu,
   });
 
@@ -87,7 +90,7 @@ class NoteCard extends HookConsumerWidget {
       isReNote = true;
     }
     var textStyle = Theme.of(context).textTheme.bodyMedium;
-    return DefaultTextStyle(
+    final content = DefaultTextStyle(
       style: textStyle!,
       child: MkCard(
         shadow: false,
@@ -137,6 +140,9 @@ class NoteCard extends HookConsumerWidget {
         ),
       ),
     );
+    return videoListIndex == null
+        ? content
+        : AppVideoPosition(index: videoListIndex!, child: content);
   }
 }
 
@@ -206,7 +212,13 @@ class TimeLineNoteCardComponent extends HookConsumerWidget {
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
             onTap: () {
-              context.push('/notes/${data.id}', extra: data.copyWith());
+              context.push(
+                '/notes/${data.id}',
+                extra: {
+                  'note': data.copyWith(),
+                  'videoContext': NoteVideoContext.of(context, data.id),
+                },
+              );
               // main_router.MainRouterDelegate.of(context)
               //     .setNewRoutePath(main_router.RouterItem(
               //   path: "notes/${data.id}",
@@ -1095,6 +1107,19 @@ class TimeLineImage extends StatefulWidget {
 
 class _TimeLineImageState extends State<TimeLineImage> {
   void open(int index) {
+    final identity = NoteVideoContext.of(context, widget.note.id);
+    final media = widget.files
+        .where(
+          (file) =>
+              file.type.startsWith('image') || file.type.startsWith('video'),
+        )
+        .toList();
+    final pool = ProviderScope.containerOf(context).read(appVideoPoolProvider);
+    final source = pool.tiles
+        .where(
+          (video) => video.videoKey == identity.attachmentKey(media[index].id),
+        )
+        .firstOrNull;
     context.push(
       '/image-preview',
       extra: {
@@ -1107,21 +1132,45 @@ class _TimeLineImageState extends State<TimeLineImage> {
         ],
         'heroKeys': heroKeys,
         'note': widget.note,
+        'videoContext': identity,
+        'initialVideoPlaying':
+            source == null || !source.ready || source.isPlaying,
+        'videoSubIndexes': [
+          for (final file in widget.files)
+            if (file.type.startsWith('image') || file.type.startsWith('video'))
+              widget.files.indexOf(file),
+        ],
       },
     );
   }
 
   List<UniqueKey> heroKeys = [];
+  final Map<String, UniqueKey> _heroKeysByFile = {};
+  void _syncHeroKeys() {
+    final media = widget.files
+        .where(
+          (file) =>
+              file.type.startsWith('image') || file.type.startsWith('video'),
+        )
+        .toList();
+    final ids = media.map((file) => file.id).toSet();
+    _heroKeysByFile.removeWhere((id, _) => !ids.contains(id));
+    heroKeys = [
+      for (final file in media)
+        _heroKeysByFile.putIfAbsent(file.id, UniqueKey.new),
+    ];
+  }
 
-  @override
   @override
   void initState() {
     super.initState();
-    for (var value in widget.files) {
-      if (value.type.startsWith("image") || value.type.startsWith("video")) {
-        heroKeys.add(UniqueKey());
-      }
-    }
+    _syncHeroKeys();
+  }
+
+  @override
+  void didUpdateWidget(TimeLineImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncHeroKeys();
   }
 
   @override
@@ -1160,7 +1209,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
     Widget? imageListWidget;
     if (media.length == 1) {
       imageListWidget = NoteImage(
+        key: ValueKey(media[0].id),
         imageFile: media[0],
+        videoContext: NoteVideoContext.of(context, widget.note.id),
+        videoSubIndex: widget.files.indexOf(media[0]),
         maxHeight: 460,
         heroKey: heroKeys[0],
         onClick: () {
@@ -1177,7 +1229,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
             mainAxisExtent: widget.mainAxisExtent / 2,
             crossAxisCellCount: 1,
             child: NoteImage(
+              key: ValueKey(media[0].id),
               imageFile: media[0],
+              videoContext: NoteVideoContext.of(context, widget.note.id),
+              videoSubIndex: widget.files.indexOf(media[0]),
               heroKey: heroKeys[0],
               onClick: () {
                 open(0);
@@ -1188,7 +1243,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
             mainAxisExtent: widget.mainAxisExtent / 2,
             crossAxisCellCount: 1,
             child: NoteImage(
+              key: ValueKey(media[1].id),
               imageFile: media[1],
+              videoContext: NoteVideoContext.of(context, widget.note.id),
+              videoSubIndex: widget.files.indexOf(media[1]),
               heroKey: heroKeys[1],
               onClick: () {
                 open(1);
@@ -1207,7 +1265,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
             mainAxisExtent: widget.mainAxisExtent / 1.5 + 8,
             crossAxisCellCount: 2,
             child: NoteImage(
+              key: ValueKey(media[0].id),
               imageFile: media[0],
+              videoContext: NoteVideoContext.of(context, widget.note.id),
+              videoSubIndex: widget.files.indexOf(media[0]),
               heroKey: heroKeys[0],
               onClick: () {
                 open(0);
@@ -1218,7 +1279,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
             mainAxisExtent: widget.mainAxisExtent / 3,
             crossAxisCellCount: 1,
             child: NoteImage(
+              key: ValueKey(media[1].id),
               imageFile: media[1],
+              videoContext: NoteVideoContext.of(context, widget.note.id),
+              videoSubIndex: widget.files.indexOf(media[1]),
               heroKey: heroKeys[1],
               onClick: () {
                 open(1);
@@ -1229,7 +1293,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
             mainAxisExtent: widget.mainAxisExtent / 3,
             crossAxisCellCount: 1,
             child: NoteImage(
+              key: ValueKey(media[2].id),
               imageFile: media[2],
+              videoContext: NoteVideoContext.of(context, widget.note.id),
+              videoSubIndex: widget.files.indexOf(media[2]),
               heroKey: heroKeys[2],
               onClick: () {
                 open(2);
@@ -1249,7 +1316,10 @@ class _TimeLineImageState extends State<TimeLineImage> {
               mainAxisExtent: widget.mainAxisExtent / 2.5,
               crossAxisCellCount: 1,
               child: NoteImage(
+                key: ValueKey(file.id),
                 imageFile: file,
+                videoContext: NoteVideoContext.of(context, widget.note.id),
+                videoSubIndex: widget.files.indexOf(file),
                 heroKey: heroKeys[index],
                 onClick: () {
                   open(index);

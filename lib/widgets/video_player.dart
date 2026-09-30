@@ -6,25 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:video_player/video_player.dart' as native_video;
-
-enum VideoPlaybackBackend { native, mediaKit }
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:moekey_video_pool/moekey_video_pool.dart';
 
 enum VideoPlayerPresentation { note, preview }
-
-@visibleForTesting
-VideoPlaybackBackend videoPlaybackBackend(TargetPlatform platform) {
-  return switch (platform) {
-    TargetPlatform.android ||
-    TargetPlatform.iOS ||
-    TargetPlatform.macOS => VideoPlaybackBackend.native,
-    TargetPlatform.linux ||
-    TargetPlatform.windows ||
-    TargetPlatform.fuchsia => VideoPlaybackBackend.mediaKit,
-  };
-}
 
 bool supportsVideoWindowFullscreen(TargetPlatform platform) {
   return platform == TargetPlatform.macOS ||
@@ -32,150 +19,30 @@ bool supportsVideoWindowFullscreen(TargetPlatform platform) {
       platform == TargetPlatform.linux;
 }
 
-final sharedVideoControllerProvider = Provider.autoDispose
-    .family<SharedVideoController, String>((ref, url) {
-      final controller = SharedVideoController(
-        url,
-        backend: videoPlaybackBackend(defaultTargetPlatform),
-      );
-      ref.onDispose(controller.dispose);
-      return controller;
-    });
-
-/// A platform-neutral video controller shared by the timeline and preview.
-///
-/// Keeping this controller in a provider family means opening the preview does
-/// not create a second decoder or lose the current playback position.
+/// UI facade over a pool attachment. It never owns a native player.
 class SharedVideoController extends ChangeNotifier {
-  SharedVideoController(this.url, {required this.backend}) {
-    unawaited(_initialize());
+  SharedVideoController(this.video, {this.listenToProgress = false}) {
+    video.addListener(_notifySafely);
+    if (listenToProgress) video.progress.addListener(_notifySafely);
   }
-
-  final String url;
-  final VideoPlaybackBackend backend;
-
-  native_video.VideoPlayerController? _nativeController;
-  Player? _mediaKitPlayer;
-  VideoController? _mediaKitVideoController;
-  final List<StreamSubscription<dynamic>> _subscriptions = [];
-
-  bool initialized = false;
-  bool muted = true;
+  final FeedVideo video;
+  final bool listenToProgress;
+  native_video.VideoPlayerController? get nativeController => video.controller;
+  bool get initialized => video.ready;
+  bool get muted => video.muted;
   bool fullscreen = false;
-  Object? error;
-
-  native_video.VideoPlayerController? get nativeController => _nativeController;
-  VideoController? get mediaKitVideoController => _mediaKitVideoController;
-
-  bool get isPlaying => switch (backend) {
-    VideoPlaybackBackend.native => _nativeController?.value.isPlaying ?? false,
-    VideoPlaybackBackend.mediaKit => _mediaKitPlayer?.state.playing ?? false,
-  };
-
-  Duration get duration => switch (backend) {
-    VideoPlaybackBackend.native =>
-      _nativeController?.value.duration ?? Duration.zero,
-    VideoPlaybackBackend.mediaKit =>
-      _mediaKitPlayer?.state.duration ?? Duration.zero,
-  };
-
-  Duration get position => switch (backend) {
-    VideoPlaybackBackend.native =>
-      _nativeController?.value.position ?? Duration.zero,
-    VideoPlaybackBackend.mediaKit =>
-      _mediaKitPlayer?.state.position ?? Duration.zero,
-  };
-
+  Object? get error => video.error;
+  bool get isPlaying => video.isPlaying;
+  Duration get duration => video.session?.player.duration ?? Duration.zero;
+  Duration get position => video.progress.value;
   double get aspectRatio {
-    final value = _nativeController?.value.aspectRatio ?? 0;
+    final value = nativeController?.value.aspectRatio ?? 0;
     return value > 0 ? value : 16 / 9;
   }
 
-  Future<void> _initialize() async {
-    try {
-      if (backend == VideoPlaybackBackend.native) {
-        final controller = native_video.VideoPlayerController.networkUrl(
-          Uri.parse(url),
-          videoPlayerOptions: native_video.VideoPlayerOptions(
-            mixWithOthers: true,
-          ),
-        );
-        _nativeController = controller;
-        controller.addListener(_notifySafely);
-        await controller.initialize();
-        await controller.setVolume(muted ? 0 : 1);
-      } else {
-        final player = Player();
-        _mediaKitPlayer = player;
-        _mediaKitVideoController = VideoController(player);
-        _subscriptions.addAll([
-          player.stream.playing.listen((_) => _notifySafely()),
-          player.stream.position.listen((_) => _notifySafely()),
-          player.stream.duration.listen((_) => _notifySafely()),
-          player.stream.error.listen((value) {
-            error = value;
-            _notifySafely();
-          }),
-        ]);
-        await player.setVolume(muted ? 0 : 100);
-        await player.open(Media(url), play: false);
-      }
-      initialized = true;
-    } catch (exception, stackTrace) {
-      error = exception;
-      debugPrint('Failed to initialize video: $exception');
-      debugPrintStack(stackTrace: stackTrace);
-    }
-    _notifySafely();
-  }
-
-  Future<void> togglePlayback() async {
-    if (!initialized) return;
-    if (backend == VideoPlaybackBackend.native) {
-      if (isPlaying) {
-        await _nativeController?.pause();
-      } else {
-        await _nativeController?.play();
-      }
-    } else {
-      await _mediaKitPlayer?.playOrPause();
-    }
-    _notifySafely();
-  }
-
-  Future<void> seek(Duration value) async {
-    if (backend == VideoPlaybackBackend.native) {
-      await _nativeController?.seekTo(value);
-    } else {
-      await _mediaKitPlayer?.seek(value);
-    }
-  }
-
-  Future<void> setMuted(bool value) async {
-    muted = value;
-    if (backend == VideoPlaybackBackend.native) {
-      await _nativeController?.setVolume(value ? 0 : 1);
-    } else {
-      await _mediaKitPlayer?.setVolume(value ? 0 : 100);
-    }
-    _notifySafely();
-  }
-
-  /// Restores the shared player without notifying widgets while Flutter may
-  /// be unmounting the preview route. A final notification is delivered after
-  /// the current frame for any timeline player that still uses this instance.
-  Future<void> restoreAfterPreview() async {
-    _notificationHoldCount++;
-    try {
-      await setMuted(true);
-      await exitFullscreen();
-    } finally {
-      _notificationHoldCount--;
-      if (_notificationHoldCount == 0) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => _notifySafely());
-      }
-    }
-  }
+  Future<void> togglePlayback() => isPlaying ? video.pause() : video.play();
+  Future<void> seek(Duration value) => video.seekTo(value);
+  Future<void> setMuted(bool value) => video.setMuted(value);
 
   Future<void> toggleFullscreen() async {
     if (!supportsVideoWindowFullscreen(defaultTargetPlatform)) return;
@@ -196,14 +63,14 @@ class SharedVideoController extends ChangeNotifier {
   }
 
   void _notifySafely() {
-    if (_disposed || _notificationHoldCount > 0) return;
+    if (_disposed) return;
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
       if (_notificationScheduled) return;
       _notificationScheduled = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _notificationScheduled = false;
-        if (!_disposed && _notificationHoldCount == 0) notifyListeners();
+        if (!_disposed) notifyListeners();
       });
       return;
     }
@@ -212,36 +79,31 @@ class SharedVideoController extends ChangeNotifier {
 
   bool _disposed = false;
   bool _notificationScheduled = false;
-  int _notificationHoldCount = 0;
 
   @override
   void dispose() {
     _disposed = true;
-    for (final subscription in _subscriptions) {
-      unawaited(subscription.cancel());
-    }
-    final nativeController = _nativeController;
-    if (nativeController != null) {
-      nativeController.removeListener(_notifySafely);
-      unawaited(nativeController.dispose());
-    }
-    final player = _mediaKitPlayer;
-    if (player != null) unawaited(player.dispose());
+    video.removeListener(_notifySafely);
+    if (listenToProgress) video.progress.removeListener(_notifySafely);
     super.dispose();
   }
 }
 
-class VideoPlayerComponent extends ConsumerWidget {
+class VideoPlayerComponent extends HookConsumerWidget {
   const VideoPlayerComponent({
     super.key,
-    required this.url,
+    required this.video,
+    this.cover,
+    this.placeholder,
     this.presentation = VideoPlayerPresentation.note,
     this.controlsVisible = true,
     this.onSurfaceTap,
     this.onZoomChanged,
   });
 
-  final String url;
+  final FeedVideo video;
+  final Widget? cover;
+  final Widget? placeholder;
   final VideoPlayerPresentation presentation;
   final bool controlsVisible;
   final VoidCallback? onSurfaceTap;
@@ -249,11 +111,31 @@ class VideoPlayerComponent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.watch(sharedVideoControllerProvider(url));
+    final preview = presentation == VideoPlayerPresentation.preview;
+    final controller = useMemoized(
+      () => SharedVideoController(video, listenToProgress: preview),
+      [video, preview],
+    );
+    useEffect(() => controller.dispose, [controller]);
+    final visible = VideoFeedView.isVisibleOf(context);
     return ListenableBuilder(
       listenable: controller,
       builder: (context, _) => _VideoSurface(
         controller: controller,
+        renderVideo: visible,
+        cover:
+            cover ??
+            (video.thumbnail == null
+                ? placeholder
+                : Image(
+                    image: video.thumbnail!,
+                    fit: BoxFit.contain,
+                    gaplessPlayback: true,
+                    frameBuilder: (_, child, frame, synchronous) =>
+                        synchronous || frame != null
+                        ? child
+                        : placeholder ?? const SizedBox.expand(),
+                  )),
         presentation: presentation,
         controlsVisible: controlsVisible,
         onSurfaceTap: onSurfaceTap,
@@ -263,9 +145,57 @@ class VideoPlayerComponent extends ConsumerWidget {
   }
 }
 
+/// Acquires the same attachment state when a preview page becomes selected.
+class PreviewVideoPlayerComponent extends HookWidget {
+  const PreviewVideoPlayerComponent({
+    super.key,
+    required this.video,
+    required this.active,
+    this.startPlaying = true,
+    required this.controlsVisible,
+    this.onSurfaceTap,
+    this.onZoomChanged,
+  });
+  final FeedVideo video;
+  final bool active;
+  final bool startPlaying;
+  final bool controlsVisible;
+  final VoidCallback? onSurfaceTap;
+  final ValueChanged<bool>? onZoomChanged;
+  @override
+  Widget build(BuildContext context) {
+    useEffect(() {
+      if (!active) return null;
+      var cancelled = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (cancelled || !video.registered) return;
+        // Selecting a preview is an explicit user action, including manual paging.
+        await video.setMuted(false);
+        if (!cancelled && video.registered && startPlaying) await video.play();
+      });
+      return () {
+        cancelled = true;
+        if (identical(video.pool.current, video) && video.registered) {
+          unawaited(video.setMuted(true));
+        }
+        unawaited(exitNativeFullscreen());
+      };
+    }, [video, active]);
+    return VideoPlayerComponent(
+      video: video,
+      presentation: VideoPlayerPresentation.preview,
+      controlsVisible: controlsVisible,
+      onSurfaceTap: onSurfaceTap,
+      onZoomChanged: onZoomChanged,
+    );
+  }
+}
+
 class _VideoSurface extends StatelessWidget {
   const _VideoSurface({
     required this.controller,
+    required this.renderVideo,
+    this.cover,
     required this.presentation,
     required this.controlsVisible,
     this.onSurfaceTap,
@@ -273,6 +203,8 @@ class _VideoSurface extends StatelessWidget {
   });
 
   final SharedVideoController controller;
+  final bool renderVideo;
+  final Widget? cover;
   final VideoPlayerPresentation presentation;
   final bool controlsVisible;
   final VoidCallback? onSurfaceTap;
@@ -286,22 +218,23 @@ class _VideoSurface extends StatelessWidget {
         child: Center(child: Icon(Icons.error_outline, color: Colors.white70)),
       );
     }
-    if (!controller.initialized) {
-      return const ColoredBox(
-        color: Colors.black,
-        child: Center(child: CircularProgressIndicator.adaptive()),
+    if (!controller.initialized || !renderVideo) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          cover ?? const ColoredBox(color: Colors.black),
+          if (renderVideo && controller.video.preparing)
+            const Center(child: CircularProgressIndicator.adaptive()),
+          if (presentation == VideoPlayerPresentation.note)
+            _NoteVideoControls(controller: controller),
+          if (presentation == VideoPlayerPresentation.preview &&
+              controlsVisible)
+            _PreviewVideoControls(controller: controller),
+        ],
       );
     }
 
-    final child = switch (controller.backend) {
-      VideoPlaybackBackend.native => native_video.VideoPlayer(
-        controller.nativeController!,
-      ),
-      VideoPlaybackBackend.mediaKit => Video(
-        controller: controller.mediaKitVideoController!,
-        controls: NoVideoControls,
-      ),
-    };
+    final child = native_video.VideoPlayer(controller.nativeController!);
 
     return ColoredBox(
       color: presentation == VideoPlayerPresentation.preview
@@ -552,9 +485,7 @@ Future<void> enterNativeFullscreen() async {
         overlays: [],
       );
     } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-      await const MethodChannel(
-        'com.alexmercerind/media_kit_video',
-      ).invokeMethod('Utils.EnterNativeFullscreen');
+      await windowManager.setFullScreen(true);
     }
   } catch (exception, stackTrace) {
     debugPrint('Failed to enter native fullscreen: $exception');
@@ -570,9 +501,7 @@ Future<void> exitNativeFullscreen() async {
         overlays: SystemUiOverlay.values,
       );
     } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-      await const MethodChannel(
-        'com.alexmercerind/media_kit_video',
-      ).invokeMethod('Utils.ExitNativeFullscreen');
+      await windowManager.setFullScreen(false);
     }
   } catch (exception, stackTrace) {
     debugPrint('Failed to exit native fullscreen: $exception');

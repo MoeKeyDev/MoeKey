@@ -74,6 +74,7 @@ class UserOverview extends HookConsumerWidget {
             return RepaintBoundary(
               child: NoteCard(
                 key: ValueKey(userPinNote[index].id),
+                videoListIndex: index,
                 borderRadius: borderRadius,
                 pined: true,
                 data: userPinNote[index],
@@ -163,6 +164,7 @@ class UserOverview extends HookConsumerWidget {
                               return RepaintBoundary(
                                 child: NoteCard(
                                   key: ValueKey(userPinNote[index].id),
+                                  videoListIndex: index,
                                   borderRadius: borderRadius,
                                   pined: true,
                                   data: userPinNote[index],
@@ -206,6 +208,7 @@ class UserOverview extends HookConsumerWidget {
                             return RepaintBoundary(
                               child: NoteCard(
                                 key: ValueKey(items[index].id),
+                                videoListIndex: index,
                                 borderRadius: borderRadius,
                                 data: items[index],
                               ),

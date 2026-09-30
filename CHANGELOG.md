@@ -1,4 +1,33 @@
 # Changelog
+
+## 0.10.1
+
+### Added
+
+- Add a shared video pool with visibility-based autoplay, same-note sequential playback, and playback-session reuse across timelines, note details, and full-screen previews.
+- Add per-video and global playback speed controls, paused next-video preloading, and a bounded four-player pool.
+- Generate compressed video covers before playback for visible attachments and cache them on disk; show BlurHash placeholders while covers load when provided by the server.
+
+### Improved
+
+- Use FVP as the video_player backend on all platforms, replacing the mpv fallback and improving playback startup and Android video rendering compatibility.
+- Defer automatic video preparation while scrolling and pause videos in inactive tabs, covered routes, and the background.
+- Proxy external post images and videos through the current Misskey server while preserving existing proxy URLs.
+- Load sensitive images beneath the content mask so revealing them reuses the loaded image.
+
+### Fixed
+
+- Fix timeline refresh stalls when inserting large batches and restore panning of zoomed images in mobile previews.
+- Fix flickering author-note load controls when the note detail page receives empty reply results.
+- Keep playback position and speed independent for separate attachments that use the same video URL, while sharing state for the same attachment across pages.
+- Keep retained timeline tabs and media lists synchronized with video scheduling eligibility.
+
+### Maintenance
+
+- Upgrade Flutter to 3.47.5 and update native plugin integration for FVP and desktop window controls.
+- Set the minimum supported versions to iOS 15 and macOS 12 for the updated Flutter toolchain.
+- Remove unused mpv dependencies from the app and Linux build workflows.
+
 ## 0.10.0
 
 ### Added

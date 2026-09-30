@@ -1,3 +1,4 @@
+import '../video/app_video_pool.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -169,7 +170,14 @@ GoRouter router(Ref ref) {
               return NotesPage(
                 key: ValueKey('note-page-$noteId'),
                 noteId: noteId,
-                previewNote: status.extra as NoteModel?,
+                previewNote: status.extra is Map<String, dynamic>
+                    ? (status.extra as Map<String, dynamic>)['note']
+                          as NoteModel?
+                    : status.extra as NoteModel?,
+                videoContext: status.extra is Map<String, dynamic>
+                    ? (status.extra as Map<String, dynamic>)['videoContext']
+                          as NoteVideoContext?
+                    : null,
               );
             },
           ),
@@ -239,6 +247,10 @@ GoRouter router(Ref ref) {
               galleryItems: params['galleryItems'],
               heroKeys: params['heroKeys'],
               note: params['note'],
+              videoContext: params['videoContext'] as NoteVideoContext?,
+              initialVideoPlaying:
+                  params['initialVideoPlaying'] as bool? ?? true,
+              videoSubIndexes: params['videoSubIndexes'] as List<int>?,
               backgroundDecoration: null,
             ),
           );
