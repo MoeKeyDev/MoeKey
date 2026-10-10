@@ -1,0 +1,28 @@
+# MoeKey
+
+> MoeKey is an open-source, cross-platform Misskey client built with Flutter. It brings Misskey-style browsing, posting, and social interaction to Android, iOS, Windows, macOS, and Linux.
+
+Official website: https://moekey.moegirl.love/
+Source repository: https://github.com/MoeKeyDev/MoeKey
+
+MoeKey supports home, local, social, and global timelines; posting with attachments, replies, quote renotes, polls, and emoji reactions; multiple accounts and profile editing; following and notifications; Drive files and clips; and note/user search and discovery. The website is available in Chinese, English, and Japanese.
+
+Downloads are published as GitHub Release assets. The latest-release link always points to the current published version; the main branch contains the current source code. Release notes describe the changes included in each release.
+
+## Product
+
+- [Website overview](https://moekey.moegirl.love/index.md): A Markdown version of the homepage, including supported features and platform downloads.
+- [English project README](https://raw.githubusercontent.com/MoeKeyDev/MoeKey/main/README.md): Detailed feature coverage and developer information.
+- [Chinese project README](https://raw.githubusercontent.com/MoeKeyDev/MoeKey/main/README.zh_CN.md): Project introduction and feature information in Simplified Chinese.
+
+## Downloads and release history
+
+- [Latest release](https://github.com/MoeKeyDev/MoeKey/releases/latest): Current release notes and installation packages for all five platforms.
+- [All releases](https://github.com/MoeKeyDev/MoeKey/releases): Previous versions and additional architecture variants.
+- [Changelog](https://raw.githubusercontent.com/MoeKeyDev/MoeKey/main/CHANGELOG.md): Versioned application changes in Markdown.
+
+## Optional
+
+- [Source code](https://github.com/MoeKeyDev/MoeKey): Flutter application source, local packages, and build workflows.
+- [Issue tracker](https://github.com/MoeKeyDev/MoeKey/issues): Bug reports and feature requests.
+- [Translations](https://crowdin.com/project/moekey): Contribute to application localization.
