@@ -34,26 +34,41 @@
 
   let scrollFrame = 0;
   const updateScroll = () => {
-    header.classList.toggle('is-scrolled', scrollY > 16);
-    topLink.classList.toggle('is-visible', scrollY > 500);
+    // Read once before changing classes: a second scrollY read after a style
+    // change can force the browser to update layout synchronously.
+    const position = window.scrollY;
+    header.classList.toggle('is-scrolled', position > 16);
+    topLink.classList.toggle('is-visible', position > 500);
     scrollFrame = 0;
   };
   addEventListener('scroll', () => {
     if (!scrollFrame) scrollFrame = requestAnimationFrame(updateScroll);
   }, { passive: true });
-  updateScroll();
+  scrollFrame = requestAnimationFrame(updateScroll);
 
+  let tiltFrame = 0;
+  let pointer = null;
   const resetTilt = () => {
+    if (tiltFrame) cancelAnimationFrame(tiltFrame);
+    tiltFrame = 0;
+    pointer = null;
     art.style.removeProperty('--tilt-x');
     art.style.removeProperty('--tilt-y');
   };
   hero.addEventListener('pointermove', event => {
     if (reducedMotion.matches || !finePointer.matches) return;
-    const bounds = hero.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-    art.style.setProperty('--tilt-x', `${-y * 9}deg`);
-    art.style.setProperty('--tilt-y', `${x * 12}deg`);
+    pointer = { x: event.clientX, y: event.clientY };
+    if (tiltFrame) return;
+    // Coalesce pointer events into one geometry read and style update per frame.
+    tiltFrame = requestAnimationFrame(() => {
+      tiltFrame = 0;
+      const bounds = hero.getBoundingClientRect();
+      if (!bounds.width || !bounds.height || !pointer) return;
+      const x = (pointer.x - bounds.left) / bounds.width - 0.5;
+      const y = (pointer.y - bounds.top) / bounds.height - 0.5;
+      art.style.setProperty('--tilt-x', `${-y * 9}deg`);
+      art.style.setProperty('--tilt-y', `${x * 12}deg`);
+    });
   }, { passive: true });
   hero.addEventListener('pointerleave', resetTilt);
   finePointer.addEventListener('change', resetTilt);
